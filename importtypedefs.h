@@ -15,19 +15,27 @@
 
 #pragma once
 
-#include "mgraph.h"
-#include "genlib/exceptions.h"
 #include <vector>
+#include <map>
 
 namespace depthmapX {
+    typedef std::vector<std::string> ColumnData;
+    typedef std::map<std::string, ColumnData> Table;
 
-    class InvalidLinkException : public depthmapX::BaseException
+    class Polyline : public QtRegion
     {
     public:
-        InvalidLinkException(std::string message) : depthmapX::BaseException(message)
-        {}
+        std::vector<Point2f> m_vertices;
+        bool m_closed = false;
+        Polyline(std::vector<Point2f> vertices, bool closed) : m_vertices(vertices), m_closed(closed) {
+        }
     };
-    std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line>& mergeLines, PointMap& currentMap);
-    void mergePixelPairs(const std::vector<PixelRefPair> &links, PointMap& currentMap);
-    std::vector<SimpleLine> getMergedPixelsAsLines(PointMap& currentMap);
+
+    enum ImportType {
+        DRAWINGMAP, DATAMAP
+    };
+
+    enum ImportFileType {
+        CSV, TSV, DXF
+    };
 }

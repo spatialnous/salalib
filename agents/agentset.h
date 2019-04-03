@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2019, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,16 @@
 
 #pragma once
 
-#include "salalib/ivga.h"
-#include "salalib/options.h"
-#include "salalib/pixelref.h"
-#include "salalib/pointdata.h"
+#include "agent.h"
+#include "agentprogram.h"
 
-class VGAIsovist : IVGA {
-  public:
-    std::string getAnalysisName() const override { return "Isovist Analysis"; }
-    bool run(Communicator *comm, const Options &, PointMap &map, bool simple_version) override;
-    BSPNode makeBSPtree(Communicator *communicator, const std::vector<SpacePixelFile> &drawingFiles);
+struct AgentSet : public AgentProgram {
+    std::vector<Agent> agents;
+    std::vector<int> m_release_locations;
+    int m_release_locations_seed = 0;
+    double m_release_rate;
+    int m_lifetime;
+    AgentSet();
+    void move();
+    void init(int agent, int trail_num = -1);
 };

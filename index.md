@@ -1,11 +1,8 @@
 ---
 layout: default
 ---
-## depthmapX - visual and spatial network analysis software
 
 ![Connectivity of the sample gallery plan](images/gallery_high_res.png)
-
-Latest releases can be found at the [releases page](https://github.com/SpaceGroupUCL/depthmapX/releases)
 
 ### About
   depthmapX is an open-source and multi-platform spatial analysis software for spatial networks of different scales. The software was originally developed by Alasdair Turner from the Space Syntax group as Depthmap, now open-source and available as depthmapX.

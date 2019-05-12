@@ -1,6 +1,7 @@
 ---
 layout: default
 ---
+![Gallery](images/gallery_high_res.png)
 ## depthmapX - visual and spatial network analysis software
 
 Latest releases can be found at the [releases page](https://github.com/SpaceGroupUCL/depthmapX/releases)

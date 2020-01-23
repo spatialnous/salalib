@@ -49,14 +49,16 @@ layout: default
   depthmapX development team. (2017). depthmapX (Version 0.6.0) [Computer software]. Retrieved from https://github.com/SpaceGroupUCL/depthmapX/
 
 - A BibTeX entry for LaTeX users:
-~~~text
+{% raw %}
+```
   @software{depthmapx,
     title = {depthmapX},
     author = {{depthmapX development team}},
     year = {2017},
     version = {0.6.0},
     url = {https://github.com/SpaceGroupUCL/depthmapX/}}
-~~~
+```
+{% endraw %}
 
 ### Training
   UCL and Space Syntax Limited have developed a [Space Syntax Online Training Platform](http://otp.spacesyntax.net/) to facilitate the dissemination of Space Syntax principles, methodologies and software. The comprehensive handbook [Space Syntax Methodology](http://discovery.ucl.ac.uk/1415080/), authored by Kinda Al-Sayed et al (2014), which is used in teaching at UCL offers an introduction and step-by-step tutorials for newbies to learn the techniques and methods of Space Syntax analysis based on depthmapX.

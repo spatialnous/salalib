@@ -68,9 +68,9 @@ layout: default
 - For more information please check the [documentation](https://github.com/SpaceGroupUCL/depthmapX/docs/index.md) and the [wiki](https://github.com/SpaceGroupUCL/depthmapX/wiki)
 - Download the [current version of depthmapX](https://github.com/SpaceGroupUCL/depthmapX/releases).
 - For any issues/bugs/crashes please create [a new issue](https://github.com/SpaceGroupUCL/depthmapX/issues/new)
-- The developers and users of depthmapX can also be found on matrix/riot for more direct and extended discussions in the following channels:
-  - [depthmapX-users](https://riot.im/app/#/room/#depthmapX-users:matrix.org) - for general discussion, and questions about using depthmapX
-  - [depthmapX-devel](https://riot.im/app/#/room/#depthmapX-devel:matrix.org) - for development discussion
+- The developers and users of depthmapX can also be found on matrix for more direct and extended discussions in the following channels:
+  - [depthmapX-users](https://matrix.to/#/#depthmapX-users:matrix.org) - for general discussion, and questions about using depthmapX
+  - [depthmapX-devel](https://matrix.to/#/#depthmapX-devel:matrix.org) - for development discussion
 
 
 depthmapX is licensed under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html) licence. It uses [Qt5](http://www.qt.io) as UI toolkit and build system, [Catch](https://github.com/philsquared/catch) as unit testing framework and [FakeIt](https://github.com/eranpeer/FakeIt) for test mocks.

@@ -1385,7 +1385,7 @@ int MetaGraph::loadLineData( Communicator *communicator, int load_type )
 {
     if (load_type & DXF) {
        // separate the stream and the communicator, allowing non-file streams read
-       return depthmapX::importFile(*this, *communicator, communicator, communicator->GetMBInfileName(), depthmapX::ImportType::DRAWINGMAP, depthmapX::ImportFileType::DXF);
+       return depthmapX::importFile(*this, communicator->getInFileStream(), communicator, communicator->GetMBInfileName(), depthmapX::ImportType::DRAWINGMAP, depthmapX::ImportFileType::DXF);
     }
 
    m_state &= ~LINEDATA;      // Clear line data flag (stops accidental redraw during reload) 
@@ -1405,7 +1405,7 @@ int MetaGraph::loadLineData( Communicator *communicator, int load_type )
 
    if (load_type & CAT) {
       // separate the stream and the communicator, allowing non-file streams read
-      int error = loadCat(*communicator, communicator);
+      int error = loadCat(communicator->getInFileStream(), communicator);
       if (error != 1) {
          return error;
       }

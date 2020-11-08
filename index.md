@@ -46,7 +46,7 @@ layout: default
 ### How to cite
 - For publications:
 
-  depthmapX development team. (2017). depthmapX (Version 0.6.0) [Computer software]. Retrieved from https://github.com/SpaceGroupUCL/depthmapX/
+  depthmapX development team. (2020). depthmapX (Version 0.8.0) [Computer software]. Retrieved from https://github.com/SpaceGroupUCL/depthmapX/
 
 - A BibTeX entry for LaTeX users:
 {% raw %}

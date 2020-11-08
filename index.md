@@ -54,8 +54,8 @@ layout: default
   @software{depthmapx,
     title = {depthmapX},
     author = {{depthmapX development team}},
-    year = {2017},
-    version = {0.6.0},
+    year = {2020},
+    version = {0.8.0},
     url = {https://github.com/SpaceGroupUCL/depthmapX/}}
 ```
 {% endraw %}

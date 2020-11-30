@@ -557,6 +557,7 @@ void ShapeGraph::makeSegmentMap(std::vector<Line>& lines, std::vector<Connector>
    auto iter = m_shapes.begin();
    for (size_t i = 0; i < m_connectors.size(); i++) {
       auto shape = iter->second;
+      int axialRef = iter->first;
       iter++;
       if (!shape.isLine()) {
          continue;
@@ -607,7 +608,7 @@ void ShapeGraph::makeSegmentMap(std::vector<Line>& lines, std::vector<Connector>
             else  {
                Line segment_a(line.start(),thispoint);
                lines.push_back(segment_a);
-               connectors.push_back(Connector(i));
+               connectors.push_back(Connector(axialRef));
                seg_a = lines.size() - 1;
             }
             lastpoint = thispoint;
@@ -632,7 +633,7 @@ void ShapeGraph::makeSegmentMap(std::vector<Line>& lines, std::vector<Connector>
             }
             Line segment_b(lastpoint,thispoint);
             lines.push_back(segment_b);
-            connectors.push_back(Connector(i));
+            connectors.push_back(Connector(axialRef));
             seg_b = lines.size() - 1;
             //
             lastpoint = thispoint;

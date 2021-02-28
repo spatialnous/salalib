@@ -23,7 +23,6 @@
 #include <cmath>
 #include <float.h>
 
-
 //////////////////////////////////////////////////////////////////////////////////////
 
 // gps2os: function to convert long-lat GPS coordinates to OS national grid

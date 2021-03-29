@@ -302,6 +302,25 @@ void ShapeGraph::writeAxialConnectionsAsDotGraph(std::ostream &stream)
     stream << "}" << std::endl;
 }
 
+void ShapeGraph::writeLinksUnlinksAsPairsCSV(std::ostream &stream)
+{
+    stream.precision(12);
+
+    stream << "refA,refB,link" << std::endl;
+
+    for(auto& link: m_links) {
+        stream <<  depthmapX::getMapAtIndex(m_shapes, link.a)->first << ","
+               << depthmapX::getMapAtIndex(m_shapes, link.b)->first << ",1"
+               << std::endl;
+    }
+
+    for(auto& unlink: m_unlinks) {
+        stream <<  depthmapX::getMapAtIndex(m_shapes, unlink.a)->first << ","
+               << depthmapX::getMapAtIndex(m_shapes, unlink.b)->first << ",0"
+               << std::endl;
+    }
+}
+
 void ShapeGraph::writeAxialConnectionsAsPairsCSV(std::ostream &stream)
 {
     const std::vector<Connector>& connectors = ShapeMap::getConnections();

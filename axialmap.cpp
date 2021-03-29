@@ -302,22 +302,19 @@ void ShapeGraph::writeAxialConnectionsAsDotGraph(std::ostream &stream)
     stream << "}" << std::endl;
 }
 
-void ShapeGraph::writeLinksUnlinksAsPairsCSV(std::ostream &stream, char delimiter)
-{
+void ShapeGraph::writeLinksUnlinksAsPairsCSV(std::ostream &stream, char delimiter) {
     stream.precision(12);
 
     stream << "refA" << delimiter << "refB" << delimiter << "link" << std::endl;
 
-    for(auto& link: m_links) {
-        stream <<  depthmapX::getMapAtIndex(m_shapes, link.a)->first << delimiter
-               << depthmapX::getMapAtIndex(m_shapes, link.b)->first << delimiter << "1"
-               << std::endl;
+    for (auto &link : m_links) {
+        stream << depthmapX::getMapAtIndex(m_shapes, link.a)->first << delimiter
+               << depthmapX::getMapAtIndex(m_shapes, link.b)->first << delimiter << "1" << std::endl;
     }
 
-    for(auto& unlink: m_unlinks) {
-        stream <<  depthmapX::getMapAtIndex(m_shapes, unlink.a)->first << delimiter
-               << depthmapX::getMapAtIndex(m_shapes, unlink.b)->first << delimiter << "0"
-               << std::endl;
+    for (auto &unlink : m_unlinks) {
+        stream << depthmapX::getMapAtIndex(m_shapes, unlink.a)->first << delimiter
+               << depthmapX::getMapAtIndex(m_shapes, unlink.b)->first << delimiter << "0" << std::endl;
     }
 }
 

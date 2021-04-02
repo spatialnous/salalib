@@ -179,8 +179,11 @@ inline void ICommunicator::CommPostMessage(int m, int x) const {
 }
 
 // a helpful little function...
+// TODO: All time handling in the application uses time_t and stores milliseconds in it, though time_t
+// is supposed to only store seconds. Replace with std::chrono::time_point everywhere
 inline bool qtimer(time_t &t1, time_t timeout) {
-    time_t t2 =  std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto time2 = std::chrono::system_clock::now().time_since_epoch();
+    time_t t2 = std::chrono::duration_cast<std::chrono::milliseconds>(time2).count();
     if ((t2 - t1) > timeout || (t2 - t1) < 0) { // also catch a loop
         t1 = t2;
         return true;

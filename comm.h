@@ -179,6 +179,13 @@ inline void ICommunicator::CommPostMessage(int m, int x) const {
 }
 
 // a helpful little function...
+// This function is used exclusively to update the communicators at specific intervals (set in milliseconds
+// by the timeout argument). Typical usage: Create a time_t t1 and pass to this function with timeout = 0,
+// setting thus t1 to the current time in milliseconds. Then continuously pass the same t1 to this function
+// along with an interval timeout (in most cases 500ms). The function only synchronises t1 to the current
+// time if its difference to the current time is longer than the interval (i.e. more than 500 milliseconds
+// have passed since the last synchronisation). If a synchronisation occurs then the communicator is
+// updated along with the equivalent user interface element.
 // TODO: All time handling in the application uses time_t and stores milliseconds in it, though time_t
 // is supposed to only store seconds. Replace with std::chrono::time_point everywhere
 inline bool qtimer(time_t &t1, time_t timeout) {

@@ -303,7 +303,7 @@ class QtRegion {
         return *this;
     }
     //
-    double height() const { return top_right.y - bottom_left.y; }
+    double height() const { return fabs(top_right.y - bottom_left.y); }
     double width() const
     // The assumption that top_right.x is always > bottom_left.x is not always true.
     // Returning a negative value here causes an infinite loop at axialmap.cpp line 3106

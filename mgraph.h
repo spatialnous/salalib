@@ -226,7 +226,7 @@ public:
    { return m_displayed_datamap; }
 
    void removeDataMap(size_t i)
-   { if (m_displayed_datamap >= i) m_displayed_datamap--; m_dataMaps.erase(m_dataMaps.begin() + i); }
+   { if (m_displayed_datamap >= i && i > 0) m_displayed_datamap--; m_dataMaps.erase(m_dataMaps.begin() + i); }
 
    void setDisplayedDataMapRef(size_t map)
    {

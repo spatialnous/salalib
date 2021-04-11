@@ -1810,8 +1810,8 @@ int ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef &shape) const {
                         depthmapX::addIfNotExists(testnodes, int(iter->m_polyrefs[k]));
                     }
                     pix2.move(PixelRef::NEGVERTICAL); // move pix2 down, search for this shape...
-                    pixelShapes = &m_pixel_shapes(static_cast<size_t>(pix2.y), static_cast<size_t>(pix2.x));
                     if (includes(pix2)) {
+                        pixelShapes = &m_pixel_shapes(static_cast<size_t>(pix2.y), static_cast<size_t>(pix2.x));
                         iter = std::find(pixelShapes->begin(), pixelShapes->end(), shape.m_shape_ref);
                     } else {
                         iter = pixelShapes->end();

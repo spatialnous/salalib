@@ -495,6 +495,7 @@ int MetaGraph::makeIsovist(Communicator *communicator, const Point2f& p, double 
    Isovist iso;
 
    if (makeBSPtree(communicator)) {
+      m_view_class &= ~VIEWDATA;
       isovistMade = 1;
       iso.makeit(m_bsp_root, p, m_region, startangle, endangle);
       int shapelayer = getMapRef(m_dataMaps, "Isovists");

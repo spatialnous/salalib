@@ -33,7 +33,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    // note: radius must be sorted lowest to highest, but if -1 occurs ("radius n") it needs to be last...
+    // note: radius must be sorted lowest to highest, but if -1 occurs ("radius n") it needs to be
+    // last...
     // ...to ensure no mess ups, we'll re-sort here:
     bool radius_n = false;
     std::vector<int> radii;
@@ -54,7 +55,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
     if (m_weighted_measure_col != -1) {
         weighting_col_text = attributes.getColumnName(m_weighted_measure_col);
         for (size_t i = 0; i < map.getShapeCount(); i++) {
-            weights.push_back(map.getAttributeRowFromShapeIndex(i).getValue(m_weighted_measure_col));
+            weights.push_back(
+                map.getAttributeRowFromShapeIndex(i).getValue(m_weighted_measure_col));
         }
     }
 
@@ -70,7 +72,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
             std::string n_choice_col_text = std::string("Choice [Norm]") + radius_text;
             attributes.insertOrResetColumn(n_choice_col_text.c_str());
             if (m_weighted_measure_col != -1) {
-                std::string w_choice_col_text = std::string("Choice [") + weighting_col_text + " Wgt]" + radius_text;
+                std::string w_choice_col_text =
+                    std::string("Choice [") + weighting_col_text + " Wgt]" + radius_text;
                 attributes.insertOrResetColumn(w_choice_col_text.c_str());
                 std::string nw_choice_col_text =
                     std::string("Choice [") + weighting_col_text + " Wgt][Norm]" + radius_text;
@@ -108,9 +111,11 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
         }
 
         if (m_weighted_measure_col != -1) {
-            std::string w_md_col_text = std::string("Mean Depth [") + weighting_col_text + " Wgt]" + radius_text;
+            std::string w_md_col_text =
+                std::string("Mean Depth [") + weighting_col_text + " Wgt]" + radius_text;
             attributes.insertOrResetColumn(w_md_col_text.c_str());
-            std::string total_weight_text = std::string("Total ") + weighting_col_text + radius_text;
+            std::string total_weight_text =
+                std::string("Total ") + weighting_col_text + radius_text;
             attributes.insertOrResetColumn(total_weight_text.c_str());
         }
         if (m_fulloutput) {
@@ -138,9 +143,10 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
         }
     }
     // then look up all the columns... eek:
-    std::vector<int> choice_col, n_choice_col, w_choice_col, nw_choice_col, entropy_col, integ_dv_col, integ_pv_col,
-        integ_tk_col, intensity_col, depth_col, count_col, rel_entropy_col, penn_norm_col, w_depth_col,
-        total_weight_col, ra_col, rra_col, td_col, harmonic_col;
+    std::vector<int> choice_col, n_choice_col, w_choice_col, nw_choice_col, entropy_col,
+        integ_dv_col, integ_pv_col, integ_tk_col, intensity_col, depth_col, count_col,
+        rel_entropy_col, penn_norm_col, w_depth_col, total_weight_col, ra_col, rra_col, td_col,
+        harmonic_col;
     for (int radius : radii) {
         std::string radius_text;
         if (radius != -1) {
@@ -152,7 +158,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
             std::string n_choice_col_text = std::string("Choice [Norm]") + radius_text;
             n_choice_col.push_back(attributes.getColumnIndex(n_choice_col_text.c_str()));
             if (m_weighted_measure_col != -1) {
-                std::string w_choice_col_text = std::string("Choice [") + weighting_col_text + " Wgt]" + radius_text;
+                std::string w_choice_col_text =
+                    std::string("Choice [") + weighting_col_text + " Wgt]" + radius_text;
                 w_choice_col.push_back(attributes.getColumnIndex(w_choice_col_text.c_str()));
                 std::string nw_choice_col_text =
                     std::string("Choice [") + weighting_col_text + " Wgt][Norm]" + radius_text;
@@ -189,9 +196,11 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
         }
 
         if (m_weighted_measure_col != -1) {
-            std::string w_md_col_text = std::string("Mean Depth [") + weighting_col_text + " Wgt]" + radius_text;
+            std::string w_md_col_text =
+                std::string("Mean Depth [") + weighting_col_text + " Wgt]" + radius_text;
             w_depth_col.push_back(attributes.getColumnIndex(w_md_col_text.c_str()));
-            std::string total_weight_col_text = std::string("Total ") + weighting_col_text + radius_text;
+            std::string total_weight_col_text =
+                std::string("Total ") + weighting_col_text + radius_text;
             total_weight_col.push_back(attributes.getColumnIndex(total_weight_col_text.c_str()));
         }
         if (m_fulloutput) {
@@ -227,13 +236,13 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
     }
 
     // n.b., for this operation we assume continuous line referencing from zero (this is silly?)
-    // has already failed due to this!  when intro hand drawn fewest line (where user may have deleted)
-    // it's going to get worse...
+    // has already failed due to this!  when intro hand drawn fewest line (where user may have
+    // deleted) it's going to get worse...
 
     bool *covered = new bool[map.getShapeCount()];
 
     size_t i = -1;
-    for (auto & iter : attributes) {
+    for (auto &iter : attributes) {
         i++;
         AttributeRow &row = iter.getRow();
         for (size_t j = 0; j < map.getShapeCount(); j++) {
@@ -241,8 +250,10 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
         }
         if (m_choice) {
             for (size_t k = 0; k < map.getShapeCount(); k++) {
-                audittrail[k][0].previous.ref = -1; // note, 0th member used as radius doesn't matter
-                // note, choice columns are not cleared, but cummulative over all shortest path pairs
+                audittrail[k][0].previous.ref =
+                    -1; // note, 0th member used as radius doesn't matter
+                // note, choice columns are not cleared, but cummulative over all shortest path
+                // pairs
             }
         }
 
@@ -267,8 +278,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
             if (!simple_version) {
                 if (connections.size() > 0) {
                     row.setValue(control_col, float(control));
-                    row.setValue(controllability_col,
-                                 float(double(connections.size()) / double(totalneighbourhood.size() - 1)));
+                    row.setValue(controllability_col, float(double(connections.size()) /
+                                                            double(totalneighbourhood.size() - 1)));
                 } else {
                     row.setValue(control_col, -1);
                     row.setValue(controllability_col, -1);
@@ -282,7 +293,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
         pflipper<std::vector<std::pair<int, int>>> foundlist;
         foundlist.a().push_back(std::pair<int, int>(i, -1));
         covered[i] = true;
-        int total_depth = 0, depth = 1, node_count = 1, pos = -1, previous = -1; // node_count includes this 1
+        int total_depth = 0, depth = 1, node_count = 1, pos = -1,
+            previous = -1; // node_count includes this 1
         double weight = 0.0, rootweight = 0.0, total_weight = 0.0, w_total_depth = 0.0;
         if (m_weighted_measure_col != -1) {
             rootweight = weights[i];
@@ -300,7 +312,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
                     index = foundlist.a().at(pos).first;
                     previous = foundlist.a().at(pos).second;
                     audittrail[index][0].previous.ref =
-                        previous; // note 0th member used here: can be used individually different radius previous
+                        previous; // note 0th member used here: can be used individually different
+                                  // radius previous
                 }
                 Connector &line = map.getConnections()[index];
                 for (size_t k = 0; k < line.m_connections.size(); k++) {
@@ -316,18 +329,21 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
                         if (m_choice && previous != -1) {
                             // both directional paths are now recorded for choice
                             // (coincidentally fixes choice problem which was completely wrong)
-                            size_t here = index;   // note: start counting from index as actually looking ahead here
-                            while (here != i) { // not i means not the current root for the path
+                            size_t here = index; // note: start counting from index as actually
+                                                 // looking ahead here
+                            while (here != i) {  // not i means not the current root for the path
                                 audittrail[here][r].choice += 1;
                                 audittrail[here][r].weighted_choice += weight * rootweight;
-                                here =
-                                    audittrail[here][0].previous.ref; // <- note, just using 0th position: radius for
-                                                                      // the previous doesn't matter in this analysis
+                                here = audittrail[here][0]
+                                           .previous
+                                           .ref; // <- note, just using 0th position: radius for
+                                                 // the previous doesn't matter in this analysis
                             }
                             if (m_weighted_measure_col != -1) {
                                 // in weighted choice, root node and current node receive values:
                                 audittrail[i][r].weighted_choice += (weight * rootweight) * 0.5;
-                                audittrail[line.m_connections[k]][r].weighted_choice += (weight * rootweight) * 0.5;
+                                audittrail[line.m_connections[k]][r].weighted_choice +=
+                                    (weight * rootweight) * 0.5;
                             }
                         }
                         total_depth += depth;
@@ -355,7 +371,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
             }
             // node count > 1 to avoid divide by zero (was > 2)
             if (node_count > 1) {
-                // note -- node_count includes this one -- mean depth as per p.108 Social Logic of Space
+                // note -- node_count includes this one -- mean depth as per p.108 Social Logic of
+                // Space
                 double mean_depth = double(total_depth) / double(node_count - 1);
                 row.setValue(depth_col[r], float(mean_depth));
                 if (m_weighted_measure_col != -1) {
@@ -393,7 +410,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
                             double dmin = node_count - 1;
                             double dmax = palmtree(node_count, depth - 1);
                             if (dmax != dmin) {
-                                row.setValue(penn_norm_col[r], float((dmax - total_depth) / (dmax - dmin)));
+                                row.setValue(penn_norm_col[r],
+                                             float((dmax - total_depth) / (dmax - dmin)));
                             }
                         }
                     }
@@ -420,17 +438,19 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
                 }
 
                 if (!simple_version) {
-                    double entropy = 0.0, intensity = 0.0, rel_entropy = 0.0, factorial = 1.0, harmonic = 0.0;
+                    double entropy = 0.0, intensity = 0.0, rel_entropy = 0.0, factorial = 1.0,
+                           harmonic = 0.0;
                     for (size_t k = 0; k < depthcounts.size(); k++) {
                         if (depthcounts[k] != 0) {
                             // some debate over whether or not this should be node count - 1
                             // (i.e., including or not including the node itself)
                             double prob = double(depthcounts[k]) / double(node_count);
-                            entropy -= prob * log2(prob);
+                            entropy -= prob * pafmath::log2(prob);
                             // Formula from Turner 2001, "Depthmap"
                             factorial *= double(k + 1);
-                            double q = (pow(mean_depth, double(k)) / double(factorial)) * exp(-mean_depth);
-                            rel_entropy += (double)prob * log2(prob / q);
+                            double q =
+                                (pow(mean_depth, double(k)) / double(factorial)) * exp(-mean_depth);
+                            rel_entropy += (double)prob * pafmath::log2(prob / q);
                             //
                             harmonic += 1.0 / double(depthcounts[k]);
                         }
@@ -474,14 +494,15 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
     delete[] covered;
     if (m_choice) {
         i = -1;
-        for (auto & iter: attributes) {
+        for (auto &iter : attributes) {
             i++;
             AttributeRow &row = iter.getRow();
             double total_choice = 0.0, w_total_choice = 0.0;
             for (size_t r = 0; r < radii.size(); r++) {
                 total_choice += audittrail[i][r].choice;
                 w_total_choice += audittrail[i][r].weighted_choice;
-                // n.b., normalise choice according to (n-1)(n-2)/2 (maximum possible through routes)
+                // n.b., normalise choice according to (n-1)(n-2)/2 (maximum possible through
+                // routes)
                 double node_count = row.getValue(count_col[r]);
                 double total_weight = 0;
                 if (m_weighted_measure_col != -1) {
@@ -489,10 +510,12 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
                 }
                 if (node_count > 2) {
                     row.setValue(choice_col[r], float(total_choice));
-                    row.setValue(n_choice_col[r], float(2.0 * total_choice / ((node_count - 1) * (node_count - 2))));
+                    row.setValue(n_choice_col[r],
+                                 float(2.0 * total_choice / ((node_count - 1) * (node_count - 2))));
                     if (m_weighted_measure_col != -1) {
                         row.setValue(w_choice_col[r], float(w_total_choice));
-                        row.setValue(nw_choice_col[r], float(2.0 * w_total_choice / (total_weight * total_weight)));
+                        row.setValue(nw_choice_col[r],
+                                     float(2.0 * w_total_choice / (total_weight * total_weight)));
                     }
                 } else {
                     row.setValue(choice_col[r], -1);

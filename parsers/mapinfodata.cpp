@@ -19,7 +19,7 @@
 #include "mapinfodata.h"
 #include "salalib/mgraph.h"
 #include "salalib/shapemap.h"
-#include "salalib/axialmap.h"
+#include "salalib/shapegraph.h"
 
 #include <numeric>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "salalib/axialmap.h"
+#include "salalib/shapegraph.h"
 #include "salalib/axialpolygons.h"
 
 class AllLineMap: public ShapeGraph

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "salalib/axialmap.h"
+#include "salalib/shapegraph.h"
 #include "salalib/shapemap.h"
 #include "salalib/spacepixfile.h"
 #include "genlib/comm.h"

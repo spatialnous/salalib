@@ -1,7 +1,7 @@
 #pragma once
 
 #include "salalib/spacepix.h"
-#include "salalib/axialmap.h"
+#include "salalib/shapegraph.h"
 #include "salalib/connector.h"
 
 #include "genlib/simplematrix.h"

@@ -17,7 +17,7 @@
 
 // Interface to handle different kinds of VGA analysis
 
-#include "salalib/axialmap.h"
+#include "salalib/shapegraph.h"
 #include "salalib/options.h"
 
 #include "genlib/comm.h"

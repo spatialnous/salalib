@@ -29,7 +29,7 @@
 #include "salalib/spacepix.h"
 
 // still need paftl:
-#include "salalib/axialmap.h"
+#include "salalib/shapegraph.h"
 #include "salalib/pointdata.h"
 #include "salalib/shapemap.h"
 

@@ -1,7 +1,7 @@
 set(salalib salalib)
 
 set(salalib_SRCS
-    axialmap.cpp
+    shapegraph.cpp
     connector.cpp
     isovist.cpp
     mgraph.cpp

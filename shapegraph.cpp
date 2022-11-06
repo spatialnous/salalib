@@ -18,7 +18,7 @@
 
 // This is my code to make a set of axial lines from a set of boundary lines
 
-#include "salalib/axialmap.h"
+#include "salalib/shapegraph.h"
 #include "salalib/alllinemap.h"
 #include "salalib/tolerances.h"
 #include "salalib/pointdata.h"   // need the pointdata for the convert boundary graph to axial map routine

@@ -31,7 +31,8 @@
  * the current node (left or right) is pushed to a stack along with the relevant set of lines.
  */
 
-void BSPTree::make(Communicator *communicator, time_t atime, const std::vector<TaggedLine> &lines, BSPNode *root) {
+void BSPTree::make(Communicator *communicator, time_t atime, const std::vector<TaggedLine> &lines,
+                   BSPNode *root) {
 
     typedef std::pair<std::vector<TaggedLine>, std::vector<TaggedLine>> TagLineVecPair;
 
@@ -43,7 +44,8 @@ void BSPTree::make(Communicator *communicator, time_t atime, const std::vector<T
 
     int progress = 0;
     while (!nodeStack.empty()) {
-        progress++; // might need to increase by 2 because it was one for each left/right in the previous iteration
+        progress++; // might need to increase by 2 because it was one for each left/right in the
+                    // previous iteration
 
         if (communicator) {
             if (communicator->IsCancelled()) {
@@ -66,7 +68,8 @@ void BSPTree::make(Communicator *communicator, time_t atime, const std::vector<T
         if (!currLines.second.empty()) {
             currNode->m_right = std::unique_ptr<BSPNode>(new BSPNode(currNode));
             nodeStack.push(currNode->m_right.get());
-            lineStack.push(makeLines(communicator, atime, currLines.second, currNode->m_right.get()));
+            lineStack.push(
+                makeLines(communicator, atime, currLines.second, currNode->m_right.get()));
         }
     }
 }
@@ -90,12 +93,14 @@ int BSPTree::pickMidpointLine(const std::vector<TaggedLine> &lines, BSPNode *par
     for (size_t i = 0; i < lines.size(); i++) {
         const Line &line = lines[i].line;
         if (ver) {
-            if (line.height() > line.width() && (chosen == -1 || dist(line.midpoint(), midpoint) < chosendist)) {
+            if (line.height() > line.width() &&
+                (chosen == -1 || dist(line.midpoint(), midpoint) < chosendist)) {
                 chosen = static_cast<int>(i);
                 chosendist = dist(line.midpoint(), midpoint);
             }
         } else {
-            if (line.width() > line.height() && (chosen == -1 || dist(line.midpoint(), midpoint) < chosendist)) {
+            if (line.width() > line.height() &&
+                (chosen == -1 || dist(line.midpoint(), midpoint) < chosendist)) {
                 chosen = static_cast<int>(i);
                 chosendist = dist(line.midpoint(), midpoint);
             }
@@ -154,8 +159,8 @@ BSPTree::makeLines(Communicator *, time_t, const std::vector<TaggedLine> &lines,
         // should use approxeq here:
         double a = testline.start() == chosenLine.start() ? 0 : det(v0, v1);
         double b = testline.end() == chosenLine.start() ? 0 : det(v0, v2);
-        // note sure what to do if a == 0 and b == 0 (i.e., it's parallel... this test at least ensures on the line is
-        // one or the other side)
+        // note sure what to do if a == 0 and b == 0 (i.e., it's parallel... this test at least
+        // ensures on the line is one or the other side)
         if (a >= 0 && b >= 0) {
             leftlines.push_back(TaggedLine(testline, tag));
         } else if (a <= 0 && b <= 0) {

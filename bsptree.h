@@ -58,8 +58,10 @@ struct BSPNode {
 };
 
 namespace BSPTree {
-    void make(Communicator *communicator, time_t atime, const std::vector<TaggedLine> &lines, BSPNode *root);
+    void make(Communicator *communicator, time_t atime, const std::vector<TaggedLine> &lines,
+              BSPNode *root);
     int pickMidpointLine(const std::vector<TaggedLine> &lines, BSPNode *par);
     std::pair<std::vector<TaggedLine>, std::vector<TaggedLine>>
-    makeLines(Communicator *communicator, time_t atime, const std::vector<TaggedLine> &lines, BSPNode *base);
+    makeLines(Communicator *communicator, time_t atime, const std::vector<TaggedLine> &lines,
+              BSPNode *base);
 } // namespace BSPTree

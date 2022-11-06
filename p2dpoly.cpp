@@ -119,24 +119,29 @@ Point2f gps2os(const Point2f &pt) {
 
     double n_sq = pow(n, 2);
     double n_cubed = pow(n, 3);
-    double M = b * F_0 *
-               ((1.0 + n + 0.25 * 5 * (n_sq + n_cubed)) * (phi - phi_0) -
-                (3.0 * (n + n_sq + 0.125 * 7 * n_cubed)) * sin(phi - phi_0) * cos(phi + phi_0) +
-                (0.125 * 15.0 * (n_sq + n_cubed)) * sin(2.0 * (phi - phi_0)) * cos(2.0 * (phi + phi_0)) -
-                (35.0 / 24.0 * n_cubed) * sin(3.0 * (phi - phi_0)) * cos(3.0 * (phi + phi_0)));
+    double M =
+        b * F_0 *
+        ((1.0 + n + 0.25 * 5 * (n_sq + n_cubed)) * (phi - phi_0) -
+         (3.0 * (n + n_sq + 0.125 * 7 * n_cubed)) * sin(phi - phi_0) * cos(phi + phi_0) +
+         (0.125 * 15.0 * (n_sq + n_cubed)) * sin(2.0 * (phi - phi_0)) * cos(2.0 * (phi + phi_0)) -
+         (35.0 / 24.0 * n_cubed) * sin(3.0 * (phi - phi_0)) * cos(3.0 * (phi + phi_0)));
     double I = M + N_0;
     double II = 0.5 * nu * sin(phi) * cos(phi);
     double tanphi = tan(phi);
     double III = nu * sin(phi) * pow(cos(phi), 3.0) * (5.0 - sqr(tanphi) + 9.0 * eta_sq) / 24.0;
-    double IIIA = nu * sin(phi) * pow(cos(phi), 5.0) * (61.0 - 58.0 * sqr(tanphi) + pow(tanphi, 4.0)) / 720.0;
+    double IIIA =
+        nu * sin(phi) * pow(cos(phi), 5.0) * (61.0 - 58.0 * sqr(tanphi) + pow(tanphi, 4.0)) / 720.0;
     double IV = nu * cos(phi);
     double V = nu * pow(cos(phi), 3.0) * (nu / rho - sqr(tanphi)) / 6.0;
-    double VI = nu * pow(cos(phi), 5.0) *
-                (5.0 - 18.0 * sqr(tanphi) + pow(tanphi, 4) + 14.0 * eta_sq - 58.0 * sqr(tanphi) * eta_sq) / 120.0;
+    double VI =
+        nu * pow(cos(phi), 5.0) *
+        (5.0 - 18.0 * sqr(tanphi) + pow(tanphi, 4) + 14.0 * eta_sq - 58.0 * sqr(tanphi) * eta_sq) /
+        120.0;
 
-    double E = E_0 + IV * (lambda - lambda_0) + V * pow((lambda - lambda_0), 3) + VI * pow((lambda - lambda_0), 5);
-    double N =
-        I + II * pow((lambda - lambda_0), 2) + III * pow((lambda - lambda_0), 4) + IIIA * pow((lambda - lambda_0), 6);
+    double E = E_0 + IV * (lambda - lambda_0) + V * pow((lambda - lambda_0), 3) +
+               VI * pow((lambda - lambda_0), 5);
+    double N = I + II * pow((lambda - lambda_0), 2) + III * pow((lambda - lambda_0), 4) +
+               IIIA * pow((lambda - lambda_0), 6);
 
     return Point2f(E, N);
 }
@@ -198,28 +203,32 @@ Point2f QtRegion::getEdgeUPoint(const EdgeU &eu) {
 EdgeU QtRegion::getCutEdgeU(const Point2f &inside, const Point2f &outside) {
     EdgeU eu;
     if (outside.x < bottom_left.x) {
-        double y = outside.y + (inside.y - outside.y) * (bottom_left.x - outside.x) / (inside.x - outside.x);
+        double y = outside.y +
+                   (inside.y - outside.y) * (bottom_left.x - outside.x) / (inside.x - outside.x);
         if (y >= bottom_left.y && y <= top_right.y) {
             eu.edge = 3;
             eu.u = (top_right.y - y) / height();
         }
     }
     if (eu.edge == -1 && outside.x > top_right.x) {
-        double y = inside.y + (outside.y - inside.y) * (top_right.x - inside.x) / (outside.x - inside.x);
+        double y =
+            inside.y + (outside.y - inside.y) * (top_right.x - inside.x) / (outside.x - inside.x);
         if (y >= bottom_left.y && y <= top_right.y) {
             eu.edge = 1;
             eu.u = (y - bottom_left.y) / height();
         }
     }
     if (eu.edge == -1 && outside.y < bottom_left.y) {
-        double x = outside.x + (inside.x - outside.x) * (bottom_left.y - outside.y) / (inside.y - outside.y);
+        double x = outside.x +
+                   (inside.x - outside.x) * (bottom_left.y - outside.y) / (inside.y - outside.y);
         if (x >= bottom_left.x && x <= top_right.x) {
             eu.edge = 0;
             eu.u = (x - bottom_left.x) / width();
         }
     }
     if (eu.edge == -1 && outside.y > top_right.y) {
-        double x = inside.x + (outside.x - inside.x) * (top_right.y - inside.y) / (outside.y - inside.y);
+        double x =
+            inside.x + (outside.x - inside.x) * (top_right.y - inside.y) / (outside.y - inside.y);
         if (x >= bottom_left.x && x <= top_right.x) {
             eu.edge = 2;
             eu.u = (top_right.x - x) / width();
@@ -440,12 +449,14 @@ double Line::intersection_point(const Line &l, int axis, double tolerance) const
             double lg = l.grad(YAXIS);
             double g = grad(YAXIS);
             if (fabs(lg - g) <= tolerance) {
-                // these have almost the same gradient, so it's impossible to tell where they intersect: going for
-                // midpoint
+                // these have almost the same gradient, so it's impossible to tell where they
+                // intersect: going for midpoint
                 Point2f p = l.midpoint();
-                loc = (p.x > top_right.x) ? top_right.x : ((p.x < bottom_left.x) ? bottom_left.x : p.x);
+                loc = (p.x > top_right.x) ? top_right.x
+                                          : ((p.x < bottom_left.x) ? bottom_left.x : p.x);
             } else {
-                // this is the same as: constant(YAXIS) - l.constant(YAXIS)) / (l.grad(YAXIS) - grad(YAXIS));
+                // this is the same as: constant(YAXIS) - l.constant(YAXIS)) / (l.grad(YAXIS) -
+                // grad(YAXIS));
                 loc = ((ay() - g * ax()) - (l.ay() - lg * l.ax())) / (lg - g);
             }
         }
@@ -456,12 +467,14 @@ double Line::intersection_point(const Line &l, int axis, double tolerance) const
             double lg = l.grad(XAXIS);
             double g = grad(XAXIS);
             if (fabs(lg - g) <= tolerance) {
-                // these have almost the same gradient, so it's impossible to tell where they intersect: going for
-                // midpoint
+                // these have almost the same gradient, so it's impossible to tell where they
+                // intersect: going for midpoint
                 Point2f p = l.midpoint();
-                loc = (p.y > top_right.y) ? top_right.y : ((p.y < bottom_left.y) ? bottom_left.y : p.y);
+                loc = (p.y > top_right.y) ? top_right.y
+                                          : ((p.y < bottom_left.y) ? bottom_left.y : p.y);
             } else {
-                // this is the same as: constant(XAXIS) - l.constant(XAXIS)) / (l.grad(XAXIS) - grad(XAXIS));
+                // this is the same as: constant(XAXIS) - l.constant(XAXIS)) / (l.grad(XAXIS) -
+                // grad(XAXIS));
                 loc = ((ax() - g * ay()) - (l.ax() - lg * l.ay())) / (lg - g);
             }
         }
@@ -738,13 +751,15 @@ void Poly::add_line_segment(const Line &l) {
 
             // traverse up tree unioning regions
             // (saving data by not recording parents!)
-            // Note must be '>=' to catch current root node --- I really stuffed up earlier with '>'!
+            // Note must be '>=' to catch current root node --- I really stuffed up earlier with
+            // '>'!
             while (cut_level >= 0) {
                 here = m_p_root;
                 for (int j = 0; j < cut_level; j++) {
                     here = here->m_p_right;
                 }
-                here->m_p_region = new Line(runion(QtRegion(here->left()), QtRegion(here->right())));
+                here->m_p_region =
+                    new Line(runion(QtRegion(here->left()), QtRegion(here->right())));
                 cut_level--;
             }
         }

@@ -83,7 +83,8 @@ namespace dXstring {
 
     // trim from end (in place)
     void rtrim(std::string &s, char c) {
-        s.erase(std::find_if(s.rbegin(), s.rend(), [&c](int ch) { return ch != c; }).base(), s.end());
+        s.erase(std::find_if(s.rbegin(), s.rend(), [&c](int ch) { return ch != c; }).base(),
+                s.end());
     }
 
     void makeInitCaps(std::string &s) {
@@ -109,7 +110,8 @@ namespace dXstring {
     }
 
     bool isDouble(const std::string &s) {
-        // nasty const cast to satisfy the function signature - we will not change the value of endPtr
+        // nasty const cast to satisfy the function signature - we will not change the value of
+        // endPtr
         char *endPtr = const_cast<char *>(&s[0]);
         strtod(s.c_str(), &endPtr);
         return endPtr != &s[0];

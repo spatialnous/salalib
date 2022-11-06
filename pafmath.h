@@ -59,8 +59,8 @@ inline double prandomr(int set = 0) { return double(pafrand(set)) / double(PAF_R
 #define ln(X) log(X)
 
 namespace pafmath {
-  inline double log2(double a) { return (ln(a) * M_1_LN2); }
-}
+    inline double log2(double a) { return (ln(a) * M_1_LN2); }
+} // namespace pafmath
 
 // Hillier Hanson dvalue
 /*
@@ -71,10 +71,14 @@ inline double dvalue(double k)
 */
 
 // Hillier Hanson dvalue (from Kruger 1989 -- see Teklenburg et al)
-inline double dvalue(double k) { return 2.0 * (k * (pafmath::log2((k + 2.0) / 3.0) - 1.0) + 1.0) / ((k - 1.0) * (k - 2.0)); }
+inline double dvalue(double k) {
+    return 2.0 * (k * (pafmath::log2((k + 2.0) / 3.0) - 1.0) + 1.0) / ((k - 1.0) * (k - 2.0));
+}
 
 // Hillier Hanson pvalue
-inline double pvalue(double k) { return 2.0 * (k - pafmath::log2(k) - 1.0) / ((k - 1.0) * (k - 2.0)); }
+inline double pvalue(double k) {
+    return 2.0 * (k - pafmath::log2(k) - 1.0) / ((k - 1.0) * (k - 2.0));
+}
 
 // Teklenburg integration (correction 31.01.11 due to Ulrich Thaler
 inline double teklinteg(double nodecount, double totaldepth) {

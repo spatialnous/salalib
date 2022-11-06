@@ -358,11 +358,13 @@ class AttributeTable : public AttributeColumnManager {
 
     // iterator implementation - templated on iterator type for const/non-const
     template <typename iterator_type>
-    class const_iterator_impl
-        : public std::iterator<std::bidirectional_iterator_tag, iterator_item> {
+    class const_iterator_impl {
         template <typename other_type> friend class const_iterator_impl;
 
       public:
+        using iterator_category = std::bidirectional_iterator_tag;
+        using value_type = iterator_item;
+
         const_iterator_impl(const iterator_type &iter) : m_item(iter) {}
         template <typename other_type>
         const_iterator_impl(const const_iterator_impl<other_type> &other) : m_item(other.m_item) {}

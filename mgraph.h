@@ -29,8 +29,8 @@
 #include "salalib/spacepix.h"
 
 // still need paftl:
-#include "salalib/shapegraph.h"
 #include "salalib/pointdata.h"
+#include "salalib/shapegraph.h"
 #include "salalib/shapemap.h"
 
 #include "genlib/p2dpoly.h"
@@ -71,7 +71,15 @@ class MetaGraph : public FileProperties {
     const SalaShape &getNextShape() const { return m_drawingFiles[m_current_layer].getNextShape(); }
     mutable int m_current_layer;
 
-    enum { ADD = 0x0001, REPLACE = 0x0002, CAT = 0x0010, DXF = 0x0020, NTF = 0x0040, RT1 = 0x0080, GML = 0x0100 };
+    enum {
+        ADD = 0x0001,
+        REPLACE = 0x0002,
+        CAT = 0x0010,
+        DXF = 0x0020,
+        NTF = 0x0040,
+        RT1 = 0x0080,
+        GML = 0x0100
+    };
     enum {
         NONE = 0x0000,
         POINTMAPS = 0x0002,
@@ -113,8 +121,8 @@ class MetaGraph : public FileProperties {
     const PointMap &getDisplayedPointMap() const { return m_pointMaps[m_displayed_pointmap]; }
     void setDisplayedPointMapRef(int i) { m_displayed_pointmap = i; }
     int getDisplayedPointMapRef() const { return m_displayed_pointmap; }
-    void redoPointMapBlockLines() // (flags blockedlines, but also flags that you need to rebuild a bsp tree if you
-                                  // have one)
+    void redoPointMapBlockLines() // (flags blockedlines, but also flags that you need to rebuild a
+                                  // bsp tree if you have one)
     {
         for (auto &pointMap : m_pointMaps) {
             pointMap.m_blockedlines = false;
@@ -143,7 +151,9 @@ class MetaGraph : public FileProperties {
     std::recursive_mutex mLock;
 
   public:
-    std::unique_lock<std::recursive_mutex> getLock() { return std::unique_lock<std::recursive_mutex>(mLock); }
+    std::unique_lock<std::recursive_mutex> getLock() {
+        return std::unique_lock<std::recursive_mutex>(mLock);
+    }
 
     std::unique_lock<std::recursive_mutex> getLockDeferred() {
         return std::unique_lock<std::recursive_mutex>(mLock, std::defer_lock_t());
@@ -161,8 +171,9 @@ class MetaGraph : public FileProperties {
     void deleteShapeMap(depthmapX::ImportType mapType, ShapeMap &shapeMap);
     void updateParentRegions(ShapeMap &shapeMap);
     bool clearPoints();
-    bool setGrid(double spacing, const Point2f &offset = Point2f());                      // override of PointMap
-    bool makePoints(const Point2f &p, int semifilled, Communicator *communicator = NULL); // override of PointMap
+    bool setGrid(double spacing, const Point2f &offset = Point2f()); // override of PointMap
+    bool makePoints(const Point2f &p, int semifilled,
+                    Communicator *communicator = NULL); // override of PointMap
     bool makeGraph(Communicator *communicator, int algorithm, double maxdist);
     bool unmakeGraph(bool removeLinks);
     bool analyseGraph(Communicator *communicator, Options options,
@@ -171,7 +182,8 @@ class MetaGraph : public FileProperties {
     // helpers for editing maps
     bool isEditableMap();
     ShapeMap &getEditableMap();
-    // currently only making / moving lines, but should be able to extend this to polys fairly easily:
+    // currently only making / moving lines, but should be able to extend this to polys fairly
+    // easily:
     bool makeShape(const Line &line);
     bool moveSelShape(const Line &line);
     // onto polys as well:
@@ -186,25 +198,33 @@ class MetaGraph : public FileProperties {
     void removeDisplayedMap();
     //
     // various map conversions
-    bool convertDrawingToAxial(Communicator *comm, std::string layer_name); // n.b., name copied for thread safety
-    bool convertDataToAxial(Communicator *comm, std::string layer_name, bool keeporiginal, bool pushvalues);
+    bool convertDrawingToAxial(Communicator *comm,
+                               std::string layer_name); // n.b., name copied for thread safety
+    bool convertDataToAxial(Communicator *comm, std::string layer_name, bool keeporiginal,
+                            bool pushvalues);
     bool convertDrawingToSegment(Communicator *comm, std::string layer_name);
-    bool convertDataToSegment(Communicator *comm, std::string layer_name, bool keeporiginal, bool pushvalues);
-    bool convertToData(Communicator *, std::string layer_name, bool keeporiginal, int shapeMapType, bool copydata);
+    bool convertDataToSegment(Communicator *comm, std::string layer_name, bool keeporiginal,
+                              bool pushvalues);
+    bool convertToData(Communicator *, std::string layer_name, bool keeporiginal, int shapeMapType,
+                       bool copydata);
     bool convertToDrawing(Communicator *, std::string layer_name, bool fromDisplayedDataMap);
-    bool convertToConvex(Communicator *comm, std::string layer_name, bool keeporiginal, int shapeMapType,
-                         bool copydata);
-    bool convertAxialToSegment(Communicator *comm, std::string layer_name, bool keeporiginal, bool pushvalues,
-                               double stubremoval);
+    bool convertToConvex(Communicator *comm, std::string layer_name, bool keeporiginal,
+                         int shapeMapType, bool copydata);
+    bool convertAxialToSegment(Communicator *comm, std::string layer_name, bool keeporiginal,
+                               bool pushvalues, double stubremoval);
     int loadMifMap(Communicator *comm, std::istream &miffile, std::istream &midfile);
     bool makeAllLineMap(Communicator *communicator, const Point2f &seed);
     bool makeFewestLineMap(Communicator *communicator, int replace);
-    bool analyseAxial(Communicator *communicator, Options options, bool);     // <- options copied to keep thread safe
-    bool analyseSegmentsTulip(Communicator *communicator, Options options);   // <- options copied to keep thread safe
-    bool analyseSegmentsAngular(Communicator *communicator, Options options); // <- options copied to keep thread safe
+    bool analyseAxial(Communicator *communicator, Options options,
+                      bool); // <- options copied to keep thread safe
+    bool analyseSegmentsTulip(Communicator *communicator,
+                              Options options); // <- options copied to keep thread safe
+    bool analyseSegmentsAngular(Communicator *communicator,
+                                Options options); // <- options copied to keep thread safe
     bool analyseTopoMetMultipleRadii(Communicator *communicator,
-                                     Options options);                // <- options copied to keep thread safe
-    bool analyseTopoMet(Communicator *communicator, Options options); // <- options copied to keep thread safe
+                                     Options options); // <- options copied to keep thread safe
+    bool analyseTopoMet(Communicator *communicator,
+                        Options options); // <- options copied to keep thread safe
     //
     bool hasAllLineMap() { return m_all_line_map != -1; }
     bool hasFewestLineMaps() {
@@ -220,8 +240,8 @@ class MetaGraph : public FileProperties {
     }
     enum { PUSH_FUNC_MAX = 0, PUSH_FUNC_MIN = 1, PUSH_FUNC_AVG = 2, PUSH_FUNC_TOT = 3 };
     bool pushValuesToLayer(int desttype, int destlayer, int push_func, bool count_col = false);
-    bool pushValuesToLayer(int sourcetype, int sourcelayer, int desttype, int destlayer, int col_in, int col_out,
-                           int push_func, bool count_col = false);
+    bool pushValuesToLayer(int sourcetype, int sourcelayer, int desttype, int destlayer, int col_in,
+                           int col_out, int push_func, bool count_col = false);
     //
     int getDisplayedMapRef() const;
     //
@@ -258,7 +278,9 @@ class MetaGraph : public FileProperties {
 
     std::vector<std::unique_ptr<ShapeGraph>> &getShapeGraphs() { return m_shapeGraphs; }
     ShapeGraph &getDisplayedShapeGraph() { return *m_shapeGraphs[m_displayed_shapegraph].get(); }
-    const ShapeGraph &getDisplayedShapeGraph() const { return *m_shapeGraphs[m_displayed_shapegraph].get(); }
+    const ShapeGraph &getDisplayedShapeGraph() const {
+        return *m_shapeGraphs[m_displayed_shapegraph].get();
+    }
     void setDisplayedShapeGraphRef(int map) {
         if (m_displayed_shapegraph != -1 && m_displayed_shapegraph != map)
             m_shapeGraphs[size_t(m_displayed_shapegraph)]->clearSel();
@@ -306,8 +328,12 @@ class MetaGraph : public FileProperties {
     const std::string &getLineFileName(int file) const { return m_drawingFiles[file].getName(); }
     int getLineLayerCount(int file) const { return (int)m_drawingFiles[file].m_spacePixels.size(); }
 
-    ShapeMap &getLineLayer(int file, int layer) { return m_drawingFiles[file].m_spacePixels[layer]; }
-    const ShapeMap &getLineLayer(int file, int layer) const { return m_drawingFiles[file].m_spacePixels[layer]; }
+    ShapeMap &getLineLayer(int file, int layer) {
+        return m_drawingFiles[file].m_spacePixels[layer];
+    }
+    const ShapeMap &getLineLayer(int file, int layer) const {
+        return m_drawingFiles[file].m_spacePixels[layer];
+    }
     //
     // Some error handling -- the idea is that you catch the error in MetaGraph,
     // return a generic error code and then get your front end to interrogate the
@@ -361,8 +387,12 @@ class MetaGraph : public FileProperties {
     bool viewingShapes() { return (m_view_class & (VIEWAXIAL | VIEWDATA)) != 0; }
     bool viewingProcessedLines() { return ((m_view_class & VIEWAXIAL) == VIEWAXIAL); }
     bool viewingProcessedShapes() { return ((m_view_class & VIEWDATA) == VIEWDATA); }
-    bool viewingProcessedPoints() { return ((m_view_class & VIEWVGA) && getDisplayedPointMap().isProcessed()); }
-    bool viewingUnprocessedPoints() { return ((m_view_class & VIEWVGA) && !getDisplayedPointMap().isProcessed()); }
+    bool viewingProcessedPoints() {
+        return ((m_view_class & VIEWVGA) && getDisplayedPointMap().isProcessed());
+    }
+    bool viewingUnprocessedPoints() {
+        return ((m_view_class & VIEWVGA) && !getDisplayedPointMap().isProcessed());
+    }
     //
     bool setViewClass(int command);
     //
@@ -389,16 +419,18 @@ class MetaGraph : public FileProperties {
             return getDisplayedDataMap().setCurSel(r, add);
         else if (m_view_class & VIEWVGA)
             return getDisplayedPointMap().setCurSel(r, add);
-        else if (m_state & POINTMAPS && !getDisplayedPointMap().isProcessed()) // this is a default select application
+        else if (m_state & POINTMAPS &&
+                 !getDisplayedPointMap().isProcessed()) // this is a default select application
             return getDisplayedPointMap().setCurSel(r, add);
-        else if (m_state & DATAMAPS) // I'm not sure why this is a possibility, but it appears you might have state &
-                                     // DATAMAPS without VIEWDATA...
+        else if (m_state & DATAMAPS) // I'm not sure why this is a possibility, but it appears you
+                                     // might have state & DATAMAPS without VIEWDATA...
             return getDisplayedDataMap().setCurSel(r, add);
         else
             return false;
     }
     bool clearSel() {
-        // really needs a separate clearSel for the datalayers... at the moment this is handled in PointMap
+        // really needs a separate clearSel for the datalayers... at the moment this is handled in
+        // PointMap
         if (m_view_class & VIEWVGA)
             return getDisplayedPointMap().clearSel();
         else if (m_view_class & VIEWAXIAL)
@@ -489,10 +521,11 @@ class MetaGraph : public FileProperties {
     bool makeBSPtree(Communicator *communicator = NULL);
     void resetBSPtree() { m_bsp_tree = false; }
     // returns 0: fail, 1: made isovist, 2: made isovist and added new shapemap layer
-    int makeIsovist(Communicator *communicator, const Point2f &p, double startangle = 0, double endangle = 0,
-                    bool simple_version = true);
+    int makeIsovist(Communicator *communicator, const Point2f &p, double startangle = 0,
+                    double endangle = 0, bool simple_version = true);
     // returns 0: fail, 1: made isovist, 2: made isovist and added new shapemap layer
-    int makeIsovistPath(Communicator *communicator, double fov_angle = 2.0 * M_PI, bool simple_version = true);
+    int makeIsovistPath(Communicator *communicator, double fov_angle = 2.0 * M_PI,
+                        bool simple_version = true);
     bool makeIsovist(const Point2f &p, Isovist &iso);
 
   protected:

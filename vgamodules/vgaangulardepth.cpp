@@ -58,10 +58,11 @@ bool VGAAngularDepth::run(Communicator *, PointMap &map, bool) {
                 Point &p2 = map.getPoint(p.getMergePixel());
                 if (p2.m_misc != ~0) {
                     p2.m_cumangle = p.m_cumangle;
-                    AttributeRow &mergePixelRow = map.getAttributeTable().getRow(AttributeKey(p.getMergePixel()));
+                    AttributeRow &mergePixelRow =
+                        map.getAttributeTable().getRow(AttributeKey(p.getMergePixel()));
                     mergePixelRow.setValue(path_angle_col, float(p2.m_cumangle));
-                    p2.getNode().extractAngular(search_list, &map,
-                                                AngularTriple(here.angle, p.getMergePixel(), NoPixel));
+                    p2.getNode().extractAngular(
+                        search_list, &map, AngularTriple(here.angle, p.getMergePixel(), NoPixel));
                     p2.m_misc = ~0;
                 }
             }

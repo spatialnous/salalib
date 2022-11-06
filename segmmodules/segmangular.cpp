@@ -35,7 +35,8 @@ bool SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getConnections().size());
     }
 
-    // note: radius must be sorted lowest to highest, but if -1 occurs ("radius n") it needs to be last...
+    // note: radius must be sorted lowest to highest, but if -1 occurs ("radius n") it needs to be
+    // last...
     // ...to ensure no mess ups, we'll re-sort here:
     bool radius_n = false;
     std::vector<double> radii;
@@ -74,7 +75,7 @@ bool SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
 
     std::vector<bool> covered(map.getShapeCount());
     size_t i = 0;
-    for (auto & iter : attributes){
+    for (auto &iter : attributes) {
         for (size_t j = 0; j < map.getShapeCount(); j++) {
             covered[j] = false;
         }
@@ -103,13 +104,16 @@ bool SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                         if (!covered[segconn.first.ref]) {
                             double angle = depth_to_line + segconn.second;
                             size_t rbin = lineindex.coverage;
-                            while (rbin != radii.size() && radii[rbin] != -1 && angle > radii[rbin]) {
+                            while (rbin != radii.size() && radii[rbin] != -1 &&
+                                   angle > radii[rbin]) {
                                 rbin++;
                             }
                             if (rbin != radii.size()) {
                                 depthmapX::insert_sorted(
-                                    anglebins, std::make_pair(float(angle),
-                                                              SegmentData(segconn.first, SegmentRef(), 0, 0.0, rbin)));
+                                    anglebins,
+                                    std::make_pair(
+                                        float(angle),
+                                        SegmentData(segconn.first, SegmentRef(), 0, 0.0, rbin)));
                             }
                         }
                     }
@@ -119,13 +123,16 @@ bool SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                         if (!covered[segconn.first.ref]) {
                             double angle = depth_to_line + segconn.second;
                             size_t rbin = lineindex.coverage;
-                            while (rbin != radii.size() && radii[rbin] != -1 && angle > radii[rbin]) {
+                            while (rbin != radii.size() && radii[rbin] != -1 &&
+                                   angle > radii[rbin]) {
                                 rbin++;
                             }
                             if (rbin != radii.size()) {
                                 depthmapX::insert_sorted(
-                                    anglebins, std::make_pair(float(angle),
-                                                              SegmentData(segconn.first, SegmentRef(), 0, 0.0, rbin)));
+                                    anglebins,
+                                    std::make_pair(
+                                        float(angle),
+                                        SegmentData(segconn.first, SegmentRef(), 0, 0.0, rbin)));
                             }
                         }
                     }
@@ -143,7 +150,8 @@ bool SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
             curs_total_depth += total_depth[r];
             row.setValue(count_col[r], float(curs_node_count));
             if (curs_node_count > 1) {
-                // note -- node_count includes this one -- mean depth as per p.108 Social Logic of Space
+                // note -- node_count includes this one -- mean depth as per p.108 Social Logic of
+                // Space
                 double mean_depth = curs_total_depth / double(curs_node_count - 1);
                 row.setValue(depth_col[r], float(mean_depth));
                 row.setValue(total_col[r], float(curs_total_depth));

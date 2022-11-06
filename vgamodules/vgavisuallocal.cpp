@@ -65,14 +65,15 @@ bool VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simple_version)
                         retpt.getNode().first();
                         while (!retpt.getNode().is_tail()) {
                             retro_size++;
-                            if (std::find(neighbourhood.begin(), neighbourhood.end(), retpt.getNode().cursor()) !=
-                                neighbourhood.end()) {
+                            if (std::find(neighbourhood.begin(), neighbourhood.end(),
+                                          retpt.getNode().cursor()) != neighbourhood.end()) {
                                 intersect_size++;
                             }
                             if (std::find(totalneighbourhood.begin(), totalneighbourhood.end(),
                                           retpt.getNode().cursor()) == totalneighbourhood.end()) {
                                 totalneighbourhood.push_back(
-                                    retpt.getNode().cursor()); // <- note add does nothing if member already exists
+                                    retpt.getNode().cursor()); // <- note add does nothing if member
+                                                               // already exists
                             }
                             retpt.getNode().next();
                         }
@@ -84,10 +85,11 @@ bool VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simple_version)
                 if (!simple_version) {
                     if (neighbourhood.size() > 1) {
                         row.setValue(cluster_col,
-                                     float(cluster / double(neighbourhood.size() * (neighbourhood.size() - 1.0))));
+                                     float(cluster / double(neighbourhood.size() *
+                                                            (neighbourhood.size() - 1.0))));
                         row.setValue(control_col, float(control));
-                        row.setValue(controllability_col,
-                                     float(double(neighbourhood.size()) / double(totalneighbourhood.size())));
+                        row.setValue(controllability_col, float(double(neighbourhood.size()) /
+                                                                double(totalneighbourhood.size())));
                     } else {
                         row.setValue(cluster_col, -1);
                         row.setValue(control_col, -1);

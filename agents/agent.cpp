@@ -31,9 +31,10 @@ void Agent::onInit(PixelRef node, int trail_num) {
     m_loc = m_pointmap->depixelate(m_node);
     if (m_output_mode & OUTPUT_GATE_COUNTS) {
         // see note about gates in Through vision analysis
-        m_gate = (m_pointmap->getPoint(node).filled())
-                     ? (int)m_pointmap->getAttributeTable().getRow(AttributeKey(m_node)).getValue(g_col_gate)
-                     : -1;
+        m_gate = (m_pointmap->getPoint(node).filled()) ? (int)m_pointmap->getAttributeTable()
+                                                             .getRow(AttributeKey(m_node))
+                                                             .getValue(g_col_gate)
+                                                       : -1;
     } else {
         m_gate = -1;
     }
@@ -69,7 +70,8 @@ void Agent::onMove() {
         m_step = 0;
         onTarget();
         m_vector = onLook(false);
-    } else if (prandomr() < (1.0 / m_program->m_steps) && !m_target_lock) { // note, on average, will change 1 in steps
+    } else if (prandomr() < (1.0 / m_program->m_steps) &&
+               !m_target_lock) { // note, on average, will change 1 in steps
         m_step = 0;
         m_vector = onLook(false);
         /*
@@ -123,7 +125,8 @@ void Agent::onStep() {
     m_step++;
     //
     Point2f nextloc = m_loc + (m_pointmap->getSpacing() * m_vector);
-    // note: false returns unconstrained pixel: goodStep must check it is in bounds using m_pointmap->includes
+    // note: false returns unconstrained pixel: goodStep must check it is in bounds using
+    // m_pointmap->includes
     PixelRef nextnode = m_pointmap->pixelate(nextloc, false);
     if (nextnode != m_node) {
         // quick check location is okay...
@@ -147,13 +150,15 @@ bool Agent::diagonalStep() {
     Point2f vector1 = m_vector;
     vector1.rotate(M_PI / 4.0);
     Point2f nextloc1 = m_loc + (m_pointmap->getSpacing() * vector1);
-    // note: "false" does not constrain to bounds: must be checked using m_pointmap->includes before getPoint is used
+    // note: "false" does not constrain to bounds: must be checked using m_pointmap->includes before
+    // getPoint is used
     PixelRef nextnode1 = m_pointmap->pixelate(nextloc1, false);
 
     Point2f vector2 = m_vector;
     vector2.rotate(-M_PI / 4.0);
     Point2f nextloc2 = m_loc + (m_pointmap->getSpacing() * vector2);
-    // note: "false" does not constrain to bounds: must be checked using m_pointmap->includes before getPoint is used
+    // note: "false" does not constrain to bounds: must be checked using m_pointmap->includes before
+    // getPoint is used
     int nextnode2 = m_pointmap->pixelate(nextloc2, false);
 
     bool good = false;
@@ -204,7 +209,8 @@ Point2f Agent::onLook(bool wholeisovist) {
     Point2f dir;
     if (m_program->m_sel_type & AgentProgram::SEL_GIBSONIAN) {
         dir = onGibsonianLook(wholeisovist);
-    } else if ((m_program->m_sel_type & AgentProgram::SEL_OCCLUSION) == AgentProgram::SEL_OCCLUSION) {
+    } else if ((m_program->m_sel_type & AgentProgram::SEL_OCCLUSION) ==
+               AgentProgram::SEL_OCCLUSION) {
         dir = onOcclusionLook(wholeisovist, m_program->m_sel_type);
     } else {
         switch (m_program->m_sel_type) {
@@ -400,7 +406,8 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
             PixelRef nigpix;
             double fardist = -1.0;
             for (int k = 0; k < subset; k++) {
-                for (size_t j = 0; j < node.m_occlusion_bins[(directionbin + i + k) % 32].size(); j++) {
+                for (size_t j = 0; j < node.m_occlusion_bins[(directionbin + i + k) % 32].size();
+                     j++) {
                     PixelRef pix = node.m_occlusion_bins[(directionbin + i + k) % 32].at(j);
                     if (dist(pix, m_node) > fardist) {
                         fardist = dist(pix, m_node);
@@ -413,8 +420,8 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
                 if (looktype == AgentProgram::SEL_OCC_MEMORY) {
                     depthmapX::addIfNotExists(m_occ_memory.a(), nigpix);
                     // the turn chance (pafrand() % 2) may have to be modified later...
-                    if (!m_at_target && std::find(m_occ_memory.b().begin(), m_occ_memory.b().end(), nigpix) !=
-                                            m_occ_memory.b().end()) {
+                    if (!m_at_target && std::find(m_occ_memory.b().begin(), m_occ_memory.b().end(),
+                                                  nigpix) != m_occ_memory.b().end()) {
                         cont = false;
                     }
                 }
@@ -485,9 +492,10 @@ Point2f Agent::onLoSLook(bool wholeisovist, int look_type) {
         vbin = 32;
     }
     for (int i = 0; i < vbin; i++) {
-        double los = (look_type == AgentProgram::SEL_LOS)
-                         ? m_pointmap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
-                         : m_pointmap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
+        double los =
+            (look_type == AgentProgram::SEL_LOS)
+                ? m_pointmap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
+                : m_pointmap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
         if (m_program->m_los_sqrd) {
             los *= los;
         }
@@ -537,9 +545,10 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int look_type) {
         vbin = 32;
     }
     for (int i = 0; i < vbin; i++) {
-        double los = (look_type == AgentProgram::SEL_LOS)
-                         ? m_pointmap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
-                         : m_pointmap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
+        double los =
+            (look_type == AgentProgram::SEL_LOS)
+                ? m_pointmap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
+                : m_pointmap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
         if (m_program->m_los_sqrd) {
             los *= los;
         }
@@ -593,7 +602,8 @@ Point2f Agent::onGibsonianLook(bool wholeisovist) {
     float angle = 0.0;
 
     if (rule_choice != -1) {
-        angle = (float)anglefrombin2((binfromvec(m_vector) + (2 * rule_choice + 1) * dir + 32) % 32);
+        angle =
+            (float)anglefrombin2((binfromvec(m_vector) + (2 * rule_choice + 1) * dir + 32) % 32);
     }
 
     // if no rule selection made, carry on in current direction
@@ -614,29 +624,35 @@ int Agent::onGibsonianRule(int rule) {
         break;
     case AgentProgram::SEL_OPTIC_FLOW:
         // rule_threshold reflects from 0x (0) to 5x (100.0)
-        if ((m_curr_los[rule + 1] + 1) / (m_last_los[rule + 1] + 1) > m_program->m_rule_threshold[rule] / 20.0) {
+        if ((m_curr_los[rule + 1] + 1) / (m_last_los[rule + 1] + 1) >
+            m_program->m_rule_threshold[rule] / 20.0) {
             option = 0x01;
         }
-        if ((m_curr_los[rule + 5] + 1) / (m_last_los[rule + 5] + 1) > m_program->m_rule_threshold[rule] / 20.0) {
+        if ((m_curr_los[rule + 5] + 1) / (m_last_los[rule + 5] + 1) >
+            m_program->m_rule_threshold[rule] / 20.0) {
             option |= 0x10;
         }
         break;
     case AgentProgram::SEL_COMPARATIVE_LENGTH:
         // rule_threshold reflects from 0x (0) to 10x (100.0)
-        if ((m_curr_los[rule + 1] + 1) / (m_curr_los[0] + 1) > m_program->m_rule_threshold[rule] / 10.0) {
+        if ((m_curr_los[rule + 1] + 1) / (m_curr_los[0] + 1) >
+            m_program->m_rule_threshold[rule] / 10.0) {
             option = 0x01;
         }
-        if ((m_curr_los[rule + 5] + 1) / (m_curr_los[0] + 1) > m_program->m_rule_threshold[rule] / 10.0) {
+        if ((m_curr_los[rule + 5] + 1) / (m_curr_los[0] + 1) >
+            m_program->m_rule_threshold[rule] / 10.0) {
             option |= 0x10;
         }
         break;
     case AgentProgram::SEL_COMPARATIVE_OPTIC_FLOW:
         // rule_threshold reflects from 0x (0) to 10x (100.0)
-        if ((m_curr_los[rule + 1] * m_last_los[0] + 1) / (m_last_los[rule + 1] * m_curr_los[0] + 1) >
+        if ((m_curr_los[rule + 1] * m_last_los[0] + 1) /
+                (m_last_los[rule + 1] * m_curr_los[0] + 1) >
             m_program->m_rule_threshold[rule] / 10.0) {
             option = 0x01;
         }
-        if ((m_curr_los[rule + 5] * m_last_los[0] + 1) / (m_last_los[rule + 5] * m_curr_los[0] + 1) >
+        if ((m_curr_los[rule + 5] * m_last_los[0] + 1) /
+                (m_last_los[rule + 5] * m_curr_los[0] + 1) >
             m_program->m_rule_threshold[rule] / 10.0) {
             option |= 0x10;
         }

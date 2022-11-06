@@ -41,12 +41,15 @@ class PixelBase {
   public:
     PixelBase() { ; }
     // constrain is constrain to bounding box (i.e., in row / col bounds)
-    virtual PixelRef pixelate(const Point2f &, bool constrain = true, int scalefactor = 1) const = 0;
+    virtual PixelRef pixelate(const Point2f &, bool constrain = true,
+                              int scalefactor = 1) const = 0;
     PixelRefVector pixelateLine(Line l, int scalefactor = 1) const;
     PixelRefVector pixelateLineTouching(Line l, double tolerance) const;
     PixelRefVector quickPixelateLine(PixelRef p, PixelRef q);
-    bool includes(const PixelRef pix) const { return (pix.x >= 0 && pix.x < static_cast<short>(m_cols) &&
-                                                      pix.y >= 0 && pix.y < static_cast<short>(m_rows)); }
+    bool includes(const PixelRef pix) const {
+        return (pix.x >= 0 && pix.x < static_cast<short>(m_cols) && pix.y >= 0 &&
+                pix.y < static_cast<short>(m_rows));
+    }
     size_t getCols() const { return m_cols; }
     size_t getRows() const { return m_rows; }
     const QtRegion &getRegion() const { return m_region; }
@@ -120,7 +123,8 @@ class SpacePixel : public PixelBase {
     //   PixelRefVector pixelate( const Line& l ) const;
     //
     void initLines(int size, const Point2f &min, const Point2f &max, double density = 1.0);
-    void reinitLines(double density); // just reinitialises pixel lines, keeps lines, current ref and test setting
+    void reinitLines(double density); // just reinitialises pixel lines, keeps lines, current ref
+                                      // and test setting
     //
     void addLine(const Line &l);
     void sortPixelLines();
@@ -140,7 +144,8 @@ class SpacePixel : public PixelBase {
 
     void setRegion(QtRegion &region) { m_region = region; }
     //
-    const std::map<int, LineTest> &getAllLines() const // Danger! Use solely to look at the raw line data
+    const std::map<int, LineTest> &
+    getAllLines() const // Danger! Use solely to look at the raw line data
     {
         return m_lines;
     }

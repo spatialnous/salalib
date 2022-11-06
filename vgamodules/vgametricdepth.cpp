@@ -63,7 +63,8 @@ bool VGAMetricDepth::run(Communicator *, PointMap &map, bool) {
             row.setValue(path_angle_col, float(p.m_cumangle));
             if (map.getSelSet().size() == 1) {
                 // Note: Euclidean distance is currently only calculated from a single point
-                row.setValue(dist_col, float(map.getSpacing() * dist(here.pixel, *map.getSelSet().begin())));
+                row.setValue(dist_col,
+                             float(map.getSpacing() * dist(here.pixel, *map.getSelSet().begin())));
             }
             if (!p.getMergePixel().empty()) {
                 Point &p2 = map.getPoint(p.getMergePixel());
@@ -76,9 +77,11 @@ bool VGAMetricDepth::run(Communicator *, PointMap &map, bool) {
                     if (map.getSelSet().size() == 1) {
                         // Note: Euclidean distance is currently only calculated from a single point
                         mergePixelRow.setValue(
-                            dist_col, float(map.getSpacing() * dist(p.getMergePixel(), *map.getSelSet().begin())));
+                            dist_col, float(map.getSpacing() *
+                                            dist(p.getMergePixel(), *map.getSelSet().begin())));
                     }
-                    p2.getNode().extractMetric(search_list, &map, MetricTriple(here.dist, p.getMergePixel(), NoPixel));
+                    p2.getNode().extractMetric(search_list, &map,
+                                               MetricTriple(here.dist, p.getMergePixel(), NoPixel));
                     p2.m_misc = ~0;
                 }
             }

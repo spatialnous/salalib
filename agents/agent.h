@@ -28,7 +28,12 @@
 
 class Agent {
   public:
-    enum { OUTPUT_NOTHING = 0x00, OUTPUT_COUNTS = 0x01, OUTPUT_GATE_COUNTS = 0x02, OUTPUT_TRAILS = 0x04 };
+    enum {
+        OUTPUT_NOTHING = 0x00,
+        OUTPUT_COUNTS = 0x01,
+        OUTPUT_GATE_COUNTS = 0x02,
+        OUTPUT_TRAILS = 0x04
+    };
 
   protected:
     AgentProgram *m_program;
@@ -105,7 +110,9 @@ class Agent {
 inline int binfromvec(const Point2f &p) { return int(32.0 * (0.5 * p.angle() / M_PI) + 0.5); }
 
 // a random angle based on a bin direction
-inline double anglefrombin2(int here) { return (2.0 * M_PI) * ((double(here) - 0.5) / 32.0 + prandom() / 32.0); }
+inline double anglefrombin2(int here) {
+    return (2.0 * M_PI) * ((double(here) - 0.5) / 32.0 + prandom() / 32.0);
+}
 
 inline int binsbetween(int bin1, int bin2) {
     int b = abs(bin1 - bin2);

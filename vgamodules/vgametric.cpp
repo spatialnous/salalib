@@ -65,7 +65,8 @@ bool VGAMetric::run(Communicator *comm, PointMap &map, bool) {
                     continue;
                 }
 
-                // TODO: Break out miscs/dist/cumangle into local variables and remove from Point class
+                // TODO: Break out miscs/dist/cumangle into local variables and remove from Point
+                // class
                 for (auto &point : map.getPoints()) {
                     point.m_misc = 0;
                     point.m_dist = -1.0f;
@@ -90,7 +91,8 @@ bool VGAMetric::run(Communicator *comm, PointMap &map, bool) {
                         break;
                     }
                     Point &p = map.getPoint(here.pixel);
-                    // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
+                    // nb, the filled check is necessary as diagonals seem to be stored with 'gaps'
+                    // left in
                     if (p.filled() && p.m_misc != ~0) {
                         p.getNode().extractMetric(search_list, &map, here);
                         p.m_misc = ~0;
@@ -98,8 +100,9 @@ bool VGAMetric::run(Communicator *comm, PointMap &map, bool) {
                             Point &p2 = map.getPoint(p.getMergePixel());
                             if (p2.m_misc != ~0) {
                                 p2.m_cumangle = p.m_cumangle;
-                                p2.getNode().extractMetric(search_list, &map,
-                                                           MetricTriple(here.dist, p.getMergePixel(), NoPixel));
+                                p2.getNode().extractMetric(
+                                    search_list, &map,
+                                    MetricTriple(here.dist, p.getMergePixel(), NoPixel));
                                 p2.m_misc = ~0;
                             }
                         }

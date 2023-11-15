@@ -46,8 +46,6 @@
 #include "salalib/vgamodules/vgavisualglobaldepth.h"
 #include "salalib/vgamodules/vgavisuallocal.h"
 
-#include "mgraph440/mgraph.h"
-
 #include "genlib/comm.h"
 #include "genlib/p2dpoly.h"
 #include "genlib/pafmath.h"
@@ -2424,15 +2422,7 @@ int MetaGraph::readFromStream(std::istream &stream, const std::string &filename)
         return NEWER_VERSION;
     }
     if (version < METAGRAPH_VERSION) {
-        std::unique_ptr<mgraph440::MetaGraph> mgraph(new mgraph440::MetaGraph);
-        auto result = mgraph->read(filename);
-        if (result != mgraph440::MetaGraph::OK) {
-            return DAMAGED_FILE;
-        }
-        std::stringstream tempstream;
-        mgraph->writeToStream(tempstream, METAGRAPH_VERSION, 0);
-
-        return readFromStream(tempstream, filename);
+        throw depthmapX::RuntimeException("This file is too old, please use an older version of depthmapX to convert it");
     }
 
     // have to use temporary state here as redraw attempt may come too early:
@@ -2453,17 +2443,10 @@ int MetaGraph::readFromStream(std::istream &stream, const std::string &filename)
     char type;
     stream.read(&type, 1);
     if (type == 'd') {
-        // contains deprecated datalayers. Read through mgraph440 which will
+        // contains deprecated datalayers. depthmapX should be able to
         // convert them into shapemaps
-        std::unique_ptr<mgraph440::MetaGraph> mgraph(new mgraph440::MetaGraph);
-        auto result = mgraph->read(filename);
-        if (result != mgraph440::MetaGraph::OK) {
-            return DAMAGED_FILE;
-        }
-        std::stringstream tempstream;
-        mgraph->writeToStream(tempstream, METAGRAPH_VERSION, 0);
-
-        return readFromStream(tempstream, filename);
+        
+        throw depthmapX::RuntimeException("This file is too old, please use an older version of depthmapX to convert it");
     }
     if (type == 'x') {
         FileProperties::read(stream);

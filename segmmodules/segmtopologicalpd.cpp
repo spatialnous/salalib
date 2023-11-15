@@ -32,7 +32,7 @@ bool SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
     std::vector<float> seglengths;
     float maxseglength = 0.0f;
     for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
-        AttributeRow& row = map.getAttributeRowFromShapeIndex(cursor);
+        AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
         axialrefs.push_back(row.getValue("Axial Line Ref"));
         seglengths.push_back(row.getValue("Segment Length"));
         if (seglengths.back() > maxseglength) {
@@ -101,7 +101,7 @@ bool SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
             }
 
             connected_cursor = iter->first.ref;
-            AttributeRow& row = map.getAttributeRowFromShapeIndex(connected_cursor);
+            AttributeRow &row = map.getAttributeRowFromShapeIndex(connected_cursor);
             if (seen[connected_cursor] > segdepth) {
                 float length = seglengths[connected_cursor];
                 int axialref = axialrefs[connected_cursor];
@@ -117,9 +117,9 @@ bool SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
                 } else {
                     list[(bin + 1) % 2].push_back(connected_cursor);
                     seen[connected_cursor] =
-                        segdepth +
-                        1; // this is so if another node is connected directly to this one but is found later it is
-                           // still handled -- note it can result in the connected cursor being added twice
+                        segdepth + 1; // this is so if another node is connected directly to this
+                                      // one but is found later it is still handled -- note it can
+                                      // result in the connected cursor being added twice
                     row.setValue(depthcol.c_str(), segdepth + 1);
                 }
             }

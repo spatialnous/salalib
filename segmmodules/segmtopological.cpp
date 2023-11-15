@@ -41,7 +41,7 @@ bool SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool) {
     std::vector<float> seglengths;
     float maxseglength = 0.0f;
     for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
-        AttributeRow& row = map.getAttributeRowFromShapeIndex(cursor);
+        AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
         axialrefs.push_back(row.getValue(attributes.getColumnIndex("Axial Line Ref")));
         seglengths.push_back(row.getValue(attributes.getColumnIndex("Segment Length")));
         if (seglengths.back() > maxseglength) {
@@ -78,7 +78,7 @@ bool SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool) {
     std::vector<TopoMetSegmentRef> audittrail(map.getShapeCount());
     std::vector<TopoMetSegmentChoice> choicevals(map.getShapeCount());
     for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
-        AttributeRow& row = map.getAttributeRowFromShapeIndex(cursor);
+        AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
         if (m_sel_only && !row.isSelected()) {
             continue;
         }
@@ -89,10 +89,12 @@ bool SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool) {
         int bin = 0;
         list[bin].push_back(cursor);
         double rootseglength = seglengths[cursor];
-        audittrail[cursor] = TopoMetSegmentRef(cursor, Connector::SEG_CONN_ALL, rootseglength * 0.5, -1);
+        audittrail[cursor] =
+            TopoMetSegmentRef(cursor, Connector::SEG_CONN_ALL, rootseglength * 0.5, -1);
         int open = 1;
         unsigned int segdepth = 0;
-        double total = 0.0, wtotal = 0.0, wtotaldepth = 0.0, totalsegdepth = 0.0, totalmetdepth = 0.0;
+        double total = 0.0, wtotal = 0.0, wtotaldepth = 0.0, totalsegdepth = 0.0,
+               totalmetdepth = 0.0;
         while (open != 0) {
             while (list[bin].size() == 0) {
                 bin++;
@@ -137,7 +139,8 @@ bool SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool) {
 
                 connected_cursor = iter->first.ref;
 
-                if (seen[connected_cursor] > segdepth && static_cast<size_t>(connected_cursor) != cursor) {
+                if (seen[connected_cursor] > segdepth &&
+                    static_cast<size_t>(connected_cursor) != cursor) {
                     bool seenalready = (seen[connected_cursor] == 0xffffffff) ? false : true;
                     float length = seglengths[connected_cursor];
                     int axialref = axialrefs[connected_cursor];
@@ -153,14 +156,16 @@ bool SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool) {
                         } else {
                             list[(bin + 1) % 2].push_back(connected_cursor);
                             seen[connected_cursor] =
-                                segdepth + 1; // this is so if another node is connected directly to this one but
-                                              // is found later it is still handled -- note it can result in the
-                                              // connected cursor being added twice
+                                segdepth +
+                                1; // this is so if another node is connected directly to this one
+                                   // but is found later it is still handled -- note it can result
+                                   // in the connected cursor being added twice
                         }
                     }
                     // not sure why this is outside the radius restriction
                     // (sel_only: with restricted selection set, not all lines will be labelled)
-                    // (seenalready: need to check that we're not doing this twice, given the seen can go twice)
+                    // (seenalready: need to check that we're not doing this twice, given the seen
+                    // can go twice)
 
                     // Quick mod - TV
                     if (!m_sel_only && connected_cursor > int(cursor) &&
@@ -197,7 +202,7 @@ bool SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool) {
     if (!m_sel_only) {
         // note, I've stopped sel only from calculating choice values:
         for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
-            AttributeRow& row = map.getAttributeRowFromShapeIndex(cursor);
+            AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
             row.setValue(choicecol.c_str(), choicevals[cursor].choice);
             row.setValue(wchoicecol.c_str(), choicevals[cursor].wchoice);
         }

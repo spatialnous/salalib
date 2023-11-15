@@ -56,10 +56,18 @@ struct ShapeRef {
     friend bool operator<(const ShapeRef &a, const ShapeRef &b);
     friend bool operator>(const ShapeRef &a, const ShapeRef &b);
 };
-inline bool operator==(const ShapeRef &a, const ShapeRef &b) { return a.m_shape_ref == b.m_shape_ref; }
-inline bool operator!=(const ShapeRef &a, const ShapeRef &b) { return a.m_shape_ref != b.m_shape_ref; }
-inline bool operator<(const ShapeRef &a, const ShapeRef &b) { return a.m_shape_ref < b.m_shape_ref; }
-inline bool operator>(const ShapeRef &a, const ShapeRef &b) { return a.m_shape_ref > b.m_shape_ref; }
+inline bool operator==(const ShapeRef &a, const ShapeRef &b) {
+    return a.m_shape_ref == b.m_shape_ref;
+}
+inline bool operator!=(const ShapeRef &a, const ShapeRef &b) {
+    return a.m_shape_ref != b.m_shape_ref;
+}
+inline bool operator<(const ShapeRef &a, const ShapeRef &b) {
+    return a.m_shape_ref < b.m_shape_ref;
+}
+inline bool operator>(const ShapeRef &a, const ShapeRef &b) {
+    return a.m_shape_ref > b.m_shape_ref;
+}
 
 struct ShapeRefHash {
   public:
@@ -143,7 +151,9 @@ class SalaShape {
     bool isPoint() const { return (m_type == SHAPE_POINT); }
     bool isLine() const { return (m_type == SHAPE_LINE); }
     bool isPolyLine() const { return (m_type & (SHAPE_POLY | SHAPE_CLOSED)) == SHAPE_POLY; }
-    bool isPolygon() const { return (m_type & (SHAPE_POLY | SHAPE_CLOSED)) == (SHAPE_POLY | SHAPE_CLOSED); }
+    bool isPolygon() const {
+        return (m_type & (SHAPE_POLY | SHAPE_CLOSED)) == (SHAPE_POLY | SHAPE_CLOSED);
+    }
     bool isCCW() const { return (m_type & SHAPE_CCW) == SHAPE_CCW; }
     //
     const Point2f &getPoint() const { return m_centroid; }
@@ -206,9 +216,9 @@ class ShapeMap : public PixelBase {
 
   public:
     // now shapemaps cover a multitude of different types, record here:
-    // (note, allline maps are automatically generated and have extra information recorded for line reduction)
-    // Do not change numeric values!  They are saved to file.
-    // Note the Pesh map does auto-overlap of shape-shape (yet...), so can be used for an arbitrary shape map
+    // (note, allline maps are automatically generated and have extra information recorded for line
+    // reduction) Do not change numeric values!  They are saved to file. Note the Pesh map does
+    // auto-overlap of shape-shape (yet...), so can be used for an arbitrary shape map
     enum {
         EMPTYMAP = 0x0000,
         DRAWINGMAP = 0x0001,
@@ -240,7 +250,8 @@ class ShapeMap : public PixelBase {
     // quick grab for shapes
     depthmapX::ColumnMatrix<std::vector<ShapeRef>> m_pixel_shapes; // i rows of j columns
     //
-    // allow quick closest line test (note only works for a given layer, with many layers will be tricky)
+    // allow quick closest line test (note only works for a given layer, with many layers will be
+    // tricky)
     mutable BSPNode *m_bsp_root = nullptr;
     mutable bool m_bsp_tree = false;
     //
@@ -264,8 +275,8 @@ class ShapeMap : public PixelBase {
     mutable int m_current;
     mutable bool m_invalidate;
     //
-private:
-    void moveData(ShapeMap& other) {
+  private:
+    void moveData(ShapeMap &other) {
         m_show = other.isShown();
         m_shapes = std::move(other.m_shapes);
         m_hasgraph = other.m_hasgraph;
@@ -289,8 +300,8 @@ private:
 
     ShapeMap(ShapeMap &&other)
         : m_name(std::move(other.m_name)), m_pixel_shapes(std::move(other.m_pixel_shapes)),
-          m_attributes(std::move(other.m_attributes)), m_attribHandle(std::move(other.m_attribHandle)),
-          m_layers(std::move(other.m_layers)) {
+          m_attributes(std::move(other.m_attributes)),
+          m_attribHandle(std::move(other.m_attribHandle)), m_layers(std::move(other.m_layers)) {
         moveData(other);
     }
     ShapeMap &operator=(ShapeMap &&other) {
@@ -334,8 +345,8 @@ private:
     //
     // add shape tools
     void makePolyPixels(int shaperef);
-    void shapePixelBorder(std::map<int, int> &relations, int shaperef, int side, PixelRef currpix, PixelRef minpix,
-                          bool first);
+    void shapePixelBorder(std::map<int, int> &relations, int shaperef, int side, PixelRef currpix,
+                          PixelRef minpix, bool first);
     // remove shape tools
     void removePolyPixels(int shaperef);
     //
@@ -348,12 +359,14 @@ private:
     int makePointShape(const Point2f &point, bool tempshape = false,
                        const std::map<int, float> &extraAttributes = std::map<int, float>());
     // or a single line into a shape
-    int makeLineShapeWithRef(const Line &line, int shape_ref, bool through_ui = false, bool tempshape = false,
+    int makeLineShapeWithRef(const Line &line, int shape_ref, bool through_ui = false,
+                             bool tempshape = false,
                              const std::map<int, float> &extraAttributes = std::map<int, float>());
     int makeLineShape(const Line &line, bool through_ui = false, bool tempshape = false,
                       const std::map<int, float> &extraAttributes = std::map<int, float>());
     // or a polygon into a shape
-    int makePolyShapeWithRef(const std::vector<Point2f> &points, bool open, int shape_ref, bool tempshape = false,
+    int makePolyShapeWithRef(const std::vector<Point2f> &points, bool open, int shape_ref,
+                             bool tempshape = false,
                              const std::map<int, float> &extraAttributes = std::map<int, float>());
     int makePolyShape(const std::vector<Point2f> &points, bool open, bool tempshape = false,
                       const std::map<int, float> &extraAttributes = std::map<int, float>());
@@ -364,8 +377,8 @@ private:
                   const std::map<int, float> &extraAttributes = std::map<int, float>());
     // convert points to polygons
     bool convertPointsToPolys(double poly_radius, bool selected_only);
-    // convert a selected pixels to a layer object (note, uses selection attribute on pixel, you must select to make
-    // this work):
+    // convert a selected pixels to a layer object (note, uses selection attribute on pixel, you
+    // must select to make this work):
     int makeShapeFromPointSet(const PointMap &pointmap);
     //
     // move a shape (currently only a line shape) -- in the future should use SalaShape
@@ -391,15 +404,16 @@ private:
     Point2f pointOffset(const PointMap &pointmap, int side);
     int moveDir(int side);
     //
-    void pointPixelBorder(const PointMap &pointmap, std::map<int, int> &relations, SalaShape &shape, int side,
-                          PixelRef currpix, PixelRef minpix, bool first);
+    void pointPixelBorder(const PointMap &pointmap, std::map<int, int> &relations, SalaShape &shape,
+                          int side, PixelRef currpix, PixelRef minpix, bool first);
     // slower point in topmost poly test:
     int pointInPoly(const Point2f &p) const;
     // test if point is inside a particular shape
     bool pointInPoly(const Point2f &p, int shaperef) const;
     // retrieve lists of polys point intersects:
     std::vector<int> pointInPolyList(const Point2f &p) const;
-    std::vector<int> lineInPolyList(const Line &li, size_t lineref = -1, double tolerance = 0.0) const;
+    std::vector<int> lineInPolyList(const Line &li, size_t lineref = -1,
+                                    double tolerance = 0.0) const;
     std::vector<int> polyInPolyList(int polyref, double tolerance = 0.0) const;
     std::vector<int> shapeInPolyList(const SalaShape &shape);
     // helper to make actual test of point in shape:
@@ -455,11 +469,14 @@ private:
 
   public:
     double getDisplayMinValue() const {
-        return (m_displayed_attribute != -1) ? m_attributes->getColumn(m_displayed_attribute).getStats().min : 0;
+        return (m_displayed_attribute != -1)
+                   ? m_attributes->getColumn(m_displayed_attribute).getStats().min
+                   : 0;
     }
     double getDisplayMaxValue() const {
-        return (m_displayed_attribute != -1) ? m_attributes->getColumn(m_displayed_attribute).getStats().max
-                                             : (m_shapes.size() > 0 ? m_shapes.rbegin()->first : 0);
+        return (m_displayed_attribute != -1)
+                   ? m_attributes->getColumn(m_displayed_attribute).getStats().max
+                   : (m_shapes.size() > 0 ? m_shapes.rbegin()->first : 0);
     }
 
     const DisplayParams &getDisplayParams() const {
@@ -491,8 +508,9 @@ private:
     void setDisplayedAttribute(int col);
     // use set displayed attribute instead unless you are deliberately changing the column order:
     void overrideDisplayedAttribute(int attribute) { m_displayed_attribute = attribute; }
-    // now, there is a slightly odd thing here: the displayed attribute can go out of step with the underlying
-    // attribute data if there is a delete of an attribute in idepthmap.h, so it just needs checking before returning!
+    // now, there is a slightly odd thing here: the displayed attribute can go out of step with the
+    // underlying attribute data if there is a delete of an attribute in idepthmap.h, so it just
+    // needs checking before returning!
     int getDisplayedAttribute() const {
         if (m_displayed_attribute == m_attribHandle->getDisplayColIndex())
             return m_displayed_attribute;
@@ -505,7 +523,8 @@ private:
     void invalidateDisplayedAttribute() { m_invalidate = true; }
     //
     double getDisplayedAverage() {
-        return m_attributes->getColumn(m_displayed_attribute).getStats().total / m_attributes->getNumRows();
+        return m_attributes->getColumn(m_displayed_attribute).getStats().total /
+               m_attributes->getNumRows();
     }
     //
   protected:
@@ -566,7 +585,8 @@ private:
 #endif
     //
     double getSpacing() const {
-        return __max(m_region.width(), m_region.height()) / (10 * log((double)10 + m_shapes.size()));
+        return __max(m_region.width(), m_region.height()) /
+               (10 * log((double)10 + m_shapes.size()));
     }
     //
     // dangerous: accessor for the shapes themselves:
@@ -621,8 +641,10 @@ private:
     bool importLinesWithRefs(const std::map<int, Line> &lines, const depthmapX::Table &data);
     bool importPoints(const std::vector<Point2f> &points, const depthmapX::Table &data);
     bool importPointsWithRefs(const std::map<int, Point2f> &points, const depthmapX::Table &data);
-    bool importPolylines(const std::vector<depthmapX::Polyline> &lines, const depthmapX::Table &data);
-    bool importPolylinesWithRefs(const std::map<int, depthmapX::Polyline> &lines, const depthmapX::Table &data);
+    bool importPolylines(const std::vector<depthmapX::Polyline> &lines,
+                         const depthmapX::Table &data);
+    bool importPolylinesWithRefs(const std::map<int, depthmapX::Polyline> &lines,
+                                 const depthmapX::Table &data);
     void copyMapInfoBaseData(const ShapeMap &sourceMap);
 
   private:

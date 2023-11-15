@@ -17,16 +17,15 @@
 
 // Interface to handle different kinds of Axial analysis
 
-#include "salalib/axialmap.h"
+#include "salalib/shapegraph.h"
 
 #include "genlib/comm.h"
 
 #include <string>
 
-class IAxial
-{
-public:
+class IAxial {
+  public:
     virtual std::string getAnalysisName() const = 0;
     virtual bool run(Communicator *comm, ShapeGraph &map, bool simple_version) = 0;
-    virtual ~IAxial(){}
+    virtual ~IAxial() {}
 };

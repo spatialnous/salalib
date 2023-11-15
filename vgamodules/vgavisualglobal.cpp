@@ -28,8 +28,8 @@ bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version
     }
     AttributeTable &attributes = map.getAttributeTable();
 
-    int entropy_col = -1, rel_entropy_col = -1, integ_dv_col = -1, integ_pv_col = -1, integ_tk_col = -1,
-        depth_col = -1, count_col = -1;
+    int entropy_col = -1, rel_entropy_col = -1, integ_dv_col = -1, integ_pv_col = -1,
+        integ_tk_col = -1, depth_col = -1, count_col = -1;
     std::string radius_text;
     if (m_radius != -1) {
         radius_text = std::string(" R") + dXstring::formatString(int(m_radius), "%d");
@@ -97,8 +97,8 @@ bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version
                     search_tree.push_back(PixelRefVector());
                     const PixelRefVector &searchTreeAtLevel = search_tree[level];
                     distribution.push_back(0);
-                    for (auto currLvlIter = searchTreeAtLevel.rbegin(); currLvlIter != searchTreeAtLevel.rend();
-                         currLvlIter++) {
+                    for (auto currLvlIter = searchTreeAtLevel.rbegin();
+                         currLvlIter != searchTreeAtLevel.rend(); currLvlIter++) {
                         int &pmisc = miscs(currLvlIter->y, currLvlIter->x);
                         Point &p = map.getPoint(*currLvlIter);
                         if (p.filled() && pmisc != ~0) {
@@ -107,7 +107,7 @@ bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version
                             distribution.back() += 1;
                             if ((int)m_radius == -1 ||
                                 (level < (int)m_radius &&
-                                    (!p.contextfilled() || currLvlIter->iseven()))) {
+                                 (!p.contextfilled() || currLvlIter->iseven()))) {
                                 extractUnseen(p.getNode(), search_tree[level + 1], miscs, extents);
                                 pmisc = ~0;
                                 if (!p.getMergePixel().empty()) {
@@ -130,9 +130,11 @@ bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version
                 }
                 AttributeRow &row = attributes.getRow(AttributeKey(curs));
                 // only set to single float precision after divide
-                // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of Space
+                // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of
+                // Space
                 if (!simple_version) {
-                    row.setValue(count_col, float(total_nodes)); // note: total nodes includes this one
+                    row.setValue(count_col,
+                                 float(total_nodes)); // note: total nodes includes this one
                 }
                 // ERROR !!!!!!
                 if (total_nodes > 1) {
@@ -143,7 +145,8 @@ bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version
                     // total nodes > 2 to avoid divide by 0 (was > 3)
                     if (total_nodes > 2 && mean_depth > 1.0) {
                         double ra = 2.0 * (mean_depth - 1.0) / double(total_nodes - 2);
-                        // d-value / p-values from Depthmap 4 manual, note: node_count includes this one
+                        // d-value / p-values from Depthmap 4 manual, note: node_count includes this
+                        // one
                         double rra_d = ra / dvalue(total_nodes);
                         double rra_p = ra / pvalue(total_nodes);
                         double integ_tk = teklinteg(total_nodes, total_depth);
@@ -173,11 +176,12 @@ bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version
                     for (size_t k = 1; k < distribution.size(); k++) {
                         if (distribution[k] > 0) {
                             double prob = double(distribution[k]) / double(total_nodes - 1);
-                            entropy -= prob * log2(prob);
+                            entropy -= prob * pafmath::log2(prob);
                             // Formula from Turner 2001, "Depthmap"
                             factorial *= double(k + 1);
-                            double q = (pow(mean_depth, double(k)) / double(factorial)) * exp(-mean_depth);
-                            rel_entropy += (float)prob * log2(prob / q);
+                            double q =
+                                (pow(mean_depth, double(k)) / double(factorial)) * exp(-mean_depth);
+                            rel_entropy += (float)prob * pafmath::log2(prob / q);
                         }
                     }
                     if (!simple_version) {
@@ -215,19 +219,22 @@ bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version
     return true;
 }
 
-void VGAVisualGlobal::extractUnseen(Node &node, PixelRefVector &pixels, depthmapX::RowMatrix<int> &miscs,
+void VGAVisualGlobal::extractUnseen(Node &node, PixelRefVector &pixels,
+                                    depthmapX::RowMatrix<int> &miscs,
                                     depthmapX::RowMatrix<PixelRef> &extents) {
     for (int i = 0; i < 32; i++) {
         Bin &bin = node.bin(i);
         for (auto pixVec : bin.m_pixel_vecs) {
-            for (PixelRef pix = pixVec.start(); pix.col(bin.m_dir) <= pixVec.end().col(bin.m_dir);) {
+            for (PixelRef pix = pixVec.start();
+                 pix.col(bin.m_dir) <= pixVec.end().col(bin.m_dir);) {
                 int &misc = miscs(pix.y, pix.x);
                 PixelRef &extent = extents(pix.y, pix.x);
                 if (misc == 0) {
                     pixels.push_back(pix);
                     misc |= (1 << i);
                 }
-                // 10.2.02 revised --- diagonal was breaking this as it was extent in diagonal or horizontal
+                // 10.2.02 revised --- diagonal was breaking this as it was extent in diagonal or
+                // horizontal
                 if (!(bin.m_dir & PixelRef::DIAGONAL)) {
                     if (extent.col(bin.m_dir) >= pixVec.end().col(bin.m_dir))
                         break;

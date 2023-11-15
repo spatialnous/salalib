@@ -6,9 +6,8 @@
 
 // helpers... a class to tidy up ugly maps people may give me...
 
-class TidyLines : public SpacePixel
-{
-public:
-   void tidy(std::vector<Line> &lines, const QtRegion& region);
-   void quicktidy(std::map<int, std::pair<Line, int> > &lines, const QtRegion& region);
+class TidyLines : public SpacePixel {
+  public:
+    void tidy(std::vector<Line> &lines, const QtRegion &region);
+    void quicktidy(std::map<int, std::pair<Line, int>> &lines, const QtRegion &region);
 };

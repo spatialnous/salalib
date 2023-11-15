@@ -55,9 +55,10 @@ struct AgentProgram {
     float m_rule_threshold[4];
     float m_rule_probability[4];
     // these are for optic flow 2 agents
-    int m_vahead;               // how wide your ahead vision is
-    float m_ahead_threshold;    // will turn if neg flow greater than this threshold (set in range 1/100 to 1)
-    float m_feeler_threshold;   // will turn if flow greater than this threshold (set in range 1 to 5)
+    int m_vahead;             // how wide your ahead vision is
+    float m_ahead_threshold;  // will turn if neg flow greater than this threshold (set in range
+                              // 1/100 to 1)
+    float m_feeler_threshold; // will turn if flow greater than this threshold (set in range 1 to 5)
     float m_feeler_probability; // turn with this much probability if a feeler triggers
     //
     // simple long range destinations:

@@ -114,7 +114,8 @@ bool SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
                 open++;
                 //
                 // better to divide by 511 but have 512 bins...
-                list[(bin + int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(connected_cursor);
+                list[(bin + int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
+                    connected_cursor);
                 AttributeRow &row = map.getAttributeRowFromShapeIndex(connected_cursor);
                 row.setValue(depthcol.c_str(), here.dist + length * 0.5);
             }

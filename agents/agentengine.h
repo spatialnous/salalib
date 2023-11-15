@@ -33,5 +33,5 @@ class AgentEngine {
   public:
     AgentEngine();
     void run(Communicator *comm, PointMap *pointmap);
-    void insertTrailsInMap(ShapeMap& trailsMap);
+    void insertTrailsInMap(ShapeMap &trailsMap);
 };

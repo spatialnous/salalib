@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <string>
+
 const static std::string g_col_total_counts = "Gate Counts";
 const static std::string g_col_gate_counts = "__Internal_Gate_Counts";
 const static std::string g_col_gate = "__Internal_Gate";

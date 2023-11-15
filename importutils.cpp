@@ -23,8 +23,8 @@ namespace depthmapX {
 
     const int DXFCIRCLERES = 36;
 
-    bool importFile(MetaGraph &mgraph, std::istream &stream, Communicator *communicator, std::string name,
-                    ImportType mapType, ImportFileType fileType) {
+    bool importFile(MetaGraph &mgraph, std::istream &stream, Communicator *communicator,
+                    std::string name, ImportType mapType, ImportFileType fileType) {
 
         // This function is still too fiddly but at least it shows the common interface for
         // drawing and data maps and how different file types may be parsed to be imported
@@ -174,8 +174,8 @@ namespace depthmapX {
         }
 
         if (xcol != -1 && ycol != -1 && refcol != -1) {
-            std::map<int, Point2f> points =
-                extractPointsWithRefs(table[columns[xcol]], table[columns[ycol]], table[columns[refcol]]);
+            std::map<int, Point2f> points = extractPointsWithRefs(
+                table[columns[xcol]], table[columns[ycol]], table[columns[refcol]]);
             table.erase(table.find(columns[xcol]));
             table.erase(table.find(columns[ycol]));
             table.erase(table.find(columns[refcol]));
@@ -212,9 +212,9 @@ namespace depthmapX {
             shapeMap.importPoints(points, table);
 
         } else if (x1col != -1 && y1col != -1 && x2col != -1 && y2col != -1 && refcol != -1) {
-            std::map<int, Line> lines =
-                extractLinesWithRef(table[columns[x1col]], table[columns[y1col]], table[columns[x2col]],
-                                    table[columns[y2col]], table[columns[refcol]]);
+            std::map<int, Line> lines = extractLinesWithRef(
+                table[columns[x1col]], table[columns[y1col]], table[columns[x2col]],
+                table[columns[y2col]], table[columns[refcol]]);
             table.erase(table.find(columns[x1col]));
             table.erase(table.find(columns[y1col]));
             table.erase(table.find(columns[x2col]));
@@ -234,8 +234,8 @@ namespace depthmapX {
             shapeMap.init(lines.size(), region);
             shapeMap.importLinesWithRefs(lines, table);
         } else if (x1col != -1 && y1col != -1 && x2col != -1 && y2col != -1) {
-            std::vector<Line> lines = extractLines(table[columns[x1col]], table[columns[y1col]], table[columns[x2col]],
-                                                   table[columns[y2col]]);
+            std::vector<Line> lines = extractLines(table[columns[x1col]], table[columns[y1col]],
+                                                   table[columns[x2col]], table[columns[y2col]]);
             table.erase(table.find(columns[x1col]));
             table.erase(table.find(columns[y1col]));
             table.erase(table.find(columns[x2col]));
@@ -287,7 +287,8 @@ namespace depthmapX {
                 auto strings = dXstring::split(inputline, delimiter);
                 if (strings.size() != columns.size()) {
                     std::stringstream message;
-                    message << "Cells in line " << inputline << "not the same number as the columns" << std::flush;
+                    message << "Cells in line " << inputline << "not the same number as the columns"
+                            << std::flush;
                     throw RuntimeException(message.str().c_str());
                 }
                 if (!strings.size()) {
@@ -301,7 +302,8 @@ namespace depthmapX {
         return table;
     }
 
-    std::vector<Line> extractLines(ColumnData &x1col, ColumnData &y1col, ColumnData &x2col, ColumnData &y2col) {
+    std::vector<Line> extractLines(ColumnData &x1col, ColumnData &y1col, ColumnData &x2col,
+                                   ColumnData &y2col) {
         std::vector<Line> lines;
         for (size_t i = 0; i < x1col.size(); i++) {
             double x1 = stod(x1col[i]);
@@ -313,8 +315,8 @@ namespace depthmapX {
         return lines;
     }
 
-    std::map<int, Line> extractLinesWithRef(ColumnData &x1col, ColumnData &y1col, ColumnData &x2col, ColumnData &y2col,
-                                            ColumnData &refcol) {
+    std::map<int, Line> extractLinesWithRef(ColumnData &x1col, ColumnData &y1col, ColumnData &x2col,
+                                            ColumnData &y2col, ColumnData &refcol) {
         std::map<int, Line> lines;
         for (size_t i = 0; i < x1col.size(); i++) {
             double x1 = stod(x1col[i]);
@@ -365,8 +367,8 @@ namespace depthmapX {
                 DxfVertex v = poly.getVertex(m);
                 vertices.push_back(Point2f(v.x, v.y));
             }
-            polylines.push_back(
-                depthmapX::Polyline(vertices, (poly.getAttributes() & DxfPolyLine::CLOSED) == DxfPolyLine::CLOSED));
+            polylines.push_back(depthmapX::Polyline(
+                vertices, (poly.getAttributes() & DxfPolyLine::CLOSED) == DxfPolyLine::CLOSED));
         }
 
         for (size_t l = 0; l < dxfLayer.numSplines(); l++) {
@@ -376,8 +378,8 @@ namespace depthmapX {
                 DxfVertex v = poly.getVertex(m);
                 vertices.push_back(Point2f(v.x, v.y));
             }
-            polylines.push_back(
-                depthmapX::Polyline(vertices, (poly.getAttributes() & DxfPolyLine::CLOSED) == DxfPolyLine::CLOSED));
+            polylines.push_back(depthmapX::Polyline(
+                vertices, (poly.getAttributes() & DxfPolyLine::CLOSED) == DxfPolyLine::CLOSED));
         }
 
         for (size_t n = 0; n < dxfLayer.numArcs(); n++) {
@@ -418,7 +420,8 @@ namespace depthmapX {
         DxfVertex layerMin = dxfLayer.getExtMin();
         DxfVertex layerMax = dxfLayer.getExtMax();
 
-        QtRegion region = QtRegion(Point2f(layerMin.x, layerMin.y), Point2f(layerMax.x, layerMax.y));
+        QtRegion region =
+            QtRegion(Point2f(layerMin.x, layerMin.y), Point2f(layerMax.x, layerMax.y));
 
         shapeMap.init(points.size() + lines.size() + polylines.size(), region);
         // parameters could be passed in the Table here such as the layer/block/colour/linetype etc.
@@ -438,20 +441,20 @@ namespace depthmapX {
             else
                 outColumns.push_back(column.first);
         }
-        if(table.size() == 0) {
+        if (table.size() == 0) {
             throw RuntimeException("No usable data found in file");
         }
-        if(refcol == -1) {
+        if (refcol == -1) {
             throw RuntimeException("The \"Ref\" column is reqired");
         }
-        if(outColumns.size() < 1) {
+        if (outColumns.size() < 1) {
             throw RuntimeException("No data found to join");
         }
-        std::vector<AttributeRow*> inRows;
-        for(const auto& refInFile: table["Ref"]) {
+        std::vector<AttributeRow *> inRows;
+        for (const auto &refInFile : table["Ref"]) {
             int ref = std::stoi(refInFile);
             auto iter = attributes.find(AttributeKey(ref));
-            if(iter == attributes.end()) {
+            if (iter == attributes.end()) {
                 std::stringstream message;
                 message << "Key " << ref << "not found in attribute table" << std::flush;
                 throw RuntimeException(message.str().c_str());
@@ -462,10 +465,11 @@ namespace depthmapX {
         // Up until this point we have not touched the attribute table
         // so no need for corrective measures yet
 
-        for(const std::string& column: outColumns) {
+        for (const std::string &column : outColumns) {
             int colIdx = attributes.insertOrResetColumn(column);
             auto outRowIter = table[column].begin();
-            for(auto inRowIter = inRows.begin(); inRowIter != inRows.end(); inRowIter++, outRowIter++) {
+            for (auto inRowIter = inRows.begin(); inRowIter != inRows.end();
+                 inRowIter++, outRowIter++) {
                 (*inRowIter)->setValue(colIdx, std::stof(*outRowIter));
             }
         }

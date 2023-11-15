@@ -20,11 +20,8 @@
 
 #include "salalib/isegment.h"
 
-class SegmentTulipDepth : ISegment
-{
-public:
-    std::string getAnalysisName() const override {
-        return "Tulip Analysis";
-    }
+class SegmentTulipDepth : ISegment {
+  public:
+    std::string getAnalysisName() const override { return "Tulip Analysis"; }
     bool run(Communicator *, ShapeGraph &map, bool) override;
 };

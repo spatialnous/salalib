@@ -109,7 +109,8 @@ class Point2f {
     friend Point2f pointfromangle(double angle);
     // a couple of useful tests
     bool intriangle(const Point2f &p1, const Point2f &p2, const Point2f &p3);
-    bool insegment(const Point2f &key, const Point2f &p2, const Point2f &p3, double tolerance = 0.0);
+    bool insegment(const Point2f &key, const Point2f &p2, const Point2f &p3,
+                   double tolerance = 0.0);
     // for OS transformation (note: accurate only to 5 metres according to OS)
     Point2f longlat2os(const Point2f &p);
 
@@ -138,14 +139,26 @@ class Point2f {
 
 inline Point2f operator-(Point2f &p) { return Point2f(-p.x, -p.y); }
 
-inline Point2f operator+(const Point2f &p1, const Point2f &p2) { return Point2f(p1.x + p2.x, p1.y + p2.y); }
+inline Point2f operator+(const Point2f &p1, const Point2f &p2) {
+    return Point2f(p1.x + p2.x, p1.y + p2.y);
+}
 
-inline Point2f operator-(const Point2f &p1, const Point2f &p2) { return Point2f(p1.x - p2.x, p1.y - p2.y); }
+inline Point2f operator-(const Point2f &p1, const Point2f &p2) {
+    return Point2f(p1.x - p2.x, p1.y - p2.y);
+}
 
-inline bool operator==(const Point2f &p1, const Point2f &p2) { return (p1.x == p2.x && p1.y == p2.y); }
-inline bool operator!=(const Point2f &p1, const Point2f &p2) { return (p1.x != p2.x || p1.y != p2.y); }
-inline bool operator>(const Point2f &p1, const Point2f &p2) { return (p1.x > p2.x || (p1.x == p2.x && p1.y > p2.y)); }
-inline bool operator<(const Point2f &p1, const Point2f &p2) { return (p1.x < p2.x || (p1.x == p2.x && p1.y < p2.y)); }
+inline bool operator==(const Point2f &p1, const Point2f &p2) {
+    return (p1.x == p2.x && p1.y == p2.y);
+}
+inline bool operator!=(const Point2f &p1, const Point2f &p2) {
+    return (p1.x != p2.x || p1.y != p2.y);
+}
+inline bool operator>(const Point2f &p1, const Point2f &p2) {
+    return (p1.x > p2.x || (p1.x == p2.x && p1.y > p2.y));
+}
+inline bool operator<(const Point2f &p1, const Point2f &p2) {
+    return (p1.x < p2.x || (p1.x == p2.x && p1.y < p2.y));
+}
 
 inline Point2f operator*(const double s, const Point2f &p) { return Point2f(s * p.x, s * p.y); }
 
@@ -156,7 +169,9 @@ inline double dot(const Point2f &p1, const Point2f &p2) { return (p1.x * p2.x + 
 // greater than 0 => p2 left (anticlockwise) of p1, less than 0 => p2 right (clockwise) of p1
 inline double det(const Point2f &p1, const Point2f &p2) { return (p1.x * p2.y - p1.y * p2.x); }
 
-inline double dist(const Point2f &p1, const Point2f &p2) { return sqrt(sqr(p1.x - p2.x) + sqr(p1.y - p2.y)); }
+inline double dist(const Point2f &p1, const Point2f &p2) {
+    return sqrt(sqr(p1.x - p2.x) + sqr(p1.y - p2.y));
+}
 
 inline double angle(const Point2f &p1, const Point2f &p2, const Point2f &p3) {
     Point2f a = p1 - p2;
@@ -172,13 +187,15 @@ inline bool approxeq(const Point2f &p1, const Point2f &p2, double tolerance) {
     return (fabs(p1.x - p2.x) <= tolerance && fabs(p1.y - p2.y) <= tolerance);
 }
 
-inline bool Point2f::insegment(const Point2f &key, const Point2f &p2, const Point2f &p3, double tolerance) {
+inline bool Point2f::insegment(const Point2f &key, const Point2f &p2, const Point2f &p3,
+                               double tolerance) {
     Point2f va = p2 - key;
     Point2f vb = p3 - key;
     Point2f vp = *this - key;
     double ap = det(va, vp);
     double bp = det(vb, vp);
-    if ((dot(va, vp) > 0 && dot(vb, vp) > 0) && (sgn(ap) != sgn(bp) || fabs(ap) < tolerance || fabs(bp) < tolerance)) {
+    if ((dot(va, vp) > 0 && dot(vb, vp) > 0) &&
+        (sgn(ap) != sgn(bp) || fabs(ap) < tolerance || fabs(bp) < tolerance)) {
         return true;
     }
     return false;
@@ -228,13 +245,15 @@ class Point3f {
         x = p.x;
         y = 0.0;
         z = p.y;
-    }                                                 // Note! not z = -y (due to an incosistency earlier...)
+    } // Note! not z = -y (due to an incosistency earlier...)
     bool inside(const Point3f &bl, const Point3f &tr) // now inclusive (...)
     {
         return (x >= bl.x && y >= bl.y && z >= bl.z && x <= tr.x && y <= tr.y && z <= tr.z);
     }
-    operator Point2f() { return Point2f(x, z); } // Note! not x, -z (due to an inconsistency earlier...)
-    Point2f xy() { return Point2f(x, y); }       // From the x, y plane
+    operator Point2f() {
+        return Point2f(x, z);
+    }                                      // Note! not x, -z (due to an inconsistency earlier...)
+    Point2f xy() { return Point2f(x, y); } // From the x, y plane
     // A few simple vector ops:
     double length() const { return (double)sqrt(x * x + y * y + z * z); }
     Point3f &scale(const double scalar) {
@@ -258,7 +277,9 @@ class Point3f {
     friend Point3f cross(const Point3f &a, const Point3f &b);
 };
 
-inline double dot(const Point3f &a, const Point3f &b) { return (a.x * b.x + a.y * b.y + a.z * b.z); }
+inline double dot(const Point3f &a, const Point3f &b) {
+    return (a.x * b.x + a.y * b.y + a.z * b.z);
+}
 inline Point3f cross(const Point3f &a, const Point3f &b) {
     return Point3f(a.y * b.z - b.y * a.z, a.z * b.x - b.z * a.x, a.x * b.y - b.x * a.y);
 }
@@ -337,10 +358,12 @@ class QtRegion {
     }
     //
     bool contains(const Point2f &p) const {
-        return (p.x > bottom_left.x && p.x < top_right.x && p.y > bottom_left.y && p.y < top_right.y);
+        return (p.x > bottom_left.x && p.x < top_right.x && p.y > bottom_left.y &&
+                p.y < top_right.y);
     }
     bool contains_touch(const Point2f &p) const {
-        return (p.x >= bottom_left.x && p.x <= top_right.x && p.y >= bottom_left.y && p.y <= top_right.y);
+        return (p.x >= bottom_left.x && p.x <= top_right.x && p.y >= bottom_left.y &&
+                p.y <= top_right.y);
     }
     void encompass(const Point2f &p) {
         if (p.x < bottom_left.x)
@@ -451,8 +474,12 @@ class Line : public QtRegion {
     double by() const { return bits.parity ? top_right.y : bottom_left.y; }
     double &by() { return bits.parity ? top_right.y : bottom_left.y; }
     //
-    const Point2f start() const { return Point2f(bottom_left.x, (bits.parity ? bottom_left.y : top_right.y)); }
-    const Point2f end() const { return Point2f(top_right.x, (bits.parity ? top_right.y : bottom_left.y)); }
+    const Point2f start() const {
+        return Point2f(bottom_left.x, (bits.parity ? bottom_left.y : top_right.y));
+    }
+    const Point2f end() const {
+        return Point2f(top_right.x, (bits.parity ? top_right.y : bottom_left.y));
+    }
     const Point2f midpoint() const { return Point2f((start() + end()) / 2); }
     //
     // helpful to have a user friendly indication of direction:
@@ -460,16 +487,22 @@ class Line : public QtRegion {
     bool upward() const { return bits.direction == bits.parity; }
     //
     const Point2f t_start() const {
-        return Point2f((rightward() ? bottom_left.x : top_right.x), (upward() ? bottom_left.y : top_right.y));
+        return Point2f((rightward() ? bottom_left.x : top_right.x),
+                       (upward() ? bottom_left.y : top_right.y));
     }
     const Point2f t_end() const {
-        return Point2f((rightward() ? top_right.x : bottom_left.x), (upward() ? top_right.y : bottom_left.y));
+        return Point2f((rightward() ? top_right.x : bottom_left.x),
+                       (upward() ? top_right.y : bottom_left.y));
     }
     //
     short sign() const { return bits.parity ? 1 : -1; }
     //
-    double grad(int axis) const { return (axis == YAXIS) ? sign() * height() / width() : sign() * width() / height(); }
-    double constant(int axis) const { return (axis == YAXIS) ? ay() - grad(axis) * ax() : ax() - grad(axis) * ay(); }
+    double grad(int axis) const {
+        return (axis == YAXIS) ? sign() * height() / width() : sign() * width() / height();
+    }
+    double constant(int axis) const {
+        return (axis == YAXIS) ? ay() - grad(axis) * ax() : ax() - grad(axis) * ay();
+    }
     //
     double length() const {
         return (double)sqrt((top_right.x - bottom_left.x) * (top_right.x - bottom_left.x) +

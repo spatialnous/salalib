@@ -134,7 +134,8 @@ bool xmlelement::parse(std::ifstream &stream, bool parsesubelements) {
                     attribute.clear();
                     step = STEP_ATTRIBUTE_NAME;
                 } else {
-                    // there was a bad char test for 'isprint(c)', but it didn't like certain characters!
+                    // there was a bad char test for 'isprint(c)', but it didn't like certain
+                    // characters!
                     buffer += c;
                 }
                 break;

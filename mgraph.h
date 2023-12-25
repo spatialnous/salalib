@@ -148,16 +148,7 @@ class MetaGraph : public FileProperties {
     bool readPointMaps(std::istream &stream);
     bool writePointMaps(std::ofstream &stream, bool displayedmaponly = false);
 
-    std::recursive_mutex mLock;
-
   public:
-    std::unique_lock<std::recursive_mutex> getLock() {
-        return std::unique_lock<std::recursive_mutex>(mLock);
-    }
-
-    std::unique_lock<std::recursive_mutex> getLockDeferred() {
-        return std::unique_lock<std::recursive_mutex>(mLock, std::defer_lock_t());
-    }
 
     int getState() const { return m_state; }
     // use with caution: only very rarely needed outside MetaGraph itself

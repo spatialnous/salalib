@@ -38,8 +38,13 @@ class SegmentTulip : ISegment {
     SegmentTulip(std::set<double> radius_set, bool sel_only, int tulip_bins,
                  int weighted_measure_col, int radius_type, bool choice, bool interactive = false,
                  int weighted_measure_col2 = -1, int routeweight_col = -1)
-        : m_radius_set(radius_set), m_sel_only(sel_only), m_tulip_bins(tulip_bins),
-          m_weighted_measure_col(weighted_measure_col), m_radius_type(radius_type),
-          m_choice(choice), m_interactive(interactive),
-          m_weighted_measure_col2(weighted_measure_col2), m_routeweight_col(routeweight_col) {}
+        : m_radius_set(radius_set),
+          m_sel_only(sel_only),
+          m_tulip_bins(tulip_bins),
+          m_weighted_measure_col(weighted_measure_col),
+          m_weighted_measure_col2(weighted_measure_col2),
+          m_routeweight_col(routeweight_col),
+          m_radius_type(radius_type),
+          m_choice(choice),
+          m_interactive(interactive) {}
 };

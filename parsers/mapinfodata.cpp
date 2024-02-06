@@ -251,7 +251,7 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     // if bounds has not been filled in, fill it in
     if (m_bounds.empty()) {
         char bounds[256];
-        sprintf(bounds, "Bounds (%10f, %10f) (%10f, %10f)", points.m_region.bottom_left.x,
+        snprintf(bounds, 256, "Bounds (%10f, %10f) (%10f, %10f)", points.m_region.bottom_left.x,
                 points.m_region.bottom_left.y, points.m_region.top_right.x,
                 points.m_region.top_right.y);
         m_bounds = bounds;
@@ -280,7 +280,7 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     // if bounds has not been filled in, fill it in
     if (m_bounds.empty()) {
         char bounds[256];
-        sprintf(bounds, "Bounds (%10f, %10f) (%10f, %10f)", map.getRegion().bottom_left.x,
+        snprintf(bounds, 256, "Bounds (%10f, %10f) (%10f, %10f)", map.getRegion().bottom_left.x,
                 map.getRegion().bottom_left.y, map.getRegion().top_right.x,
                 map.getRegion().top_right.y);
         m_bounds = bounds;
@@ -342,7 +342,7 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
     // if bounds has not been filled in, fill it in
     if (m_bounds.empty()) {
         char bounds[256];
-        sprintf(bounds, "Bounds (%10f, %10f) (%10f, %10f)", region.bottom_left.x,
+        snprintf(bounds, 256, "Bounds (%10f, %10f) (%10f, %10f)", region.bottom_left.x,
                 region.bottom_left.y, region.top_right.x, region.top_right.y);
         m_bounds = bounds;
     }

@@ -134,7 +134,7 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
         }
     }
     // TODO: Use the proper exception
-    catch (std::exception) {
+    catch (std::exception&) {
         // unhandled parsing exceptions return read error:
         return MINFO_MIFPARSE;
     }
@@ -208,7 +208,7 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
         }
     }
     // TODO: use a proper exception
-    catch (std::exception) {
+    catch (std::exception&) {
         // unhandled parsing exceptions return read error:
         return MINFO_TABLE;
     }

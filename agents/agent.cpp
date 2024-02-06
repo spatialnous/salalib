@@ -348,7 +348,7 @@ Point2f Agent::onWeightedLook(bool wholeisovist) {
 }
 
 Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
-    if (AgentProgram::SEL_OCC_MEMORY) {
+    if (looktype == AgentProgram::SEL_OCC_MEMORY) {
         m_occ_memory.flip();
         m_occ_memory.a().clear();
     }

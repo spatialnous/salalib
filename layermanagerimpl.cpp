@@ -106,7 +106,7 @@ void LayerManagerImpl::write(std::ostream &stream) const {
     // should have been:
     // int64_t availableLayers = (int64_t(0xffffffff) << 32) + 0xfffffffe;
 
-    for (size_t i = 1; i < 64 & i < m_layers.size(); ++i) {
+    for (size_t i = 1; (i < 64) & (i < m_layers.size()); ++i) {
         int loc = 1;
         while (loc < 64 && ((availableLayers >> loc) & 0x1) == 0) {
             loc++;

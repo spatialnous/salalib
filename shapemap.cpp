@@ -19,7 +19,7 @@
 #include "salalib/shapemap.h"
 #include "salalib/attributetable.h"
 #include "salalib/attributetablehelpers.h"
-#include "salalib/mgraph.h" // purely for the version info --- as phased out should replace
+#include "salalib/pointdata.h"
 #include "salalib/parsers/mapinfodata.h" // for mapinfo interface
 
 #include "genlib/comm.h" // for communicator
@@ -3166,9 +3166,9 @@ bool ShapeMap::unlinkShapeSet(std::istream &idset, int refcol) {
                 unlink.first = stoi(tokens[0]);
                 unlink.second = stoi(tokens[1]);
                 unlinks.push_back(unlink);
-            } catch (const std::invalid_argument) {
+            } catch (const std::invalid_argument&) {
                 ;
-            } catch (const std::out_of_range) {
+            } catch (const std::out_of_range&) {
                 ;
             } // don't do anything if it can't parse the numbers, just ignore (e.g., first line)
         }

@@ -19,8 +19,6 @@
 #include "salalib/vgamodules/vgaisovist.h"
 #include "salalib/isovist.h"
 
-#include "genlib/stringutils.h"
-
 bool VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
     map.m_hasIsovistAnalysis = false;
 
@@ -29,7 +27,7 @@ bool VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 2);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
     }
-    BSPNode bspRoot = makeBSPtree(comm, m_drawingFiles);
+    BSPNode bspRoot = makeBSPtree(comm, m_boundaryShapes);
 
     AttributeTable &attributes = map.getAttributeTable();
 
@@ -91,29 +89,22 @@ bool VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
 }
 
 BSPNode VGAIsovist::makeBSPtree(Communicator *communicator,
-                                const std::vector<SpacePixelFile> &drawingFiles) {
+                                const std::vector<SalaShape> &boundaryShapes) {
     std::vector<TaggedLine> partitionlines;
-    for (const auto &pixelGroup : drawingFiles) {
-        for (const auto &pixel : pixelGroup.m_spacePixels) {
-            // chooses the first editable layer it can find:
-            if (pixel.isShown()) {
-                auto refShapes = pixel.getAllShapes();
-                int k = -1;
-                for (const auto &refShape : refShapes) {
-                    k++;
-                    std::vector<Line> newLines = refShape.second.getAsLines();
-                    // I'm not sure what the tagging was meant for any more,
-                    // tagging at the moment tags the *polygon* it was original attached to
-                    // must check it is not a zero length line:
-                    for (const Line &line : newLines) {
-                        if (line.length() > 0.0) {
-                            partitionlines.push_back(TaggedLine(line, k));
-                        }
-                    }
-                }
+    int k = -1;
+    for (const auto &shape : boundaryShapes) {
+        k++;
+        std::vector<Line> newLines = shape.getAsLines();
+        // I'm not sure what the tagging was meant for any more,
+        // tagging at the moment tags the *polygon* it was original attached to
+        // must check it is not a zero length line:
+        for (const Line &line : newLines) {
+            if (line.length() > 0.0) {
+                partitionlines.push_back(TaggedLine(line, k));
             }
         }
     }
+
 
     BSPNode bspRoot;
     if (partitionlines.size()) {

@@ -248,6 +248,23 @@ std::vector<Line> MetaGraph::getShownDrawingFilesAsLines() {
     return lines;
 }
 
+std::vector<SalaShape> MetaGraph::getShownDrawingFilesAsShapes() {
+    std::vector<SalaShape> shapes;
+
+    for (const auto &pixelGroup : m_drawingFiles) {
+        for (const auto &pixel : pixelGroup.m_spacePixels) {
+            // chooses the first editable layer it can find:
+            if (pixel.isShown()) {
+                auto refShapes = pixel.getAllShapes();
+                for (const auto &refShape : refShapes) {
+                    shapes.push_back(refShape.second);
+                }
+            }
+        }
+    }
+    return shapes;
+}
+
 bool MetaGraph::makeGraph(Communicator *communicator, int algorithm, double maxdist) {
     // this is essentially a version tag, and remains for historical reasons:
     m_state |= ANGULARGRAPH;
@@ -329,8 +346,9 @@ bool MetaGraph::analyseGraph(Communicator *communicator, Options options,
                     SegmentTopologicalPD().run(communicator, getDisplayedShapeGraph(), false);
             }
         } else if (options.output_type == Options::OUTPUT_ISOVIST) {
+            auto shapes = getShownDrawingFilesAsShapes();
             analysisCompleted =
-                VGAIsovist(m_drawingFiles).run(communicator, getDisplayedPointMap(), simple_version);
+                VGAIsovist(shapes).run(communicator, getDisplayedPointMap(), simple_version);
         } else if (options.output_type == Options::OUTPUT_VISUAL) {
             bool localResult = true;
             bool globalResult = true;

@@ -22,7 +22,6 @@
 #include "salalib/mapconverter.h"
 
 #include "salalib/importutils.h"
-#include "salalib/parsers/dxfp.h"
 #include "salalib/parsers/ntfp.h"
 #include "salalib/parsers/tigerp.h"
 
@@ -48,10 +47,8 @@
 
 #include "genlib/comm.h"
 #include "genlib/p2dpoly.h"
-#include "genlib/pafmath.h"
 
 #include "math.h"
-#include "time.h"
 
 #include <sstream>
 #include <tuple>

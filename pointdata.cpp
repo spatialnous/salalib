@@ -36,9 +36,9 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 
-PointMap::PointMap(const QtRegion &parentRegion, const std::vector<SpacePixelFile> &drawingFiles,
+PointMap::PointMap(const QtRegion &parentRegion,
                    const std::string &name)
-    : m_parentRegion(&parentRegion), m_drawingFiles(&drawingFiles), m_points(0, 0),
+    : m_parentRegion(&parentRegion), m_points(0, 0),
       m_attributes(new AttributeTable()), m_attribHandle(new AttributeTableHandle(*m_attributes)) {
     m_name = name;
 

@@ -2721,7 +2721,7 @@ int MetaGraph::addNewPointMap(const std::string &name) {
             }
         }
     }
-    m_pointMaps.push_back(PointMap(m_region, m_drawingFiles, myname));
+    m_pointMaps.push_back(PointMap(m_region, myname));
     m_displayed_pointmap = m_pointMaps.size() - 1;
     return m_pointMaps.size() - 1;
 }
@@ -2731,7 +2731,7 @@ bool MetaGraph::readPointMaps(std::istream &stream) {
     int count;
     stream.read((char *)&count, sizeof(count));
     for (int i = 0; i < count; i++) {
-        m_pointMaps.push_back(PointMap(m_region, m_drawingFiles));
+        m_pointMaps.push_back(PointMap(m_region));
         m_pointMaps.back().read(stream);
     }
     return true;

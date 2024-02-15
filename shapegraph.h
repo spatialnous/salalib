@@ -72,6 +72,10 @@ class ShapeGraph : public ShapeMap {
   public:
     ShapeGraph(const std::string &name = "<axial map>", int type = ShapeMap::AXIALMAP);
     virtual ~ShapeGraph() { ; }
+
+    ShapeGraph(ShapeGraph&&) = default;
+    ShapeGraph& operator=(ShapeGraph&&) = default;
+
     void initialiseAttributesAxial();
     void makeConnections(const KeyVertices &keyvertices = KeyVertices());
     bool stepdepth(Communicator *comm = NULL);

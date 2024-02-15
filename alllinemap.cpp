@@ -5,25 +5,12 @@
 #include <iomanip>
 #include <time.h>
 
-AllLineMap::AllLineMap(Communicator *comm, std::vector<SpacePixelFile> &drawingLayers,
-                       const Point2f &seed, const std::string &name)
-    : ShapeGraph(name, ShapeMap::ALLLINEMAP) {
-    if (comm) {
-        comm->CommPostMessage(Communicator::NUM_STEPS, 3);
-        comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
-    }
-    // this has a nasty habit of crashing if reused...
-    // reset everything at the top level, including any existing all-line map:
-    m_polygons.clear();
-    m_poly_connections.clear();
-    m_radial_lines.clear();
-
-    // starting off... finding a polygon...
-    // for ease, I'm just going to make a construction line set from all the visible lines...
-
-    QtRegion region;
+void AllLineMap::generate(Communicator *comm,
+                          std::vector<SpacePixelFile> &drawingLayers,
+                          const Point2f &seed) {
 
     std::vector<Line> lines;
+    QtRegion region;
 
     // add all visible layers to the set of polygon lines...
     for (const auto &pixelGroup : drawingLayers) {
@@ -41,6 +28,25 @@ AllLineMap::AllLineMap(Communicator *comm, std::vector<SpacePixelFile> &drawingL
             }
         }
     }
+    generate(comm, lines, region, seed);
+}
+
+void AllLineMap::generate(Communicator *comm,
+                          std::vector<Line> &lines,
+                          QtRegion &region,
+                          const Point2f &seed) {
+    if (comm) {
+        comm->CommPostMessage(Communicator::NUM_STEPS, 3);
+        comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
+    }
+    // this has a nasty habit of crashing if reused...
+    // reset everything at the top level, including any existing all-line map:
+    m_polygons.clear();
+    m_poly_connections.clear();
+    m_radial_lines.clear();
+
+    // starting off... finding a polygon...
+    // for ease, I'm just going to make a construction line set from all the visible lines...
 
     region.grow(1.30);
     m_polygons.init(lines, region);

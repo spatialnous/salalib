@@ -1115,8 +1115,11 @@ bool MetaGraph::makeAllLineMap(Communicator *communicator, const Point2f &seed) 
             m_all_line_map = -1;
         }
 
-        m_shapeGraphs.push_back(
-            std::unique_ptr<AllLineMap>(new AllLineMap(communicator, m_drawingFiles, seed)));
+        {
+            std::unique_ptr<AllLineMap> allm(new AllLineMap());
+            allm->generate(communicator, m_drawingFiles, seed);
+            m_shapeGraphs.push_back(std::move(allm));
+        }
 
         m_all_line_map = int(m_shapeGraphs.size() - 1);
         setDisplayedShapeGraphRef(m_all_line_map);

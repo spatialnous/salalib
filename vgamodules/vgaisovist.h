@@ -23,7 +23,10 @@
 #include "salalib/pointdata.h"
 
 class VGAIsovist : IVGA {
+    const std::vector<SpacePixelFile> &m_drawingFiles;
   public:
+    VGAIsovist(const std::vector<SpacePixelFile> &drawingFiles) :
+    m_drawingFiles(drawingFiles) {}
     std::string getAnalysisName() const override { return "Isovist Analysis"; }
     bool run(Communicator *comm, PointMap &map, bool simple_version) override;
     BSPNode makeBSPtree(Communicator *communicator,

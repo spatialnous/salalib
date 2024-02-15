@@ -81,7 +81,6 @@ class PointMap : public PixelBase {
 
   public:
     bool m_hasIsovistAnalysis = false;
-    const std::vector<SpacePixelFile> &getDrawingFiles() { return *m_drawingFiles; }
 
   protected:
     std::string m_name;
@@ -149,13 +148,13 @@ class PointMap : public PixelBase {
     //
     bool isProcessed() const { return m_processed; }
     void fillLine(const Line &li);
-    bool blockLines();
+    bool blockLines(std::vector<Line> &lines);
     void blockLine(const Line &li);
     void unblockLines(bool clearblockedflag = true);
     bool fillPoint(const Point2f &p, bool add = true); // use add = false for remove point
     // bool blockPoint(const Point2f& p, bool add = true); // no longer used
     //
-    bool makePoints(const Point2f &seed, int fill_type,
+    bool makePoints(std::vector<Line> &lines, const Point2f &seed, int fill_type,
                     Communicator *comm = nullptr); // Point2f non-reference deliberate
     bool clearPoints();                            // Clear *selected* points
     bool undoPoints();
@@ -163,7 +162,7 @@ class PointMap : public PixelBase {
     void outputPoints(std::ostream &stream, char delim);
     void outputMergeLines(std::ostream &stream, char delim);
     int tagState(bool settag);
-    bool sparkGraph2(Communicator *comm, bool boundarygraph, double maxdist);
+    bool sparkGraph2(Communicator *comm, std::vector<Line> &lines, bool boundarygraph, double maxdist);
     bool unmake(bool removeLinks);
     bool sparkPixel2(PixelRef curs, int make, double maxdist = -1.0);
     bool sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q, int depth,

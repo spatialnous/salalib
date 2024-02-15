@@ -211,7 +211,8 @@ bool MetaGraph::makePoints(const Point2f &p, int fill_type, Communicator *commun
     //   m_state &= ~POINTS;
 
     try {
-        getDisplayedPointMap().makePoints(p, fill_type, communicator);
+        std::vector<Line> lines = getShownDrawingFilesAsLines();
+        getDisplayedPointMap().makePoints(lines, p, fill_type, communicator);
     } catch (Communicator::CancelledException) {
 
         // By this stage points almost certainly exist,
@@ -231,6 +232,22 @@ bool MetaGraph::clearPoints() {
     return b_return;
 }
 
+std::vector<Line> MetaGraph::getShownDrawingFilesAsLines() {
+    std::vector<Line> lines;
+    for (const auto &pixelGroup : m_drawingFiles) {
+        for (const auto &pixel : pixelGroup.m_spacePixels) {
+            // chooses the first editable layer it can find:
+            if (pixel.isShown()) {
+                std::vector<SimpleLine> newLines = pixel.getAllShapesAsLines();
+                for (const auto &line : newLines) {
+                    lines.emplace_back(line.start(), line.end());
+                }
+            }
+        }
+    }
+    return lines;
+}
+
 bool MetaGraph::makeGraph(Communicator *communicator, int algorithm, double maxdist) {
     // this is essentially a version tag, and remains for historical reasons:
     m_state |= ANGULARGRAPH;
@@ -238,8 +255,11 @@ bool MetaGraph::makeGraph(Communicator *communicator, int algorithm, double maxd
     bool graphMade = false;
 
     try {
+        std::vector<Line> lines = getShownDrawingFilesAsLines();
         // algorithm is now used for boundary graph option (as a simple boolean)
-        graphMade = getDisplayedPointMap().sparkGraph2(communicator, (algorithm != 0), maxdist);
+        graphMade = getDisplayedPointMap().sparkGraph2(communicator, lines,
+                                                       (algorithm != 0),
+                                                       maxdist);
     } catch (Communicator::CancelledException) {
         graphMade = false;
     }
@@ -310,7 +330,7 @@ bool MetaGraph::analyseGraph(Communicator *communicator, Options options,
             }
         } else if (options.output_type == Options::OUTPUT_ISOVIST) {
             analysisCompleted =
-                VGAIsovist().run(communicator, getDisplayedPointMap(), simple_version);
+                VGAIsovist(m_drawingFiles).run(communicator, getDisplayedPointMap(), simple_version);
         } else if (options.output_type == Options::OUTPUT_VISUAL) {
             bool localResult = true;
             bool globalResult = true;

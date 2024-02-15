@@ -165,6 +165,7 @@ class MetaGraph : public FileProperties {
     bool setGrid(double spacing, const Point2f &offset = Point2f()); // override of PointMap
     bool makePoints(const Point2f &p, int semifilled,
                     Communicator *communicator = NULL); // override of PointMap
+    std::vector<Line> getShownDrawingFilesAsLines();
     bool makeGraph(Communicator *communicator, int algorithm, double maxdist);
     bool unmakeGraph(bool removeLinks);
     bool analyseGraph(Communicator *communicator, Options options,

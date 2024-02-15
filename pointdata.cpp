@@ -282,7 +282,7 @@ void PointMap::fillLine(const Line &li) {
     }
 }
 
-bool PointMap::blockLines() {
+bool PointMap::blockLines(std::vector<Line> &lines) {
     if (!m_initialised || m_points.size() == 0) {
         return false;
     }
@@ -297,16 +297,8 @@ bool PointMap::blockLines() {
     // would require a key with (file, layer, shaperef, seg) when used with shaperef,
     // so just switched to an integer key:
 
-    for (const auto &pixelGroup : *m_drawingFiles) {
-        for (const auto &pixel : pixelGroup.m_spacePixels) {
-            // chooses the first editable layer it can find:
-            if (pixel.isShown()) {
-                std::vector<SimpleLine> newLines = pixel.getAllShapesAsLines();
-                for (const auto &line : newLines) {
-                    blockLine(Line(line.start(), line.end()));
-                }
-            }
-        }
+    for (const auto &line : lines) {
+        blockLine(Line(line.start(), line.end()));
     }
 
     for (size_t i = 0; i < m_cols; i++) {
@@ -384,7 +376,8 @@ bool PointMap::fillPoint(const Point2f &p, bool add) {
 // NB --- I've returned to original
 
 // AV TV // semifilled
-bool PointMap::makePoints(const Point2f &seed, int fill_type, Communicator *comm) {
+bool PointMap::makePoints(std::vector<Line> &lines, const Point2f &seed,
+                          int fill_type, Communicator *comm) {
     if (!m_initialised || m_points.size() == 0) {
         return false;
     }
@@ -409,7 +402,7 @@ bool PointMap::makePoints(const Point2f &seed, int fill_type, Communicator *comm
     }
 
     if (!m_blockedlines) {
-        blockLines();
+        blockLines(lines);
     }
 
     m_undocounter++; // undo counter increased ready for fill...
@@ -1170,11 +1163,12 @@ int PointMap::tagState(bool settag) {
 // Then wouldn't have to 'test twice' for the grid point being blocked...
 // ...perhaps a tweak for a later date!
 
-bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdist) {
+bool PointMap::sparkGraph2(Communicator *comm, std::vector<Line> &lines,
+                           bool boundarygraph, double maxdist) {
     // Note, graph must be fixed (i.e., having blocking pixels filled in)
 
     if (!m_blockedlines) {
-        blockLines();
+        blockLines(lines);
     }
 
     if (boundarygraph) {

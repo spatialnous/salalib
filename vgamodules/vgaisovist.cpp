@@ -29,7 +29,7 @@ bool VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 2);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
     }
-    BSPNode bspRoot = makeBSPtree(comm, map.getDrawingFiles());
+    BSPNode bspRoot = makeBSPtree(comm, m_drawingFiles);
 
     AttributeTable &attributes = map.getAttributeTable();
 

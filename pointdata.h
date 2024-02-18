@@ -154,7 +154,7 @@ class PointMap : public PixelBase {
     bool fillPoint(const Point2f &p, bool add = true); // use add = false for remove point
     // bool blockPoint(const Point2f& p, bool add = true); // no longer used
     //
-    bool makePoints(std::vector<Line> &lines, const Point2f &seed, int fill_type,
+    bool makePoints(const Point2f &seed, int fill_type,
                     Communicator *comm = nullptr); // Point2f non-reference deliberate
     bool clearPoints();                            // Clear *selected* points
     bool undoPoints();

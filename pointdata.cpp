@@ -376,8 +376,8 @@ bool PointMap::fillPoint(const Point2f &p, bool add) {
 // NB --- I've returned to original
 
 // AV TV // semifilled
-bool PointMap::makePoints(std::vector<Line> &lines, const Point2f &seed,
-                          int fill_type, Communicator *comm) {
+bool PointMap::makePoints(const Point2f &seed, int fill_type,
+                          Communicator *comm) {
     if (!m_initialised || m_points.size() == 0) {
         return false;
     }
@@ -402,7 +402,9 @@ bool PointMap::makePoints(std::vector<Line> &lines, const Point2f &seed,
     }
 
     if (!m_blockedlines) {
-        blockLines(lines);
+        throw depthmapX::RuntimeException(
+                    "blockLines() not called before makePoints"
+                    );
     }
 
     m_undocounter++; // undo counter increased ready for fill...

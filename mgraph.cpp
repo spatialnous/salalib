@@ -209,7 +209,8 @@ bool MetaGraph::makePoints(const Point2f &p, int fill_type, Communicator *commun
 
     try {
         std::vector<Line> lines = getShownDrawingFilesAsLines();
-        getDisplayedPointMap().makePoints(lines, p, fill_type, communicator);
+        getDisplayedPointMap().blockLines(lines);
+        getDisplayedPointMap().makePoints(p, fill_type, communicator);
     } catch (Communicator::CancelledException) {
 
         // By this stage points almost certainly exist,

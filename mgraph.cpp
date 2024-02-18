@@ -271,8 +271,9 @@ bool MetaGraph::makeGraph(Communicator *communicator, int algorithm, double maxd
 
     try {
         std::vector<Line> lines = getShownDrawingFilesAsLines();
+        getDisplayedPointMap().blockLines(lines);
         // algorithm is now used for boundary graph option (as a simple boolean)
-        graphMade = getDisplayedPointMap().sparkGraph2(communicator, lines,
+        graphMade = getDisplayedPointMap().sparkGraph2(communicator,
                                                        (algorithm != 0),
                                                        maxdist);
     } catch (Communicator::CancelledException) {

@@ -162,7 +162,7 @@ class PointMap : public PixelBase {
     void outputPoints(std::ostream &stream, char delim);
     void outputMergeLines(std::ostream &stream, char delim);
     int tagState(bool settag);
-    bool sparkGraph2(Communicator *comm, std::vector<Line> &lines, bool boundarygraph, double maxdist);
+    bool sparkGraph2(Communicator *comm, bool boundarygraph, double maxdist);
     bool unmake(bool removeLinks);
     bool sparkPixel2(PixelRef curs, int make, double maxdist = -1.0);
     bool sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q, int depth,

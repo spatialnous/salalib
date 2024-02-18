@@ -1165,12 +1165,14 @@ int PointMap::tagState(bool settag) {
 // Then wouldn't have to 'test twice' for the grid point being blocked...
 // ...perhaps a tweak for a later date!
 
-bool PointMap::sparkGraph2(Communicator *comm, std::vector<Line> &lines,
-                           bool boundarygraph, double maxdist) {
+bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph,
+                           double maxdist) {
     // Note, graph must be fixed (i.e., having blocking pixels filled in)
 
     if (!m_blockedlines) {
-        blockLines(lines);
+        throw depthmapX::RuntimeException(
+                    "blockLines() not called before makePoints"
+                    );
     }
 
     if (boundarygraph) {

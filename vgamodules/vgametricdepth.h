@@ -19,7 +19,6 @@
 #pragma once
 
 #include "salalib/ivga.h"
-#include "salalib/pixelref.h"
 #include "salalib/pointdata.h"
 
 class VGAMetricDepth : IVGA {

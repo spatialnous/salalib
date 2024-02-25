@@ -18,7 +18,7 @@
 
 #include "salalib/segmmodules/segmtopologicalpd.h"
 
-#include "genlib/stringutils.h"
+#include "salalib/segmmodules/segmhelpers.h"
 
 bool SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
 

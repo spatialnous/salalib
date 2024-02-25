@@ -18,8 +18,6 @@
 
 #include "salalib/segmmodules/segmtulipdepth.h"
 
-#include "genlib/stringutils.h"
-
 // revised to use tulip bins for faster analysis of large spaces
 
 bool SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {

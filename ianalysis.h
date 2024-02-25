@@ -15,10 +15,10 @@
 
 #pragma once
 
-#include "salalib/mgraph.h"
-#include "salalib/pointdata.h"
-
 #include "genlib/comm.h"
+
+#include <string>
+#include <set>
 
 class IAnalysis {
   public:

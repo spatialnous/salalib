@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "salalib/attributetable.h"
-
 #include "genlib/bsptree.h"
 #include <set>
 

@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@
 #include "genlib/pflipper.h"
 #include "genlib/stringutils.h"
 
-bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_version) {
+AnalysisResult AxialIntegration::run(Communicator *comm,
+                                     ShapeGraph &map,
+                                     bool simple_version) {
     // note, from 10.0, Depthmap no longer includes *self* connections on axial lines
     // self connections are stripped out on loading graph files, as well as no longer made
 
@@ -30,6 +32,8 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
         qtimer(atime, 0);
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getShapeCount());
     }
+
+    AnalysisResult result{false, std::set<std::string>()};
 
     AttributeTable &attributes = map.getAttributeTable();
 
@@ -69,77 +73,98 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
         if (m_choice) {
             std::string choice_col_text = std::string("Choice") + radius_text;
             attributes.insertOrResetColumn(choice_col_text.c_str());
+            result.newColumns.insert(choice_col_text);
             std::string n_choice_col_text = std::string("Choice [Norm]") + radius_text;
             attributes.insertOrResetColumn(n_choice_col_text.c_str());
+            result.newColumns.insert(n_choice_col_text);
             if (m_weighted_measure_col != -1) {
                 std::string w_choice_col_text =
                     std::string("Choice [") + weighting_col_text + " Wgt]" + radius_text;
                 attributes.insertOrResetColumn(w_choice_col_text.c_str());
+                result.newColumns.insert(w_choice_col_text);
                 std::string nw_choice_col_text =
                     std::string("Choice [") + weighting_col_text + " Wgt][Norm]" + radius_text;
                 attributes.insertOrResetColumn(nw_choice_col_text.c_str());
+                result.newColumns.insert(nw_choice_col_text);
             }
         }
 
         if (!simple_version) {
             std::string entropy_col_text = std::string("Entropy") + radius_text;
             attributes.insertOrResetColumn(entropy_col_text.c_str());
+            result.newColumns.insert(entropy_col_text);
         }
 
         std::string integ_dv_col_text = std::string("Integration [HH]") + radius_text;
         attributes.insertOrResetColumn(integ_dv_col_text.c_str());
+        result.newColumns.insert(integ_dv_col_text);
 
         if (!simple_version) {
             std::string integ_pv_col_text = std::string("Integration [P-value]") + radius_text;
             attributes.insertOrResetColumn(integ_pv_col_text.c_str());
+            result.newColumns.insert(integ_pv_col_text);
             std::string integ_tk_col_text = std::string("Integration [Tekl]") + radius_text;
             attributes.insertOrResetColumn(integ_tk_col_text.c_str());
+            result.newColumns.insert(integ_tk_col_text);
             std::string intensity_col_text = std::string("Intensity") + radius_text;
             attributes.insertOrResetColumn(intensity_col_text.c_str());
+            result.newColumns.insert(intensity_col_text);
             std::string harmonic_col_text = std::string("Harmonic Mean Depth") + radius_text;
             attributes.insertOrResetColumn(harmonic_col_text.c_str());
+            result.newColumns.insert(harmonic_col_text);
         }
 
         std::string depth_col_text = std::string("Mean Depth") + radius_text;
         attributes.insertOrResetColumn(depth_col_text.c_str());
+        result.newColumns.insert(depth_col_text);
         std::string count_col_text = std::string("Node Count") + radius_text;
         attributes.insertOrResetColumn(count_col_text.c_str());
+        result.newColumns.insert(count_col_text);
 
         if (!simple_version) {
             std::string rel_entropy_col_text = std::string("Relativised Entropy") + radius_text;
             attributes.insertOrResetColumn(rel_entropy_col_text);
+            result.newColumns.insert(rel_entropy_col_text);
         }
 
         if (m_weighted_measure_col != -1) {
             std::string w_md_col_text =
                 std::string("Mean Depth [") + weighting_col_text + " Wgt]" + radius_text;
             attributes.insertOrResetColumn(w_md_col_text.c_str());
+            result.newColumns.insert(w_md_col_text);
             std::string total_weight_text =
                 std::string("Total ") + weighting_col_text + radius_text;
             attributes.insertOrResetColumn(total_weight_text.c_str());
+            result.newColumns.insert(total_weight_text);
         }
         if (m_fulloutput) {
             if (!simple_version) {
                 std::string penn_norm_text = std::string("RA [Penn]") + radius_text;
                 attributes.insertOrResetColumn(penn_norm_text);
+                result.newColumns.insert(penn_norm_text);
             }
             std::string ra_col_text = std::string("RA") + radius_text;
             attributes.insertOrResetColumn(ra_col_text.c_str());
+            result.newColumns.insert(ra_col_text);
 
             if (!simple_version) {
                 std::string rra_col_text = std::string("RRA") + radius_text;
                 attributes.insertOrResetColumn(rra_col_text.c_str());
+                result.newColumns.insert(rra_col_text);
             }
 
             std::string td_col_text = std::string("Total Depth") + radius_text;
             attributes.insertOrResetColumn(td_col_text.c_str());
+            result.newColumns.insert(td_col_text);
         }
         //
     }
     if (m_local) {
         if (!simple_version) {
             attributes.insertOrResetColumn("Control");
+            result.newColumns.insert("Control");
             attributes.insertOrResetColumn("Controllability");
+            result.newColumns.insert("Controllability");
         }
     }
     // then look up all the columns... eek:
@@ -536,5 +561,7 @@ bool AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_vers
     map.setDisplayedAttribute(-1); // <- override if it's already showing
     map.setDisplayedAttribute(integ_dv_col.back());
 
-    return true;
+    result.completed = true;
+
+    return result;
 }

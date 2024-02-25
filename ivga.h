@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Petros Koutsolampros
+// Copyright (C) 2018-2024 Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 // Interface to handle different kinds of VGA analysis
 
+#include "salalib/analysisresult.h"
+
 #include "salalib/pointdata.h"
 
 #include "genlib/comm.h"
@@ -26,6 +28,8 @@
 class IVGA {
   public:
     virtual std::string getAnalysisName() const = 0;
-    virtual bool run(Communicator *comm, PointMap &map, bool simple_version) = 0;
+    virtual AnalysisResult run(Communicator *comm,
+                               PointMap &map,
+                               bool simple_version) = 0;
     virtual ~IVGA() {}
 };

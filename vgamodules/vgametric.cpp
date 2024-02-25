@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,12 +23,16 @@
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes
 
-bool VGAMetric::run(Communicator *comm, PointMap &map, bool) {
+AnalysisResult VGAMetric::run(Communicator *comm,
+                              PointMap &map,
+                              bool) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
     }
+
+    AnalysisResult result{false, std::set<std::string>()};
 
     std::string radius_text;
     if (m_radius != -1.0) {
@@ -45,12 +49,16 @@ bool VGAMetric::run(Communicator *comm, PointMap &map, bool) {
     // n.b. these must be entered in alphabetical order to preserve col indexing:
     std::string mspa_col_text = std::string("Metric Mean Shortest-Path Angle") + radius_text;
     int mspa_col = attributes.insertOrResetColumn(mspa_col_text.c_str());
+    result.newColumns.insert(mspa_col_text);
     std::string mspl_col_text = std::string("Metric Mean Shortest-Path Distance") + radius_text;
     int mspl_col = attributes.insertOrResetColumn(mspl_col_text.c_str());
+    result.newColumns.insert(mspl_col_text);
     std::string dist_col_text = std::string("Metric Mean Straight-Line Distance") + radius_text;
     int dist_col = attributes.insertOrResetColumn(dist_col_text.c_str());
+    result.newColumns.insert(dist_col_text);
     std::string count_col_text = std::string("Metric Node Count") + radius_text;
     int count_col = attributes.insertOrResetColumn(count_col_text.c_str());
+    result.newColumns.insert(count_col_text);
 
     int count = 0;
 
@@ -135,5 +143,7 @@ bool VGAMetric::run(Communicator *comm, PointMap &map, bool) {
     map.overrideDisplayedAttribute(-2);
     map.setDisplayedAttribute(mspl_col);
 
-    return true;
+    result.completed = true;
+
+    return result;
 }

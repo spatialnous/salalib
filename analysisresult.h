@@ -1,7 +1,4 @@
-// sala - a component of the depthmapX - spatial network analysis platform
-// Copyright (C) 2000-2010, University College London, Alasdair Turner
-// Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2024, Petros Koutsolampros
+// Copyright (C) 2024 Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +15,10 @@
 
 #pragma once
 
-#include "salalib/isegment.h"
+#include <set>
+#include <string>
 
-class SegmentTopologicalPD : ISegment {
-  public:
-    std::string getAnalysisName() const override { return "Topological Analysis"; }
-    AnalysisResult run(Communicator *,
-                       ShapeGraph &map,
-                       bool) override;
+struct AnalysisResult {
+    bool completed;
+    std::set<std::string> newColumns;
 };

@@ -1,5 +1,6 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
+// Copyright (C) 2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +19,8 @@
 
 // Interface: the meta graph loads and holds all sorts of arbitrary data...
 
-#include "salalib/displayparams.h"
 #include "salalib/fileproperties.h"
 #include "salalib/importtypedefs.h"
-#include "salalib/mgraph_consts.h"
 
 // still call paftl:
 #include "salalib/agents/agentengine.h" // for agent engine interface
@@ -516,6 +515,8 @@ class MetaGraph : public FileProperties {
     // returns 0: fail, 1: made isovist, 2: made isovist and added new shapemap layer
     int makeIsovist(Communicator *communicator, const Point2f &p, double startangle = 0,
                     double endangle = 0, bool simple_version = true);
+    std::set<std::string> setIsovistData(Isovist &isovist, AttributeTable &table,
+                                         AttributeRow &row, bool simple_version);
     // returns 0: fail, 1: made isovist, 2: made isovist and added new shapemap layer
     int makeIsovistPath(Communicator *communicator, double fov_angle = 2.0 * M_PI,
                         bool simple_version = true);

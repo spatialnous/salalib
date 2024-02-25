@@ -23,5 +23,7 @@
 class SegmentTulipDepth : ISegment {
   public:
     std::string getAnalysisName() const override { return "Tulip Analysis"; }
-    bool run(Communicator *, ShapeGraph &map, bool) override;
+    AnalysisResult run(Communicator *,
+                       ShapeGraph &map,
+                       bool) override;
 };

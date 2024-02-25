@@ -1,5 +1,6 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
+// Copyright (C) 2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -315,14 +316,14 @@ bool MetaGraph::analyseGraph(Communicator *communicator, Options options,
         if (options.point_depth_selection == 1) {
             if (m_view_class & VIEWVGA) {
                 analysisCompleted =
-                    VGAVisualGlobalDepth().run(communicator, getDisplayedPointMap(), false);
+                    VGAVisualGlobalDepth().run(communicator, getDisplayedPointMap(), false).completed;
             } else if (m_view_class & VIEWAXIAL) {
                 if (!getDisplayedShapeGraph().isSegmentMap()) {
                     analysisCompleted =
-                        AxialStepDepth().run(communicator, getDisplayedShapeGraph(), false);
+                        AxialStepDepth().run(communicator, getDisplayedShapeGraph(), false).completed;
                 } else {
                     analysisCompleted =
-                        SegmentTulipDepth().run(communicator, getDisplayedShapeGraph(), false);
+                        SegmentTulipDepth().run(communicator, getDisplayedShapeGraph(), false).completed;
                 }
             }
             // REPLACES:
@@ -330,45 +331,45 @@ bool MetaGraph::analyseGraph(Communicator *communicator, Options options,
         } else if (options.point_depth_selection == 2) {
             if (m_view_class & VIEWVGA) {
                 analysisCompleted =
-                    VGAMetricDepth().run(communicator, getDisplayedPointMap(), false);
+                    VGAMetricDepth().run(communicator, getDisplayedPointMap(), false).completed;
             } else if (m_view_class & VIEWAXIAL && getDisplayedShapeGraph().isSegmentMap()) {
                 analysisCompleted =
-                    SegmentMetricPD().run(communicator, getDisplayedShapeGraph(), false);
+                    SegmentMetricPD().run(communicator, getDisplayedShapeGraph(), false).completed;
             }
         } else if (options.point_depth_selection == 3) {
-            analysisCompleted = VGAAngularDepth().run(communicator, getDisplayedPointMap(), false);
+            analysisCompleted = VGAAngularDepth().run(communicator, getDisplayedPointMap(), false).completed;
         } else if (options.point_depth_selection == 4) {
             if (m_view_class & VIEWVGA) {
                 getDisplayedPointMap().binDisplay(communicator);
             } else if (m_view_class & VIEWAXIAL && getDisplayedShapeGraph().isSegmentMap()) {
                 analysisCompleted =
-                    SegmentTopologicalPD().run(communicator, getDisplayedShapeGraph(), false);
+                    SegmentTopologicalPD().run(communicator, getDisplayedShapeGraph(), false).completed;
             }
         } else if (options.output_type == Options::OUTPUT_ISOVIST) {
             auto shapes = getShownDrawingFilesAsShapes();
             analysisCompleted =
-                VGAIsovist(shapes).run(communicator, getDisplayedPointMap(), simple_version);
+                VGAIsovist(shapes).run(communicator, getDisplayedPointMap(), simple_version).completed;
         } else if (options.output_type == Options::OUTPUT_VISUAL) {
             bool localResult = true;
             bool globalResult = true;
             if (options.local) {
                 localResult = VGAVisualLocal(options.gates_only)
-                                  .run(communicator, getDisplayedPointMap(), simple_version);
+                                  .run(communicator, getDisplayedPointMap(), simple_version).completed;
             }
             if (options.global) {
                 globalResult = VGAVisualGlobal(options.radius, options.gates_only)
-                                   .run(communicator, getDisplayedPointMap(), simple_version);
+                                   .run(communicator, getDisplayedPointMap(), simple_version).completed;
             }
             analysisCompleted = globalResult & localResult;
         } else if (options.output_type == Options::OUTPUT_METRIC) {
             analysisCompleted = VGAMetric(options.radius, options.gates_only)
-                                    .run(communicator, getDisplayedPointMap(), simple_version);
+                                    .run(communicator, getDisplayedPointMap(), simple_version).completed;
         } else if (options.output_type == Options::OUTPUT_ANGULAR) {
             analysisCompleted = VGAAngular(options.radius, options.gates_only)
-                                    .run(communicator, getDisplayedPointMap(), simple_version);
+                                    .run(communicator, getDisplayedPointMap(), simple_version).completed;
         } else if (options.output_type == Options::OUTPUT_THRU_VISION) {
             analysisCompleted =
-                VGAThroughVision().run(communicator, getDisplayedPointMap(), simple_version);
+                VGAThroughVision().run(communicator, getDisplayedPointMap(), simple_version).completed;
         }
     } catch (Communicator::CancelledException) {
         analysisCompleted = false;
@@ -506,9 +507,60 @@ int MetaGraph::makeIsovist(Communicator *communicator, const Point2f &p, double 
         setViewClass(SHOWSHAPETOP);
         AttributeTable &table = map.getAttributeTable();
         AttributeRow &row = table.getRow(AttributeKey(polyref));
-        iso.setData(table, row, simple_version);
+        setIsovistData(iso, table, row, simple_version);
     }
     return isovistMade;
+}
+
+std::set<std::string> MetaGraph::setIsovistData(Isovist &isovist, AttributeTable &table,
+                                                 AttributeRow &row, bool simple_version) {
+    std::set<std::string> newColumns;
+    auto [centroid, area] = isovist.getCentroidArea();
+    auto [driftmag, driftang] = isovist.getDriftData();
+    double perimeter = isovist.getPerimeter();
+
+    std::string colText = "Isovist Area";
+    int col = table.getOrInsertColumn(colText);
+    newColumns.insert(colText);
+    row.setValue(col, float(area));
+
+    if (!simple_version) {
+        colText = "Isovist Compactness";
+        col = table.getOrInsertColumn(colText);
+        newColumns.insert(colText);
+        row.setValue(col, float(4.0 * M_PI * area / (perimeter * perimeter)));
+
+        colText = "Isovist Drift Angle";
+        col = table.getOrInsertColumn(colText);
+        newColumns.insert(colText);
+        row.setValue(col, float(180.0 * driftang / M_PI));
+
+        colText = "Isovist Drift Magnitude";
+        col = table.getOrInsertColumn(colText);
+        newColumns.insert(colText);
+        row.setValue(col, float(driftmag));
+
+        colText = "Isovist Min Radial";
+        col = table.getOrInsertColumn(colText);
+        newColumns.insert(colText);
+        row.setValue(col, float(isovist.getMinRadial()));
+
+        colText = "Isovist Max Radial";
+        col = table.getOrInsertColumn(colText);
+        newColumns.insert(colText);
+        row.setValue(col, float(isovist.getMaxRadial()));
+
+        colText = "Isovist Occlusivity";
+        col = table.getOrInsertColumn(colText);
+        newColumns.insert(colText);
+        row.setValue(col, float(isovist.getOccludedPerimeter()));
+
+        colText = "Isovist Perimeter";
+        col = table.getOrInsertColumn(colText);
+        newColumns.insert(colText);
+        row.setValue(col, float(perimeter));
+    }
+    return newColumns;
 }
 
 static std::pair<double, double> startendangle(Point2f vec, double fov) {
@@ -583,7 +635,7 @@ int MetaGraph::makeIsovistPath(Communicator *communicator, double fov, bool simp
                     isovists->getAllShapes()[polyref].setCentroid(start);
                     AttributeTable &table = isovists->getAttributeTable();
                     AttributeRow &row = table.getRow(AttributeKey(polyref));
-                    iso.setData(table, row, simple_version);
+                    setIsovistData(iso, table, row, simple_version);
                 } else {
                     for (size_t i = 0; i < path.m_points.size() - 1; i++) {
                         Line li = Line(path.m_points[i], path.m_points[i + 1]);
@@ -597,7 +649,7 @@ int MetaGraph::makeIsovistPath(Communicator *communicator, double fov, bool simp
                         isovists->getAllShapes().find(polyref)->second.setCentroid(start);
                         AttributeTable &table = isovists->getAttributeTable();
                         AttributeRow &row = table.getRow(AttributeKey(polyref));
-                        iso.setData(table, row, simple_version);
+                        setIsovistData(iso, table, row, simple_version);
                     }
                 }
             }
@@ -1252,7 +1304,7 @@ bool MetaGraph::analyseAxial(Communicator *communicator, Options options,
     try {
         analysisCompleted = AxialIntegration(options.radius_set, options.weighted_measure_col,
                                              options.choice, options.fulloutput, options.local)
-                                .run(communicator, getDisplayedShapeGraph(), false);
+                                .run(communicator, getDisplayedShapeGraph(), false).completed;
     } catch (Communicator::CancelledException) {
         analysisCompleted = false;
     }
@@ -1273,7 +1325,7 @@ bool MetaGraph::analyseSegmentsTulip(Communicator *communicator,
         analysisCompleted =
             SegmentTulip(options.radius_set, options.sel_only, options.tulip_bins,
                          options.weighted_measure_col, options.radius_type, options.choice)
-                .run(communicator, getDisplayedShapeGraph(), false);
+                .run(communicator, getDisplayedShapeGraph(), false).completed;
     } catch (Communicator::CancelledException) {
         analysisCompleted = false;
     }
@@ -1292,7 +1344,7 @@ bool MetaGraph::analyseSegmentsAngular(Communicator *communicator,
 
     try {
         analysisCompleted =
-            SegmentAngular(options.radius_set).run(communicator, getDisplayedShapeGraph(), false);
+            SegmentAngular(options.radius_set).run(communicator, getDisplayedShapeGraph(), false).completed;
     } catch (Communicator::CancelledException) {
         analysisCompleted = false;
     }
@@ -1315,11 +1367,11 @@ bool MetaGraph::analyseTopoMetMultipleRadii(
         for (size_t r = 0; r < options.radius_set.size(); r++) {
             if (options.output_type == 0) {
                 if (!SegmentTopological(options.radius, options.sel_only)
-                         .run(communicator, getDisplayedShapeGraph(), false))
+                         .run(communicator, getDisplayedShapeGraph(), false).completed)
                     analysisCompleted = false;
             } else {
                 if (!SegmentMetric(options.radius, options.sel_only)
-                         .run(communicator, getDisplayedShapeGraph(), false))
+                         .run(communicator, getDisplayedShapeGraph(), false).completed)
                     analysisCompleted = false;
             }
         }
@@ -1343,10 +1395,10 @@ bool MetaGraph::analyseTopoMet(Communicator *communicator,
         // note: "output_type" reused for analysis type (either 0 = topological or 1 = metric)
         if (options.output_type == 0) {
             analysisCompleted = SegmentTopological(options.radius, options.sel_only)
-                                    .run(communicator, getDisplayedShapeGraph(), false);
+                                    .run(communicator, getDisplayedShapeGraph(), false).completed;
         } else {
             analysisCompleted = SegmentMetric(options.radius, options.sel_only)
-                                    .run(communicator, getDisplayedShapeGraph(), false);
+                                    .run(communicator, getDisplayedShapeGraph(), false).completed;
         }
     } catch (Communicator::CancelledException) {
         analysisCompleted = false;
@@ -2085,7 +2137,7 @@ bool MetaGraph::analyseThruVision(Communicator *comm, int gatelayer) {
     }
 
     try {
-        analysisCompleted = VGAThroughVision().run(comm, getDisplayedPointMap(), false);
+        analysisCompleted = VGAThroughVision().run(comm, getDisplayedPointMap(), false).completed;
     } catch (Communicator::CancelledException) {
         analysisCompleted = false;
     }

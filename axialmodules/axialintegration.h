@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,10 @@ class AxialIntegration : IAxial {
 
   public:
     std::string getAnalysisName() const override { return "Angular Analysis"; }
-    bool run(Communicator *, ShapeGraph &map, bool) override;
+
+    AnalysisResult run(Communicator *,
+                       ShapeGraph &map,
+                       bool) override;
     AxialIntegration(std::set<double> radius_set, int weighted_measure_col, bool choice,
                      bool fulloutput, bool local)
         : m_radius_set(radius_set), m_weighted_measure_col(weighted_measure_col), m_choice(choice),

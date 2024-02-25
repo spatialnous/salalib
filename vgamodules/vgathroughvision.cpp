@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,17 +19,19 @@
 #include "salalib/vgamodules/vgathroughvision.h"
 #include "salalib/agents/agenthelpers.h"
 
-#include "genlib/stringutils.h"
-
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes
 
-bool VGAThroughVision::run(Communicator *comm, PointMap &map, bool) {
+AnalysisResult VGAThroughVision::run(Communicator *comm,
+                                     PointMap &map,
+                                     bool) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
     }
+
+    AnalysisResult result{false, std::set<std::string>()};
 
     AttributeTable &attributes = map.getAttributeTable();
 
@@ -89,7 +91,9 @@ bool VGAThroughVision::run(Communicator *comm, PointMap &map, bool) {
         }
     }
 
-    int col = attributes.getOrInsertColumn("Through vision");
+    std::string colText = "Through vision";
+    int col = attributes.getOrInsertColumn(colText);
+    result.newColumns.insert(colText);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         PixelRef pix = iter->getKey().value;
@@ -100,5 +104,7 @@ bool VGAThroughVision::run(Communicator *comm, PointMap &map, bool) {
     map.overrideDisplayedAttribute(-2);
     map.setDisplayedAttribute(col);
 
-    return true;
+    result.completed = true;
+
+    return result;
 }

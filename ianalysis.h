@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Petros Koutsolampros
+// Copyright (C) 2020-2024 Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "salalib/analysisresult.h"
+
 #include "genlib/comm.h"
 
 #include <string>
@@ -23,6 +25,6 @@
 class IAnalysis {
   public:
     virtual std::string getAnalysisName() const = 0;
-    virtual bool run(Communicator *comm) = 0;
+    virtual AnalysisResult run(Communicator *comm) = 0;
     virtual ~IAnalysis() {}
 };

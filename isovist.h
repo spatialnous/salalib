@@ -1,5 +1,6 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
+// Copyright (C) 2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -96,7 +97,12 @@ class Isovist {
     void make(BSPNode *here);
     void drawnode(const Line &li, int tag);
     void addBlock(const Line &li, int tag, double startangle, double endangle);
-    void setData(AttributeTable &table, AttributeRow &row, bool simple_version);
+    std::pair<Point2f, double> getCentroidArea();
+    std::pair<double, double> getDriftData();
+    double getPerimeter() { return m_perimeter; }
+    double getMinRadial() { return m_min_radial; }
+    double getMaxRadial() { return m_max_radial; }
+    double getOccludedPerimeter() { return m_occluded_perimeter; }
     //
     int getClosestLine(BSPNode *root, const Point2f &p);
 };

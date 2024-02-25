@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,15 @@ class VGAIsovist : IVGA {
     VGAIsovist(const std::vector<SalaShape> &boundaryShapes) :
     m_boundaryShapes(boundaryShapes) {}
     std::string getAnalysisName() const override { return "Isovist Analysis"; }
-    bool run(Communicator *comm, PointMap &map, bool simple_version) override;
+    AnalysisResult run(Communicator *comm,
+                       PointMap &map,
+                       bool simple_version) override;
+private:
+    std::vector<std::pair<std::string, int>> createAttributes(AttributeTable &table, bool simple_version);
+    std::set<std::string> setData(Isovist &isovist,
+                                  AttributeRow &row,
+                                  std::vector<std::pair<std::string, int>> cols,
+                                  bool simple_version);
     BSPNode makeBSPtree(Communicator *communicator,
                         const std::vector<SalaShape> &boundaryShapes);
 };

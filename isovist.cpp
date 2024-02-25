@@ -1,5 +1,6 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
+// Copyright (C) 2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -258,7 +259,7 @@ void Isovist::addBlock(const Line &li, int tag, double startangle, double endang
     }
 }
 
-void Isovist::setData(AttributeTable &table, AttributeRow &row, bool simple_version) {
+std::pair<Point2f, double> Isovist::getCentroidArea() {
     // the area / centre of gravity calculation is a duplicate of the SalaPolygon version,
     // included here for general information about the isovist
     double area = 0.0;
@@ -288,35 +289,14 @@ void Isovist::setData(AttributeTable &table, AttributeRow &row, bool simple_vers
         }
     }
     centroid.scale(2.0 / fabs(area));
+    return std::make_pair(centroid, area);
+}
 
+std::pair<double, double> Isovist::getDriftData() {
+    auto [centroid, area] = getCentroidArea();
     Point2f driftvec = centroid - m_centre;
     double driftmag = driftvec.length();
     driftvec.normalise();
     double driftang = driftvec.angle();
-    //
-    int col = table.getOrInsertColumn("Isovist Area");
-    row.setValue(col, float(area));
-
-    if (!simple_version) {
-        col = table.getOrInsertColumn("Isovist Compactness");
-        row.setValue(col, float(4.0 * M_PI * area / (m_perimeter * m_perimeter)));
-
-        col = table.getOrInsertColumn("Isovist Drift Angle");
-        row.setValue(col, float(180.0 * driftang / M_PI));
-
-        col = table.getOrInsertColumn("Isovist Drift Magnitude");
-        row.setValue(col, float(driftmag));
-
-        col = table.getOrInsertColumn("Isovist Min Radial");
-        row.setValue(col, float(m_min_radial));
-
-        col = table.getOrInsertColumn("Isovist Max Radial");
-        row.setValue(col, float(m_max_radial));
-
-        col = table.getOrInsertColumn("Isovist Occlusivity");
-        row.setValue(col, float(m_occluded_perimeter));
-
-        col = table.getOrInsertColumn("Isovist Perimeter");
-        row.setValue(col, float(m_perimeter));
-    }
+    return std::make_pair(driftmag, driftang);
 }

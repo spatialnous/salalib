@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@
 
 #include "salalib/segmmodules/segmhelpers.h"
 
-bool SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
+AnalysisResult SegmentTopologicalPD::run(Communicator *,
+                                         ShapeGraph &map,
+                                         bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    bool retvar = true;
+    AnalysisResult result{false, std::set<std::string>()};
 
     // record axial line refs for topological analysis
     std::vector<int> axialrefs;
@@ -45,6 +47,7 @@ bool SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
     std::string depthcol = prefix + "Step Depth";
 
     attributes.insertOrResetColumn(depthcol.c_str());
+    result.newColumns.insert(depthcol);
 
     std::vector<unsigned int> seen(map.getShapeCount());
     std::vector<TopoMetSegmentRef> audittrail(map.getShapeCount());
@@ -129,5 +132,7 @@ bool SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
 
     map.setDisplayedAttribute(attributes.getColumnIndex(depthcol.c_str()));
 
-    return retvar;
+    result.completed = true;
+
+    return result;
 }

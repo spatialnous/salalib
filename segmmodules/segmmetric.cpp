@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@
 
 #include "genlib/stringutils.h"
 
-bool SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
+AnalysisResult SegmentMetric::run(Communicator *comm,
+                                  ShapeGraph &map,
+                                  bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    bool retvar = true;
+    AnalysisResult result{false, std::set<std::string>()};
 
     time_t atime = 0;
 
@@ -66,13 +68,20 @@ bool SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
     //
     if (!m_sel_only) {
         attributes.insertOrResetColumn(choicecol.c_str());
+        result.newColumns.insert(choicecol);
         attributes.insertOrResetColumn(wchoicecol.c_str());
+        result.newColumns.insert(wchoicecol);
     }
     attributes.insertOrResetColumn(meandepthcol.c_str());
+    result.newColumns.insert(meandepthcol);
     attributes.insertOrResetColumn(wmeandepthcol.c_str());
+    result.newColumns.insert(wmeandepthcol);
     attributes.insertOrResetColumn(totaldcol.c_str());
+    result.newColumns.insert(totaldcol);
     attributes.insertOrResetColumn(totalcol.c_str());
+    result.newColumns.insert(totalcol);
     attributes.insertOrResetColumn(wtotalcol.c_str());
+    result.newColumns.insert(wtotalcol);
     //
     std::vector<unsigned int> seen(map.getShapeCount());
     std::vector<TopoMetSegmentRef> audittrail(map.getShapeCount());
@@ -206,5 +215,5 @@ bool SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
         map.setDisplayedAttribute(attributes.getColumnIndex(meandepthcol.c_str()));
     }
 
-    return retvar;
+    return result;
 }

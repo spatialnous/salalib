@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Petros Koutsolampros
+// Copyright (C) 2018-2024 Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 // Interface to handle different kinds of Axial analysis
 
+#include "salalib/analysisresult.h"
+
 #include "salalib/shapegraph.h"
 
 #include "genlib/comm.h"
@@ -26,6 +28,8 @@
 class IAxial {
   public:
     virtual std::string getAnalysisName() const = 0;
-    virtual bool run(Communicator *comm, ShapeGraph &map, bool simple_version) = 0;
+    virtual AnalysisResult run(Communicator *comm,
+                               ShapeGraph &map,
+                               bool simple_version) = 0;
     virtual ~IAxial() {}
 };

@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,12 +19,13 @@
 #include "salalib/segmmodules/segmangular.h"
 #include "salalib/options.h"
 
-#include "genlib/stringutils.h"
-
-bool SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
+AnalysisResult SegmentAngular::run(Communicator *comm,
+                                   ShapeGraph &map,
+                                   bool) {
+    AnalysisResult result{false, std::set<std::string>()};
 
     if (map.getMapType() != ShapeMap::SEGMENTMAP) {
-        return false;
+        return result;
     }
 
     AttributeTable &attributes = map.getAttributeTable();
@@ -57,10 +58,13 @@ bool SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         std::string radius_text = makeRadiusText(Options::RADIUS_ANGULAR, radius);
         std::string depth_col_text = std::string("Angular Mean Depth") + radius_text;
         attributes.insertOrResetColumn(depth_col_text.c_str());
+        result.newColumns.insert(depth_col_text);
         std::string count_col_text = std::string("Angular Node Count") + radius_text;
         attributes.insertOrResetColumn(count_col_text.c_str());
+        result.newColumns.insert(count_col_text);
         std::string total_col_text = std::string("Angular Total Depth") + radius_text;
         attributes.insertOrResetColumn(total_col_text.c_str());
+        result.newColumns.insert(total_col_text);
     }
 
     for (int radius : radii) {
@@ -175,5 +179,7 @@ bool SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
     map.setDisplayedAttribute(-2); // <- override if it's already showing
     map.setDisplayedAttribute(depth_col.back());
 
-    return true;
+    result.completed = true;
+
+    return result;
 }

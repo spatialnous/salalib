@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,12 +20,17 @@
 
 #include "genlib/stringutils.h"
 
-bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version) {
+AnalysisResult VGAVisualGlobal::run(Communicator *comm,
+                                    PointMap &map,
+                                    bool simple_version) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
     }
+
+    AnalysisResult result{false, std::set<std::string>()};
+
     AttributeTable &attributes = map.getAttributeTable();
 
     int entropy_col = -1, rel_entropy_col = -1, integ_dv_col = -1, integ_pv_col = -1,
@@ -41,24 +46,31 @@ bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version
     if (!simple_version) {
         std::string entropy_col_text = std::string("Visual Entropy") + radius_text;
         entropy_col = attributes.insertOrResetColumn(entropy_col_text.c_str());
+        result.newColumns.insert(entropy_col_text);
     }
 #endif
 
     std::string integ_dv_col_text = std::string("Visual Integration [HH]") + radius_text;
     integ_dv_col = attributes.insertOrResetColumn(integ_dv_col_text.c_str());
+    result.newColumns.insert(integ_dv_col_text);
 
 #ifndef _COMPILE_dX_SIMPLE_VERSION
     if (!simple_version) {
         std::string integ_pv_col_text = std::string("Visual Integration [P-value]") + radius_text;
         integ_pv_col = attributes.insertOrResetColumn(integ_pv_col_text.c_str());
+        result.newColumns.insert(integ_pv_col_text);
         std::string integ_tk_col_text = std::string("Visual Integration [Tekl]") + radius_text;
         integ_tk_col = attributes.insertOrResetColumn(integ_tk_col_text.c_str());
+        result.newColumns.insert(integ_tk_col_text);
         std::string depth_col_text = std::string("Visual Mean Depth") + radius_text;
         depth_col = attributes.insertOrResetColumn(depth_col_text.c_str());
+        result.newColumns.insert(depth_col_text);
         std::string count_col_text = std::string("Visual Node Count") + radius_text;
         count_col = attributes.insertOrResetColumn(count_col_text.c_str());
+        result.newColumns.insert(count_col_text);
         std::string rel_entropy_col_text = std::string("Visual Relativised Entropy") + radius_text;
         rel_entropy_col = attributes.insertOrResetColumn(rel_entropy_col_text.c_str());
+        result.newColumns.insert(rel_entropy_col_text);
     }
 #endif
 
@@ -216,7 +228,9 @@ bool VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version
     }
     map.setDisplayedAttribute(integ_dv_col);
 
-    return true;
+    result.completed = true;
+
+    return result;
 }
 
 void VGAVisualGlobal::extractUnseen(Node &node, PixelRefVector &pixels,

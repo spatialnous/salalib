@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,19 +18,27 @@
 
 #include "salalib/vgamodules/vgametricdepth.h"
 
-#include "genlib/stringutils.h"
+AnalysisResult VGAMetricDepth::run(Communicator *,
+                                   PointMap &map,
+                                   bool) {
 
-bool VGAMetricDepth::run(Communicator *, PointMap &map, bool) {
+    AnalysisResult result{false, std::set<std::string>()};
 
     AttributeTable &attributes = map.getAttributeTable();
 
     // n.b., insert columns sets values to -1 if the column already exists
-    int path_angle_col = attributes.insertOrResetColumn("Metric Step Shortest-Path Angle");
-    int path_length_col = attributes.insertOrResetColumn("Metric Step Shortest-Path Length");
+    std::string colText = "Metric Step Shortest-Path Angle";
+    int path_angle_col = attributes.insertOrResetColumn(colText);
+    result.newColumns.insert(colText);
+    colText = "Metric Step Shortest-Path Length";
+    int path_length_col = attributes.insertOrResetColumn(colText);
+    result.newColumns.insert(colText);
     int dist_col = -1;
     if (map.getSelSet().size() == 1) {
+        colText = "Metric Straight-Line Distance";
         // Note: Euclidean distance is currently only calculated from a single point
-        dist_col = attributes.insertOrResetColumn("Metric Straight-Line Distance");
+        dist_col = attributes.insertOrResetColumn(colText);
+        result.newColumns.insert(colText);
     }
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
@@ -91,5 +99,7 @@ bool VGAMetricDepth::run(Communicator *, PointMap &map, bool) {
     map.setDisplayedAttribute(-2);
     map.setDisplayedAttribute(path_length_col);
 
-    return true;
+    result.completed = true;
+
+    return result;
 }

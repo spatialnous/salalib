@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,13 @@
 
 #include "genlib/stringutils.h"
 
-bool SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
+AnalysisResult SegmentTulip::run(Communicator *comm,
+                                 ShapeGraph &map,
+                                 bool) {
 
+    AnalysisResult result{false, std::set<std::string>()};
     if (map.getMapType() != ShapeMap::SEGMENTMAP) {
-        return false;
+        return result;
     }
 
     // TODO: Understand what these parameters do. They were never truly provided in the original
@@ -125,12 +128,14 @@ bool SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                 std::string choice_col_text = tulip_text + " Choice [Route weight by " +
                                               routeweight_col_text + "]" + radius_text;
                 attributes.insertOrResetColumn(choice_col_text.c_str());
+                result.newColumns.insert(choice_col_text);
                 if (m_weighted_measure_col != -1) {
                     std::string w_choice_col_text = tulip_text + " Choice [[Route weight by " +
                                                     routeweight_col_text + "][" +
                                                     weighting_col_text + " Wgt]]" + radius_text;
 
                     attributes.insertOrResetColumn(w_choice_col_text.c_str());
+                    result.newColumns.insert(w_choice_col_text);
                 }
                 // EFEF*
                 if (weighting_col2 != -1) {
@@ -139,6 +144,7 @@ bool SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                         weighting_col_text + "-" + weighting_col_text2 + " Wgt]]" + radius_text;
 
                     attributes.insertOrResetColumn(w_choice_col_text2.c_str());
+                    result.newColumns.insert(w_choice_col_text2);
                 }
                 //*EFEF
             }
@@ -146,10 +152,12 @@ bool SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
             else { // Normal run // TV
                 std::string choice_col_text = tulip_text + " Choice" + radius_text;
                 attributes.insertOrResetColumn(choice_col_text.c_str());
+                result.newColumns.insert(choice_col_text);
                 if (m_weighted_measure_col != -1) {
                     std::string w_choice_col_text =
                         tulip_text + " Choice [" + weighting_col_text + " Wgt]" + radius_text;
                     attributes.insertOrResetColumn(w_choice_col_text.c_str());
+                    result.newColumns.insert(w_choice_col_text);
                 }
                 // EFEF*
                 if (weighting_col2 != -1) {
@@ -157,6 +165,7 @@ bool SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                                                      "-" + weighting_col_text2 + " Wgt]" +
                                                      radius_text;
                     attributes.insertOrResetColumn(w_choice_col_text2.c_str());
+                    result.newColumns.insert(w_choice_col_text2);
                 }
                 //*EFEF
             }
@@ -186,12 +195,18 @@ bool SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                                             radius_text;
 
             attributes.insertOrResetColumn(integ_col_text.c_str());
+            result.newColumns.insert(integ_col_text);
             attributes.insertOrResetColumn(count_col_text.c_str());
+            result.newColumns.insert(count_col_text);
             attributes.insertOrResetColumn(td_col_text.c_str());
+            result.newColumns.insert(td_col_text);
             if (m_weighted_measure_col != -1) {
                 attributes.insertOrResetColumn(w_integ_col_text.c_str());
+                result.newColumns.insert(w_integ_col_text);
                 attributes.insertOrResetColumn(w_td_text.c_str());
+                result.newColumns.insert(w_td_text);
                 attributes.insertOrResetColumn(total_weight_text.c_str());
+                result.newColumns.insert(total_weight_text);
             }
         }
         //*EF routeweight
@@ -215,12 +230,18 @@ bool SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                 tulip_text + " Total " + weighting_col_text + radius_text;
 
             attributes.insertOrResetColumn(integ_col_text.c_str());
+            result.newColumns.insert(integ_col_text);
             attributes.insertOrResetColumn(count_col_text.c_str());
+            result.newColumns.insert(count_col_text);
             attributes.insertOrResetColumn(td_col_text.c_str());
+            result.newColumns.insert(td_col_text);
             if (m_weighted_measure_col != -1) {
                 attributes.insertOrResetColumn(w_integ_col_text.c_str());
+                result.newColumns.insert(w_integ_col_text);
                 attributes.insertOrResetColumn(w_td_text.c_str());
+                result.newColumns.insert(w_td_text);
                 attributes.insertOrResetColumn(total_weight_text.c_str());
+                result.newColumns.insert(total_weight_text);
             }
         }
     }
@@ -774,5 +795,7 @@ bool SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
     } else {
         map.setDisplayedAttribute(td_col.back());
     }
-    return processed_rows > 0;
+    result.completed = processed_rows > 0;
+
+    return result;
 }

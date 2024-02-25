@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,12 @@
 #include "salalib/vgamodules/vgaisovist.h"
 #include "salalib/isovist.h"
 
-bool VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
+AnalysisResult VGAIsovist::run(Communicator *comm,
+                               PointMap &map,
+                               bool simple_version) {
     map.m_hasIsovistAnalysis = false;
+
+    AnalysisResult result{false, std::set<std::string>()};
 
     // note, BSP tree plays with comm counting...
     if (comm) {
@@ -40,6 +44,10 @@ bool VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
     }
     int count = 0;
+    auto cols = createAttributes(attributes, simple_version);
+    for (auto col: cols) {
+        result.newColumns.insert(col.first);
+    }
 
     for (size_t i = 0; i < map.getCols(); i++) {
         for (size_t j = 0; j < map.getRows(); j++) {
@@ -53,7 +61,7 @@ bool VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
                 isovist.makeit(&bspRoot, map.depixelate(curs), map.getRegion(), 0, 0);
 
                 AttributeRow &row = attributes.getRow(AttributeKey(curs));
-                isovist.setData(attributes, row, simple_version);
+                setData(isovist, row, cols, simple_version);
                 Node &node = map.getPoint(curs).getNode();
                 std::vector<PixelRef> *occ = node.m_occlusion_bins;
                 for (size_t k = 0; k < 32; k++) {
@@ -85,7 +93,86 @@ bool VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
     }
     map.m_hasIsovistAnalysis = true;
 
-    return true;
+    result.completed = true;
+
+    return result;
+}
+
+std::vector<std::pair<std::string, int>> VGAIsovist::createAttributes(AttributeTable &table,
+                                                                      bool simple_version) {
+    std::vector<std::pair<std::string, int>> cols;
+
+    std::string colText = "Isovist Area";
+    int col = table.getOrInsertColumn(colText);
+    cols.emplace_back(colText, col);
+
+    if (!simple_version) {
+        colText = "Isovist Compactness";
+        col = table.getOrInsertColumn(colText);
+        cols.emplace_back(colText, col);
+
+        colText = "Isovist Drift Angle";
+        col = table.getOrInsertColumn(colText);
+        cols.emplace_back(colText, col);
+
+        colText = "Isovist Drift Magnitude";
+        col = table.getOrInsertColumn(colText);
+        cols.emplace_back(colText, col);
+
+        colText = "Isovist Min Radial";
+        col = table.getOrInsertColumn(colText);
+        cols.emplace_back(colText, col);
+
+        colText = "Isovist Max Radial";
+        col = table.getOrInsertColumn(colText);
+        cols.emplace_back(colText, col);
+
+        colText = "Isovist Occlusivity";
+        col = table.getOrInsertColumn(colText);
+        cols.emplace_back(colText, col);
+
+        colText = "Isovist Perimeter";
+        col = table.getOrInsertColumn(colText);
+        cols.emplace_back(colText, col);
+    }
+    return cols;
+}
+
+std::set<std::string> VGAIsovist::setData(Isovist &isovist,
+                                          AttributeRow &row,
+                                          std::vector<std::pair<std::string, int>> cols,
+                                          bool simple_version) {
+    std::set<std::string> newColumns;
+    auto [centroid, area] = isovist.getCentroidArea();
+    auto [driftmag, driftang] = isovist.getDriftData();
+    double perimeter = isovist.getPerimeter();
+
+    auto colIt = cols.begin();
+    row.setValue(colIt->second, float(area));
+
+    if (!simple_version) {
+        ++colIt;
+        row.setValue(colIt->second, float(4.0 * M_PI * area / (perimeter * perimeter)));
+
+        ++colIt;
+        row.setValue(colIt->second, float(180.0 * driftang / M_PI));
+
+        ++colIt;
+        row.setValue(colIt->second, float(driftmag));
+
+        ++colIt;
+        row.setValue(colIt->second, float(isovist.getMinRadial()));
+
+        ++colIt;
+        row.setValue(colIt->second, float(isovist.getMaxRadial()));
+
+        ++colIt;
+        row.setValue(colIt->second, float(isovist.getOccludedPerimeter()));
+
+        ++colIt;
+        row.setValue(colIt->second, float(perimeter));
+    }
+    return newColumns;
 }
 
 BSPNode VGAIsovist::makeBSPtree(Communicator *communicator,

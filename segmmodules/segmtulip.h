@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,9 @@ class SegmentTulip : ISegment {
 
   public:
     std::string getAnalysisName() const override { return "Tulip Analysis"; }
-    bool run(Communicator *comm, ShapeGraph &map, bool) override;
+    AnalysisResult run(Communicator *comm,
+                       ShapeGraph &map,
+                       bool) override;
     SegmentTulip(std::set<double> radius_set, bool sel_only, int tulip_bins,
                  int weighted_measure_col, int radius_type, bool choice, bool interactive = false,
                  int weighted_measure_col2 = -1, int routeweight_col = -1)

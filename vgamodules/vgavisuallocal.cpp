@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,29 @@
 
 #include "salalib/vgamodules/vgavisuallocal.h"
 
-#include "genlib/stringutils.h"
-
-bool VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simple_version) {
+AnalysisResult VGAVisualLocal::run(Communicator *comm,
+                                   PointMap &map,
+                                   bool simple_version) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
     }
 
+    AnalysisResult result{false, std::set<std::string>()};
+
+    std::string colText = "";
     int cluster_col = -1, control_col = -1, controllability_col = -1;
     if (!simple_version) {
-        cluster_col = map.getAttributeTable().insertOrResetColumn("Visual Clustering Coefficient");
-        control_col = map.getAttributeTable().insertOrResetColumn("Visual Control");
-        controllability_col = map.getAttributeTable().insertOrResetColumn("Visual Controllability");
+        colText = "Visual Clustering Coefficient";
+        cluster_col = map.getAttributeTable().insertOrResetColumn(colText);
+        result.newColumns.insert(colText);
+        colText = "Visual Control";
+        control_col = map.getAttributeTable().insertOrResetColumn(colText);
+        result.newColumns.insert(colText);
+        colText = "Visual Controllability";
+        controllability_col = map.getAttributeTable().insertOrResetColumn(colText);
+        result.newColumns.insert(colText);
     }
 
     int count = 0;
@@ -115,5 +124,7 @@ bool VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simple_version)
         map.setDisplayedAttribute(cluster_col);
 #endif
 
-    return true;
+    result.completed = true;
+
+    return result;
 }

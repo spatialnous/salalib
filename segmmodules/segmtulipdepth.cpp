@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,12 +20,18 @@
 
 // revised to use tulip bins for faster analysis of large spaces
 
-bool SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
+AnalysisResult SegmentTulipDepth::run(Communicator *,
+                                      ShapeGraph &map,
+                                      bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 
+    AnalysisResult result{false, std::set<std::string>()};
+
     std::string stepdepth_col_text = "Angular Step Depth";
+
     int stepdepth_col = attributes.insertOrResetColumn(stepdepth_col_text.c_str());
+    result.newColumns.insert(stepdepth_col_text);
 
     // The original code set tulip_bins to 1024, divided by two and added one
     // in order to duplicate previous code (using a semicircle of tulip bins)
@@ -108,5 +114,7 @@ bool SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
     map.setDisplayedAttribute(-2); // <- override if it's already showing
     map.setDisplayedAttribute(stepdepth_col);
 
-    return true;
+    result.completed = true;
+
+    return result;
 }

@@ -1,7 +1,7 @@
 // sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
-// Copyright (C) 2017-2018, Petros Koutsolampros
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,14 +19,18 @@
 #include "salalib/axialmodules/axialstepdepth.h"
 
 #include "genlib/pflipper.h"
-#include "genlib/stringutils.h"
 
-bool AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
+AnalysisResult AxialStepDepth::run(Communicator *,
+                                   ShapeGraph &map,
+                                   bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 
+    AnalysisResult result{false, std::set<std::string>()};
+
     std::string stepdepth_col_text = std::string("Step Depth");
     int stepdepth_col = attributes.insertOrResetColumn(stepdepth_col_text.c_str());
+    result.newColumns.insert(stepdepth_col_text);
 
     bool *covered = new bool[map.getConnections().size()];
     for (size_t i = 0; i < map.getConnections().size(); i++) {
@@ -60,5 +64,7 @@ bool AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
     map.setDisplayedAttribute(-1); // <- override if it's already showing
     map.setDisplayedAttribute(stepdepth_col);
 
-    return true;
+    result.completed = true;
+
+    return result;
 }

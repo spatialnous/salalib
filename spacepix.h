@@ -23,9 +23,7 @@
 #include "salalib/pixelref.h"
 
 #include "genlib/p2dpoly.h"
-#include "genlib/pafmath.h"
 #include "genlib/simplematrix.h"
-#include "genlib/stringutils.h"
 
 #include <deque>
 #include <map>

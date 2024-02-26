@@ -135,7 +135,9 @@ BSPTree::makeLines(Communicator *, time_t, const std::vector<TaggedLine> &lines,
     if (lines.size() > 3) {
         chosen = BSPTree::pickMidpointLine(lines, base->m_parent);
     } else {
-        chosen = pafrand() % lines.size();
+        // TODO: This was originally `chosen = pafrand() % lines.size();`, but was making the
+        // isovists non-reproducible. Just pick the first line for the moment. Figure out later
+        chosen = 0;
     }
 
     Line chosenLine = lines[chosen].line;

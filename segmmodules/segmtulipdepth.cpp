@@ -35,7 +35,7 @@ AnalysisResult SegmentTulipDepth::run(Communicator *,
 
     // The original code set tulip_bins to 1024, divided by two and added one
     // in order to duplicate previous code (using a semicircle of tulip bins)
-    size_t tulip_bins = 513;
+    size_t tulip_bins = (m_tulip_bins / 2) + 1;
 
     std::vector<bool> covered(map.getConnections().size());
     for (size_t i = 0; i < map.getConnections().size(); i++) {

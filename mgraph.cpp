@@ -323,7 +323,7 @@ bool MetaGraph::analyseGraph(Communicator *communicator, Options options,
                         AxialStepDepth().run(communicator, getDisplayedShapeGraph(), false).completed;
                 } else {
                     analysisCompleted =
-                        SegmentTulipDepth().run(communicator, getDisplayedShapeGraph(), false).completed;
+                        SegmentTulipDepth(1024).run(communicator, getDisplayedShapeGraph(), false).completed;
                 }
             }
             // REPLACES:

@@ -24,7 +24,7 @@ AnalysisResult VGAIsovist::run(Communicator *comm,
                                bool simple_version) {
     map.m_hasIsovistAnalysis = false;
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     // note, BSP tree plays with comm counting...
     if (comm) {
@@ -46,7 +46,7 @@ AnalysisResult VGAIsovist::run(Communicator *comm,
     int count = 0;
     auto cols = createAttributes(attributes, simple_version);
     for (auto col: cols) {
-        result.newColumns.insert(col.first);
+        result.addColumn(col.first);
     }
 
     for (size_t i = 0; i < map.getCols(); i++) {

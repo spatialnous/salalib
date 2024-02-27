@@ -26,12 +26,12 @@ AnalysisResult SegmentTulipDepth::run(Communicator *,
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     std::string stepdepth_col_text = "Angular Step Depth";
 
     int stepdepth_col = attributes.insertOrResetColumn(stepdepth_col_text.c_str());
-    result.newColumns.insert(stepdepth_col_text);
+    result.addColumn(stepdepth_col_text);
 
     // The original code set tulip_bins to 1024, divided by two and added one
     // in order to duplicate previous code (using a semicircle of tulip bins)

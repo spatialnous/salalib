@@ -28,7 +28,7 @@ AnalysisResult SegmentTopological::run(Communicator *comm,
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     time_t atime = 0;
 
@@ -70,20 +70,20 @@ AnalysisResult SegmentTopological::run(Communicator *comm,
     //
     if (!m_sel_only) {
         attributes.insertOrResetColumn(choicecol.c_str());
-        result.newColumns.insert(choicecol);
+        result.addColumn(choicecol);
         attributes.insertOrResetColumn(wchoicecol.c_str());
-        result.newColumns.insert(wchoicecol);
+        result.addColumn(wchoicecol);
     }
     attributes.insertOrResetColumn(meandepthcol.c_str());
-    result.newColumns.insert(meandepthcol);
+    result.addColumn(meandepthcol);
     attributes.insertOrResetColumn(wmeandepthcol.c_str());
-    result.newColumns.insert(wmeandepthcol);
+    result.addColumn(wmeandepthcol);
     attributes.insertOrResetColumn(totaldcol.c_str());
-    result.newColumns.insert(totaldcol);
+    result.addColumn(totaldcol);
     attributes.insertOrResetColumn(totalcol.c_str());
-    result.newColumns.insert(totalcol);
+    result.addColumn(totalcol);
     attributes.insertOrResetColumn(wtotalcol.c_str());
-    result.newColumns.insert(wtotalcol);
+    result.addColumn(wtotalcol);
     //
     std::vector<unsigned int> seen(map.getShapeCount());
     std::vector<TopoMetSegmentRef> audittrail(map.getShapeCount());

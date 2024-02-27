@@ -29,7 +29,7 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm,
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
     }
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     AttributeTable &attributes = map.getAttributeTable();
 
@@ -46,31 +46,31 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm,
     if (!simple_version) {
         std::string entropy_col_text = std::string("Visual Entropy") + radius_text;
         entropy_col = attributes.insertOrResetColumn(entropy_col_text.c_str());
-        result.newColumns.insert(entropy_col_text);
+        result.addColumn(entropy_col_text);
     }
 #endif
 
     std::string integ_dv_col_text = std::string("Visual Integration [HH]") + radius_text;
     integ_dv_col = attributes.insertOrResetColumn(integ_dv_col_text.c_str());
-    result.newColumns.insert(integ_dv_col_text);
+    result.addColumn(integ_dv_col_text);
 
 #ifndef _COMPILE_dX_SIMPLE_VERSION
     if (!simple_version) {
         std::string integ_pv_col_text = std::string("Visual Integration [P-value]") + radius_text;
         integ_pv_col = attributes.insertOrResetColumn(integ_pv_col_text.c_str());
-        result.newColumns.insert(integ_pv_col_text);
+        result.addColumn(integ_pv_col_text);
         std::string integ_tk_col_text = std::string("Visual Integration [Tekl]") + radius_text;
         integ_tk_col = attributes.insertOrResetColumn(integ_tk_col_text.c_str());
-        result.newColumns.insert(integ_tk_col_text);
+        result.addColumn(integ_tk_col_text);
         std::string depth_col_text = std::string("Visual Mean Depth") + radius_text;
         depth_col = attributes.insertOrResetColumn(depth_col_text.c_str());
-        result.newColumns.insert(depth_col_text);
+        result.addColumn(depth_col_text);
         std::string count_col_text = std::string("Visual Node Count") + radius_text;
         count_col = attributes.insertOrResetColumn(count_col_text.c_str());
-        result.newColumns.insert(count_col_text);
+        result.addColumn(count_col_text);
         std::string rel_entropy_col_text = std::string("Visual Relativised Entropy") + radius_text;
         rel_entropy_col = attributes.insertOrResetColumn(rel_entropy_col_text.c_str());
-        result.newColumns.insert(rel_entropy_col_text);
+        result.addColumn(rel_entropy_col_text);
     }
 #endif
 

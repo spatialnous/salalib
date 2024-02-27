@@ -27,20 +27,20 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm,
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
     }
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     std::string colText = "";
     int cluster_col = -1, control_col = -1, controllability_col = -1;
     if (!simple_version) {
         colText = "Visual Clustering Coefficient";
         cluster_col = map.getAttributeTable().insertOrResetColumn(colText);
-        result.newColumns.insert(colText);
+        result.addColumn(colText);
         colText = "Visual Control";
         control_col = map.getAttributeTable().insertOrResetColumn(colText);
-        result.newColumns.insert(colText);
+        result.addColumn(colText);
         colText = "Visual Controllability";
         controllability_col = map.getAttributeTable().insertOrResetColumn(colText);
-        result.newColumns.insert(colText);
+        result.addColumn(colText);
     }
 
     int count = 0;

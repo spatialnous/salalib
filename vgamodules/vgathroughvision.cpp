@@ -31,7 +31,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm,
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
     }
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     AttributeTable &attributes = map.getAttributeTable();
 
@@ -93,7 +93,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm,
 
     std::string colText = "Through vision";
     int col = attributes.getOrInsertColumn(colText);
-    result.newColumns.insert(colText);
+    result.addColumn(colText);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         PixelRef pix = iter->getKey().value;

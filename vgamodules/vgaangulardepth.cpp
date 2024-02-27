@@ -22,14 +22,14 @@ AnalysisResult VGAAngularDepth::run(Communicator *,
                                     PointMap &map,
                                     bool) {
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     AttributeTable &attributes = map.getAttributeTable();
 
     // n.b., insert columns sets values to -1 if the column already exists
     std::string colText = "Angular Step Depth";
     int path_angle_col = attributes.insertOrResetColumn(colText);
-    result.newColumns.insert(colText);
+    result.addColumn(colText);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         PixelRef pix = iter->getKey().value;

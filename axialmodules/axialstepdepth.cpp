@@ -26,11 +26,11 @@ AnalysisResult AxialStepDepth::run(Communicator *,
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     std::string stepdepth_col_text = std::string("Step Depth");
     int stepdepth_col = attributes.insertOrResetColumn(stepdepth_col_text.c_str());
-    result.newColumns.insert(stepdepth_col_text);
+    result.addColumn(stepdepth_col_text);
 
     bool *covered = new bool[map.getConnections().size()];
     for (size_t i = 0; i < map.getConnections().size(); i++) {

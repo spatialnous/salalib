@@ -15,10 +15,19 @@
 
 #pragma once
 
-#include <set>
+#include <vector>
 #include <string>
+#include <algorithm>
 
 struct AnalysisResult {
-    bool completed;
-    std::set<std::string> newColumns;
+    bool completed = false;
+    void addColumn(std::string column) {
+        auto colIt = std::find(newColumns.begin(), newColumns.end(), column);
+        if (colIt == newColumns.end()) {
+            newColumns.push_back(column);
+        }
+    }
+    std::vector<std::string> &getColumns() { return newColumns; };
+private:
+    std::vector<std::string> newColumns = std::vector<std::string>();
 };

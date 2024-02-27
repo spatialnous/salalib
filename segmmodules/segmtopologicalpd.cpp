@@ -26,7 +26,7 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *,
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     // record axial line refs for topological analysis
     std::vector<int> axialrefs;
@@ -47,7 +47,7 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *,
     std::string depthcol = prefix + "Step Depth";
 
     attributes.insertOrResetColumn(depthcol.c_str());
-    result.newColumns.insert(depthcol);
+    result.addColumn(depthcol);
 
     std::vector<unsigned int> seen(map.getShapeCount());
     std::vector<TopoMetSegmentRef> audittrail(map.getShapeCount());

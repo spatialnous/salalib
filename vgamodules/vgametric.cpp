@@ -32,7 +32,7 @@ AnalysisResult VGAMetric::run(Communicator *comm,
         comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
     }
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     std::string radius_text;
     if (m_radius != -1.0) {
@@ -49,16 +49,16 @@ AnalysisResult VGAMetric::run(Communicator *comm,
     // n.b. these must be entered in alphabetical order to preserve col indexing:
     std::string mspa_col_text = std::string("Metric Mean Shortest-Path Angle") + radius_text;
     int mspa_col = attributes.insertOrResetColumn(mspa_col_text.c_str());
-    result.newColumns.insert(mspa_col_text);
+    result.addColumn(mspa_col_text);
     std::string mspl_col_text = std::string("Metric Mean Shortest-Path Distance") + radius_text;
     int mspl_col = attributes.insertOrResetColumn(mspl_col_text.c_str());
-    result.newColumns.insert(mspl_col_text);
+    result.addColumn(mspl_col_text);
     std::string dist_col_text = std::string("Metric Mean Straight-Line Distance") + radius_text;
     int dist_col = attributes.insertOrResetColumn(dist_col_text.c_str());
-    result.newColumns.insert(dist_col_text);
+    result.addColumn(dist_col_text);
     std::string count_col_text = std::string("Metric Node Count") + radius_text;
     int count_col = attributes.insertOrResetColumn(count_col_text.c_str());
-    result.newColumns.insert(count_col_text);
+    result.addColumn(count_col_text);
 
     int count = 0;
 

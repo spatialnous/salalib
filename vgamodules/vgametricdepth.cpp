@@ -22,23 +22,23 @@ AnalysisResult VGAMetricDepth::run(Communicator *,
                                    PointMap &map,
                                    bool) {
 
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     AttributeTable &attributes = map.getAttributeTable();
 
     // n.b., insert columns sets values to -1 if the column already exists
     std::string colText = "Metric Step Shortest-Path Angle";
     int path_angle_col = attributes.insertOrResetColumn(colText);
-    result.newColumns.insert(colText);
+    result.addColumn(colText);
     colText = "Metric Step Shortest-Path Length";
     int path_length_col = attributes.insertOrResetColumn(colText);
-    result.newColumns.insert(colText);
+    result.addColumn(colText);
     int dist_col = -1;
     if (map.getSelSet().size() == 1) {
         colText = "Metric Straight-Line Distance";
         // Note: Euclidean distance is currently only calculated from a single point
         dist_col = attributes.insertOrResetColumn(colText);
-        result.newColumns.insert(colText);
+        result.addColumn(colText);
     }
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {

@@ -22,7 +22,7 @@
 AnalysisResult SegmentAngular::run(Communicator *comm,
                                    ShapeGraph &map,
                                    bool) {
-    AnalysisResult result{false, std::set<std::string>()};
+    AnalysisResult result;
 
     if (map.getMapType() != ShapeMap::SEGMENTMAP) {
         return result;
@@ -58,13 +58,13 @@ AnalysisResult SegmentAngular::run(Communicator *comm,
         std::string radius_text = makeRadiusText(Options::RADIUS_ANGULAR, radius);
         std::string depth_col_text = std::string("Angular Mean Depth") + radius_text;
         attributes.insertOrResetColumn(depth_col_text.c_str());
-        result.newColumns.insert(depth_col_text);
+        result.addColumn(depth_col_text);
         std::string count_col_text = std::string("Angular Node Count") + radius_text;
         attributes.insertOrResetColumn(count_col_text.c_str());
-        result.newColumns.insert(count_col_text);
+        result.addColumn(count_col_text);
         std::string total_col_text = std::string("Angular Total Depth") + radius_text;
         attributes.insertOrResetColumn(total_col_text.c_str());
-        result.newColumns.insert(total_col_text);
+        result.addColumn(total_col_text);
     }
 
     for (int radius : radii) {

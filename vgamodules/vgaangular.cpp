@@ -47,17 +47,17 @@ AnalysisResult VGAAngular::run(Communicator *comm,
     // n.b. these must be entered in alphabetical order to preserve col indexing:
     std::string mean_depth_col_text = std::string("Angular Mean Depth") + radius_text;
     int mean_depth_col = attributes.getOrInsertColumn(mean_depth_col_text.c_str());
-    result.addColumn(mean_depth_col_text);
+    result.addAttribute(mean_depth_col_text);
     std::string total_detph_col_text = std::string("Angular Total Depth") + radius_text;
     int total_depth_col = attributes.getOrInsertColumn(total_detph_col_text.c_str());
-    result.addColumn(total_detph_col_text);
+    result.addAttribute(total_detph_col_text);
     std::string count_col_text = std::string("Angular Node Count") + radius_text;
     int count_col = attributes.getOrInsertColumn(count_col_text.c_str());
-    result.addColumn(count_col_text);
+    result.addAttribute(count_col_text);
 
     // TODO: Binary compatibility. Remove in re-examination
     total_depth_col = attributes.getOrInsertColumn(total_detph_col_text.c_str());
-    result.addColumn(total_detph_col_text);
+    result.addAttribute(total_detph_col_text);
 
     int count = 0;
 

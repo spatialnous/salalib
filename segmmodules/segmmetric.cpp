@@ -68,20 +68,20 @@ AnalysisResult SegmentMetric::run(Communicator *comm,
     //
     if (!m_sel_only) {
         attributes.insertOrResetColumn(choicecol.c_str());
-        result.addColumn(choicecol);
+        result.addAttribute(choicecol);
         attributes.insertOrResetColumn(wchoicecol.c_str());
-        result.addColumn(wchoicecol);
+        result.addAttribute(wchoicecol);
     }
     attributes.insertOrResetColumn(meandepthcol.c_str());
-    result.addColumn(meandepthcol);
+    result.addAttribute(meandepthcol);
     attributes.insertOrResetColumn(wmeandepthcol.c_str());
-    result.addColumn(wmeandepthcol);
+    result.addAttribute(wmeandepthcol);
     attributes.insertOrResetColumn(totaldcol.c_str());
-    result.addColumn(totaldcol);
+    result.addAttribute(totaldcol);
     attributes.insertOrResetColumn(totalcol.c_str());
-    result.addColumn(totalcol);
+    result.addAttribute(totalcol);
     attributes.insertOrResetColumn(wtotalcol.c_str());
-    result.addColumn(wtotalcol);
+    result.addAttribute(wtotalcol);
     //
     std::vector<unsigned int> seen(map.getShapeCount());
     std::vector<TopoMetSegmentRef> audittrail(map.getShapeCount());

@@ -46,7 +46,7 @@ AnalysisResult SegmentMetricPD::run(Communicator *,
     maxbin = 512;
     std::string depthcol = prefix + "Step Depth";
     attributes.insertOrResetColumn(depthcol.c_str());
-    result.addColumn(depthcol);
+    result.addAttribute(depthcol);
 
     std::vector<unsigned int> seen(map.getShapeCount());
     std::vector<TopoMetSegmentRef> audittrail(map.getShapeCount());

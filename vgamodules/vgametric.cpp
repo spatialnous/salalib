@@ -49,16 +49,16 @@ AnalysisResult VGAMetric::run(Communicator *comm,
     // n.b. these must be entered in alphabetical order to preserve col indexing:
     std::string mspa_col_text = std::string("Metric Mean Shortest-Path Angle") + radius_text;
     int mspa_col = attributes.insertOrResetColumn(mspa_col_text.c_str());
-    result.addColumn(mspa_col_text);
+    result.addAttribute(mspa_col_text);
     std::string mspl_col_text = std::string("Metric Mean Shortest-Path Distance") + radius_text;
     int mspl_col = attributes.insertOrResetColumn(mspl_col_text.c_str());
-    result.addColumn(mspl_col_text);
+    result.addAttribute(mspl_col_text);
     std::string dist_col_text = std::string("Metric Mean Straight-Line Distance") + radius_text;
     int dist_col = attributes.insertOrResetColumn(dist_col_text.c_str());
-    result.addColumn(dist_col_text);
+    result.addAttribute(dist_col_text);
     std::string count_col_text = std::string("Metric Node Count") + radius_text;
     int count_col = attributes.insertOrResetColumn(count_col_text.c_str());
-    result.addColumn(count_col_text);
+    result.addAttribute(count_col_text);
 
     int count = 0;
 

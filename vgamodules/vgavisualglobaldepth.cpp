@@ -29,7 +29,7 @@ AnalysisResult VGAVisualGlobalDepth::run(Communicator *,
     // n.b., insert columns sets values to -1 if the column already exists
     std::string colText = "Visual Step Depth";
     int col = attributes.insertOrResetColumn(colText);
-    result.addColumn(colText);
+    result.addAttribute(colText);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         PixelRef pix = iter->getKey().value;

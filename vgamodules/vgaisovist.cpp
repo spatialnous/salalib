@@ -46,7 +46,7 @@ AnalysisResult VGAIsovist::run(Communicator *comm,
     int count = 0;
     auto cols = createAttributes(attributes, simple_version);
     for (auto col: cols) {
-        result.addColumn(col.first);
+        result.addAttribute(col.first);
     }
 
     for (size_t i = 0; i < map.getCols(); i++) {

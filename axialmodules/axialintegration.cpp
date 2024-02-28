@@ -73,98 +73,98 @@ AnalysisResult AxialIntegration::run(Communicator *comm,
         if (m_choice) {
             std::string choice_col_text = std::string("Choice") + radius_text;
             attributes.insertOrResetColumn(choice_col_text.c_str());
-            result.addColumn(choice_col_text);
+            result.addAttribute(choice_col_text);
             std::string n_choice_col_text = std::string("Choice [Norm]") + radius_text;
             attributes.insertOrResetColumn(n_choice_col_text.c_str());
-            result.addColumn(n_choice_col_text);
+            result.addAttribute(n_choice_col_text);
             if (m_weighted_measure_col != -1) {
                 std::string w_choice_col_text =
                     std::string("Choice [") + weighting_col_text + " Wgt]" + radius_text;
                 attributes.insertOrResetColumn(w_choice_col_text.c_str());
-                result.addColumn(w_choice_col_text);
+                result.addAttribute(w_choice_col_text);
                 std::string nw_choice_col_text =
                     std::string("Choice [") + weighting_col_text + " Wgt][Norm]" + radius_text;
                 attributes.insertOrResetColumn(nw_choice_col_text.c_str());
-                result.addColumn(nw_choice_col_text);
+                result.addAttribute(nw_choice_col_text);
             }
         }
 
         if (!simple_version) {
             std::string entropy_col_text = std::string("Entropy") + radius_text;
             attributes.insertOrResetColumn(entropy_col_text.c_str());
-            result.addColumn(entropy_col_text);
+            result.addAttribute(entropy_col_text);
         }
 
         std::string integ_dv_col_text = std::string("Integration [HH]") + radius_text;
         attributes.insertOrResetColumn(integ_dv_col_text.c_str());
-        result.addColumn(integ_dv_col_text);
+        result.addAttribute(integ_dv_col_text);
 
         if (!simple_version) {
             std::string integ_pv_col_text = std::string("Integration [P-value]") + radius_text;
             attributes.insertOrResetColumn(integ_pv_col_text.c_str());
-            result.addColumn(integ_pv_col_text);
+            result.addAttribute(integ_pv_col_text);
             std::string integ_tk_col_text = std::string("Integration [Tekl]") + radius_text;
             attributes.insertOrResetColumn(integ_tk_col_text.c_str());
-            result.addColumn(integ_tk_col_text);
+            result.addAttribute(integ_tk_col_text);
             std::string intensity_col_text = std::string("Intensity") + radius_text;
             attributes.insertOrResetColumn(intensity_col_text.c_str());
-            result.addColumn(intensity_col_text);
+            result.addAttribute(intensity_col_text);
             std::string harmonic_col_text = std::string("Harmonic Mean Depth") + radius_text;
             attributes.insertOrResetColumn(harmonic_col_text.c_str());
-            result.addColumn(harmonic_col_text);
+            result.addAttribute(harmonic_col_text);
         }
 
         std::string depth_col_text = std::string("Mean Depth") + radius_text;
         attributes.insertOrResetColumn(depth_col_text.c_str());
-        result.addColumn(depth_col_text);
+        result.addAttribute(depth_col_text);
         std::string count_col_text = std::string("Node Count") + radius_text;
         attributes.insertOrResetColumn(count_col_text.c_str());
-        result.addColumn(count_col_text);
+        result.addAttribute(count_col_text);
 
         if (!simple_version) {
             std::string rel_entropy_col_text = std::string("Relativised Entropy") + radius_text;
             attributes.insertOrResetColumn(rel_entropy_col_text);
-            result.addColumn(rel_entropy_col_text);
+            result.addAttribute(rel_entropy_col_text);
         }
 
         if (m_weighted_measure_col != -1) {
             std::string w_md_col_text =
                 std::string("Mean Depth [") + weighting_col_text + " Wgt]" + radius_text;
             attributes.insertOrResetColumn(w_md_col_text.c_str());
-            result.addColumn(w_md_col_text);
+            result.addAttribute(w_md_col_text);
             std::string total_weight_text =
                 std::string("Total ") + weighting_col_text + radius_text;
             attributes.insertOrResetColumn(total_weight_text.c_str());
-            result.addColumn(total_weight_text);
+            result.addAttribute(total_weight_text);
         }
         if (m_fulloutput) {
             if (!simple_version) {
                 std::string penn_norm_text = std::string("RA [Penn]") + radius_text;
                 attributes.insertOrResetColumn(penn_norm_text);
-                result.addColumn(penn_norm_text);
+                result.addAttribute(penn_norm_text);
             }
             std::string ra_col_text = std::string("RA") + radius_text;
             attributes.insertOrResetColumn(ra_col_text.c_str());
-            result.addColumn(ra_col_text);
+            result.addAttribute(ra_col_text);
 
             if (!simple_version) {
                 std::string rra_col_text = std::string("RRA") + radius_text;
                 attributes.insertOrResetColumn(rra_col_text.c_str());
-                result.addColumn(rra_col_text);
+                result.addAttribute(rra_col_text);
             }
 
             std::string td_col_text = std::string("Total Depth") + radius_text;
             attributes.insertOrResetColumn(td_col_text.c_str());
-            result.addColumn(td_col_text);
+            result.addAttribute(td_col_text);
         }
         //
     }
     if (m_local) {
         if (!simple_version) {
             attributes.insertOrResetColumn("Control");
-            result.addColumn("Control");
+            result.addAttribute("Control");
             attributes.insertOrResetColumn("Controllability");
-            result.addColumn("Controllability");
+            result.addAttribute("Controllability");
         }
     }
     // then look up all the columns... eek:

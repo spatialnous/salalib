@@ -31,7 +31,7 @@ AnalysisResult SegmentTulipDepth::run(Communicator *,
     std::string stepdepth_col_text = "Angular Step Depth";
 
     int stepdepth_col = attributes.insertOrResetColumn(stepdepth_col_text.c_str());
-    result.addColumn(stepdepth_col_text);
+    result.addAttribute(stepdepth_col_text);
 
     // The original code set tulip_bins to 1024, divided by two and added one
     // in order to duplicate previous code (using a semicircle of tulip bins)

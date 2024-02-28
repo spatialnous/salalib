@@ -128,14 +128,14 @@ AnalysisResult SegmentTulip::run(Communicator *comm,
                 std::string choice_col_text = tulip_text + " Choice [Route weight by " +
                                               routeweight_col_text + "]" + radius_text;
                 attributes.insertOrResetColumn(choice_col_text.c_str());
-                result.addColumn(choice_col_text);
+                result.addAttribute(choice_col_text);
                 if (m_weighted_measure_col != -1) {
                     std::string w_choice_col_text = tulip_text + " Choice [[Route weight by " +
                                                     routeweight_col_text + "][" +
                                                     weighting_col_text + " Wgt]]" + radius_text;
 
                     attributes.insertOrResetColumn(w_choice_col_text.c_str());
-                    result.addColumn(w_choice_col_text);
+                    result.addAttribute(w_choice_col_text);
                 }
                 // EFEF*
                 if (weighting_col2 != -1) {
@@ -144,7 +144,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm,
                         weighting_col_text + "-" + weighting_col_text2 + " Wgt]]" + radius_text;
 
                     attributes.insertOrResetColumn(w_choice_col_text2.c_str());
-                    result.addColumn(w_choice_col_text2);
+                    result.addAttribute(w_choice_col_text2);
                 }
                 //*EFEF
             }
@@ -152,12 +152,12 @@ AnalysisResult SegmentTulip::run(Communicator *comm,
             else { // Normal run // TV
                 std::string choice_col_text = tulip_text + " Choice" + radius_text;
                 attributes.insertOrResetColumn(choice_col_text.c_str());
-                result.addColumn(choice_col_text);
+                result.addAttribute(choice_col_text);
                 if (m_weighted_measure_col != -1) {
                     std::string w_choice_col_text =
                         tulip_text + " Choice [" + weighting_col_text + " Wgt]" + radius_text;
                     attributes.insertOrResetColumn(w_choice_col_text.c_str());
-                    result.addColumn(w_choice_col_text);
+                    result.addAttribute(w_choice_col_text);
                 }
                 // EFEF*
                 if (weighting_col2 != -1) {
@@ -165,7 +165,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm,
                                                      "-" + weighting_col_text2 + " Wgt]" +
                                                      radius_text;
                     attributes.insertOrResetColumn(w_choice_col_text2.c_str());
-                    result.addColumn(w_choice_col_text2);
+                    result.addAttribute(w_choice_col_text2);
                 }
                 //*EFEF
             }
@@ -195,18 +195,18 @@ AnalysisResult SegmentTulip::run(Communicator *comm,
                                             radius_text;
 
             attributes.insertOrResetColumn(integ_col_text.c_str());
-            result.addColumn(integ_col_text);
+            result.addAttribute(integ_col_text);
             attributes.insertOrResetColumn(count_col_text.c_str());
-            result.addColumn(count_col_text);
+            result.addAttribute(count_col_text);
             attributes.insertOrResetColumn(td_col_text.c_str());
-            result.addColumn(td_col_text);
+            result.addAttribute(td_col_text);
             if (m_weighted_measure_col != -1) {
                 attributes.insertOrResetColumn(w_integ_col_text.c_str());
-                result.addColumn(w_integ_col_text);
+                result.addAttribute(w_integ_col_text);
                 attributes.insertOrResetColumn(w_td_text.c_str());
-                result.addColumn(w_td_text);
+                result.addAttribute(w_td_text);
                 attributes.insertOrResetColumn(total_weight_text.c_str());
-                result.addColumn(total_weight_text);
+                result.addAttribute(total_weight_text);
             }
         }
         //*EF routeweight
@@ -230,18 +230,18 @@ AnalysisResult SegmentTulip::run(Communicator *comm,
                 tulip_text + " Total " + weighting_col_text + radius_text;
 
             attributes.insertOrResetColumn(integ_col_text.c_str());
-            result.addColumn(integ_col_text);
+            result.addAttribute(integ_col_text);
             attributes.insertOrResetColumn(count_col_text.c_str());
-            result.addColumn(count_col_text);
+            result.addAttribute(count_col_text);
             attributes.insertOrResetColumn(td_col_text.c_str());
-            result.addColumn(td_col_text);
+            result.addAttribute(td_col_text);
             if (m_weighted_measure_col != -1) {
                 attributes.insertOrResetColumn(w_integ_col_text.c_str());
-                result.addColumn(w_integ_col_text);
+                result.addAttribute(w_integ_col_text);
                 attributes.insertOrResetColumn(w_td_text.c_str());
-                result.addColumn(w_td_text);
+                result.addAttribute(w_td_text);
                 attributes.insertOrResetColumn(total_weight_text.c_str());
-                result.addColumn(total_weight_text);
+                result.addAttribute(total_weight_text);
             }
         }
     }

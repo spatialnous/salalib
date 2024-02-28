@@ -21,13 +21,13 @@
 
 struct AnalysisResult {
     bool completed = false;
-    void addColumn(std::string column) {
-        auto colIt = std::find(newColumns.begin(), newColumns.end(), column);
-        if (colIt == newColumns.end()) {
-            newColumns.push_back(column);
+    void addAttribute(std::string attribute) {
+        auto colIt = std::find(newAttributes.begin(), newAttributes.end(), attribute);
+        if (colIt == newAttributes.end()) {
+            newAttributes.push_back(attribute);
         }
     }
-    std::vector<std::string> &getColumns() { return newColumns; };
+    std::vector<std::string> &getColumns() { return newAttributes; };
 private:
-    std::vector<std::string> newColumns = std::vector<std::string>();
+    std::vector<std::string> newAttributes = std::vector<std::string>();
 };

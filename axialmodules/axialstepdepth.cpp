@@ -30,7 +30,7 @@ AnalysisResult AxialStepDepth::run(Communicator *,
 
     std::string stepdepth_col_text = std::string("Step Depth");
     int stepdepth_col = attributes.insertOrResetColumn(stepdepth_col_text.c_str());
-    result.addColumn(stepdepth_col_text);
+    result.addAttribute(stepdepth_col_text);
 
     bool *covered = new bool[map.getConnections().size()];
     for (size_t i = 0; i < map.getConnections().size(); i++) {

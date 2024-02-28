@@ -29,16 +29,16 @@ AnalysisResult VGAMetricDepth::run(Communicator *,
     // n.b., insert columns sets values to -1 if the column already exists
     std::string colText = "Metric Step Shortest-Path Angle";
     int path_angle_col = attributes.insertOrResetColumn(colText);
-    result.addColumn(colText);
+    result.addAttribute(colText);
     colText = "Metric Step Shortest-Path Length";
     int path_length_col = attributes.insertOrResetColumn(colText);
-    result.addColumn(colText);
+    result.addAttribute(colText);
     int dist_col = -1;
     if (map.getSelSet().size() == 1) {
         colText = "Metric Straight-Line Distance";
         // Note: Euclidean distance is currently only calculated from a single point
         dist_col = attributes.insertOrResetColumn(colText);
-        result.addColumn(colText);
+        result.addAttribute(colText);
     }
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {

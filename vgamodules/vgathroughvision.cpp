@@ -93,7 +93,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm,
 
     std::string colText = "Through vision";
     int col = attributes.getOrInsertColumn(colText);
-    result.addColumn(colText);
+    result.addAttribute(colText);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         PixelRef pix = iter->getKey().value;

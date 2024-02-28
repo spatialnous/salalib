@@ -34,13 +34,13 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm,
     if (!simple_version) {
         colText = "Visual Clustering Coefficient";
         cluster_col = map.getAttributeTable().insertOrResetColumn(colText);
-        result.addColumn(colText);
+        result.addAttribute(colText);
         colText = "Visual Control";
         control_col = map.getAttributeTable().insertOrResetColumn(colText);
-        result.addColumn(colText);
+        result.addAttribute(colText);
         colText = "Visual Controllability";
         controllability_col = map.getAttributeTable().insertOrResetColumn(colText);
-        result.addColumn(colText);
+        result.addAttribute(colText);
     }
 
     int count = 0;

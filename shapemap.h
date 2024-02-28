@@ -626,6 +626,9 @@ class ShapeMap : public PixelBase {
     bool findNextLinkLine() const;
     Line getNextLinkLine() const;
     std::vector<SimpleLine> getAllLinkLines();
+
+    const std::vector<OrderedIntPair> &getLinks() { return m_links; }
+    const std::vector<OrderedIntPair> &getUnlinks() { return m_unlinks; }
     // specific to axial line graphs
     bool findNextUnlinkPoint() const;
     Point2f getNextUnlinkPoint() const;

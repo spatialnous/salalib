@@ -147,15 +147,11 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
         AttributeTable &input = shapemap.getAttributeTable();
         AttributeTable &output = usermap->getAttributeTable();
 
-        // TODO: Compatibility. The columns are sorted in the old implementation so
-        // they are also passed sorted in the conversion:
+        // The columns used to be sorted in the old implementation, but are not
+        // sorted anywhere else
 
         std::vector<size_t> indices(input.getNumColumns());
         std::iota(indices.begin(), indices.end(), static_cast<size_t>(0));
-
-        std::sort(indices.begin(), indices.end(), [&](size_t a, size_t b) {
-            return input.getColumnName(a) < input.getColumnName(b);
-        });
 
         std::vector<std::string> newColumns;
         for (size_t i = 0; i < indices.size(); i++) {

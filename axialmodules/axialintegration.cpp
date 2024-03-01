@@ -159,14 +159,6 @@ AnalysisResult AxialIntegration::run(Communicator *comm,
         }
         //
     }
-    if (m_local) {
-        if (!simple_version) {
-            attributes.insertOrResetColumn("Control");
-            result.addAttribute("Control");
-            attributes.insertOrResetColumn("Controllability");
-            result.addAttribute("Controllability");
-        }
-    }
     // then look up all the columns... eek:
     std::vector<int> choice_col, n_choice_col, w_choice_col, nw_choice_col, entropy_col,
         integ_dv_col, integ_pv_col, integ_tk_col, intensity_col, depth_col, count_col,
@@ -243,13 +235,6 @@ AnalysisResult AxialIntegration::run(Communicator *comm,
             td_col.push_back(attributes.getColumnIndex(td_col_text.c_str()));
         }
     }
-    int control_col = -1, controllability_col = -1;
-    if (m_local) {
-        if (!simple_version) {
-            control_col = attributes.getColumnIndex("Control");
-            controllability_col = attributes.getColumnIndex("Controllability");
-        }
-    }
 
     // for choice
     AnalysisInfo **audittrail;
@@ -279,36 +264,6 @@ AnalysisResult AxialIntegration::run(Communicator *comm,
                     -1; // note, 0th member used as radius doesn't matter
                 // note, choice columns are not cleared, but cummulative over all shortest path
                 // pairs
-            }
-        }
-
-        if (m_local) {
-            double control = 0.0;
-            const std::vector<int> &connections = map.getConnections()[i].m_connections;
-            std::vector<int> totalneighbourhood;
-            for (int connection : connections) {
-                // n.b., as of Depthmap 10.0, connections[j] and i cannot coexist
-                // if (connections[j] != i) {
-                depthmapX::addIfNotExists(totalneighbourhood, connection);
-                int retro_size = 0;
-                auto &retconnectors = map.getConnections()[size_t(connection)].m_connections;
-                for (auto retconnector : retconnectors) {
-                    retro_size++;
-                    depthmapX::addIfNotExists(totalneighbourhood, retconnector);
-                }
-                control += 1.0 / double(retro_size);
-                //}
-            }
-
-            if (!simple_version) {
-                if (connections.size() > 0) {
-                    row.setValue(control_col, float(control));
-                    row.setValue(controllability_col, float(double(connections.size()) /
-                                                            double(totalneighbourhood.size() - 1)));
-                } else {
-                    row.setValue(control_col, -1);
-                    row.setValue(controllability_col, -1);
-                }
             }
         }
 

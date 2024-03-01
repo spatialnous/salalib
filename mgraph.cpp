@@ -28,6 +28,7 @@
 
 #include "salalib/agents/agenthelpers.h"
 #include "salalib/axialmodules/axialintegration.h"
+#include "salalib/axialmodules/axiallocal.h"
 #include "salalib/axialmodules/axialstepdepth.h"
 #include "salalib/segmmodules/segmangular.h"
 #include "salalib/segmmodules/segmmetric.h"
@@ -1303,7 +1304,10 @@ bool MetaGraph::analyseAxial(Communicator *communicator, Options options,
 
     try {
         analysisCompleted = AxialIntegration(options.radius_set, options.weighted_measure_col,
-                                             options.choice, options.fulloutput, options.local)
+                                             options.choice, options.fulloutput)
+                                .run(communicator, getDisplayedShapeGraph(), false).completed;
+        if (options.local)
+        analysisCompleted &= AxialLocal()
                                 .run(communicator, getDisplayedShapeGraph(), false).completed;
     } catch (Communicator::CancelledException) {
         analysisCompleted = false;

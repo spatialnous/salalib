@@ -27,7 +27,7 @@ struct AnalysisResult {
             newAttributes.push_back(attribute);
         }
     }
-    std::vector<std::string> &getColumns() { return newAttributes; };
+    std::vector<std::string> &getAttributes() { return newAttributes; };
 private:
     std::vector<std::string> newAttributes = std::vector<std::string>();
 };

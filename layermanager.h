@@ -17,6 +17,7 @@
 #include <string>
 #include <genlib/exceptions.h>
 #include <iostream>
+#include <cstdint>
 
 
 class LayerManager

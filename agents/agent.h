@@ -40,16 +40,16 @@ class Agent {
     PointMap *m_pointmap;
     //
     PixelRef m_node;
-    int m_step;
-    int m_frame;
-    int m_gate;
-    bool m_stuck;
-    bool m_stopped;
-    bool m_target_lock;
-    bool m_gate_encountered;
-    bool m_at_target;
-    bool m_at_destination;
-    int m_output_mode;
+    int m_step = 0;
+    int m_frame = 0;
+    int m_gate = -1;
+    bool m_stuck = false;
+    bool m_stopped = false;
+    bool m_target_lock = false;
+    bool m_gate_encountered = false;
+    bool m_at_target = false;
+    bool m_at_destination = false;
+    int m_output_mode = OUTPUT_NOTHING;
     Point2f m_loc;
     Point2f m_target;
     Point2f m_vector;
@@ -58,7 +58,7 @@ class Agent {
     Point2f m_destination;
     //
     // for recording trails:
-    int m_trail_num;
+    int m_trail_num = -1;
     //
     // for occlusion memory
     pflipper<PixelRefVector> m_occ_memory;

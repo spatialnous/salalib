@@ -79,7 +79,7 @@ public:
    friend double dist(const PixelRef a, const PixelRef b);
    friend double angle(const PixelRef a, const PixelRef b, const PixelRef c);
    operator int() const
-   { return (x == -1 || y == -1) ? -1 : ((int(x) << 16) + (int(y) & 0xffff)); }
+   { return (x < 0 || y < 0) ? -1 : ((int(x) << 16) + (int(y) & 0xffff)); }
 };
 
 const PixelRef NoPixel( -1, -1 );

@@ -161,6 +161,10 @@ PixelRefVector PixelBase::pixelateLineTouching(Line l, double tolerance) const {
         dir = XAXIS;
         grad = l.grad(YAXIS);
         constant = l.constant(YAXIS);
+    } else if (l.width() == 0 && l.height() == 0) {
+        dir = YAXIS;
+        grad = 0;
+        constant = 0;
     } else {
         dir = YAXIS;
         grad = l.grad(XAXIS);

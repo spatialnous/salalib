@@ -250,11 +250,6 @@ class ShapeMap : public PixelBase {
     // quick grab for shapes
     depthmapX::ColumnMatrix<std::vector<ShapeRef>> m_pixel_shapes; // i rows of j columns
     //
-    // allow quick closest line test (note only works for a given layer, with many layers will be
-    // tricky)
-    mutable BSPNode *m_bsp_root = nullptr;
-    mutable bool m_bsp_tree = false;
-    //
     std::map<int, SalaShape> m_shapes;
     //
     std::vector<SalaEvent> m_undobuffer;
@@ -295,7 +290,6 @@ class ShapeMap : public PixelBase {
 
   public:
     ShapeMap(const std::string &name = std::string(), int type = EMPTYMAP);
-    virtual ~ShapeMap();
     void copy(const ShapeMap &shapemap, int copyflags = 0);
 
     ShapeMap(ShapeMap &&other)
@@ -420,8 +414,6 @@ class ShapeMap : public PixelBase {
     int testPointInPoly(const Point2f &p, const ShapeRef &shape) const;
     // also allow look for a close polyline:
     int getClosestOpenGeom(const Point2f &p) const;
-    // this version uses a BSP tree to find closest line (currently only line shapes)
-    int getClosestLine(const Point2f &p) const;
     // this version simply finds the closest vertex to the point
     Point2f getClosestVertex(const Point2f &p) const;
     // Connect a particular shape into the graph
@@ -432,8 +424,6 @@ class ShapeMap : public PixelBase {
     std::vector<int> getShapeConnections(int polyref, double tolerance);
     // Make all connections
     void makeShapeConnections();
-    //
-    bool makeBSPtree() const;
     //
     const std::vector<Connector> &getConnections() const { return m_connectors; }
     std::vector<Connector> &getConnections() { return m_connectors; }

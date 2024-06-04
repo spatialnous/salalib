@@ -154,17 +154,8 @@ ShapeMap::ShapeMap(const std::string &name, int type)
     m_show = true;
     m_editable = false;
 
-    m_bsp_tree = false;
-    m_bsp_root = NULL;
     //
     m_hasMapInfoData = false;
-}
-
-ShapeMap::~ShapeMap() {
-    if (m_bsp_root) {
-        delete m_bsp_root;
-        m_bsp_root = NULL;
-    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -249,10 +240,6 @@ void ShapeMap::copy(const ShapeMap &sourcemap, int copyflags) {
 
 // Zaps all memory structures, apart from mapinfodata
 void ShapeMap::clearAll() {
-    if (m_bsp_root) {
-        delete m_bsp_root;
-        m_bsp_root = NULL;
-    }
     m_display_shapes.clear();
 
     m_shapes.clear();
@@ -2044,30 +2031,6 @@ Point2f ShapeMap::getClosestVertex(const Point2f &p) const {
     return vertex;
 }
 
-// nb, uses full BSP tree test:
-
-#include "isovist.h"
-
-int ShapeMap::getClosestLine(const Point2f &p) const {
-    // not the best place to check this, but we must all the same:
-    if (m_newshape) {
-        m_bsp_tree = false;
-    }
-
-    if (!m_bsp_tree) {
-        makeBSPtree();
-    }
-
-    int index = -1;
-
-    if (m_bsp_tree) { // <- check there is actually something in the tree!
-        Isovist iso;
-        index = iso.getClosestLine(m_bsp_root, p);
-    }
-
-    return index;
-}
-
 // code to add intersections when shapes are added to the graph one by one:
 int ShapeMap::connectIntersected(int rowid, bool linegraph) {
     auto shaperefIter = depthmapX::getMapAtIndex(m_shapes, rowid);
@@ -2367,10 +2330,6 @@ bool ShapeMap::read(std::istream &stream) {
     m_editable = false;
     m_show = true; // <- by default show
     m_map_type = ShapeMap::EMPTYMAP;
-
-    // clear old BSP tree (if exists)
-    m_bsp_tree = false;
-    m_bsp_root = NULL;
 
     // clear old:
     m_display_shapes.clear();
@@ -3274,39 +3233,6 @@ void ShapeMap::outputUnlinkPoints(std::ofstream &stream, char delim) {
             depthmapX::getMapAtIndex(m_shapes, m_unlinks[i].b)->second.getLine(), TOLERANCE_A);
         stream << p.x << delim << p.y << std::endl;
     }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-bool ShapeMap::makeBSPtree() const {
-    if (m_bsp_tree) {
-        return true;
-    }
-
-    std::vector<TaggedLine> partitionlines;
-    for (auto shape : m_shapes) {
-        if (shape.second.isLine()) {
-            partitionlines.push_back(TaggedLine(shape.second.getLine(), shape.first));
-        }
-    }
-
-    if (partitionlines.size()) {
-        //
-        // Now we'll try the BSP tree:
-        //
-        if (m_bsp_root) {
-            delete m_bsp_root;
-            m_bsp_root = NULL;
-        }
-        m_bsp_root = new BSPNode();
-
-        BSPTree::make(NULL, 0, partitionlines, m_bsp_root);
-        m_bsp_tree = true;
-    }
-
-    partitionlines.clear();
-
-    return m_bsp_tree;
 }
 
 /////////////////////////////////////////////////////////////////////////////////

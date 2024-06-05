@@ -224,7 +224,7 @@ void AxialPolygons::makePixelPolys() {
     m_pixel_polys = depthmapX::ColumnMatrix<std::vector<int>>(m_rows, m_cols);
     // now register the vertices in each pixel...
     int j = -1;
-    for (auto vertPoss : m_vertex_possibles) {
+    for (const auto &vertPoss : m_vertex_possibles) {
         j++;
         PixelRef pix = pixelate(vertPoss.first);
         m_pixel_polys(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x)).push_back(j);
@@ -320,7 +320,7 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
     m_handled_list.insert(vertex);
 
     int i = -1;
-    for (auto vertPoss : m_vertex_possibles) {
+    for (const auto &vertPoss : m_vertex_possibles) {
         i++;
         if (i == vertex.m_ref_key) {
             continue;
@@ -438,7 +438,7 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
     }
 
     int i = -1;
-    for (auto vertPoss : m_vertex_possibles) {
+    for (const auto &vertPoss : m_vertex_possibles) {
         i++;
         std::vector<int> &currList = handled_list[size_t(i)];
         if (vertPoss.second.size() == 1) {

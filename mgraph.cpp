@@ -1478,8 +1478,8 @@ int MetaGraph::loadLineData(Communicator *communicator, int load_type) {
             m_drawingFiles.back().m_spacePixels.emplace_back(layer.getName());
             m_drawingFiles.back().m_spacePixels.back().init(layer.getLineCount(), map.getRegion());
 
-            for (auto geometry : layer.geometries) {
-                for (auto &line : geometry.lines) {
+            for (const auto &geometry : layer.geometries) {
+                for (const auto &line : geometry.lines) {
                     m_drawingFiles.back().m_spacePixels.back().makeLineShape(line);
                 }
             }
@@ -1506,7 +1506,7 @@ int MetaGraph::loadLineData(Communicator *communicator, int load_type) {
 
 void MetaGraph::writeMapShapesAsCat(ShapeMap &map, std::ostream &stream) {
     stream << "CAT" << std::endl;
-    for (auto refShape : map.getAllShapes()) {
+    for (auto &refShape : map.getAllShapes()) {
         SalaShape &shape = refShape.second;
         if (shape.isPolyLine() || shape.isPolygon()) {
             stream << "Begin " << (shape.isPolyLine() ? "Polyline" : "Polygon") << std::endl;
@@ -1669,7 +1669,7 @@ int MetaGraph::loadRT1(const std::vector<std::string> &fileset, Communicator *co
     m_drawingFiles.back().m_region = QtRegion(map.getBottomLeft(), map.getTopRight());
 
     // for each category
-    for (auto val : map.m_categories) {
+    for (const auto &val : map.m_categories) {
         ShapeMap shapeMap = ShapeMap(val.first);
         shapeMap.init(val.second.chains.size(), map.getRegion());
 
@@ -2280,7 +2280,7 @@ void MetaGraph::undo() {
 // Moving to global ways of doing things:
 
 int MetaGraph::addAttribute(const std::string &name) {
-    int col;
+    int col = -1;
     switch (m_view_class & VIEWFRONT) {
     case VIEWVGA:
         col = getDisplayedPointMap().addAttribute(name);

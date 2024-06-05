@@ -175,7 +175,7 @@ class SalaShape {
     std::vector<SalaEdgeU> getClippingSet(QtRegion &clipframe) const;
     //
     bool read(std::istream &stream);
-    bool write(std::ofstream &stream);
+    bool write(std::ofstream &stream) const;
 
     std::vector<Line> getAsLines() const {
         std::vector<Line> lines;

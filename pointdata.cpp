@@ -395,7 +395,7 @@ bool PointMap::makePoints(const Point2f &seed, int fill_type,
 
     // check if seed point is actually visible from the centre of the cell
     std::vector<Line> &linesTouching = getPoint(seedref).m_lines;
-    for (auto line : linesTouching) {
+    for (const auto &line : linesTouching) {
         if (intersect_line_no_touch(line, Line(seed, getPoint(seedref).m_location))) {
             return false;
         }
@@ -1607,7 +1607,7 @@ bool PointMap::mergePixels(PixelRef a, PixelRef b) {
 
 void PointMap::mergeFromShapeMap(const ShapeMap &shapemap) {
     const std::map<int, SalaShape> &polygons = shapemap.getAllShapes();
-    for (auto polygon : polygons) {
+    for (const auto &polygon : polygons) {
         const SalaShape &poly = polygon.second;
         if (poly.isLine()) {
             PixelRef a = pixelate(poly.getLine().start());

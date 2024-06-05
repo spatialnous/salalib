@@ -93,7 +93,7 @@ void TidyLines::quicktidy(std::map<int, std::pair<Line, int>> &lines, const QtRe
 
     double avglen = 0.0;
 
-    for (auto line : lines) {
+    for (const auto &line : lines) {
         avglen += line.second.first.length();
     }
     avglen /= lines.size();
@@ -111,7 +111,7 @@ void TidyLines::quicktidy(std::map<int, std::pair<Line, int>> &lines, const QtRe
 
     // now load up m_lines...
     initLines(lines.size(), m_region.bottom_left, m_region.top_right);
-    for (auto line : lines) {
+    for (const auto &line : lines) {
         addLine(line.second.first);
     }
     sortPixelLines();
@@ -119,7 +119,7 @@ void TidyLines::quicktidy(std::map<int, std::pair<Line, int>> &lines, const QtRe
     // and chop duplicate lines:
     std::vector<int> removelist;
     int i = -1;
-    for (auto line : lines) {
+    for (const auto &line : lines) {
         i++;
         PixelRef start = pixelate(line.second.first.start());
         auto &pixel_lines =

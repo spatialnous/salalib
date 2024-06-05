@@ -108,7 +108,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
     // add all visible layers to the set of polygon lines...
 
     int count = 0;
-    for (auto shape : shapemap.getAllShapes()) {
+    for (const auto &shape : shapemap.getAllShapes()) {
         int key = shape.first;
 
         std::vector<Line> shapeLines = shape.second.getAsLines();
@@ -259,7 +259,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToConvex(Communicator *,
         }
     }
 
-    for (auto refShape : refShapes) {
+    for (auto &refShape : refShapes) {
         if (copydata) {
             for (size_t i = 0; i < input.getNumColumns(); ++i) {
                 extraAttr[attrCols[size_t(i)]] =
@@ -383,7 +383,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
     // add all visible layers to the set of polygon lines...
 
     int count = 0;
-    for (auto shape : shapemap.getAllShapes()) {
+    for (const auto &shape : shapemap.getAllShapes()) {
         int key = shape.first;
         std::vector<Line> shapeLines = shape.second.getAsLines();
         for (Line line : shapeLines) {

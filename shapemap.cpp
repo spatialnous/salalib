@@ -22,7 +22,6 @@
 #include "salalib/pointdata.h"
 #include "salalib/parsers/mapinfodata.h" // for mapinfo interface
 
-#include "genlib/comm.h" // for communicator
 #include "genlib/containerutils.h"
 #include "genlib/exceptions.h"
 #include "genlib/stringutils.h"
@@ -65,7 +64,7 @@ bool SalaShape::read(std::istream &stream) {
     return true;
 }
 
-bool SalaShape::write(std::ofstream &stream) {
+bool SalaShape::write(std::ofstream &stream) const {
     stream.write((char *)&m_type, sizeof(m_type));
     stream.write((char *)&m_region, sizeof(m_region));
     stream.write((char *)&m_centroid, sizeof(m_centroid));
@@ -183,7 +182,7 @@ void ShapeMap::copy(const ShapeMap &sourcemap, int copyflags) {
     if ((copyflags & ShapeMap::COPY_GEOMETRY) == ShapeMap::COPY_GEOMETRY) {
         m_shapes.clear();
         init(sourcemap.m_shapes.size(), sourcemap.m_region);
-        for (auto shape : sourcemap.m_shapes) {
+        for (const auto &shape : sourcemap.m_shapes) {
             // using makeShape is actually easier than thinking about a total copy:
             makeShape(shape.second, shape.first);
             // note that addShape automatically adds the attribute row
@@ -272,7 +271,7 @@ int ShapeMap::makePointShapeWithRef(const Point2f &point, int shape_ref, bool te
         makePolyPixels(shape_ref);
     } else {
         // pixelate all polys in the pixel new structure:
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             makePolyPixels(shape.first);
         }
     }
@@ -315,7 +314,7 @@ int ShapeMap::makeLineShapeWithRef(const Line &line, int shape_ref, bool through
         makePolyPixels(shape_ref);
     } else {
         // pixelate all polys in the pixel new structure:
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             makePolyPixels(shape.first);
         }
     }
@@ -413,7 +412,7 @@ int ShapeMap::makePolyShapeWithRef(const std::vector<Point2f> &points, bool open
         makePolyPixels(shape_ref);
     } else {
         // pixelate all polys in the pixel new structure:
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             makePolyPixels(shape.first);
         }
     }
@@ -423,7 +422,7 @@ int ShapeMap::makePolyShapeWithRef(const std::vector<Point2f> &points, bool open
         m_shapes.rbegin()->second.setCentroidAreaPerim();
 
         auto &row = m_attributes->addRow(AttributeKey(shape_ref));
-        for (auto &attr : extraAttributes) {
+        for (const auto &attr : extraAttributes) {
             row.setValue(attr.first, attr.second);
         }
         m_newshape = true;
@@ -466,7 +465,7 @@ int ShapeMap::makeShape(const SalaShape &poly, int override_shape_ref,
         makePolyPixels(shape_ref);
     } else {
         // pixelate all polys in the pixel new structure:
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             makePolyPixels(shape.first);
         }
     }
@@ -549,7 +548,7 @@ int ShapeMap::makeShapeFromPointSet(const PointMap &pointmap) {
         makePolyPixels(new_shape_ref);
     } else {
         // pixelate all polys in the pixel new structure:
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             makePolyPixels(shape.first);
         }
     }
@@ -623,7 +622,7 @@ bool ShapeMap::convertPointsToPolys(double poly_radius, bool selected_only) {
         // spatially reindex (simplest just to redo everything)
         init(m_shapes.size(), region);
 
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             makePolyPixels(shape.first);
         }
     }
@@ -665,7 +664,7 @@ bool ShapeMap::moveShape(int shaperef, const Line &line, bool undoing) {
         makePolyPixels(shaperef);
     } else {
         // pixelate all polys in the pixel new structure:
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             makePolyPixels(shape.first);
         }
     }
@@ -787,7 +786,7 @@ int ShapeMap::polyBegin(const Line &line) {
         makePolyPixels(new_shape_ref);
     } else {
         // pixelate all polys in the pixel new structure:
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             makePolyPixels(shape.first);
         }
     }
@@ -849,7 +848,7 @@ bool ShapeMap::polyAppend(int shape_ref, const Point2f &point) {
         makePolyPixels(shape_ref);
     } else {
         // pixelate all polys in the pixel new structure:
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             makePolyPixels(shape.first);
         }
     }
@@ -2099,7 +2098,7 @@ std::vector<int> ShapeMap::getLineConnections(int lineref, double tolerance) {
             shapesToTest.insert(shape);
         }
     }
-    for (ShapeRef shape : shapesToTest) {
+    for (const ShapeRef &shape : shapesToTest) {
         if ((shape.m_tags & ShapeRef::SHAPE_OPEN) == ShapeRef::SHAPE_OPEN) {
             const Line &line = m_shapes.find(int(shape.m_shape_ref))->second.getLine();
             if (intersect_region(line, l, line.length() * tolerance)) {
@@ -2163,7 +2162,7 @@ void ShapeMap::makeShapeConnections() {
         int conn_col = m_attributes->insertOrResetLockedColumn("Connectivity");
 
         int i = -1;
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             i++;
             int key = shape.first;
             auto &row = m_attributes->addRow(AttributeKey(key));
@@ -2405,7 +2404,7 @@ bool ShapeMap::read(std::istream &stream) {
     m_pixel_shapes = depthmapX::ColumnMatrix<std::vector<ShapeRef>>(m_rows, m_cols);
     // Now add the pixel shapes pixel map:
     // pixelate all polys in the pixel structure:
-    for (auto shape : m_shapes) {
+    for (const auto &shape : m_shapes) {
         makePolyPixels(shape.first);
     }
 
@@ -2462,7 +2461,7 @@ bool ShapeMap::write(std::ofstream &stream) {
     // write shape data
     int count = m_shapes.size();
     stream.write((char *)&count, sizeof(count));
-    for (auto shape : m_shapes) {
+    for (const auto &shape : m_shapes) {
         int key = shape.first;
         stream.write((char *)&key, sizeof(key));
         shape.second.write(stream);
@@ -3308,8 +3307,8 @@ int findwinner(double *bins, int bincount, int &difficult, int &impossible) {
 std::vector<SimpleLine> ShapeMap::getAllShapesAsLines() const {
     std::vector<SimpleLine> lines;
     const std::map<int, SalaShape> &allShapes = getAllShapes();
-    for (auto refShape : allShapes) {
-        SalaShape &shape = refShape.second;
+    for (const auto &refShape : allShapes) {
+        const SalaShape &shape = refShape.second;
         if (shape.isLine()) {
             lines.push_back(SimpleLine(shape.getLine()));
         } else if (shape.isPolyLine() || shape.isPolygon()) {

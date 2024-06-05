@@ -45,7 +45,7 @@ AnalysisResult VGAIsovist::run(Communicator *comm,
     }
     int count = 0;
     auto cols = createAttributes(attributes, simple_version);
-    for (auto col: cols) {
+    for (const auto &col: cols) {
         result.addAttribute(col.first);
     }
 

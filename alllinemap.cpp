@@ -157,7 +157,7 @@ AllLineMap::extractFewestLineMaps(Communicator *comm) {
     // also, a list of radial lines cut by each axial line
     std::map<int, std::set<int>> ax_radial_cuts;
     std::map<int, std::set<int>> ax_seg_cuts;
-    for (auto shape : getAllShapes()) {
+    for (const auto &shape : getAllShapes()) {
         ax_radial_cuts.insert(std::make_pair(shape.first, std::set<int>()));
         ax_seg_cuts.insert(std::make_pair(shape.first, std::set<int>()));
     }

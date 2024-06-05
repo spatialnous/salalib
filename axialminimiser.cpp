@@ -46,7 +46,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
         m_radialsegcounts[x] = 0;
     }
     int y = -1;
-    for (auto axSegCut : axsegcuts) {
+    for (const auto &axSegCut : axsegcuts) {
         y++;
         for (int cut : axSegCut.second) {
             m_radialsegcounts[cut] += 1;

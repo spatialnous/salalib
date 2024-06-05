@@ -55,7 +55,7 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
         }
     }
 
-    for (std::string colname : colnames) {
+    for (const std::string &colname : colnames) {
         colindexes.push_back(attributes.getColumnIndex(colname));
     }
 
@@ -298,7 +298,7 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     miffile.precision(16);
     midfile.precision(16);
 
-    for (auto shape : map.m_shapes) {
+    for (const auto &shape : map.m_shapes) {
         // note, attributes must align for this:
         if (isObjectVisible(map.m_layers,
                             map.getAttributeTable().getRow(AttributeKey(shape.first)))) {

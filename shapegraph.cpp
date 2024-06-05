@@ -64,7 +64,7 @@ void ShapeGraph::makeConnections(const KeyVertices &keyvertices) {
     int leng_col = m_attributes->getColumnIndex("Line Length");
 
     int i = -1;
-    for (auto shape : m_shapes) {
+    for (const auto &shape : m_shapes) {
         i++;
         int key = shape.first;
         AttributeRow &row = m_attributes->getRow(AttributeKey(key));
@@ -89,7 +89,7 @@ void ShapeGraph::makeConnections(const KeyVertices &keyvertices) {
 bool ShapeGraph::outputMifPolygons(std::ostream &miffile, std::ostream &midfile) const {
     // take lines from lines layer and make into regions (using the axial polygons)
     std::vector<Line> lines;
-    for (auto shape : m_shapes) {
+    for (const auto &shape : m_shapes) {
         lines.push_back(shape.second.getLine());
     }
     AxialPolygons polygons;
@@ -115,7 +115,7 @@ void ShapeGraph::outputNet(std::ostream &netfile) const {
     if (isSegmentMap()) {
         netfile << "*Vertices " << m_shapes.size() * 2 << std::endl;
         int i = -1;
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             i++;
             Line li = shape.second.getLine();
             Point2f p1 = li.start();
@@ -152,7 +152,7 @@ void ShapeGraph::outputNet(std::ostream &netfile) const {
     } else {
         netfile << "*Vertices " << m_shapes.size() << std::endl;
         int i = -1;
-        for (auto shape : m_shapes) {
+        for (const auto &shape : m_shapes) {
             i++;
             Point2f p = shape.second.getCentroid();
             p.x = offset.x + (p.x - m_region.bottom_left.x) / maxdim;
@@ -203,7 +203,7 @@ bool ShapeGraph::readold(std::istream &stream) {
 
     // now copy to new base class:
     init(lines.size(), linemap.getRegion());
-    for (auto line : lines) {
+    for (const auto &line : lines) {
         makeLineShape(line.second.line);
     }
     // n.b., we now have to reclear attributes!
@@ -403,7 +403,7 @@ void ShapeGraph::unlinkFromShapeMap(const ShapeMap &shapemap) {
     // pair to unlink:
 
     const std::map<int, SalaShape> &polygons = shapemap.getAllShapes();
-    for (auto polygon : polygons) {
+    for (const auto &polygon : polygons) {
         // just use the points:
         if (polygon.second.isPoint()) {
             unlinkAtPoint(polygon.second.getPoint());
@@ -772,7 +772,7 @@ void ShapeGraph::makeSegmentConnections(std::vector<Connector> &connectionset) {
     int leng_col = m_attributes->getColumnIndex("Segment Length");
 
     int i = -1;
-    for (auto shape : m_shapes) {
+    for (const auto &shape : m_shapes) {
         i++;
         Connector &connector = connectionset[size_t(i)];
         AttributeRow &row = m_attributes->getRow(AttributeKey(shape.first));

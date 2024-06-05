@@ -345,7 +345,7 @@ class ShapeMap : public PixelBase {
     void removePolyPixels(int shaperef);
     //
     //
-    void init(int size, const QtRegion &r);
+    void init(size_t size, const QtRegion &r);
     int getNextShapeKey();
     // convert a single point into a shape
     int makePointShapeWithRef(const Point2f &point, int shape_ref, bool tempshape = false,

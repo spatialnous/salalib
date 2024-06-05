@@ -161,7 +161,7 @@ ShapeMap::ShapeMap(const std::string &name, int type)
 
 // this can be reinit as well
 
-void ShapeMap::init(int size, const QtRegion &r) {
+void ShapeMap::init(size_t size, const QtRegion &r) {
     m_display_shapes.clear();
     m_rows = __min(__max(20, (int)sqrt((double)size)), 32768);
     m_cols = __min(__max(20, (int)sqrt((double)size)), 32768);

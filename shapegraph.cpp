@@ -60,8 +60,8 @@ void ShapeGraph::makeConnections(const KeyVertices &keyvertices) {
     m_keyvertices.clear();
 
     // note, expects these to be numbered 0, 1...
-    int conn_col = m_attributes->getColumnIndex("Connectivity");
-    int leng_col = m_attributes->getColumnIndex("Line Length");
+    auto conn_col = m_attributes->getColumnIndex("Connectivity");
+    auto leng_col = m_attributes->getColumnIndex("Line Length");
 
     int i = -1;
     for (const auto &shape : m_shapes) {
@@ -262,7 +262,7 @@ bool ShapeGraph::write(std::ofstream &stream) {
     // note keyvertexcount and keyvertices are different things!  (length keyvertices not the same
     // as keyvertexcount!)
     stream.write((char *)&m_keyvertexcount, sizeof(m_keyvertexcount));
-    int size = m_keyvertices.size();
+    auto size = m_keyvertices.size();
     stream.write((char *)&size, sizeof(size));
     for (size_t i = 0; i < m_keyvertices.size(); i++) {
         dXreadwrite::writeVector(
@@ -411,7 +411,7 @@ void ShapeGraph::unlinkFromShapeMap(const ShapeMap &shapemap) {
     }
 
     // reset displayed attribute if it happens to be "Connectivity":
-    int conn_col = m_attributes->getColumnIndex("Connectivity");
+    auto conn_col = m_attributes->getColumnIndex("Connectivity");
     if (getDisplayedAttribute() == conn_col) {
         invalidateDisplayedAttribute();
         setDisplayedAttribute(conn_col); // <- reflect changes to connectivity counts
@@ -456,7 +456,8 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, lineConnectors.size());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<int>(lineConnectors.size()));
     }
 
     double maxdim = __max(m_region.width(), m_region.height());
@@ -627,7 +628,7 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
                     Line segment_a(line.start(), thispoint);
                     lines.push_back(segment_a);
                     connectors.push_back(Connector(axialRef));
-                    seg_a = lines.size() - 1;
+                    seg_a = static_cast<int>(lines.size()) - 1;
                 }
                 lastpoint = thispoint;
             }
@@ -652,14 +653,14 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
                 Line segment_b(lastpoint, thispoint);
                 lines.push_back(segment_b);
                 connectors.push_back(Connector(axialRef));
-                seg_b = lines.size() - 1;
+                seg_b = static_cast<int>(lines.size()) - 1;
                 //
                 lastpoint = thispoint;
             }
             //
             for (size_t j = 0; j < keylist.size(); j++) {
                 //
-                if (keylist[j] < (int)i) {
+                if (keylist[j] < static_cast<int>(i)) {
                     // other line already segmented, look up in segment list,
                     // and join segments together nicely
                     auto segIter = segmentlist.find(OrderedIntPair(keylist[j], i));
@@ -735,7 +736,8 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
                 } else {
                     // other line still to be segmented, add ourselves to segment list
                     // to be added later
-                    segmentlist.insert(std::make_pair(OrderedIntPair(i, keylist[j]),
+                    segmentlist.insert(std::make_pair(OrderedIntPair(static_cast<int>(i),
+                                                                     keylist[j]),
                                                       std::pair<int, int>(seg_a, seg_b)));
                 }
             }
@@ -765,11 +767,11 @@ void ShapeGraph::makeSegmentConnections(std::vector<Connector> &connectionset) {
     m_connectors.clear();
 
     // note, expects these in alphabetical order to preserve numbering:
-    int w_conn_col = m_attributes->getOrInsertColumn("Angular Connectivity");
-    int uw_conn_col = m_attributes->getOrInsertLockedColumn("Connectivity");
+    auto w_conn_col = m_attributes->getOrInsertColumn("Angular Connectivity");
+    auto uw_conn_col = m_attributes->getOrInsertLockedColumn("Connectivity");
 
-    int ref_col = m_attributes->getColumnIndex("Axial Line Ref");
-    int leng_col = m_attributes->getColumnIndex("Segment Length");
+    auto ref_col = m_attributes->getColumnIndex("Axial Line Ref");
+    auto leng_col = m_attributes->getColumnIndex("Segment Length");
 
     int i = -1;
     for (const auto &shape : m_shapes) {

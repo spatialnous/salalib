@@ -248,7 +248,7 @@ class PointMap : public PixelBase {
     mutable int m_displayed_attribute;
 
   public:
-    int addAttribute(const std::string &name) { return m_attributes->insertOrResetColumn(name); }
+    size_t addAttribute(const std::string &name) { return m_attributes->insertOrResetColumn(name); }
     void removeAttribute(int col) { m_attributes->removeColumn(col); }
     // I don't want to do this, but every so often you will need to update this table
     // use const version by preference

@@ -263,7 +263,7 @@ bool ShapeGraph::write(std::ofstream &stream) {
     // as keyvertexcount!)
     stream.write((char *)&m_keyvertexcount, sizeof(m_keyvertexcount));
     auto size = m_keyvertices.size();
-    stream.write((char *)&size, sizeof(size));
+    stream.write((char *)&size, sizeof(static_cast<int>(size)));
     for (size_t i = 0; i < m_keyvertices.size(); i++) {
         dXreadwrite::writeVector(
             stream, std::vector<int>(m_keyvertices[i].begin(), m_keyvertices[i].end()));

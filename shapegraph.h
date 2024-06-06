@@ -72,8 +72,8 @@ class ShapeGraph : public ShapeMap {
   public:
     ShapeGraph(const std::string &name = "<axial map>", int type = ShapeMap::AXIALMAP);
 
-    ShapeGraph(ShapeGraph&&) = default;
-    ShapeGraph& operator=(ShapeGraph&&) = default;
+    ShapeGraph(ShapeGraph &&) = default;
+    ShapeGraph &operator=(ShapeGraph &&) = default;
 
     void initialiseAttributesAxial();
     void makeConnections(const KeyVertices &keyvertices = KeyVertices());

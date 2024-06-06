@@ -76,8 +76,8 @@ class Point {
     Point2f m_location; // note: this is large, but it helps allow loading of non-standard grid
                         // points, whilst allowing them to be displayed as a visibility graph, also
                         // speeds up time to display
-    float m_color;    // although display color for the point now introduced
-    PixelRef m_merge; // to merge with another point
+    float m_color;      // although display color for the point now introduced
+    PixelRef m_merge;   // to merge with another point
     // hmm... this is for my 3rd attempt at a quick line intersect algo:
     // every line that goes through the gridsquare -- memory intensive I know, but what can you do:
     // accuracy is imperative here!  Calculated pre-fillpoints / pre-makegraph, and (importantly) it

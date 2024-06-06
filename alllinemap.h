@@ -5,12 +5,9 @@
 
 class AllLineMap : public ShapeGraph {
   public:
-    void generate(Communicator *comm,
-                  std::vector<SpacePixelFile> &drawingLayers,
+    void generate(Communicator *comm, std::vector<SpacePixelFile> &drawingLayers,
                   const Point2f &seed);
-    void generate(Communicator *comm,
-                  std::vector<Line> &lines,
-                  QtRegion &region,
+    void generate(Communicator *comm, std::vector<Line> &lines, QtRegion &region,
                   const Point2f &seed);
     AllLineMap(const std::string &name = "All-Line Map") : ShapeGraph(name, ShapeMap::ALLLINEMAP) {}
     AxialPolygons m_polygons;

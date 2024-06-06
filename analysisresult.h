@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include <vector>
-#include <string>
 #include <algorithm>
+#include <string>
+#include <vector>
 
 struct AnalysisResult {
     bool completed = false;
@@ -28,6 +28,7 @@ struct AnalysisResult {
         }
     }
     std::vector<std::string> &getAttributes() { return newAttributes; };
-private:
+
+  private:
     std::vector<std::string> newAttributes = std::vector<std::string>();
 };

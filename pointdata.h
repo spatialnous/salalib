@@ -104,15 +104,13 @@ class PointMap : public PixelBase {
     LayerManagerImpl m_layers;
 
   public:
-    PointMap(const QtRegion &parentRegion,
-             const std::string &name = std::string("VGA Map"));
+    PointMap(const QtRegion &parentRegion, const std::string &name = std::string("VGA Map"));
     virtual ~PointMap() {}
     void copy(const PointMap &other);
     const std::string &getName() const { return m_name; }
 
     PointMap(PointMap &&other)
-        : m_parentRegion(std::move(other.m_parentRegion)),
-          m_points(std::move(other.m_points)),
+        : m_parentRegion(std::move(other.m_parentRegion)), m_points(std::move(other.m_points)),
           m_attributes(std::move(other.m_attributes)),
           m_attribHandle(std::move(other.m_attribHandle)), m_layers(std::move(other.m_layers)) {
         copy(other);

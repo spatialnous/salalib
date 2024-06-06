@@ -22,9 +22,7 @@
 
 #include "genlib/stringutils.h"
 
-AnalysisResult SegmentTopological::run(Communicator *comm,
-                                       ShapeGraph &map,
-                                       bool) {
+AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 

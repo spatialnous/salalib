@@ -21,9 +21,7 @@
 #include "genlib/pflipper.h"
 #include "genlib/stringutils.h"
 
-AnalysisResult AxialIntegration::run(Communicator *comm,
-                                     ShapeGraph &map,
-                                     bool simple_version) {
+AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_version) {
     // note, from 10.0, Depthmap no longer includes *self* connections on axial lines
     // self connections are stripped out on loading graph files, as well as no longer made
 

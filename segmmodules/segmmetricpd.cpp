@@ -18,9 +18,7 @@
 
 #include "salalib/segmmodules/segmmetricpd.h"
 
-AnalysisResult SegmentMetricPD::run(Communicator *,
-                                    ShapeGraph &map,
-                                    bool) {
+AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 

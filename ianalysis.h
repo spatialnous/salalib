@@ -19,8 +19,8 @@
 
 #include "genlib/comm.h"
 
-#include <string>
 #include <set>
+#include <string>
 
 class IAnalysis {
   public:

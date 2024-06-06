@@ -22,9 +22,7 @@
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes
 
-AnalysisResult VGAThroughVision::run(Communicator *comm,
-                                     PointMap &map,
-                                     bool) {
+AnalysisResult VGAThroughVision::run(Communicator *comm, PointMap &map, bool) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);

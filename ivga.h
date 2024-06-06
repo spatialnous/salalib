@@ -28,8 +28,6 @@
 class IVGA {
   public:
     virtual std::string getAnalysisName() const = 0;
-    virtual AnalysisResult run(Communicator *comm,
-                               PointMap &map,
-                               bool simple_version) = 0;
+    virtual AnalysisResult run(Communicator *comm, PointMap &map, bool simple_version) = 0;
     virtual ~IVGA() {}
 };

@@ -20,9 +20,7 @@
 
 #include "genlib/stringutils.h"
 
-AnalysisResult VGAAngular::run(Communicator *comm,
-                               PointMap &map,
-                               bool) {
+AnalysisResult VGAAngular::run(Communicator *comm, PointMap &map, bool) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);

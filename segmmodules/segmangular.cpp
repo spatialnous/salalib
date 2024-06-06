@@ -19,9 +19,7 @@
 #include "salalib/segmmodules/segmangular.h"
 #include "salalib/options.h"
 
-AnalysisResult SegmentAngular::run(Communicator *comm,
-                                   ShapeGraph &map,
-                                   bool) {
+AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
     AnalysisResult result;
 
     if (map.getMapType() != ShapeMap::SEGMENTMAP) {

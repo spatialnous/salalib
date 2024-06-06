@@ -52,7 +52,7 @@ void AgentEngine::run(Communicator *comm, PointMap *pointmap) {
         if (m_trail_count < 1) {
             m_trail_count = 1;
         }
-        for (auto& agentSet: agentSets) {
+        for (auto &agentSet : agentSets) {
             agentSet.m_trails = std::vector<std::vector<Event2f>>(m_trail_count);
         }
         trail_num = 0;
@@ -101,7 +101,7 @@ void AgentEngine::run(Communicator *comm, PointMap *pointmap) {
     pointmap->setDisplayedAttribute(displaycol);
 }
 
-void AgentEngine::insertTrailsInMap(ShapeMap& trailsMap) {
+void AgentEngine::insertTrailsInMap(ShapeMap &trailsMap) {
     for (auto &agentSet : agentSets) {
         // there is currently only one AgentSet. If at any point there are more then
         // this could be amended to put the AgentSet id as a property of the trail

@@ -477,7 +477,6 @@ inline SalaObj::SalaObj(const SalaObj &obj) {
 }
 #pragma GCC diagnostic pop
 
-
 inline SalaObj &SalaObj::operator=(const SalaObj &obj) {
     if (this != &obj) {
         reset();

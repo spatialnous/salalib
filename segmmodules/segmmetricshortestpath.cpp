@@ -31,7 +31,6 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
     AttributeTable &attributes = m_map.getAttributeTable();
     size_t shapeCount = m_map.getShapeCount();
 
-
     std::string colText = "Metric Shortest Path Distance";
     size_t dist_col = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);

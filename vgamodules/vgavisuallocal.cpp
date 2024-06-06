@@ -18,9 +18,7 @@
 
 #include "salalib/vgamodules/vgavisuallocal.h"
 
-AnalysisResult VGAVisualLocal::run(Communicator *comm,
-                                   PointMap &map,
-                                   bool simple_version) {
+AnalysisResult VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simple_version) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);

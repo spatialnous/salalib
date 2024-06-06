@@ -20,9 +20,7 @@
 
 #include "genlib/pflipper.h"
 
-AnalysisResult AxialStepDepth::run(Communicator *,
-                                   ShapeGraph &map,
-                                   bool) {
+AnalysisResult AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 

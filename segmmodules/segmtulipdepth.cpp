@@ -20,9 +20,7 @@
 
 // revised to use tulip bins for faster analysis of large spaces
 
-AnalysisResult SegmentTulipDepth::run(Communicator *,
-                                      ShapeGraph &map,
-                                      bool) {
+AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 

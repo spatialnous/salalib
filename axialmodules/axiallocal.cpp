@@ -18,9 +18,7 @@
 
 #include "salalib/axialmodules/axiallocal.h"
 
-AnalysisResult AxialLocal::run(Communicator *comm,
-                               ShapeGraph &map,
-                               bool) {
+AnalysisResult AxialLocal::run(Communicator *comm, ShapeGraph &map, bool) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
@@ -36,16 +34,13 @@ AnalysisResult AxialLocal::run(Communicator *comm,
     attributes.insertOrResetColumn("Controllability");
     result.addAttribute("Controllability");
 
-
     int control_col = -1, controllability_col = -1;
     control_col = attributes.getColumnIndex("Control");
     controllability_col = attributes.getColumnIndex("Controllability");
 
-
     // n.b., for this operation we assume continuous line referencing from zero (this is silly?)
     // has already failed due to this!  when intro hand drawn fewest line (where user may have
     // deleted) it's going to get worse...
-
 
     size_t i = -1;
     for (auto &iter : attributes) {
@@ -71,13 +66,12 @@ AnalysisResult AxialLocal::run(Communicator *comm,
 
         if (connections.size() > 0) {
             row.setValue(control_col, float(control));
-            row.setValue(controllability_col, float(double(connections.size()) /
-                                                    double(totalneighbourhood.size() - 1)));
+            row.setValue(controllability_col,
+                         float(double(connections.size()) / double(totalneighbourhood.size() - 1)));
         } else {
             row.setValue(control_col, -1);
             row.setValue(controllability_col, -1);
         }
-
 
         if (comm) {
             if (qtimer(atime, 500)) {

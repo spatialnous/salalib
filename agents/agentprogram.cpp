@@ -117,8 +117,8 @@ void AgentProgram::save(const std::string &filename) {
 
     file << "Steps: " << m_steps << std::endl;
     file << "Bins: " << ((m_vbin == -1) ? 32 : m_vbin * 2 + 1) << std::endl;
-    file << "Rule order: " << m_rule_order[0] << " " << m_rule_order[1] << " " << m_rule_order[2] << " "
-         << m_rule_order[3] << std::endl;
+    file << "Rule order: " << m_rule_order[0] << " " << m_rule_order[1] << " " << m_rule_order[2]
+         << " " << m_rule_order[3] << std::endl;
 
     for (int i = 0; i < 4; i++) {
         file << "Rule " << i << " (Bin -" << 1 + (i * 2) << "/+" << 1 + (i * 2) << ")" << std::endl;

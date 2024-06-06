@@ -30,9 +30,7 @@ class AxialIntegration : IAxial {
   public:
     std::string getAnalysisName() const override { return "Angular Analysis"; }
 
-    AnalysisResult run(Communicator *,
-                       ShapeGraph &map,
-                       bool) override;
+    AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
     AxialIntegration(std::set<double> radius_set, int weighted_measure_col, bool choice,
                      bool fulloutput)
         : m_radius_set(radius_set), m_weighted_measure_col(weighted_measure_col), m_choice(choice),

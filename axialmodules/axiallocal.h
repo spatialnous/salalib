@@ -25,8 +25,6 @@ class AxialLocal : IAxial {
   public:
     std::string getAnalysisName() const override { return "Angular Local Analysis"; }
 
-    AnalysisResult run(Communicator *,
-                       ShapeGraph &map,
-                       bool) override;
+    AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
     AxialLocal() {}
 };

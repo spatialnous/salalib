@@ -20,9 +20,7 @@
 
 #include "salalib/segmmodules/segmhelpers.h"
 
-AnalysisResult SegmentTopologicalPD::run(Communicator *,
-                                         ShapeGraph &map,
-                                         bool) {
+AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 

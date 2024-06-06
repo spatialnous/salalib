@@ -19,9 +19,7 @@
 #include "salalib/vgamodules/vgaisovist.h"
 #include "salalib/isovist.h"
 
-AnalysisResult VGAIsovist::run(Communicator *comm,
-                               PointMap &map,
-                               bool simple_version) {
+AnalysisResult VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
     map.m_hasIsovistAnalysis = false;
 
     AnalysisResult result;
@@ -45,7 +43,7 @@ AnalysisResult VGAIsovist::run(Communicator *comm,
     }
     int count = 0;
     auto cols = createAttributes(attributes, simple_version);
-    for (const auto &col: cols) {
+    for (const auto &col : cols) {
         result.addAttribute(col.first);
     }
 
@@ -138,8 +136,7 @@ std::vector<std::pair<std::string, int>> VGAIsovist::createAttributes(AttributeT
     return cols;
 }
 
-std::set<std::string> VGAIsovist::setData(Isovist &isovist,
-                                          AttributeRow &row,
+std::set<std::string> VGAIsovist::setData(Isovist &isovist, AttributeRow &row,
                                           std::vector<std::pair<std::string, int>> cols,
                                           bool simple_version) {
     std::set<std::string> newColumns;
@@ -191,7 +188,6 @@ BSPNode VGAIsovist::makeBSPtree(Communicator *communicator,
             }
         }
     }
-
 
     BSPNode bspRoot;
     if (partitionlines.size()) {

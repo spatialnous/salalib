@@ -357,8 +357,7 @@ class AttributeTable : public AttributeColumnManager {
     };
 
     // iterator implementation - templated on iterator type for const/non-const
-    template <typename iterator_type>
-    class const_iterator_impl {
+    template <typename iterator_type> class const_iterator_impl {
         template <typename other_type> friend class const_iterator_impl;
 
       public:

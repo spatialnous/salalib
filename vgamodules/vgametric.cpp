@@ -23,9 +23,7 @@
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes
 
-AnalysisResult VGAMetric::run(Communicator *comm,
-                              PointMap &map,
-                              bool) {
+AnalysisResult VGAMetric::run(Communicator *comm, PointMap &map, bool) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);

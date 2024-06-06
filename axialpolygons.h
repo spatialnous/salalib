@@ -79,8 +79,7 @@ struct RadialKey {
         ang = rk.ang;
         segend = rk.segend;
     }
-    RadialKey& operator=(const RadialKey&) = default;
-
+    RadialKey &operator=(const RadialKey &) = default;
 };
 inline bool operator<(const RadialKey &a, const RadialKey &b) {
     return a.vertex < b.vertex ||

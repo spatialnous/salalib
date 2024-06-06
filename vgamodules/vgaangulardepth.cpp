@@ -18,9 +18,7 @@
 
 #include "salalib/vgamodules/vgaangulardepth.h"
 
-AnalysisResult VGAAngularDepth::run(Communicator *,
-                                    PointMap &map,
-                                    bool) {
+AnalysisResult VGAAngularDepth::run(Communicator *, PointMap &map, bool) {
 
     AnalysisResult result;
 

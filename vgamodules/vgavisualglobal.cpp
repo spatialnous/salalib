@@ -20,9 +20,7 @@
 
 #include "genlib/stringutils.h"
 
-AnalysisResult VGAVisualGlobal::run(Communicator *comm,
-                                    PointMap &map,
-                                    bool simple_version) {
+AnalysisResult VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);

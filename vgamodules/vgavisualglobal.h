@@ -31,9 +31,7 @@ class VGAVisualGlobal : IVGA {
 
   public:
     std::string getAnalysisName() const override { return "Global Visibility Analysis"; }
-    AnalysisResult run(Communicator *comm,
-                       PointMap &map,
-                       bool simple_version) override;
+    AnalysisResult run(Communicator *comm, PointMap &map, bool simple_version) override;
     void extractUnseen(Node &node, PixelRefVector &pixels, depthmapX::RowMatrix<int> &miscs,
                        depthmapX::RowMatrix<PixelRef> &extents);
     VGAVisualGlobal(double radius, bool gates_only) : m_radius(radius), m_gates_only(gates_only) {}

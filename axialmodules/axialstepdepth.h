@@ -23,7 +23,5 @@
 class AxialStepDepth : IAxial {
   public:
     std::string getAnalysisName() const override { return "Angular Analysis"; }
-    AnalysisResult run(Communicator *comm,
-                       ShapeGraph &map,
-                       bool simple_version) override;
+    AnalysisResult run(Communicator *comm, ShapeGraph &map, bool simple_version) override;
 };

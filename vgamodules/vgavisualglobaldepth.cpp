@@ -18,9 +18,7 @@
 
 #include "salalib/vgamodules/vgavisualglobaldepth.h"
 
-AnalysisResult VGAVisualGlobalDepth::run(Communicator *,
-                                         PointMap &map,
-                                         bool) {
+AnalysisResult VGAVisualGlobalDepth::run(Communicator *, PointMap &map, bool) {
 
     AnalysisResult result;
 

@@ -15,8 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mapinfodata.h"
-#include "salalib/mgraph.h"
-#include "salalib/shapegraph.h"
+#include "salalib/pointdata.h"
 #include "salalib/shapemap.h"
 
 #include <numeric>
@@ -140,7 +139,7 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
     }
 
     size_t nextduplicate = 0;
-    AttributeRow *lastrow;
+    AttributeRow *lastrow = nullptr;
 
     QtRegion region(pointsets[0][0], pointsets[0][0]);
     for (size_t i = 0; i < pointsets.size(); i++) {
@@ -163,8 +162,10 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
             // table data entries:
             if (nextduplicate < duplicates.size() && duplicates[nextduplicate] == i) {
                 // duplicate last row:
-                for (int colindex : colindexes) {
-                    row.setValue(colindex, lastrow->getValue(colindex));
+                if (lastrow) {
+                    for (int colindex : colindexes) {
+                        row.setValue(colindex, lastrow->getValue(colindex));
+                    }
                 }
                 nextduplicate++;
             } else {

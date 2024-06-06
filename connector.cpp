@@ -55,8 +55,8 @@ bool Connector::write(std::ofstream &stream) {
 
 // Cursor extras
 
-int Connector::count(int mode) const {
-    int c = 0;
+size_t Connector::count(int mode) const {
+    size_t c = 0;
     switch (mode) {
     case CONN_ALL:
         c = m_connections.size();

@@ -20,7 +20,7 @@
 
 AnalysisResult AxialLocal::run(Communicator *comm,
                                ShapeGraph &map,
-                               bool simple_version) {
+                               bool) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);

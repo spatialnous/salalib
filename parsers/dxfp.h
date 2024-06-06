@@ -100,8 +100,8 @@ class DxfEntity {
   protected:
     // Reference data
     int m_tag;
-    DxfLineType *m_p_line_type;
-    DxfLayer *m_p_layer;
+    DxfLineType *m_p_line_type = nullptr;
+    DxfLayer *m_p_layer = nullptr;
 
   public:
     DxfEntity(int tag = -1);

@@ -1726,6 +1726,7 @@ void MetaGraph::deleteShapeMap(depthmapX::ImportType mapType, ShapeMap &shapeMap
                 break;
             }
         }
+        break;
     }
     case depthmapX::ImportType::DATAMAP: {
         for (size_t i = 0; i < m_dataMaps.size(); i++) {
@@ -2496,7 +2497,7 @@ int MetaGraph::readFromFile(const std::string &filename) {
     return result;
 }
 
-int MetaGraph::readFromStream(std::istream &stream, const std::string &filename) {
+int MetaGraph::readFromStream(std::istream &stream, const std::string &) {
     m_state = 0; // <- clear the state out
 
     // clear BSP tree if it exists:

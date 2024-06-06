@@ -1945,6 +1945,7 @@ int ShapeMap::getClosestOpenGeom(const Point2f &p) const {
             switch (poly.m_type) {
             case SalaShape::SHAPE_POINT:
                 thisdist = dist(p, poly.m_centroid);
+                break;
             case SalaShape::SHAPE_LINE:
                 thisdist = dist(p, poly.m_region); // note, in this case m_region is a line
                 break;

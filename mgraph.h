@@ -538,7 +538,7 @@ class MetaGraph : public FileProperties {
     };
     // likely to use communicator if too slow...
     int readFromFile(const std::string &filename);
-    int readFromStream(std::istream &stream, const std::string &filename);
+    int readFromStream(std::istream &stream, const std::string &);
     int write(const std::string &filename, int version, bool currentlayer = false);
     //
     std::vector<SimpleLine> getVisibleDrawingLines();

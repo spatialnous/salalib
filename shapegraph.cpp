@@ -17,17 +17,13 @@
 // This is my code to make a set of axial lines from a set of boundary lines
 
 #include "salalib/shapegraph.h"
-#include "salalib/alllinemap.h"
-#include "salalib/ngraph.h" // ditto ngraph
 #include "salalib/parsers/mapinfodata.h"
-#include "salalib/pointdata.h" // need the pointdata for the convert boundary graph to axial map routine
 #include "salalib/tolerances.h"
+#include "salalib/axialpolygons.h"
 
 #include "genlib/comm.h" // For communicator
 #include "genlib/containerutils.h"
-#include "genlib/pflipper.h"
 #include "genlib/readwritehelpers.h"
-#include "genlib/stringutils.h"
 
 #include <float.h>
 #include <math.h>
@@ -412,7 +408,7 @@ void ShapeGraph::unlinkFromShapeMap(const ShapeMap &shapemap) {
 
     // reset displayed attribute if it happens to be "Connectivity":
     auto conn_col = m_attributes->getColumnIndex("Connectivity");
-    if (getDisplayedAttribute() == conn_col) {
+    if (getDisplayedAttribute() == static_cast<int>(conn_col)) {
         invalidateDisplayedAttribute();
         setDisplayedAttribute(conn_col); // <- reflect changes to connectivity counts
     }

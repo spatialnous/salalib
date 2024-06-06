@@ -791,6 +791,7 @@ bool DxfPolyLine::parse(const DxfToken &token, DxfParser *parser) {
             break;
         case 70:
             m_attributes = std::stoi(token.data);
+            break;
         default:
             DxfEntity::parse(token, parser); // base class parse
             break;
@@ -846,8 +847,10 @@ bool DxfLwPolyLine::parse(const DxfToken &token, DxfParser *parser) {
         break;
     case 70:
         m_attributes = std::stoi(token.data);
+        break;
     case 90:
         m_expected_vertex_count = std::stoi(token.data);
+        break;
     default:
         DxfEntity::parse(token, parser); // base class parse
         break;
@@ -1189,6 +1192,7 @@ bool DxfSpline::parse(const DxfToken &token, DxfParser *parser) {
         break;
     case 40:
         m_knots.push_back(std::stod(token.data));
+        break;
     case 10:
         vertex.x = std::stod(token.data);
         m_xyz |= 0x0001;

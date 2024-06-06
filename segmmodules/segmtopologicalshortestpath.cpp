@@ -20,7 +20,7 @@
 
 #include "salalib/segmmodules/segmhelpers.h"
 
-AnalysisResult SegmentTopologicalShortestPath::run(Communicator *comm) {
+AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
 
     AnalysisResult result;
     auto &selected = m_map.getSelSet();

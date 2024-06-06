@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include "salalib/segmmodules/segmhelpers.h"
-
 #include "salalib/isegment.h"
 
 class SegmentMetricPD : ISegment {

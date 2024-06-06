@@ -16,9 +16,11 @@
 
 #pragma once
 
-#include "genlib/p2dpoly.h"
 #include "salalib/ngraph.h"
 #include "salalib/pixelref.h"
+
+#include "genlib/p2dpoly.h"
+
 #include <map>
 #include <memory>
 

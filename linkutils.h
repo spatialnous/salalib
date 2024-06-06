@@ -15,8 +15,11 @@
 
 #pragma once
 
+#include "salalib/pointdata.h"
+
 #include "genlib/exceptions.h"
-#include "mgraph.h"
+#include "genlib/p2dpoly.h"
+
 #include <vector>
 
 namespace depthmapX {

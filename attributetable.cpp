@@ -15,8 +15,9 @@
 
 #include "attributetable.h"
 #include "displayparams.h"
-#include <genlib/readwritehelpers.h>
-#include <genlib/stringutils.h>
+
+#include "genlib/readwritehelpers.h"
+#include "genlib/stringutils.h"
 
 #include <numeric>
 #include <sstream>

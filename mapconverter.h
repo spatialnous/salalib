@@ -1,9 +1,10 @@
 #pragma once
 
-#include "genlib/comm.h"
 #include "salalib/shapegraph.h"
 #include "salalib/shapemap.h"
 #include "salalib/spacepixfile.h"
+
+#include "genlib/comm.h"
 
 namespace MapConverter {
 

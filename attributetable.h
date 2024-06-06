@@ -14,13 +14,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+
 #include "layermanager.h"
+#include "salalib/displayparams.h"
+
 #include <algorithm>
 #include <iterator>
 #include <map>
 #include <memory>
-#include <salalib/displayparams.h>
-#include <salalib/mgraph_consts.h>
 #include <sstream>
 #include <string>
 #include <vector>

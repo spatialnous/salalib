@@ -263,7 +263,7 @@ class ShapeMap : public PixelBase {
     // for geometric operations
     double m_tolerance;
     // for screen drawing
-    mutable std::vector<int> m_display_shapes;
+    mutable std::vector<size_t> m_display_shapes;
     mutable int m_current;
     mutable bool m_invalidate;
     //
@@ -564,13 +564,14 @@ class ShapeMap : public PixelBase {
     bool findNextShape(bool &nextlayer) const;
     const SalaShape &getNextShape() const;
     const PafColor getShapeColor() const {
-        AttributeKey key(m_display_shapes[m_current]);
+        AttributeKey key(static_cast<int>(m_display_shapes[static_cast<size_t>(m_current)]));
         const AttributeRow &row = m_attributes->getRow(key);
         return dXreimpl::getDisplayColor(key, row, *m_attribHandle.get(), true);
         ;
     }
     bool getShapeSelected() const {
-        return depthmapX::getMapAtIndex(m_shapes, m_display_shapes[m_current])->second.m_selected;
+        return depthmapX::getMapAtIndex(m_shapes, m_display_shapes[static_cast<size_t>(m_current)])
+            ->second.m_selected;
     }
     //
     double getLocationValue(const Point2f &point) const;

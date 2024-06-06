@@ -19,18 +19,15 @@
 
 // Interface: the meta graph loads and holds all sorts of arbitrary data...
 
-#include "salalib/fileproperties.h"
-#include "salalib/importtypedefs.h"
-
-// still call paftl:
 #include "salalib/agents/agentengine.h" // for agent engine interface
 #include "salalib/connector.h"
-#include "salalib/spacepix.h"
-
-// still need paftl:
+#include "salalib/fileproperties.h"
+#include "salalib/importtypedefs.h"
+#include "salalib/options.h"
 #include "salalib/pointdata.h"
 #include "salalib/shapegraph.h"
 #include "salalib/shapemap.h"
+#include "salalib/spacepix.h"
 
 #include "genlib/bsptree.h"
 #include "genlib/p2dpoly.h"
@@ -243,7 +240,8 @@ class MetaGraph : public FileProperties {
     bool canUndo() const;
     void undo();
 
-    size_t m_displayed_datamap = -1;
+    // TODO: There should be no "display" parameters in this data class
+    size_t m_displayed_datamap = static_cast<size_t>(-1);
     ShapeMap &getDisplayedDataMap() { return m_dataMaps[m_displayed_datamap]; }
     const ShapeMap &getDisplayedDataMap() const { return m_dataMaps[m_displayed_datamap]; }
     size_t getDisplayedDataMapRef() const { return m_displayed_datamap; }
@@ -251,7 +249,7 @@ class MetaGraph : public FileProperties {
     void removeDataMap(size_t i) {
         if (m_displayed_datamap >= i && i > 0)
             m_displayed_datamap--;
-        m_dataMaps.erase(m_dataMaps.begin() + i);
+        m_dataMaps.erase(std::next(m_dataMaps.begin(), i));
     }
 
     void setDisplayedDataMapRef(size_t map) {

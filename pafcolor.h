@@ -16,8 +16,9 @@
 
 #pragma once
 
-#include "genlib/p2dpoly.h"
 #include "salalib/displayparams.h"
+
+#include "genlib/p2dpoly.h"
 
 // For my colour scheme... some parameters to pass, and my own colour class
 

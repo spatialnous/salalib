@@ -20,6 +20,7 @@
 #define __SPARKSIEVE2_H__
 
 #include "genlib/p2dpoly.h"
+
 #include <float.h>
 #include <list>
 #include <map>

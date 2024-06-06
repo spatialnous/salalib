@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "pafcolor.h" // <- sala actually includes vertex.h for us
+
 #include <float.h> // _finite support
 #include <math.h>
-
-#include <salalib/pafcolor.h> // <- sala actually includes vertex.h for us
 
 static unsigned int g_nicecolor[] = {
     0x003333DD, // 0 blue

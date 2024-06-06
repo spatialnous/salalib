@@ -15,9 +15,11 @@
 
 #pragma once
 
+#include "isovistdef.h"
+
 #include "genlib/exceptions.h"
 #include "genlib/p2dpoly.h"
-#include "isovistdef.h"
+
 #include <iostream>
 #include <string>
 #include <vector>

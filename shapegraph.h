@@ -17,8 +17,9 @@
 #pragma once
 
 #include "salalib/connector.h"
-#include "salalib/spacepix.h"
-#include "salalib/spacepixfile.h"
+#include "salalib/shapemap.h"
+
+#include <set>
 
 struct AxialVertex;
 struct AxialVertexKey;

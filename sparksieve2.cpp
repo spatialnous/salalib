@@ -20,13 +20,9 @@
 
 // New spark sieve implemementation (more accurate)
 
-#include <math.h>
-
-#include <salalib/mgraph.h>
-#include <salalib/pointdata.h>
-#include <salalib/spacepix.h>
-
 #include "sparksieve2.h"
+
+#include <math.h>
 
 sparkSieve2::sparkSieve2(const Point2f &centre, double maxdist) {
     m_centre = centre;

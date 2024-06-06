@@ -17,11 +17,12 @@
 #ifndef __POINTDATA_H__
 #define __POINTDATA_H__
 
-#include "genlib/exceptions.h"
 #include "salalib/attributetable.h"
-#include "salalib/options.h"
 #include "salalib/point.h"
 #include "salalib/spacepixfile.h"
+
+#include "genlib/exceptions.h"
+
 #include <deque>
 #include <set>
 #include <vector>
@@ -247,7 +248,7 @@ class PointMap : public PixelBase {
 
   public:
     size_t addAttribute(const std::string &name) { return m_attributes->insertOrResetColumn(name); }
-    void removeAttribute(int col) { m_attributes->removeColumn(col); }
+    void removeAttribute(size_t col) { m_attributes->removeColumn(col); }
     // I don't want to do this, but every so often you will need to update this table
     // use const version by preference
     AttributeTable &getAttributeTable() { return *m_attributes.get(); }
@@ -260,25 +261,31 @@ class PointMap : public PixelBase {
   public:
     double getDisplayMinValue() const {
         return (m_displayed_attribute != -1)
-                   ? m_attributes->getColumn(m_displayed_attribute).getStats().min
+                   ? m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
+                         .getStats()
+                         .min
                    : 0;
     }
 
     double getDisplayMaxValue() const {
         return (m_displayed_attribute != -1)
-                   ? m_attributes->getColumn(m_displayed_attribute).getStats().max
+                   ? m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
+                         .getStats()
+                         .max
                    : pixelate(m_region.top_right).x;
     }
 
     const DisplayParams &getDisplayParams() const {
-        return m_attributes->getColumn(m_displayed_attribute).getDisplayParams();
+        return m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
+            .getDisplayParams();
     }
     // make a local copy of the display params for access speed:
     void setDisplayParams(const DisplayParams &dp, bool apply_to_all = false) {
         if (apply_to_all)
             m_attributes->setDisplayParams(dp);
         else
-            m_attributes->getColumn(m_displayed_attribute).setDisplayParams(dp);
+            m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
+                .setDisplayParams(dp);
     }
     //
   public:
@@ -297,7 +304,9 @@ class PointMap : public PixelBase {
         return m_displayed_attribute;
     }
 
-    float getDisplayedSelectedAvg() { return (m_attributes->getSelAvg(m_displayed_attribute)); }
+    float getDisplayedSelectedAvg() {
+        return (m_attributes->getSelAvg(static_cast<size_t>(m_displayed_attribute)));
+    }
 
     double getLocationValue(const Point2f &point);
     //

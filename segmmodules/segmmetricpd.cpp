@@ -17,6 +17,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "salalib/segmmodules/segmmetricpd.h"
+#include "salalib/segmmodules/segmhelpers.h"
 
 AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
 

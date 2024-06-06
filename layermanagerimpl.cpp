@@ -14,7 +14,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "layermanagerimpl.h"
-#include <genlib/stringutils.h>
+
+#include "genlib/stringutils.h"
 
 LayerManagerImpl::LayerManagerImpl() : m_visibleLayers(1) {
     m_layers.push_back("Everything");

@@ -84,7 +84,7 @@ int BSPTree::pickMidpointLine(const std::vector<TaggedLine> &lines, BSPNode *par
     for (size_t i = 0; i < lines.size(); i++) {
         midpoint += lines[i].line.start() + lines[i].line.end();
     }
-    midpoint /= 2.0 * lines.size();
+    midpoint /= 2.0 * static_cast<double>(lines.size());
     bool ver = true;
     if (par && par->getLine().height() > par->getLine().width()) {
         ver = false;
@@ -140,8 +140,8 @@ BSPTree::makeLines(Communicator *, time_t, const std::vector<TaggedLine> &lines,
         chosen = 0;
     }
 
-    Line chosenLine = lines[chosen].line;
-    int chosenTag = lines[chosen].tag;
+    Line chosenLine = lines[static_cast<unsigned int>(chosen)].line;
+    int chosenTag = lines[static_cast<unsigned int>(chosen)].tag;
     base->setLine(chosenLine);
     base->setTag(chosenTag);
 

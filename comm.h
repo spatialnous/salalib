@@ -117,14 +117,14 @@ class Communicator {
         }
         return ret;
     }
-    size_t GetInfileSize() {
+    long GetInfileSize() {
         if (m_infile) {
             m_infile->seekg(0, std::ios::beg);
-            size_t begin_pos = m_infile->tellg();
+            long begin_pos = m_infile->tellg();
             m_infile->seekg(0, std::ios::end);
-            size_t end_pos = m_infile->tellg();
+            long end_pos = m_infile->tellg();
             m_infile->seekg(0, std::ios::beg);
-            return size_t(end_pos - begin_pos);
+            return end_pos - begin_pos;
         }
         return 0;
     }

@@ -399,11 +399,11 @@ class QtRegion {
 
 // First time we have a region available to use...
 inline void Point2f::normalScale(const QtRegion &r) {
-    if (r.width())
+    if (r.width() != 0)
         x = (x - r.bottom_left.x) / r.width();
     else
         x = 0.0;
-    if (r.height())
+    if (r.height() != 0)
         y = (y - r.bottom_left.y) / r.height();
     else
         y = 0.0;

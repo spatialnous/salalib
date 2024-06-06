@@ -23,8 +23,8 @@
 #include <vector>
 
 namespace dXreadwrite {
-    // The read/write methods can only be used for vectors of stack allocated types (basic data, POD)
-    // read in vector data and write to an existing vector (overwriting its previous contents)
+    // The read/write methods can only be used for vectors of stack allocated types (basic data,
+    // POD) read in vector data and write to an existing vector (overwriting its previous contents)
     template <typename T> size_t readIntoVector(std::istream &stream, std::vector<T> &vec) {
         vec.clear();
         unsigned int size;
@@ -56,7 +56,8 @@ namespace dXreadwrite {
     }
 
     // read in map data and write to an existing map (overwriting its previous contents)
-    template <typename K, typename V> size_t readIntoMap(std::istream &stream, std::map<K, V> &map) {
+    template <typename K, typename V>
+    size_t readIntoMap(std::istream &stream, std::map<K, V> &map) {
         map.clear();
         unsigned int size;
         stream.read(reinterpret_cast<char *>(&size), sizeof(size));
@@ -76,7 +77,8 @@ namespace dXreadwrite {
         return map;
     }
 
-    template <typename K, typename V> void writeMap(std::ostream &stream, const std::map<K, V> &map) {
+    template <typename K, typename V>
+    void writeMap(std::ostream &stream, const std::map<K, V> &map) {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
         if (map.size() > size_t(static_cast<unsigned int>(-1))) {

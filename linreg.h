@@ -75,7 +75,9 @@ template <class T> struct LinReg {
             makecache();
         return cb;
     }
-    double r() { return (n * S_xy - S_x * S_y) / sqrt((n * S_xx - sqr(S_x)) * (n * S_yy - sqr(S_y))); }
+    double r() {
+        return (n * S_xy - S_x * S_y) / sqrt((n * S_xx - sqr(S_x)) * (n * S_yy - sqr(S_y)));
+    }
     double mu_x() { return S_x / n; }
     double mu_y() { return S_y / n; }
     // note you will need to keep the vectors if you need

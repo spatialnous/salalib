@@ -42,6 +42,19 @@ namespace dXreadwrite {
         return vec;
     }
 
+    // read in a vector into a new vector and cast according to new type
+    template <typename F, typename T>
+    size_t readFromCastIntoVector(std::istream &stream, std::vector<T> &vecT) {
+        std::vector<F> vecF;
+        readIntoVector(stream, vecF);
+        vecT.clear();
+        vecT.reserve(vecF.size());
+        for (const auto &i : vecF) {
+            vecT.push_back(static_cast<T>(i));
+        }
+        return vecF.size();
+    }
+
     template <typename T> void writeVector(std::ostream &stream, const std::vector<T> &vec) {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
@@ -52,6 +65,25 @@ namespace dXreadwrite {
         stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
         if (length > 0) {
             stream.write(reinterpret_cast<const char *>(vec.data()), sizeof(T) * length);
+        }
+    }
+
+    template <typename T, typename F>
+    void writeCastVector(std::ostream &stream, std::vector<F> &vecF) {
+        // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
+
+        if (vecF.size() > size_t(static_cast<unsigned int>(-1))) {
+            throw new depthmapX::RuntimeException("Vector exceeded max size for streaming");
+        }
+        const unsigned int length = static_cast<const unsigned int>(vecF.size());
+        stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
+        if (length > 0) {
+            std::vector<T> vecT;
+            vecT.reserve(vecF.size());
+            for (const auto &i : vecF) {
+                vecT.push_back(static_cast<T>(i));
+            }
+            stream.write(reinterpret_cast<const char *>(vecT.data()), sizeof(T) * length);
         }
     }
 

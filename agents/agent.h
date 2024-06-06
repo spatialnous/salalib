@@ -135,9 +135,9 @@ struct wpair {
 // convert an x / y difference to it's corresponding connection direction
 inline char connectValue(PixelRef dir) {
     if (dir.y > 0) {
-        return (Point::CONNECT_NE << (1 - dir.x));
+        return static_cast<char>(Point::CONNECT_NE << (1 - dir.x));
     } else if (dir.y < 0) {
-        return (Point::CONNECT_SW << (dir.x + 1));
+        return static_cast<char>(Point::CONNECT_SW << (dir.x + 1));
     } else if (dir.x == 1) {
         return (char)Point::CONNECT_E;
     } else {

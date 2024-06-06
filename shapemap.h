@@ -31,6 +31,7 @@
 #include "genlib/p2dpoly.h"
 
 #include <map>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
@@ -402,24 +403,24 @@ class ShapeMap : public PixelBase {
     // test if point is inside a particular shape
     bool pointInPoly(const Point2f &p, int shaperef) const;
     // retrieve lists of polys point intersects:
-    std::vector<int> pointInPolyList(const Point2f &p) const;
+    std::vector<size_t> pointInPolyList(const Point2f &p) const;
     // TODO: Fix casting -1 to size_t
-    std::vector<int> lineInPolyList(const Line &li, size_t lineref = static_cast<size_t>(-1),
-                                    double tolerance = 0.0) const;
-    std::vector<int> polyInPolyList(int polyref, double tolerance = 0.0) const;
-    std::vector<int> shapeInPolyList(const SalaShape &shape);
+    std::vector<size_t> lineInPolyList(const Line &li, size_t lineref = static_cast<size_t>(-1),
+                                       double tolerance = 0.0) const;
+    std::vector<size_t> polyInPolyList(int polyref, double tolerance = 0.0) const;
+    std::vector<size_t> shapeInPolyList(const SalaShape &shape);
     // helper to make actual test of point in shape:
-    int testPointInPoly(const Point2f &p, const ShapeRef &shape) const;
+    std::optional<size_t> testPointInPoly(const Point2f &p, const ShapeRef &shape) const;
     // also allow look for a close polyline:
     int getClosestOpenGeom(const Point2f &p) const;
     // this version simply finds the closest vertex to the point
     Point2f getClosestVertex(const Point2f &p) const;
     // Connect a particular shape into the graph
-    int connectIntersected(int rowid, bool linegraph);
+    size_t connectIntersected(int rowid, bool linegraph);
     // Get the connections for a particular line
-    std::vector<int> getLineConnections(int lineref, double tolerance);
+    std::vector<size_t> getLineConnections(int lineref, double tolerance);
     // Get arbitrary shape connections for a particular shape
-    std::vector<int> getShapeConnections(int polyref, double tolerance);
+    std::vector<size_t> getShapeConnections(int polyref, double tolerance);
     // Make all connections
     void makeShapeConnections();
     //
@@ -602,8 +603,8 @@ class ShapeMap : public PixelBase {
     //
     // links and unlinks
   protected:
-    std::vector<OrderedIntPair> m_links;
-    std::vector<OrderedIntPair> m_unlinks;
+    std::vector<OrderedSizeTPair> m_links;
+    std::vector<OrderedSizeTPair> m_unlinks;
     mutable int m_curlinkline;
     mutable int m_curunlinkpoint;
 
@@ -611,11 +612,11 @@ class ShapeMap : public PixelBase {
     bool clearLinks();
     bool linkShapes(const Point2f &p);
     bool linkShapesFromRefs(int ref1, int ref2, bool refresh = true);
-    bool linkShapes(int index1, int index2, bool refresh = true);
-    bool linkShapes(int id1, int dir1, int id2, int dir2, float weight);
+    bool linkShapes(size_t index1, size_t index2, bool refresh = true);
+    bool linkShapes(size_t id1, int dir1, size_t id2, int dir2, float weight);
     bool unlinkShapes(const Point2f &p);
     bool unlinkShapesFromRefs(int index1, int index2, bool refresh = true);
-    bool unlinkShapes(int index1, int index2, bool refresh = true);
+    bool unlinkShapes(size_t index1, size_t index2, bool refresh = true);
     bool unlinkShapesByKey(int key1, int key2, bool refresh = true);
     bool unlinkShapeSet(std::istream &idset, int refcol);
 
@@ -625,8 +626,8 @@ class ShapeMap : public PixelBase {
     Line getNextLinkLine() const;
     std::vector<SimpleLine> getAllLinkLines();
 
-    const std::vector<OrderedIntPair> &getLinks() { return m_links; }
-    const std::vector<OrderedIntPair> &getUnlinks() { return m_unlinks; }
+    const std::vector<OrderedSizeTPair> &getLinks() { return m_links; }
+    const std::vector<OrderedSizeTPair> &getUnlinks() { return m_unlinks; }
     // specific to axial line graphs
     bool findNextUnlinkPoint() const;
     Point2f getNextUnlinkPoint() const;

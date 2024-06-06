@@ -84,7 +84,7 @@ struct Connector {
     //  if this is a segment, this is the key for the axial line:
     int m_segment_axialref;
     // use one or other of these
-    std::vector<int> m_connections;
+    std::vector<size_t> m_connections;
     //
     std::map<SegmentRef, float> m_back_segconns;
     std::map<SegmentRef, float> m_forward_segconns;

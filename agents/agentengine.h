@@ -20,10 +20,12 @@
 
 #include "agentset.h"
 
+#include <optional>
+
 class AgentEngine {
   public: // public for now for speed
     std::vector<AgentSet> agentSets;
-    int m_gatelayer;
+    std::optional<size_t> m_gatelayer = std::nullopt;
     int m_timesteps;
 
   public:

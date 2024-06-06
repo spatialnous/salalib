@@ -14,6 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+
 #include "attributetable.h"
 #include "attributetableview.h"
 #include "mgraph_consts.h"
@@ -48,6 +49,8 @@ namespace dXreimpl {
 
 } // namespace dXreimpl
 
+struct OrderedSizeTPair;
+
 struct OrderedIntPair {
     int a;
     int b;
@@ -55,12 +58,34 @@ struct OrderedIntPair {
         a = (int)x < y ? x : y;
         b = (int)x < y ? y : x;
     }
+    OrderedIntPair(const OrderedSizeTPair &osp);
     // inlined at end of file
     friend bool operator==(const OrderedIntPair &x, const OrderedIntPair &y);
     friend bool operator!=(const OrderedIntPair &x, const OrderedIntPair &y);
     friend bool operator<(const OrderedIntPair &x, const OrderedIntPair &y);
     friend bool operator>(const OrderedIntPair &x, const OrderedIntPair &y);
 };
+
+struct OrderedSizeTPair {
+    size_t a;
+    size_t b;
+    OrderedSizeTPair(size_t x = static_cast<size_t>(-1), size_t y = static_cast<size_t>(-1)) {
+        a = (size_t)x < y ? x : y;
+        b = (size_t)x < y ? y : x;
+    }
+    OrderedSizeTPair(const OrderedIntPair &oip);
+    // inlined at end of file
+    friend bool operator==(const OrderedSizeTPair &x, const OrderedSizeTPair &y);
+    friend bool operator!=(const OrderedSizeTPair &x, const OrderedSizeTPair &y);
+    friend bool operator<(const OrderedSizeTPair &x, const OrderedSizeTPair &y);
+    friend bool operator>(const OrderedSizeTPair &x, const OrderedSizeTPair &y);
+};
+
+inline OrderedIntPair::OrderedIntPair(const OrderedSizeTPair &osp)
+    : OrderedIntPair(static_cast<int>(osp.a), static_cast<int>(osp.b)) {}
+
+inline OrderedSizeTPair::OrderedSizeTPair(const OrderedIntPair &oip)
+    : OrderedSizeTPair(static_cast<size_t>(oip.a), static_cast<size_t>(oip.b)) {}
 
 // note: these are made with a is always less than b
 inline bool operator==(const OrderedIntPair &x, const OrderedIntPair &y) {
@@ -73,5 +98,19 @@ inline bool operator<(const OrderedIntPair &x, const OrderedIntPair &y) {
     return ((x.a == y.a) ? x.b < y.b : x.a < y.a);
 }
 inline bool operator>(const OrderedIntPair &x, const OrderedIntPair &y) {
+    return ((x.a == y.a) ? x.b > y.b : x.a > y.a);
+}
+
+// note: these are made with a is always less than b
+inline bool operator==(const OrderedSizeTPair &x, const OrderedSizeTPair &y) {
+    return (x.a == y.a && x.b == y.b);
+}
+inline bool operator!=(const OrderedSizeTPair &x, const OrderedSizeTPair &y) {
+    return (x.a != y.a || x.b != y.b);
+}
+inline bool operator<(const OrderedSizeTPair &x, const OrderedSizeTPair &y) {
+    return ((x.a == y.a) ? x.b < y.b : x.a < y.a);
+}
+inline bool operator>(const OrderedSizeTPair &x, const OrderedSizeTPair &y) {
     return ((x.a == y.a) ? x.b > y.b : x.a > y.a);
 }

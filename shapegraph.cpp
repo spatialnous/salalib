@@ -282,8 +282,8 @@ void ShapeGraph::writeAxialConnectionsAsDotGraph(std::ostream &stream) {
     stream.precision(12);
 
     for (size_t i = 0; i < connectors.size(); i++) {
-        const std::vector<int> &connections = connectors[i].m_connections;
-        for (int connection : connections) {
+        const auto &connections = connectors[i].m_connections;
+        for (auto connection : connections) {
             stream << "    " << i << " -- " << connection << std::endl;
         }
     }

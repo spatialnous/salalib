@@ -16,6 +16,8 @@
 
 #include "salalib/connector.h"
 
+#include "salalib/attributetablehelpers.h"
+
 #include "genlib/containerutils.h"
 #include "genlib/readwritehelpers.h"
 
@@ -30,7 +32,10 @@ bool Connector::read(std::istream &stream) {
     m_back_segconns.clear();
 
     // n.b., must set displayed attribute as soon as loaded...
-    dXreadwrite::readIntoVector(stream, m_connections);
+
+    // The metagraph file format uses signed integers for connections
+    // therefore we have to first read that vector and then convert
+    dXreadwrite::readFromCastIntoVector<int>(stream, m_connections);
 
     stream.read((char *)&m_segment_axialref, sizeof(m_segment_axialref));
 
@@ -42,7 +47,7 @@ bool Connector::read(std::istream &stream) {
 
 bool Connector::write(std::ofstream &stream) {
     // n.b., must set displayed attribute as soon as loaded...
-    dXreadwrite::writeVector(stream, m_connections);
+    dXreadwrite::writeCastVector<int>(stream, m_connections);
     stream.write((char *)&m_segment_axialref, sizeof(m_segment_axialref));
 
     dXreadwrite::writeMap(stream, m_forward_segconns);

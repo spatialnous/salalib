@@ -255,7 +255,7 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
     enum { CLOSED = 1 }; // CLOSED = closed polygon
   protected:
     int m_attributes;
-    int m_vertex_count;
+    size_t m_vertex_count;
     std::vector<DxfVertex> m_vertices;
 
   public:
@@ -269,17 +269,17 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
     //
     // some basic manipulation
     void scale(const DxfVertex &base_vertex, const DxfVertex &scale) {
-        for (int i = 0; i < m_vertex_count; i++)
+        for (size_t i = 0; i < m_vertex_count; i++)
             m_vertices[i].scale(base_vertex, scale);
         DxfRegion::scale(base_vertex, scale);
     }
     void rotate(const DxfVertex &base_vertex, double angle) {
-        for (int i = 0; i < m_vertex_count; i++)
+        for (size_t i = 0; i < m_vertex_count; i++)
             m_vertices[i].rotate(base_vertex, angle);
         DxfRegion::rotate(base_vertex, angle);
     }
     void translate(const DxfVertex &translation) {
-        for (int i = 0; i < m_vertex_count; i++)
+        for (size_t i = 0; i < m_vertex_count; i++)
             m_vertices[i].translate(translation);
         DxfRegion::translate(translation);
     }
@@ -454,8 +454,8 @@ class DxfSpline : public DxfEntity, public DxfRegion {
   protected:
     int m_xyz;
     int m_attributes;
-    int m_ctrl_pt_count;
-    int m_knot_count;
+    size_t m_ctrl_pt_count;
+    size_t m_knot_count;
     std::vector<DxfVertex> m_ctrl_pts;
     std::vector<double> m_knots;
 
@@ -469,17 +469,17 @@ class DxfSpline : public DxfEntity, public DxfRegion {
     //
     // some basic manipulation
     void scale(const DxfVertex &base_vertex, const DxfVertex &scale) {
-        for (int i = 0; i < m_ctrl_pt_count; i++)
+        for (size_t i = 0; i < m_ctrl_pt_count; i++)
             m_ctrl_pts[i].scale(base_vertex, scale);
         DxfRegion::scale(base_vertex, scale);
     }
     void rotate(const DxfVertex &base_vertex, double angle) {
-        for (int i = 0; i < m_ctrl_pt_count; i++)
+        for (size_t i = 0; i < m_ctrl_pt_count; i++)
             m_ctrl_pts[i].rotate(base_vertex, angle);
         DxfRegion::rotate(base_vertex, angle);
     }
     void translate(const DxfVertex &translation) {
-        for (int i = 0; i < m_ctrl_pt_count; i++)
+        for (size_t i = 0; i < m_ctrl_pt_count; i++)
             m_ctrl_pts[i].translate(translation);
         DxfRegion::translate(translation);
     }

@@ -41,7 +41,7 @@ class NtfLayer {
 
   protected:
     std::string m_name;
-    int m_line_count;
+    size_t m_line_count;
 
   public:
     int pad1 : 32;
@@ -50,7 +50,7 @@ class NtfLayer {
         m_name = name;
         m_line_count = 0;
     }
-    int getLineCount() { return m_line_count; }
+    size_t getLineCount() { return m_line_count; }
     std::string getName() { return m_name; }
 };
 

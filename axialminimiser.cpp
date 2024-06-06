@@ -163,7 +163,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                     for (auto affectedconnection : affectedconnections) {
                         if (!m_removed[affectedconnection]) {
                             auto &connections = m_axialconns[affectedconnection].m_connections;
-                            depthmapX::findAndErase(connections, int(removeindex));
+                            depthmapX::findAndErase(connections, removeindex);
                             m_affected[affectedconnection] = true;
                         }
                     }
@@ -257,7 +257,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
             for (auto affectedconnection : affectedconnections) {
                 if (!m_removed[affectedconnection]) {
                     auto &connections = m_axialconns[size_t(affectedconnection)].m_connections;
-                    depthmapX::findAndErase(connections, int(j));
+                    depthmapX::findAndErase(connections, static_cast<size_t>(j));
                     m_affected[affectedconnection] = true;
                 }
             }

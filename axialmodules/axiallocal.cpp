@@ -34,28 +34,26 @@ AnalysisResult AxialLocal::run(Communicator *comm, ShapeGraph &map, bool) {
     attributes.insertOrResetColumn("Controllability");
     result.addAttribute("Controllability");
 
-    int control_col = -1, controllability_col = -1;
-    control_col = attributes.getColumnIndex("Control");
-    controllability_col = attributes.getColumnIndex("Controllability");
+    size_t control_col = attributes.getColumnIndex("Control");
+    size_t controllability_col = attributes.getColumnIndex("Controllability");
 
     // n.b., for this operation we assume continuous line referencing from zero (this is silly?)
     // has already failed due to this!  when intro hand drawn fewest line (where user may have
     // deleted) it's going to get worse...
 
-    size_t i = -1;
+    size_t i = 0;
     for (auto &iter : attributes) {
-        i++;
         AttributeRow &row = iter.getRow();
 
         double control = 0.0;
-        const std::vector<int> &connections = map.getConnections()[i].m_connections;
-        std::vector<int> totalneighbourhood;
-        for (int connection : connections) {
+        const auto &connections = map.getConnections()[i].m_connections;
+        std::vector<size_t> totalneighbourhood;
+        for (auto connection : connections) {
             // n.b., as of Depthmap 10.0, connections[j] and i cannot coexist
             // if (connections[j] != i) {
             depthmapX::addIfNotExists(totalneighbourhood, connection);
             int retro_size = 0;
-            auto &retconnectors = map.getConnections()[size_t(connection)].m_connections;
+            auto &retconnectors = map.getConnections()[connection].m_connections;
             for (auto retconnector : retconnectors) {
                 retro_size++;
                 depthmapX::addIfNotExists(totalneighbourhood, retconnector);
@@ -81,6 +79,7 @@ AnalysisResult AxialLocal::run(Communicator *comm, ShapeGraph &map, bool) {
                 comm->CommPostMessage(Communicator::CURRENT_RECORD, i);
             }
         }
+        i++;
     }
 
     result.completed = true;

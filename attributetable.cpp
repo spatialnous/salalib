@@ -71,7 +71,7 @@ size_t AttributeColumnImpl::read(std::istream &stream) {
 
     stream.read((char *)&m_displayParams, sizeof(DisplayParams));
     m_formula = dXstring::readString(stream);
-    return physical_column;
+    return static_cast<size_t>(physical_column);
 }
 
 void AttributeColumnImpl::write(std::ostream &stream, int physicalCol) {

@@ -66,7 +66,9 @@ class MetaGraph : public FileProperties {
     // TODO: drawing state functions/fields that should be eventually removed
     void makeViewportShapes(const QtRegion &viewport) const;
     bool findNextShape(bool &nextlayer) const;
-    const SalaShape &getNextShape() const { return m_drawingFiles[m_current_layer].getNextShape(); }
+    const SalaShape &getNextShape() const {
+        return m_drawingFiles[static_cast<size_t>(m_current_layer)].getNextShape();
+    }
     mutable int m_current_layer;
 
     enum {
@@ -103,7 +105,7 @@ class MetaGraph : public FileProperties {
     std::vector<ShapeMap> m_dataMaps;
 
     std::vector<std::unique_ptr<ShapeGraph>> m_shapeGraphs;
-    int m_displayed_shapegraph = -1;
+    std::optional<size_t> m_displayed_shapegraph = std::nullopt;
 
   public:
     MetaGraph(std::string name = "");
@@ -115,10 +117,17 @@ class MetaGraph : public FileProperties {
     }
 
     std::vector<PointMap> &getPointMaps() { return m_pointMaps; }
-    PointMap &getDisplayedPointMap() { return m_pointMaps[m_displayed_pointmap]; }
-    const PointMap &getDisplayedPointMap() const { return m_pointMaps[m_displayed_pointmap]; }
-    void setDisplayedPointMapRef(int i) { m_displayed_pointmap = i; }
-    int getDisplayedPointMapRef() const { return m_displayed_pointmap; }
+    bool hasDisplayedPointMap() { return m_displayed_pointmap.has_value(); }
+    PointMap &getDisplayedPointMap() { return m_pointMaps[m_displayed_pointmap.value()]; }
+    const PointMap &getDisplayedPointMap() const {
+        return m_pointMaps[m_displayed_pointmap.value()];
+    }
+    void setDisplayedPointMapRef(size_t map) {
+        if (m_displayed_pointmap.has_value() && m_displayed_pointmap != map)
+            getDisplayedPointMap().clearSel();
+        m_displayed_pointmap = map;
+    }
+    size_t getDisplayedPointMapRef() const { return m_displayed_pointmap.value(); }
     void redoPointMapBlockLines() // (flags blockedlines, but also flags that you need to rebuild a
                                   // bsp tree if you have one)
     {
@@ -126,21 +135,23 @@ class MetaGraph : public FileProperties {
             pointMap.m_blockedlines = false;
         }
     }
-    int addNewPointMap(const std::string &name = std::string("VGA Map"));
+    size_t addNewPointMap(const std::string &name = std::string("VGA Map"));
 
   private:
     std::vector<PointMap> m_pointMaps;
-    int m_displayed_pointmap = -1;
+    std::optional<size_t> m_displayed_pointmap = std::nullopt;
 
     // helpful to know this for creating fewest line maps, although has to be reread at input
-    int m_all_line_map = -1;
+    std::optional<size_t> m_all_line_map = std::nullopt;
 
-    void removePointMap(int i) {
-        if (m_displayed_pointmap >= i)
-            m_displayed_pointmap--;
-        if (m_displayed_pointmap < 0)
-            m_displayed_pointmap = 0;
-        m_pointMaps.erase(m_pointMaps.begin() + i);
+    void removePointMap(size_t i) {
+        if (m_displayed_pointmap.has_value()) {
+            if (m_pointMaps.size() == 1)
+                m_displayed_pointmap = std::nullopt;
+            else if (m_displayed_pointmap.value() != 0 && m_displayed_pointmap.value() >= i)
+                m_displayed_pointmap.value()--;
+        }
+        m_pointMaps.erase(std::next(m_pointMaps.begin(), static_cast<int>(i)));
     }
 
     bool readPointMaps(std::istream &stream);
@@ -229,9 +240,10 @@ class MetaGraph : public FileProperties {
         return false;
     }
     enum { PUSH_FUNC_MAX = 0, PUSH_FUNC_MIN = 1, PUSH_FUNC_AVG = 2, PUSH_FUNC_TOT = 3 };
-    bool pushValuesToLayer(int desttype, int destlayer, int push_func, bool count_col = false);
-    bool pushValuesToLayer(int sourcetype, int sourcelayer, int desttype, int destlayer, int col_in,
-                           int col_out, int push_func, bool count_col = false);
+    bool pushValuesToLayer(int desttype, size_t destlayer, int push_func, bool count_col = false);
+    bool pushValuesToLayer(int sourcetype, size_t sourcelayer, int desttype, size_t destlayer,
+                           std::optional<size_t> col_in, size_t col_out, int push_func,
+                           bool count_col = false);
     //
     int getDisplayedMapRef() const;
     //
@@ -240,21 +252,25 @@ class MetaGraph : public FileProperties {
     bool canUndo() const;
     void undo();
 
-    // TODO: There should be no "display" parameters in this data class
-    size_t m_displayed_datamap = static_cast<size_t>(-1);
-    ShapeMap &getDisplayedDataMap() { return m_dataMaps[m_displayed_datamap]; }
-    const ShapeMap &getDisplayedDataMap() const { return m_dataMaps[m_displayed_datamap]; }
-    size_t getDisplayedDataMapRef() const { return m_displayed_datamap; }
+    std::optional<size_t> m_displayed_datamap = std::nullopt;
+    bool hasDisplayedDataMap() { return m_displayed_datamap.has_value(); }
+    ShapeMap &getDisplayedDataMap() { return m_dataMaps[m_displayed_datamap.value()]; }
+    const ShapeMap &getDisplayedDataMap() const { return m_dataMaps[m_displayed_datamap.value()]; }
+    size_t getDisplayedDataMapRef() const { return m_displayed_datamap.value(); }
 
     void removeDataMap(size_t i) {
-        if (m_displayed_datamap >= i && i > 0)
-            m_displayed_datamap--;
-        m_dataMaps.erase(std::next(m_dataMaps.begin(), i));
+        if (m_displayed_datamap.has_value()) {
+            if (m_dataMaps.size() == 1)
+                m_displayed_datamap = std::nullopt;
+            else if (m_displayed_datamap.value() != 0 && m_displayed_datamap.value() >= i)
+                m_displayed_datamap.value()--;
+        }
+        m_dataMaps.erase(std::next(m_dataMaps.begin(), static_cast<int>(i)));
     }
 
     void setDisplayedDataMapRef(size_t map) {
-        if (static_cast<int>(m_displayed_datamap) != -1 && m_displayed_datamap != map)
-            m_dataMaps[m_displayed_datamap].clearSel();
+        if (m_displayed_datamap.has_value() && m_displayed_datamap != map)
+            getDisplayedDataMap().clearSel();
         m_displayed_datamap = map;
     }
 
@@ -269,23 +285,28 @@ class MetaGraph : public FileProperties {
     }
 
     std::vector<std::unique_ptr<ShapeGraph>> &getShapeGraphs() { return m_shapeGraphs; }
-    ShapeGraph &getDisplayedShapeGraph() { return *m_shapeGraphs[m_displayed_shapegraph].get(); }
-    const ShapeGraph &getDisplayedShapeGraph() const {
-        return *m_shapeGraphs[m_displayed_shapegraph].get();
+    bool hasDisplayedShapeGraph() { return m_displayed_shapegraph.has_value(); }
+    ShapeGraph &getDisplayedShapeGraph() {
+        return *m_shapeGraphs[m_displayed_shapegraph.value()].get();
     }
-    void setDisplayedShapeGraphRef(int map) {
-        if (m_displayed_shapegraph != -1 && m_displayed_shapegraph != map)
-            m_shapeGraphs[size_t(m_displayed_shapegraph)]->clearSel();
+    const ShapeGraph &getDisplayedShapeGraph() const {
+        return *m_shapeGraphs[m_displayed_shapegraph.value()].get();
+    }
+    void setDisplayedShapeGraphRef(size_t map) {
+        if (m_displayed_shapegraph.has_value() && m_displayed_shapegraph != map)
+            getDisplayedShapeGraph().clearSel();
         m_displayed_shapegraph = map;
     }
-    int getDisplayedShapeGraphRef() const { return m_displayed_shapegraph; }
+    size_t getDisplayedShapeGraphRef() const { return m_displayed_shapegraph.value(); }
 
-    void removeShapeGraph(int i) {
-        if (m_displayed_shapegraph >= i)
-            m_displayed_shapegraph--;
-        if (m_displayed_shapegraph < 0)
-            m_displayed_shapegraph = 0;
-        m_shapeGraphs.erase(m_shapeGraphs.begin() + i);
+    void removeShapeGraph(size_t i) {
+        if (m_displayed_shapegraph.has_value()) {
+            if (m_shapeGraphs.size() == 1)
+                m_displayed_shapegraph = std::nullopt;
+            else if (m_displayed_shapegraph.value() != 0 && m_displayed_shapegraph.value() >= i)
+                m_displayed_shapegraph.value()--;
+        }
+        m_shapeGraphs.erase(std::next(m_shapeGraphs.begin(), static_cast<int>(i)));
     }
 
     bool readShapeGraphs(std::istream &stream);
@@ -307,8 +328,10 @@ class MetaGraph : public FileProperties {
     int addAttribute(const std::string &name);
     void removeAttribute(int col);
     bool isAttributeLocked(int col);
-    AttributeTable &getAttributeTable(int type = -1, int layer = -1);
-    const AttributeTable &getAttributeTable(int type = -1, int layer = -1) const;
+    AttributeTable &getAttributeTable(std::optional<size_t> type = std::nullopt,
+                                      std::optional<size_t> layer = std::nullopt);
+    const AttributeTable &getAttributeTable(std::optional<size_t> type = std::nullopt,
+                                            std::optional<size_t> layer = std::nullopt) const;
     LayerManagerImpl &getLayers(int type = -1, int layer = -1);
     const LayerManagerImpl &getLayers(int type = -1, int layer = -1) const;
     AttributeTableHandle &getAttributeTableHandle(int type = -1, int layer = -1);
@@ -317,14 +340,18 @@ class MetaGraph : public FileProperties {
     int getLineFileCount() const { return (int)m_drawingFiles.size(); }
 
     // Quick mod - TV
-    const std::string &getLineFileName(int file) const { return m_drawingFiles[file].getName(); }
-    int getLineLayerCount(int file) const { return (int)m_drawingFiles[file].m_spacePixels.size(); }
-
-    ShapeMap &getLineLayer(int file, int layer) {
-        return m_drawingFiles[file].m_spacePixels[layer];
+    const std::string &getLineFileName(size_t fileIdx) const {
+        return m_drawingFiles[fileIdx].getName();
     }
-    const ShapeMap &getLineLayer(int file, int layer) const {
-        return m_drawingFiles[file].m_spacePixels[layer];
+    size_t getLineLayerCount(size_t fileIdx) const {
+        return m_drawingFiles[fileIdx].m_spacePixels.size();
+    }
+
+    ShapeMap &getLineLayer(size_t fileIdx, size_t layerIdx) {
+        return m_drawingFiles[fileIdx].m_spacePixels[layerIdx];
+    }
+    const ShapeMap &getLineLayer(size_t fileIdx, size_t layerIdx) const {
+        return m_drawingFiles[fileIdx].m_spacePixels[layerIdx];
     }
     //
     // Some error handling -- the idea is that you catch the error in MetaGraph,
@@ -414,15 +441,15 @@ class MetaGraph : public FileProperties {
         else if (m_state & POINTMAPS &&
                  !getDisplayedPointMap().isProcessed()) // this is a default select application
             return getDisplayedPointMap().setCurSel(r, add);
-        else if (m_state & DATAMAPS) // I'm not sure why this is a possibility, but it appears you
-                                     // might have state & DATAMAPS without VIEWDATA...
+        else if (m_state & DATAMAPS) // I'm not sure why this is a possibility, but it appears
+                                     // you might have state & DATAMAPS without VIEWDATA...
             return getDisplayedDataMap().setCurSel(r, add);
         else
             return false;
     }
     bool clearSel() {
-        // really needs a separate clearSel for the datalayers... at the moment this is handled in
-        // PointMap
+        // really needs a separate clearSel for the datalayers... at the moment this is handled
+        // in PointMap
         if (m_view_class & VIEWVGA)
             return getDisplayedPointMap().clearSel();
         else if (m_view_class & VIEWAXIAL)

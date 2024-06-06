@@ -15,8 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mapinfodata.h"
+
 #include "salalib/pointdata.h"
 #include "salalib/shapemap.h"
+
+#include "genlib/stringutils.h"
 
 #include <numeric>
 
@@ -133,7 +136,7 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
         }
     }
     // TODO: Use the proper exception
-    catch (std::exception&) {
+    catch (std::exception &) {
         // unhandled parsing exceptions return read error:
         return MINFO_MIFPARSE;
     }
@@ -209,7 +212,7 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
         }
     }
     // TODO: use a proper exception
-    catch (std::exception&) {
+    catch (std::exception &) {
         // unhandled parsing exceptions return read error:
         return MINFO_TABLE;
     }
@@ -253,8 +256,8 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     if (m_bounds.empty()) {
         char bounds[256];
         snprintf(bounds, 256, "Bounds (%10f, %10f) (%10f, %10f)", points.m_region.bottom_left.x,
-                points.m_region.bottom_left.y, points.m_region.top_right.x,
-                points.m_region.top_right.y);
+                 points.m_region.bottom_left.y, points.m_region.top_right.x,
+                 points.m_region.top_right.y);
         m_bounds = bounds;
     }
 
@@ -282,8 +285,8 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     if (m_bounds.empty()) {
         char bounds[256];
         snprintf(bounds, 256, "Bounds (%10f, %10f) (%10f, %10f)", map.getRegion().bottom_left.x,
-                map.getRegion().bottom_left.y, map.getRegion().top_right.x,
-                map.getRegion().top_right.y);
+                 map.getRegion().bottom_left.y, map.getRegion().top_right.x,
+                 map.getRegion().top_right.y);
         m_bounds = bounds;
     }
 
@@ -344,7 +347,7 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
     if (m_bounds.empty()) {
         char bounds[256];
         snprintf(bounds, 256, "Bounds (%10f, %10f) (%10f, %10f)", region.bottom_left.x,
-                region.bottom_left.y, region.top_right.x, region.top_right.y);
+                 region.bottom_left.y, region.top_right.x, region.top_right.y);
         m_bounds = bounds;
     }
 

@@ -62,7 +62,9 @@ struct LineTest {
     unsigned int test;
     LineTest(const Line &l = Line(), int t = -1) {
         line = l;
-        test = t;
+        // TODO: Shouldn't be casting an int with a known
+        // default value of -1
+        test = static_cast<unsigned int>(t);
     }
     // operator Line() {return line;}
 };

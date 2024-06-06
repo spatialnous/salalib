@@ -19,11 +19,12 @@
 #include "salalib/shapemap.h"
 #include "salalib/attributetable.h"
 #include "salalib/attributetablehelpers.h"
-#include "salalib/pointdata.h"
 #include "salalib/parsers/mapinfodata.h" // for mapinfo interface
+#include "salalib/pointdata.h"
 
 #include "genlib/containerutils.h"
 #include "genlib/exceptions.h"
+#include "genlib/readwritehelpers.h"
 #include "genlib/stringutils.h"
 
 #include <float.h>
@@ -93,9 +94,8 @@ void SalaShape::setCentroidAreaPerim() {
     if (sgn(m_area) == 1) {
         m_type |= SHAPE_CCW;
     }
-    m_centroid.scale(
-        2.0 /
-        m_area); // note, *not* fabs(m_area) as it is then confused by clockwise ordered shapes
+    m_centroid.scale(2.0 / m_area); // note, *not* fabs(m_area) as it is then
+                                    // confused by clockwise ordered shapes
     m_area = fabs(m_area);
     if (isOpen()) {
         // take off the automatically collected final side
@@ -206,8 +206,8 @@ void ShapeMap::copy(const ShapeMap &sourcemap, int copyflags) {
         for (int idx : indices) {
             int outcol =
                 m_attributes->insertOrResetColumn(sourcemap.m_attributes->getColumnName(idx));
-            // n.b. outcol not necessarily the same as incol, although row position in table (j)
-            // should match
+            // n.b. outcol not necessarily the same as incol, although row position in
+            // table (j) should match
 
             auto targetIter = m_attributes->begin();
             for (auto sourceIter = sourcemap.m_attributes->begin();
@@ -294,7 +294,8 @@ int ShapeMap::makePointShape(const Point2f &point, bool tempshape,
 
 int ShapeMap::makeLineShapeWithRef(const Line &line, int shape_ref, bool through_ui, bool tempshape,
                                    const std::map<int, float> &extraAttributes) {
-    // note, map must have editable flag on if we are to make a shape through the user interface:
+    // note, map must have editable flag on if we are to make a shape through the
+    // user interface:
     if (through_ui && !m_editable) {
         return -1;
     }
@@ -333,7 +334,8 @@ int ShapeMap::makeLineShapeWithRef(const Line &line, int shape_ref, bool through
             int rowid = depthmapX::findIndexFromKey(m_shapes, shape_ref);
             if (isAxialMap()) {
                 connectIntersected(
-                    rowid, true); // "true" means line-line intersections only will be applied
+                    rowid,
+                    true); // "true" means line-line intersections only will be applied
             } else {
                 connectIntersected(rowid, false);
             }
@@ -369,9 +371,9 @@ int ShapeMap::makePolyShapeWithRef(const std::vector<Point2f> &points, bool open
     case 1:
         return makePointShapeWithRef(points[0], shape_ref, tempshape);
     case 2:
-        return makeLineShapeWithRef(
-            Line(points[0], points[1]), shape_ref, false,
-            tempshape); // false is not through ui: there really should be a through ui here?
+        return makeLineShapeWithRef(Line(points[0], points[1]), shape_ref, false,
+                                    tempshape); // false is not through ui: there really should be a
+                                                // through ui here?
     }
 
     QtRegion region(points[0], points[0]);
@@ -395,7 +397,8 @@ int ShapeMap::makePolyShapeWithRef(const std::vector<Point2f> &points, bool open
     }
     */
 
-    // not sure if it matters if the polygon is clockwise or anticlockwise... we'll soon tell!
+    // not sure if it matters if the polygon is clockwise or anticlockwise...
+    // we'll soon tell!
 
     if (open) {
         m_shapes.insert(std::make_pair(shape_ref, SalaShape(SalaShape::SHAPE_POLY)));
@@ -648,8 +651,8 @@ bool ShapeMap::moveShape(int shaperef, const Line &line, bool undoing) {
         m_undobuffer.push_back(SalaEvent(SalaEvent::SALA_MOVED, shaperef));
         m_undobuffer.back().m_geometry = shapeIter->second;
         m_undobuffer.back().m_geometry.m_selected =
-            false; // <- this m_selected really shouldn't be used -- should use attributes, but for
-                   // some reason it is!
+            false; // <- this m_selected really shouldn't be used -- should use
+                   // attributes, but for some reason it is!
     }
 
     if (!(m_region.contains_touch(line.start()) && m_region.contains_touch(line.end()))) {
@@ -713,7 +716,8 @@ bool ShapeMap::moveShape(int shaperef, const Line &line, bool undoing) {
                 newConnectionRow.incrValue(conn_col);
             }
         }
-        // now check any unlinks still exist in our newconnections are unlinked again (argh...)
+        // now check any unlinks still exist in our newconnections are unlinked
+        // again (argh...)
         for (auto revIter = m_unlinks.rbegin(); revIter != m_unlinks.rend(); ++revIter) {
             int connb = -1;
             if (revIter->a == rowid)
@@ -917,19 +921,20 @@ bool ShapeMap::removeSelected() {
 }
 
 void ShapeMap::removeShape(int shaperef, bool undoing) {
-    // remove shape from four keys: the pixel grid, the poly list, the attributes and the
-    // connections
+    // remove shape from four keys: the pixel grid, the poly list, the attributes
+    // and the connections
     removePolyPixels(shaperef); // done first, as all interface references use this list
 
     auto shapeIter = m_shapes.find(shaperef);
     size_t rowid = std::distance(m_shapes.begin(), shapeIter);
 
-    if (!undoing) { // <- if not currently undoing another event, then add to the undo buffer:
+    if (!undoing) { // <- if not currently undoing another event, then add to the
+                    // undo buffer:
         m_undobuffer.push_back(SalaEvent(SalaEvent::SALA_DELETED, shaperef));
         m_undobuffer.back().m_geometry = shapeIter->second;
         m_undobuffer.back().m_geometry.m_selected =
-            false; // <- this m_selected really shouldn't be used -- should use attributes, but for
-                   // some reason it is!
+            false; // <- this m_selected really shouldn't be used -- should use
+                   // attributes, but for some reason it is!
     }
 
     if (m_hasgraph) {
@@ -1005,8 +1010,8 @@ void ShapeMap::undo() {
     if (event.m_action == SalaEvent::SALA_CREATED) {
 
         removeShape(event.m_shape_ref,
-                    true); // <- note, must tell remove shape it's an undo, or it will add this
-                           // remove to the undo stack!
+                    true); // <- note, must tell remove shape it's an undo, or it
+                           // will add this remove to the undo stack!
 
     } else if (event.m_action == SalaEvent::SALA_DELETED) {
 
@@ -1015,15 +1020,16 @@ void ShapeMap::undo() {
         auto &row = m_attributes->getRow(AttributeKey(event.m_shape_ref));
 
         if (rowid != -1 && m_hasgraph) {
-            // redo connections... n.b. TO DO this is intended to use the slower "any connection"
-            // method, so it can handle any sort of graph
+            // redo connections... n.b. TO DO this is intended to use the slower "any
+            // connection" method, so it can handle any sort of graph
             // ...but that doesn't exist yet, so for the moment do lines:
             //
             // insert new connector at the row:
             m_connectors[rowid] = Connector();
             //
-            // now go through all connectors, ensuring they're reindexed above this one:
-            // Argh!  ...but, remember the reason we're doing this is for fast processing elsewhere
+            // now go through all connectors, ensuring they're reindexed above this
+            // one: Argh!  ...but, remember the reason we're doing this is for fast
+            // processing elsewhere
             // -- this is a user triggered *undo*, they'll just have to wait:
             for (size_t i = 0; i < m_connectors.size(); i++) {
                 for (size_t j = 0; j < m_connectors[i].m_connections.size(); j++) {
@@ -1032,8 +1038,8 @@ void ShapeMap::undo() {
                     }
                 }
             }
-            // it gets worse, the links and unlinks will also be all over the shop due to the
-            // inserted row:
+            // it gets worse, the links and unlinks will also be all over the shop due
+            // to the inserted row:
             size_t j;
             for (j = 0; j < m_links.size(); j++) {
                 if (m_links[j].a >= rowid)
@@ -1074,8 +1080,8 @@ void ShapeMap::undo() {
     } else if (event.m_action == SalaEvent::SALA_MOVED) {
 
         moveShape(event.m_shape_ref, event.m_geometry.getLine(),
-                  true); // <- note, must tell remove shape it's an undo, or it will add this remove
-                         // to the undo stack!
+                  true); // <- note, must tell remove shape it's an undo, or it will
+                         // add this remove to the undo stack!
     }
 
     m_undobuffer.pop_back();
@@ -1090,7 +1096,8 @@ void ShapeMap::undo() {
 
 void ShapeMap::makePolyPixels(int polyref) {
     ShapeRef shapeRef = ShapeRef(polyref);
-    // first add into pixels, and ensure you have a bl, tr for the set (useful for testing later)
+    // first add into pixels, and ensure you have a bl, tr for the set (useful for
+    // testing later)
     SalaShape &poly = m_shapes.find(polyref)->second;
     if (poly.isClosed()) {
         std::map<int, int> relations;
@@ -1164,8 +1171,8 @@ void ShapeMap::makePolyPixels(int polyref) {
             }
         }
         shapePixelBorder(relations, polyref, ShapeRef::SHAPE_L, minpix, minpix, true);
-        // go through any that aren't on the outer border: this will be internal edges, and will
-        // cause problems for point in polygon algorithms!
+        // go through any that aren't on the outer border: this will be internal
+        // edges, and will cause problems for point in polygon algorithms!
 
         for (auto &relation : relations) {
             PixelRef pix = relation.first;
@@ -1179,8 +1186,8 @@ void ShapeMap::makePolyPixels(int polyref) {
                 tags |= ShapeRef::SHAPE_INTERNAL_EDGE;
             }
         }
-        // now, any remaining tags are internal sides, and need to be cleared through fill
-        // we could go either direction, but we just go left to right:
+        // now, any remaining tags are internal sides, and need to be cleared
+        // through fill we could go either direction, but we just go left to right:
         for (auto &relation : relations) {
             PixelRef pix = relation.first;
             if (relation.second & ShapeRef::SHAPE_R) {
@@ -1324,8 +1331,8 @@ void ShapeMap::removePolyPixels(int polyref) {
     }
     SalaShape &poly = shapeIter->second;
     if (poly.isClosed()) {
-        // easiest just to use scan lines to find internal pixels rather than trace a complex
-        // border:
+        // easiest just to use scan lines to find internal pixels rather than trace
+        // a complex border:
         PixelRef minpix = pixelate(poly.m_region.bottom_left);
         PixelRef maxpix = pixelate(poly.m_region.top_right);
         for (int x = minpix.x; x <= maxpix.x; x++) {
@@ -1481,8 +1488,8 @@ std::vector<int> ShapeMap::pointInPolyList(const Point2f &p) const {
 
         int shapeindex = testPointInPoly(p, shape);
 
-        // if there's a shapeindex, then add (note it is an add -- you may be passed a list again to
-        // expand)
+        // if there's a shapeindex, then add (note it is an add -- you may be passed
+        // a list again to expand)
         if (shapeindex != -1) {
             shapeindexlist.push_back(shapeindex);
         }
@@ -1491,7 +1498,8 @@ std::vector<int> ShapeMap::pointInPolyList(const Point2f &p) const {
     return shapeindexlist;
 }
 
-// note, lineref is only used as an "exclude self" test when called from getShapeConnections
+// note, lineref is only used as an "exclude self" test when called from
+// getShapeConnections
 std::vector<int> ShapeMap::lineInPolyList(const Line &li_orig, size_t lineref,
                                           double tolerance) const {
     std::vector<int> shapeindexlist;
@@ -1515,12 +1523,12 @@ std::vector<int> ShapeMap::lineInPolyList(const Line &li_orig, size_t lineref,
             const std::vector<ShapeRef> &shapes =
                 m_pixel_shapes(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
             for (const ShapeRef &shape : shapes) {
-                // slow to do this as it can repeat -- really need to use a linetest like structure
-                // to avoid retest of polygon lines
+                // slow to do this as it can repeat -- really need to use a linetest
+                // like structure to avoid retest of polygon lines
                 if (shape.m_shape_ref != lineref &&
                     shape.m_tags & (ShapeRef::SHAPE_EDGE | ShapeRef::SHAPE_INTERNAL_EDGE |
                                     ShapeRef::SHAPE_OPEN)) {
-                    auto shapeIter = m_shapes.find(shape.m_shape_ref);
+                    auto shapeIter = m_shapes.find(static_cast<int>(shape.m_shape_ref));
                     const SalaShape &poly = shapeIter->second;
                     switch (poly.m_type & (SalaShape::SHAPE_LINE | SalaShape::SHAPE_POLY)) {
                     case SalaShape::SHAPE_LINE:
@@ -1563,10 +1571,11 @@ std::vector<int> ShapeMap::polyInPolyList(int polyref, double tolerance) const {
         return shapeindexlist;
     }
     const SalaShape &poly = shapeIter->second;
-    if (poly.isClosed()) { // <- it ought to be, you shouldn't be using this function if not!
+    if (poly.isClosed()) { // <- it ought to be, you shouldn't be using this
+                           // function if not!
         std::vector<size_t> testedlist;
-        // easiest just to use scan lines to find internal pixels rather than trace a complex
-        // border:
+        // easiest just to use scan lines to find internal pixels rather than trace
+        // a complex border:
         PixelRef minpix = pixelate(poly.m_region.bottom_left);
         PixelRef maxpix = pixelate(poly.m_region.top_right);
         // pass one: shape centre of either object coincident automatically adds
@@ -1669,9 +1678,9 @@ std::vector<int> ShapeMap::polyInPolyList(int polyref, double tolerance) const {
                                 } else {
                                     // poly to poly, ick!
                                     // first test one entirely inside the other
-                                    // any point at all will suffice to check this: however, we need
-                                    // to check that the polyref point *itself* is within the pixel,
-                                    // not just part of the line associated with it...
+                                    // any point at all will suffice to check this: however, we
+                                    // need to check that the polyref point *itself* is within the
+                                    // pixel, not just part of the line associated with it...
                                     if ((pixelate(polyb.m_points[shaperefb.m_polyrefs[0]]) ==
                                              PixelRef(x, y) &&
                                          testPointInPoly(polyb.m_points[shaperefb.m_polyrefs[0]],
@@ -1755,8 +1764,8 @@ ShapeMap::shapeInPolyList(const SalaShape &shape) // note: no const due to poly 
 }
 
 // helper for point in poly --
-// currently needs slight rewrite to avoid problem if point is in line with a vertex
-// (counter incremented twice on touching implies not in poly when is)
+// currently needs slight rewrite to avoid problem if point is in line with a
+// vertex (counter incremented twice on touching implies not in poly when is)
 
 int ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef &shape) const {
     auto shapeIter = m_shapes.end();
@@ -1801,8 +1810,8 @@ int ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef &shape) const {
                                     // n.b., no counter here
                                 }
                             }
-                            // at this stage we know the line isn't horizontal, so we can find the
-                            // intersection point:
+                            // at this stage we know the line isn't horizontal, so we can find
+                            // the intersection point:
                             else if (parity *
                                          (lineb.grad(XAXIS) * (p.y - lineb.ay()) + lineb.ax()) >=
                                      parity * p.x) {
@@ -1836,8 +1845,8 @@ int ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef &shape) const {
                                     // n.b., no counter here
                                 }
                             }
-                            // at this stage we know the line isn't vertical, so we can find the
-                            // intersection point:
+                            // at this stage we know the line isn't vertical, so we can find
+                            // the intersection point:
                             else if (parity *
                                          (lineb.grad(YAXIS) * (p.x - lineb.ax()) + lineb.ay()) >=
                                      parity * p.y) {
@@ -1861,13 +1870,15 @@ int ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef &shape) const {
                 pix2.move(PixelRef::NEGVERTICAL); // move pix2 down, search for this shape...
                 const std::vector<ShapeRef> *pixelShapes =
                     &m_pixel_shapes(static_cast<size_t>(pix2.y), static_cast<size_t>(pix2.x));
-                // bit of code duplication like this, but easier on params to this function:
+                // bit of code duplication like this, but easier on params to this
+                // function:
                 auto iter = std::find(pixelShapes->begin(), pixelShapes->end(), shape.m_shape_ref);
                 while (iter != pixelShapes->end()) {
                     for (size_t k = 0; k < iter->m_polyrefs.size(); k++) {
                         depthmapX::addIfNotExists(testnodes, int(iter->m_polyrefs[k]));
                     }
-                    pix2.move(PixelRef::NEGVERTICAL); // move pix2 down, search for this shape...
+                    pix2.move(PixelRef::NEGVERTICAL); // move pix2 down, search for this
+                                                      // shape...
                     if (includes(pix2)) {
                         pixelShapes = &m_pixel_shapes(static_cast<size_t>(pix2.y),
                                                       static_cast<size_t>(pix2.x));
@@ -1950,8 +1961,8 @@ int ShapeMap::getClosestOpenGeom(const Point2f &p) const {
                 thisdist = dist(p, poly.m_region); // note, in this case m_region is a line
                 break;
             case SalaShape::SHAPE_POLY:
-            case SalaShape::SHAPE_POLY |
-                SalaShape::SHAPE_CCW: // note CCW should never have happened, but it has
+            case SalaShape::SHAPE_POLY | SalaShape::SHAPE_CCW: // note CCW should never have
+                                                               // happened, but it has
                 for (size_t j = 0; j < ref.m_polyrefs.size(); j++) {
                     Line line(poly.m_points[ref.m_polyrefs[j]],
                               poly.m_points[ref.m_polyrefs[j] + 1]);
@@ -1969,9 +1980,9 @@ int ShapeMap::getClosestOpenGeom(const Point2f &p) const {
         }
     }
 
-    return (shapeIter == m_shapes.end())
-               ? -1
-               : std::distance(m_shapes.begin(), shapeIter); // note conversion to -1
+    return (shapeIter == m_shapes.end()) ? -1
+                                         : std::distance(m_shapes.begin(),
+                                                         shapeIter); // note conversion to -1
 }
 
 Point2f ShapeMap::getClosestVertex(const Point2f &p) const {
@@ -2040,7 +2051,8 @@ int ShapeMap::connectIntersected(int rowid, bool linegraph) {
         // historically line length has always been added at this point
         leng_col = m_attributes->getOrInsertLockedColumn("Line Length");
     }
-    // all indices should match... this grows connectors if necessary to same length as shapes
+    // all indices should match... this grows connectors if necessary to same
+    // length as shapes
     while (m_connectors.size() < m_shapes.size()) {
         m_connectors.push_back(Connector());
     }
@@ -2068,9 +2080,10 @@ int ShapeMap::connectIntersected(int rowid, bool linegraph) {
 }
 
 // this assumes this is a line map (to speed up axial map creation)
-// use the other version, getShapeConnections for arbitrary shape-shape connections
-// note, connections are listed by rowid in list, *not* reference number
-// (so they may vary: must be checked carefully when shapes are removed / added)
+// use the other version, getShapeConnections for arbitrary shape-shape
+// connections note, connections are listed by rowid in list, *not* reference
+// number (so they may vary: must be checked carefully when shapes are removed /
+// added)
 std::vector<int> ShapeMap::getLineConnections(int lineref, double tolerance) {
     std::vector<int> connections;
 
@@ -2085,8 +2098,9 @@ std::vector<int> ShapeMap::getLineConnections(int lineref, double tolerance) {
     // As of version 10, self-connections are *not* added
     // In the past:
     // <exclude> it's useful to have yourself in your connections list
-    // (apparently! -- this needs checking, as most of the time it is then checked to exclude self
-    // again!) </exclude> <exclude> connections.add(m_shapes.searchindex(lineref)); </exclude>
+    // (apparently! -- this needs checking, as most of the time it is then checked
+    // to exclude self again!) </exclude> <exclude>
+    // connections.add(m_shapes.searchindex(lineref)); </exclude>
 
     shapesToTest.insert(lineref);
 
@@ -2103,9 +2117,9 @@ std::vector<int> ShapeMap::getLineConnections(int lineref, double tolerance) {
         if ((shape.m_tags & ShapeRef::SHAPE_OPEN) == ShapeRef::SHAPE_OPEN) {
             const Line &line = m_shapes.find(int(shape.m_shape_ref))->second.getLine();
             if (intersect_region(line, l, line.length() * tolerance)) {
-                // n.b. originally this followed the logic that we must normalise intersect_line
-                // properly: tolerance * line length one * line length two in fact, works better if
-                // it's just line.length() * tolerance...
+                // n.b. originally this followed the logic that we must normalise
+                // intersect_line properly: tolerance * line length one * line length
+                // two in fact, works better if it's just line.length() * tolerance...
                 if (intersect_line(line, l, line.length() * tolerance)) {
                     depthmapX::insert_sorted(
                         connections, depthmapX::findIndexFromKey(m_shapes, int(shape.m_shape_ref)));
@@ -2117,11 +2131,12 @@ std::vector<int> ShapeMap::getLineConnections(int lineref, double tolerance) {
     return connections;
 }
 
-// this is only problematic as there is lots of legacy code with shape-in-shape testing,
+// this is only problematic as there is lots of legacy code with shape-in-shape
+// testing,
 std::vector<int> ShapeMap::getShapeConnections(int shaperef, double tolerance) {
-    // In versions prior to 10, note that unlike getLineConnections, self-connection is excluded by
-    // all of the following functions As of version 10, both getShapeConnections and
-    // getLineConnections exclude self-connection
+    // In versions prior to 10, note that unlike getLineConnections,
+    // self-connection is excluded by all of the following functions As of version
+    // 10, both getShapeConnections and getLineConnections exclude self-connection
 
     std::vector<int> connections;
 
@@ -2132,15 +2147,16 @@ std::vector<int> ShapeMap::getShapeConnections(int shaperef, double tolerance) {
             // a point is simple, it never intersects itself:
             connections = pointInPolyList(shape.getPoint());
         } else if (shape.isPolygon()) {
-            // a closed poly is actually quite simple too as we already have code using a polyref:
+            // a closed poly is actually quite simple too as we already have code
+            // using a polyref:
             connections = polyInPolyList(shaperef, tolerance);
         } else if (shape.isLine()) {
-            // line is a bit slow because there's no tested shape as in getLineConnections, but
-            // similar:
+            // line is a bit slow because there's no tested shape as in
+            // getLineConnections, but similar:
             connections = lineInPolyList(shape.getLine(), shaperef, tolerance);
         } else if (shape.isPolyLine()) {
-            // this is the worst for efficiency: potential for many possible retries of the same
-            // shape:
+            // this is the worst for efficiency: potential for many possible retries
+            // of the same shape:
             for (size_t i = 1; i < shape.m_points.size() - 1; i++) {
                 Line li(shape.m_points[i - 1], shape.m_points[i]);
                 connections = lineInPolyList(li, shaperef, tolerance);
@@ -2198,7 +2214,8 @@ double ShapeMap::getLocationValue(const Point2f &point) const {
             val = row.getValue(m_displayed_attribute);
         }
     }
-    return (x == -1) ? -2.0 : val; // -2.0 is returned when point cannot be associated with a poly
+    return (x == -1) ? -2.0 : val; // -2.0 is returned when point cannot be
+                                   // associated with a poly
 }
 
 const std::map<int, SalaShape> ShapeMap::getShapesInRegion(const QtRegion &r) const {
@@ -2253,7 +2270,8 @@ bool ShapeMap::setCurSel(QtRegion &r, bool add) {
     return !shapesInRegion.empty();
 }
 
-// this version is used by setSelSet in MetaGraph, ultimately called from CTableView and PlotView
+// this version is used by setSelSet in MetaGraph, ultimately called from
+// CTableView and PlotView
 bool ShapeMap::setCurSel(const std::vector<int> &selset, bool add) {
     // note: override cursel, can only be used with analysed pointdata:
     if (!add) {
@@ -2474,8 +2492,8 @@ bool ShapeMap::write(std::ofstream &stream) {
     // write attribute data
     m_attributes->write(stream, m_layers);
 
-    // TODO: Compatibility. The attribute columns will be stored sorted alphabetically
-    // so the displayed attribute needs to match that
+    // TODO: Compatibility. The attribute columns will be stored sorted
+    // alphabetically so the displayed attribute needs to match that
     int sortedDisplayedAttribute = m_attributes->getColumnSortedIndex(m_displayed_attribute);
     stream.write((char *)&sortedDisplayedAttribute, sizeof(sortedDisplayedAttribute));
 
@@ -2680,15 +2698,17 @@ bool ShapeMap::importData(const depthmapX::Table &data, std::vector<int> shape_r
                 if (cellAt == colcodes.end()) {
 
                     // TODO:
-                    // It seems that the original intention here was that if we are past 32 unique
-                    // values, we should stop trying to make the column categorical and fill the
-                    // rest of the values with -1.0f. It's not possible to test the original
-                    // implementation because the app crashes if we load a file with more than 32
-                    // unique values. When and if we have a robust implementation of an attribute
-                    // table that allows for both categorical and plain string attributes this
-                    // should be re-examined for a better way to classify the column as either.
-                    // Meanwhile after this threshold (32) we set the whole column to -1 so that it
-                    // does not give the impression it worked when it's actually half-baked
+                    // It seems that the original intention here was that if we are past
+                    // 32 unique values, we should stop trying to make the column
+                    // categorical and fill the rest of the values with -1.0f. It's not
+                    // possible to test the original implementation because the app
+                    // crashes if we load a file with more than 32 unique values. When and
+                    // if we have a robust implementation of an attribute table that
+                    // allows for both categorical and plain string attributes this should
+                    // be re-examined for a better way to classify the column as either.
+                    // Meanwhile after this threshold (32) we set the whole column to -1
+                    // so that it does not give the impression it worked when it's
+                    // actually half-baked
 
                     if (colcodes.size() >= 32) {
                         for (size_t j = 0; j < column.second.size(); j++) {
@@ -2749,8 +2769,8 @@ void ShapeMap::makeViewportShapes(const QtRegion &viewport) const {
             const std::vector<ShapeRef> &shapeRefs =
                 m_pixel_shapes(static_cast<size_t>(j), static_cast<size_t>(i));
             for (const ShapeRef &shape : shapeRefs) {
-                // copy the index to the correct draworder position (draworder is formatted on
-                // display attribute)
+                // copy the index to the correct draworder position (draworder is
+                // formatted on display attribute)
                 int x = std::distance(m_shapes.begin(), m_shapes.find(shape.m_shape_ref));
                 AttributeKey shapeRefKey(shape.m_shape_ref);
                 if (isObjectVisible(m_layers, m_attributes->getRow(shapeRefKey))) {
@@ -2765,7 +2785,8 @@ void ShapeMap::makeViewportShapes(const QtRegion &viewport) const {
 }
 
 bool ShapeMap::findNextShape(bool &nextlayer) const {
-    // note: will not work immediately after a new poly has been added: makeViewportShapes first
+    // note: will not work immediately after a new poly has been added:
+    // makeViewportShapes first
     if (m_invalidate || m_newshape) {
         return false;
     }
@@ -2809,7 +2830,8 @@ std::vector<SalaEdgeU> SalaShape::getClippingSet(QtRegion &clipframe) const {
         last_inside = next_inside;
     }
     if (!found_inside) {
-        // note: deliberately add a single empty SalaEdgeU if this polygon is never inside the frame
+        // note: deliberately add a single empty SalaEdgeU if this polygon is never
+        // inside the frame
         edgeset.push_back(SalaEdgeU());
     }
     return edgeset;
@@ -3125,11 +3147,12 @@ bool ShapeMap::unlinkShapeSet(std::istream &idset, int refcol) {
                 unlink.first = stoi(tokens[0]);
                 unlink.second = stoi(tokens[1]);
                 unlinks.push_back(unlink);
-            } catch (const std::invalid_argument&) {
+            } catch (const std::invalid_argument &) {
                 ;
-            } catch (const std::out_of_range&) {
+            } catch (const std::out_of_range &) {
                 ;
-            } // don't do anything if it can't parse the numbers, just ignore (e.g., first line)
+            } // don't do anything if it can't parse the numbers, just ignore (e.g.,
+              // first line)
         }
     } while (!idset.eof());
 

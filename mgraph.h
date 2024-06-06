@@ -32,10 +32,12 @@
 #include "salalib/shapegraph.h"
 #include "salalib/shapemap.h"
 
+#include "genlib/bsptree.h"
 #include "genlib/p2dpoly.h"
 
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <vector>
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +150,6 @@ class MetaGraph : public FileProperties {
     bool writePointMaps(std::ofstream &stream, bool displayedmaponly = false);
 
   public:
-
     int getState() const { return m_state; }
     // use with caution: only very rarely needed outside MetaGraph itself
     void setState(int state) { m_state = state; }
@@ -184,9 +185,9 @@ class MetaGraph : public FileProperties {
     bool polyClose(int shape_ref);
     bool polyCancel(int shape_ref);
     //
-    int addShapeGraph(std::unique_ptr<ShapeGraph> &shapeGraph);
-    int addShapeGraph(const std::string &name, int type);
-    int addShapeMap(const std::string &name);
+    size_t addShapeGraph(std::unique_ptr<ShapeGraph> &shapeGraph);
+    size_t addShapeGraph(const std::string &name, int type);
+    size_t addShapeMap(const std::string &name);
     void removeDisplayedMap();
     //
     // various map conversions
@@ -259,13 +260,14 @@ class MetaGraph : public FileProperties {
         m_displayed_datamap = map;
     }
 
-    template <class T> size_t getMapRef(std::vector<T> &maps, const std::string &name) const {
+    template <class T>
+    std::optional<size_t> getMapRef(std::vector<T> &maps, const std::string &name) const {
         // note, only finds first map with this name
         for (size_t i = 0; i < maps.size(); i++) {
             if (maps[i].getName() == name)
-                return i;
+                return std::optional<size_t>{i};
         }
-        return -1;
+        return std::nullopt;
     }
 
     std::vector<std::unique_ptr<ShapeGraph>> &getShapeGraphs() { return m_shapeGraphs; }
@@ -515,8 +517,8 @@ class MetaGraph : public FileProperties {
     // returns 0: fail, 1: made isovist, 2: made isovist and added new shapemap layer
     int makeIsovist(Communicator *communicator, const Point2f &p, double startangle = 0,
                     double endangle = 0, bool simple_version = true);
-    std::set<std::string> setIsovistData(Isovist &isovist, AttributeTable &table,
-                                         AttributeRow &row, bool simple_version);
+    std::set<std::string> setIsovistData(Isovist &isovist, AttributeTable &table, AttributeRow &row,
+                                         bool simple_version);
     // returns 0: fail, 1: made isovist, 2: made isovist and added new shapemap layer
     int makeIsovistPath(Communicator *communicator, double fov_angle = 2.0 * M_PI,
                         bool simple_version = true);

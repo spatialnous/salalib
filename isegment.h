@@ -17,21 +17,19 @@
 
 // Interface to handle different kinds of VGA analysis
 
+#include "salalib/analysisresult.h"
 #include "salalib/options.h"
 #include "salalib/shapegraph.h"
 
-#include "salalib/analysisresult.h"
-
 #include "genlib/comm.h"
+#include "genlib/stringutils.h"
 
 #include <string>
 
 class ISegment {
   public:
     virtual std::string getAnalysisName() const = 0;
-    virtual AnalysisResult run(Communicator *comm,
-                               ShapeGraph &map,
-                               bool simple_version) = 0;
+    virtual AnalysisResult run(Communicator *comm, ShapeGraph &map, bool simple_version) = 0;
     virtual ~ISegment() {}
 
     // Axial map helper: convert a radius for angular analysis

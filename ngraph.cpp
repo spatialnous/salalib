@@ -14,13 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// ngraph.cpp
+#include "salalib/ngraph.h"
+
+#include "salalib/pointdata.h"
 
 #include "genlib/containerutils.h"
-#include <salalib/mgraph.h>
-#include <salalib/ngraph.h>
-#include <salalib/pointdata.h>
-#include <salalib/spacepix.h>
+#include "genlib/readwritehelpers.h"
 
 void Node::make(const PixelRef pix, PixelRefVector *bins, float *bin_far_dists, int q_octants) {
     m_pixel = pix;
@@ -28,8 +27,8 @@ void Node::make(const PixelRef pix, PixelRefVector *bins, float *bin_far_dists, 
     for (int i = 0; i < 32; i++) {
 
         if (q_octants != 0x00FF) {
-            // now, an octant filter has been used... note that the exact q-octants that
-            // will have been processed rely on adjacenies in the q_octants...
+            // now, an octant filter has been used... note that the exact q-octants
+            // that will have been processed rely on adjacenies in the q_octants...
             if (!(q_octants & processoctant(i))) {
                 continue;
             }
@@ -59,8 +58,9 @@ void Node::extractUnseen(PixelRefVector &pixels, PointMap *pointdata) {
 
 void Node::extractMetric(std::set<MetricTriple> &pixels, PointMap *pointdata,
                          const MetricTriple &curs) {
-    // if (dist == 0.0f || concaveConnected()) { // increases effiency but is too inaccurate
-    // if (dist == 0.0f || !fullyConnected()) { // increases effiency but can miss lines
+    // if (dist == 0.0f || concaveConnected()) { // increases effiency but is too
+    // inaccurate if (dist == 0.0f || !fullyConnected()) { // increases effiency
+    // but can miss lines
     if (curs.dist == 0.0f || pointdata->getPoint(curs.pixel).blocked() ||
         pointdata->blockedAdjacent(curs.pixel)) {
         for (int i = 0; i < 32; i++) {
@@ -82,8 +82,9 @@ void Node::extractAngular(std::set<AngularTriple> &pixels, PointMap *pointdata,
 }
 
 bool Node::concaveConnected() {
-    // not quite correct -- sometimes at corners you 'see through' the very first connection
-    // but a useful approximation: to be concave connected, you need less than 3 in a row somewhere:
+    // not quite correct -- sometimes at corners you 'see through' the very first
+    // connection but a useful approximation: to be concave connected, you need
+    // less than 3 in a row somewhere:
     unsigned int test = 0;
     // note wraps around
     test |= (m_bins[0].count()) ? 0 : 0x101;
@@ -106,7 +107,8 @@ bool Node::concaveConnected() {
 }
 
 bool Node::fullyConnected() {
-    // not quite correct -- sometimes at corners you 'see through' the very first connection
+    // not quite correct -- sometimes at corners you 'see through' the very first
+    // connection
     return (m_bins[0].count() && m_bins[4].count() && m_bins[8].count() && m_bins[12].count() &&
             m_bins[16].count() && m_bins[20].count() && m_bins[24].count() && m_bins[28].count());
 }
@@ -291,8 +293,8 @@ void Bin::extractUnseen(PixelRefVector &pixels, PointMap *pointdata, int binmark
                 pixels.push_back(pix);
                 pointdata->getPoint(pix).m_misc |= binmark;
             }
-            // 10.2.02 revised --- diagonal was breaking this as it was extent in diagonal or
-            // horizontal
+            // 10.2.02 revised --- diagonal was breaking this as it was extent in
+            // diagonal or horizontal
             if (!(m_dir & PixelRef::DIAGONAL)) {
                 if (pt.m_extent.col(m_dir) >= pixVec.end().col(m_dir))
                     break;
@@ -353,7 +355,8 @@ void Bin::extractAngular(std::set<AngularTriple> &pixels, PointMap *pointdata,
 bool Bin::containsPoint(const PixelRef p) const {
     for (auto pixVec : m_pixel_vecs) {
         if (m_dir & PixelRef::DIAGONAL) {
-            // note abs is only allowed if you have pre-checked you are in the right quadrant!
+            // note abs is only allowed if you have pre-checked you are in the right
+            // quadrant!
             if (p.x >= pixVec.start().x && p.x <= pixVec.end().x &&
                 abs(p.y - pixVec.start().y) == p.x - pixVec.start().x) {
                 return true;

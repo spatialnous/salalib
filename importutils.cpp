@@ -26,9 +26,9 @@ namespace depthmapX {
     bool importFile(MetaGraph &mgraph, std::istream &stream, Communicator *communicator,
                     std::string name, ImportType mapType, ImportFileType fileType) {
 
-        // This function is still too fiddly but at least it shows the common interface for
-        // drawing and data maps and how different file types may be parsed to be imported
-        // into them
+        // This function is still too fiddly but at least it shows the common
+        // interface for drawing and data maps and how different file types may be
+        // parsed to be imported into them
 
         int state = MetaGraph::NONE;
         int viewClass = MetaGraph::NONE;
@@ -49,13 +49,13 @@ namespace depthmapX {
         int oldstate = mgraph.getState();
         mgraph.setState(oldstate & ~state);
 
-        // Currently the drawing shapemaps are understood as two-level trees (file -> layers)
-        // while the data shapemaps are flat. Therefore, for the moment, when we load dxfs as
-        // drawing shapemaps then we let the filename be the parent and the layers the children.
-        // For text files (csv, tsv) we create an artificial parent with the relevant name
-        // Drawing shapemaps also carry region data that needs to be initialised and their parents
-        // updated when they are created.
-        // Ideally datamaps and drawingmaps should be more similar.
+        // Currently the drawing shapemaps are understood as two-level trees (file ->
+        // layers) while the data shapemaps are flat. Therefore, for the moment, when
+        // we load dxfs as drawing shapemaps then we let the filename be the parent
+        // and the layers the children. For text files (csv, tsv) we create an
+        // artificial parent with the relevant name Drawing shapemaps also carry
+        // region data that needs to be initialised and their parents updated when
+        // they are created. Ideally datamaps and drawingmaps should be more similar.
 
         if (mapType == DRAWINGMAP) {
             mgraph.m_drawingFiles.emplace_back(name);
@@ -66,7 +66,7 @@ namespace depthmapX {
         switch (fileType) {
         case CSV: {
             ShapeMap &shapeMap = mgraph.createNewShapeMap(mapType, name);
-            int newMapIdx = mgraph.getMapRef(mgraph.getDataMaps(), shapeMap.getName());
+            auto newMapIdx = mgraph.getMapRef(mgraph.getDataMaps(), shapeMap.getName());
             parsed = importTxt(shapeMap, stream, ',');
 
             if (!parsed) {
@@ -76,13 +76,13 @@ namespace depthmapX {
             if (mapType == DRAWINGMAP) {
                 mgraph.updateParentRegions(shapeMap);
             } else if (mapType == DATAMAP) {
-                mgraph.setDisplayedDataMapRef(newMapIdx);
+                mgraph.setDisplayedDataMapRef(newMapIdx.value());
             }
             break;
         }
         case TSV: {
             ShapeMap &shapeMap = mgraph.createNewShapeMap(mapType, name);
-            int newMapIdx = mgraph.getMapRef(mgraph.getDataMaps(), shapeMap.getName());
+            auto newMapIdx = mgraph.getMapRef(mgraph.getDataMaps(), shapeMap.getName());
             parsed = importTxt(shapeMap, stream, '\t');
 
             if (!parsed) {
@@ -92,7 +92,7 @@ namespace depthmapX {
             if (mapType == DRAWINGMAP) {
                 mgraph.updateParentRegions(shapeMap);
             } else if (mapType == DATAMAP) {
-                mgraph.setDisplayedDataMapRef(newMapIdx);
+                mgraph.setDisplayedDataMapRef(newMapIdx.value());
             }
             break;
         }
@@ -424,7 +424,8 @@ namespace depthmapX {
             QtRegion(Point2f(layerMin.x, layerMin.y), Point2f(layerMax.x, layerMax.y));
 
         shapeMap.init(points.size() + lines.size() + polylines.size(), region);
-        // parameters could be passed in the Table here such as the layer/block/colour/linetype etc.
+        // parameters could be passed in the Table here such as the
+        // layer/block/colour/linetype etc.
         shapeMap.importPoints(points, Table());
         shapeMap.importLines(lines, Table());
         shapeMap.importPolylines(polylines, Table());

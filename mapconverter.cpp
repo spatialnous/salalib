@@ -1,7 +1,27 @@
+// Copyright (C) 2000-2010 University College London, Alasdair Turner
+// Copyright (C) 2011-2012 Tasos Varoudis
+// Copyright (C) 2017 Christian Sailer
+// Copyright (C) 2018-2024 Petros Koutsolampros
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #include "salalib/mapconverter.h"
+
 #include "salalib/tidylines.h"
 
 #include "genlib/exceptions.h"
+#include "genlib/stringutils.h"
 
 #include <numeric>
 
@@ -52,7 +72,8 @@ MapConverter::convertDrawingToAxial(Communicator *comm, const std::string &name,
         throw depthmapX::RuntimeException("Failed to convert lines");
     }
 
-    // quick tidy removes very short and duplicate lines, but does not merge overlapping lines
+    // quick tidy removes very short and duplicate lines, but does not merge
+    // overlapping lines
     TidyLines tidier;
     tidier.quicktidy(lines, region);
     if (lines.size() == 0) {
@@ -87,8 +108,8 @@ MapConverter::convertDrawingToAxial(Communicator *comm, const std::string &name,
 }
 
 // create axial map directly from data maps
-// note that actually should be able to merge this code with the line layers, now both use similar
-// code
+// note that actually should be able to merge this code with the line layers,
+// now both use similar code
 
 std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
                                                              const std::string &name,
@@ -121,7 +142,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
         throw depthmapX::RuntimeException("No lines found in data map");
     }
 
-    // quick tidy removes very short and duplicate lines, but does not merge overlapping lines
+    // quick tidy removes very short and duplicate lines, but does not merge
+    // overlapping lines
     TidyLines tidier;
     tidier.quicktidy(lines, region);
     if (lines.size() == 0) {
@@ -292,7 +314,8 @@ MapConverter::convertDrawingToSegment(Communicator *comm, const std::string &nam
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
     }
 
-    // second number in internal pair is used to say which layer it originated from
+    // second number in internal pair is used to say which layer it originated
+    // from
     std::map<int, std::pair<Line, int>> lines;
 
     bool recordlayer = false;
@@ -328,7 +351,8 @@ MapConverter::convertDrawingToSegment(Communicator *comm, const std::string &nam
         throw depthmapX::RuntimeException("No lines found in drawing");
     }
 
-    // quick tidy removes very short and duplicate lines, but does not merge overlapping lines
+    // quick tidy removes very short and duplicate lines, but does not merge
+    // overlapping lines
     TidyLines tidier;
     tidier.quicktidy(lines, region);
     if (lines.size() == 0) {
@@ -363,8 +387,8 @@ MapConverter::convertDrawingToSegment(Communicator *comm, const std::string &nam
     return usermap;
 }
 
-// create segment map directly from data maps (ultimately, this will replace the line layers
-// version)
+// create segment map directly from data maps (ultimately, this will replace the
+// line layers version)
 
 std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *comm,
                                                                const std::string &name,
@@ -395,7 +419,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
         throw depthmapX::RuntimeException("No lines found in data map");
     }
 
-    // quick tidy removes very short and duplicate lines, but does not merge overlapping lines
+    // quick tidy removes very short and duplicate lines, but does not merge
+    // overlapping lines
     TidyLines tidier;
     tidier.quicktidy(lines, region);
 
@@ -466,8 +491,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
         usermap->makeLineShape(line.second.first, false, false, extraAttr);
     }
 
-    // start to be a little bit more efficient about memory now we are hitting the limits
-    // from time to time:
+    // start to be a little bit more efficient about memory now we are hitting the
+    // limits from time to time:
     if (!copydata) {
         lines.clear();
     }
@@ -478,7 +503,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
     return usermap;
 }
 
-// stubremoval is fraction of overhanging line length before axial "stub" is removed
+// stubremoval is fraction of overhanging line length before axial "stub" is
+// removed
 std::unique_ptr<ShapeGraph>
 MapConverter::convertAxialToSegment(Communicator *, ShapeGraph &axialMap, const std::string &name,
                                     bool keeporiginal, bool copydata, double stubremoval) {
@@ -487,7 +513,8 @@ MapConverter::convertAxialToSegment(Communicator *, ShapeGraph &axialMap, const 
 
     axialMap.makeSegmentMap(lines, connectionset, stubremoval);
 
-    // destroy unnecessary parts of axial map as quickly as possible in order not to overload memory
+    // destroy unnecessary parts of axial map as quickly as possible in order not
+    // to overload memory
     if (!keeporiginal) {
         axialMap.getAllShapes().clear();
         axialMap.getConnections().clear();
@@ -516,7 +543,8 @@ MapConverter::convertAxialToSegment(Communicator *, ShapeGraph &axialMap, const 
     if (copydata) {
         segmap->pushAxialValues(axialMap);
     }
-    // destroy unnecessary parts of axial map as quickly as possible in order not to overload memory
+    // destroy unnecessary parts of axial map as quickly as possible in order not
+    // to overload memory
     if (!keeporiginal) {
         axialMap.getAttributeTable().clear();
     }

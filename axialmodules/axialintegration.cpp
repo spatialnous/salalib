@@ -237,7 +237,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm,
     }
 
     // for choice
-    AnalysisInfo **audittrail;
+    AnalysisInfo **audittrail = nullptr;
     if (m_choice) {
         audittrail = new AnalysisInfo *[map.getShapeCount()];
         for (size_t i = 0; i < map.getShapeCount(); i++) {
@@ -510,10 +510,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm,
         for (size_t i = 0; i < map.getShapeCount(); i++) {
             // TODO: At this moment, GCC triggers a warning here. Find
             // a better solution rather than disabling the warnind
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
             delete[] audittrail[i];
-#pragma GCC diagnostic pop
         }
         delete[] audittrail;
     }

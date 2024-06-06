@@ -17,12 +17,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "salalib/segmmodules/segmmetric.h"
+#include "salalib/segmmodules/segmhelpers.h"
 
 #include "genlib/stringutils.h"
 
-AnalysisResult SegmentMetric::run(Communicator *comm,
-                                  ShapeGraph &map,
-                                  bool) {
+AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 

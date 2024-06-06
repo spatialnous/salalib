@@ -27,11 +27,8 @@
 #include "salalib/parsers/mapinfodata.h"
 #include "salalib/spacepix.h"
 
-#include "genlib/bsptree.h"
 #include "genlib/containerutils.h"
 #include "genlib/p2dpoly.h"
-#include "genlib/readwritehelpers.h"
-#include "genlib/stringutils.h"
 
 #include <map>
 #include <set>
@@ -331,11 +328,11 @@ class ShapeMap : public PixelBase {
     size_t getShapeCount() const { return m_shapes.size(); }
     // num shapes for this object (note, request by object rowid
     // -- on interrogation, this is what you will usually receive)
-    size_t getShapeCount(int rowid) const {
+    size_t getShapeCount(size_t rowid) const {
         return depthmapX::getMapAtIndex(m_shapes, rowid)->second.m_points.size();
     }
     //
-    int getIndex(int rowid) const { return depthmapX::getMapAtIndex(m_shapes, rowid)->first; }
+    int getIndex(size_t rowid) const { return depthmapX::getMapAtIndex(m_shapes, rowid)->first; }
     //
     // add shape tools
     void makePolyPixels(int shaperef);
@@ -406,7 +403,8 @@ class ShapeMap : public PixelBase {
     bool pointInPoly(const Point2f &p, int shaperef) const;
     // retrieve lists of polys point intersects:
     std::vector<int> pointInPolyList(const Point2f &p) const;
-    std::vector<int> lineInPolyList(const Line &li, size_t lineref = -1,
+    // TODO: Fix casting -1 to size_t
+    std::vector<int> lineInPolyList(const Line &li, size_t lineref = static_cast<size_t>(-1),
                                     double tolerance = 0.0) const;
     std::vector<int> polyInPolyList(int polyref, double tolerance = 0.0) const;
     std::vector<int> shapeInPolyList(const SalaShape &shape);
@@ -441,7 +439,7 @@ class ShapeMap : public PixelBase {
   public:
     const std::string &getName() const { return m_name; }
     size_t addAttribute(const std::string &name) { return m_attributes->insertOrResetColumn(name); }
-    void removeAttribute(int col) { m_attributes->removeColumn(col); }
+    void removeAttribute(size_t col) { m_attributes->removeColumn(col); }
     // I don't want to do this, but every so often you will need to update this table
     // use const version by preference
     AttributeTable &getAttributeTable() { return *m_attributes.get(); }
@@ -453,31 +451,37 @@ class ShapeMap : public PixelBase {
 
   public:
     // layer functionality
-    bool isLayerVisible(int layerid) const { return m_layers.isLayerVisible(layerid); }
-    void setLayerVisible(int layerid, bool show) { m_layers.setLayerVisible(layerid, show); }
+    bool isLayerVisible(size_t layerid) const { return m_layers.isLayerVisible(layerid); }
+    void setLayerVisible(size_t layerid, bool show) { m_layers.setLayerVisible(layerid, show); }
     bool selectionToLayer(const std::string &name = std::string("Unnamed"));
 
   public:
     double getDisplayMinValue() const {
         return (m_displayed_attribute != -1)
-                   ? m_attributes->getColumn(m_displayed_attribute).getStats().min
+                   ? m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
+                         .getStats()
+                         .min
                    : 0;
     }
     double getDisplayMaxValue() const {
         return (m_displayed_attribute != -1)
-                   ? m_attributes->getColumn(m_displayed_attribute).getStats().max
+                   ? m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
+                         .getStats()
+                         .max
                    : (m_shapes.size() > 0 ? m_shapes.rbegin()->first : 0);
     }
 
     const DisplayParams &getDisplayParams() const {
-        return m_attributes->getColumn(m_displayed_attribute).getDisplayParams();
+        return m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
+            .getDisplayParams();
     }
     // make a local copy of the display params for access speed:
     void setDisplayParams(const DisplayParams &dp, bool apply_to_all = false) {
         if (apply_to_all)
             m_attributes->setDisplayParams(dp);
         else
-            m_attributes->getColumn(m_displayed_attribute).setDisplayParams(dp);
+            m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
+                .setDisplayParams(dp);
     }
     //
     mutable bool m_show_lines;
@@ -496,6 +500,7 @@ class ShapeMap : public PixelBase {
     //
   public:
     void setDisplayedAttribute(int col);
+    void setDisplayedAttribute(size_t col) { setDisplayedAttribute(static_cast<int>(col)); }
     // use set displayed attribute instead unless you are deliberately changing the column order:
     void overrideDisplayedAttribute(int attribute) { m_displayed_attribute = attribute; }
     // now, there is a slightly odd thing here: the displayed attribute can go out of step with the
@@ -513,8 +518,10 @@ class ShapeMap : public PixelBase {
     void invalidateDisplayedAttribute() { m_invalidate = true; }
     //
     double getDisplayedAverage() {
-        return m_attributes->getColumn(m_displayed_attribute).getStats().total /
-               m_attributes->getNumRows();
+        return m_attributes->getColumn(static_cast<unsigned int>(m_displayed_attribute))
+                   .getStats()
+                   .total /
+               static_cast<double>(m_attributes->getNumRows());
     }
     //
   protected:
@@ -576,7 +583,7 @@ class ShapeMap : public PixelBase {
     //
     double getSpacing() const {
         return __max(m_region.width(), m_region.height()) /
-               (10 * log((double)10 + m_shapes.size()));
+               (10 * log((double)10 + static_cast<double>(m_shapes.size())));
     }
     //
     // dangerous: accessor for the shapes themselves:

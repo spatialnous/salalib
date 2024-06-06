@@ -278,7 +278,7 @@ class AttributeTable : public AttributeColumnManager {
         if (selNum == 0) {
             return (-1);
         }
-        return (selTotal / selNum);
+        return (selTotal / static_cast<float>(selNum));
     }
 
     // interface AttributeColumnManager

@@ -110,7 +110,8 @@ inline PixelRef operator - (const PixelRef a, const PixelRef b)
 }
 inline PixelRef operator / (const PixelRef a, const int factor)
 {
-   return PixelRef(a.x / factor, a.y / factor);
+   return PixelRef(static_cast<short>(static_cast<int>(a.x) / factor),
+                   static_cast<short>(static_cast<int>(a.y) / factor));
 }
 
 inline double dist(const PixelRef a, const PixelRef b)

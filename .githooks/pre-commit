@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2024 Petros Koutsolampros
+#
+# SPDX-License-Identifier: GPL-3.0-only
+
+#!/bin/sh
+
+set -e
+
+#reuse lint
+echo "Running clang-format..."
+for FILE in $(git diff --cached --name-only | grep -E '.*\.(c|cpp|h|hpp)')
+do
+    clang-format --dry-run --Werror -style=file:.clang-format $FILE
+done
+echo "clang-format satisfied"

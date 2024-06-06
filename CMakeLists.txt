@@ -10,34 +10,48 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 set(salalib_HDRS
-    shapegraph.h
-    connector.h
-    isovist.h
-    mgraph.h
-    ngraph.h
-    pointdata.h
-    salaprogram.h
-    shapemap.h
-    spacepix.h
-    sparksieve2.h
-    entityparsing.h
-    linkutils.h
-    gridproperties.h
-    attributetable.h
-    layermanagerimpl.h
-    attributetableview.h
-    geometrygenerators.h
-    point.h
-    pafcolor.h
-    spacepixfile.h
     alllinemap.h
     axialminimiser.h
-    axialpolygons.h
-    tidylines.h
-    mapconverter.h
-    importutils.h
-    attributetableindex.h
+    geometrygenerators.h
     isegment.h
+    linkutils.h
+    pafcolor.h
+    shapemap.h
+    analysisresult.h
+    axialpolygons.h
+    gridproperties.h
+    isovistdef.h
+    mapconverter.h
+    pixelref.h
+    spacepixfile.h
+    attributetable.h
+    connector.h
+    ianalysis.h
+    isovist.h
+    mgraph_consts.h
+    pointdata.h
+    spacepix.h
+    attributetablehelpers.h
+    displayparams.h
+    iaxial.h
+    ivga.h
+    mgraph.h
+    point.h
+    sparksieve2.h
+    attributetableindex.h
+    entityparsing.h
+    importtypedefs.h
+    layermanager.h
+    ngraph.h
+    salaprogram.h
+    tidylines.h
+    attributetableview.h
+    fileproperties.h
+    importutils.h
+    layermanagerimpl.h
+    options.h
+    shapegraph.h
+    tolerances.h
 )
 
 set(salalib_SRCS

@@ -18,8 +18,6 @@
 
 #include "p2dpoly.h"
 
-#include "genlib/comm.h" // used in BSP construction
-
 #include <cmath>
 #include <float.h>
 

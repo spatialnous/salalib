@@ -759,7 +759,7 @@ bool MetaGraph::makeBSPtree(Communicator *communicator) {
 size_t MetaGraph::addShapeGraph(std::unique_ptr<ShapeGraph> &shapeGraph) {
     m_shapeGraphs.push_back(std::move(shapeGraph));
     auto mapref = m_shapeGraphs.size() - 1;
-    setDisplayedShapeGraphRef(static_cast<int>(mapref));
+    setDisplayedShapeGraphRef(mapref);
     m_state |= SHAPEGRAPHS;
     setViewClass(SHOWAXIALTOP);
     return mapref;
@@ -1136,17 +1136,18 @@ bool MetaGraph::convertToDrawing(Communicator *, std::string layer_name,
 
 bool MetaGraph::convertAxialToSegment(Communicator *comm, std::string layer_name, bool keeporiginal,
                                       bool pushvalues, double stubremoval) {
-    int oldstate = m_state;
+    if (!hasDisplayedShapeGraph()) {
+        return false;
+    }
 
+    auto axialShapeGraphRef = getDisplayedShapeGraphRef();
+
+    int oldstate = m_state;
     m_state &= ~SHAPEGRAPHS;
 
     bool converted = true;
 
     try {
-        if (hasDisplayedShapeGraph()) {
-            return false;
-        }
-
         auto shapeGraph = MapConverter::convertAxialToSegment(
             comm, getDisplayedShapeGraph(), layer_name, keeporiginal, pushvalues, stubremoval);
         addShapeGraph(shapeGraph);
@@ -1155,7 +1156,7 @@ bool MetaGraph::convertAxialToSegment(Communicator *comm, std::string layer_name
         m_shapeGraphs.back()->setDisplayedAttribute(
             m_shapeGraphs.back()->getAttributeTable().getColumnIndex("Connectivity"));
 
-        setDisplayedShapeGraphRef(int(m_shapeGraphs.size() - 1));
+        setDisplayedShapeGraphRef(m_shapeGraphs.size() - 1);
     } catch (Communicator::CancelledException) {
         converted = false;
     }
@@ -1164,7 +1165,7 @@ bool MetaGraph::convertAxialToSegment(Communicator *comm, std::string layer_name
 
     if (converted) {
         if (!keeporiginal) {
-            removeShapeGraph(getDisplayedShapeGraphRef());
+            removeShapeGraph(axialShapeGraphRef);
         }
         m_state |= SHAPEGRAPHS;
         setViewClass(SHOWAXIALTOP);
@@ -2922,7 +2923,7 @@ bool MetaGraph::readShapeGraphs(std::istream &stream) {
     // problems
     unsigned int displayed_map;
     stream.read((char *)&displayed_map, sizeof(displayed_map));
-    setDisplayedShapeGraphRef(int(displayed_map));
+    setDisplayedShapeGraphRef(displayed_map);
     // read maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems

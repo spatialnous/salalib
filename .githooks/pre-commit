@@ -8,7 +8,7 @@ set -e
 
 #reuse lint
 echo "Running clang-format..."
-for FILE in $(git diff --cached --name-only | grep -E '.*\.(c|cpp|h|hpp)')
+for FILE in $(git diff --cached --name-only | grep -E '.*\.(c|cpp|h|hpp)\b')
 do
     clang-format --dry-run --Werror -style=file:.clang-format $FILE
 done

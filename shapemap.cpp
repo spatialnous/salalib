@@ -3040,7 +3040,6 @@ bool ShapeMap::unlinkShapesFromRefs(int ref1, int ref2, bool refresh) {
 bool ShapeMap::unlinkShapes(size_t index1, size_t index2, bool refresh) {
     auto conn_col = m_attributes->getColumnIndex("Connectivity");
     bool update = false;
-    std::cout << "Unlinking " << index1 << " -> " << index2 << std::endl;
 
     if (index1 != index2) {
         // unlink these shapes...

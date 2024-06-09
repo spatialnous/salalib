@@ -23,7 +23,7 @@
 
 AgentEngine::AgentEngine() {
     m_timesteps = 5000;
-    m_gatelayer = -1;
+    m_gatelayer = std::nullopt;
     m_record_trails = false;
 }
 
@@ -43,7 +43,7 @@ void AgentEngine::run(Communicator *comm, PointMap *pointmap) {
     int displaycol = table.getOrInsertColumn(g_col_total_counts);
 
     int output_mode = Agent::OUTPUT_COUNTS;
-    if (m_gatelayer != -1) {
+    if (m_gatelayer != std::nullopt) {
         output_mode |= Agent::OUTPUT_GATE_COUNTS;
     }
 

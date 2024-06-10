@@ -140,7 +140,8 @@ class Communicator {
     //
     const std::vector<std::string> &GetFileSet() const { return m_fileset; }
     //
-    virtual void CommPostMessage(int m, int x) const = 0; // Override for specific operating system
+    virtual void CommPostMessage(size_t m,
+                                 size_t x) const = 0; // Override for specific operating system
 };
 
 // this is a simple version of the Communicator which can be used for
@@ -150,20 +151,20 @@ class ICommunicator : public Communicator {
     friend class IComm; // IComm is found in idepthmap.h
                         //
   protected:
-    mutable int num_steps;
-    mutable int num_records;
-    mutable int step;
-    mutable int record;
+    mutable size_t num_steps;
+    mutable size_t num_records;
+    mutable size_t step;
+    mutable size_t record;
     //
   public:
     ICommunicator() {
         m_delete_flag = true;
     } // note: an ICommunicator lets IComm know that it should delete it
     virtual ~ICommunicator() { ; }
-    virtual void CommPostMessage(int m, int x) const;
+    virtual void CommPostMessage(size_t m, size_t x) const;
 };
 
-inline void ICommunicator::CommPostMessage(int m, int x) const {
+inline void ICommunicator::CommPostMessage(size_t m, size_t x) const {
     switch (m) {
     case Communicator::NUM_STEPS:
         num_steps = x;

@@ -42,7 +42,7 @@ void BSPTree::make(Communicator *communicator, time_t atime, const std::vector<T
     nodeStack.push(root);
     lineStack.push(makeLines(communicator, atime, lines, root));
 
-    int progress = 0;
+    size_t progress = 0;
     while (!nodeStack.empty()) {
         progress++; // might need to increase by 2 because it was one for each left/right in the
                     // previous iteration

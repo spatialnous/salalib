@@ -15,7 +15,7 @@
 
 #include "geometrygenerators.h"
 
-std::vector<Point2f> GeometryGenerators::generateDiskTriangles(int sides, float radius,
+std::vector<Point2f> GeometryGenerators::generateDiskTriangles(size_t sides, float radius,
                                                                Point2f position) {
     std::vector<Point2f> diskTriangles;
     for (int i = 0; i < sides; i++) {
@@ -29,7 +29,7 @@ std::vector<Point2f> GeometryGenerators::generateDiskTriangles(int sides, float 
 }
 
 std::vector<Point2f>
-GeometryGenerators::generateMultipleDiskTriangles(int sides, float radius,
+GeometryGenerators::generateMultipleDiskTriangles(size_t sides, float radius,
                                                   std::vector<Point2f> positions) {
     std::vector<Point2f> diskTriangles = generateDiskTriangles(sides, radius);
 
@@ -48,7 +48,7 @@ GeometryGenerators::generateMultipleDiskTriangles(int sides, float radius,
     return mulitpleDiskTriangles;
 }
 
-std::vector<SimpleLine> GeometryGenerators::generateCircleLines(int sides, float radius,
+std::vector<SimpleLine> GeometryGenerators::generateCircleLines(size_t sides, float radius,
                                                                 Point2f position) {
     std::vector<SimpleLine> cirleLines;
     for (int i = 0; i < sides; i++) {
@@ -62,7 +62,7 @@ std::vector<SimpleLine> GeometryGenerators::generateCircleLines(int sides, float
 }
 
 std::vector<SimpleLine>
-GeometryGenerators::generateMultipleCircleLines(int sides, float radius,
+GeometryGenerators::generateMultipleCircleLines(size_t sides, float radius,
                                                 std::vector<Point2f> positions) {
     std::vector<SimpleLine> circleLines = generateCircleLines(sides, radius);
 

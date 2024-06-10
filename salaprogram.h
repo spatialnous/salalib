@@ -237,7 +237,7 @@ class SalaObj {
         type = t;
         if (t & S_LIST) {
             data.list.refcount = new int(1);
-            data.list.list = new std::vector<SalaObj>(v); // set blanks
+            data.list.list = new std::vector<SalaObj>(static_cast<size_t>(v)); // set blanks
         } else {
             data.var = v;
         }
@@ -280,7 +280,7 @@ class SalaObj {
         type = S_UNINIT;
     } // <- used to uninitialise variables before running program, thus they give nice error
       // messages if used before initialisation
-    int func() const { return data.func; }
+    int func() const { return static_cast<int>(data.func); }
     int precedence() const;
     bool toBool() const;
     int toInt() const;
@@ -878,7 +878,7 @@ inline SalaObj &SalaObj::list_at(int i) {
         i += (int)data.list.list->size();
     if (i < 0 || size_t(i) >= data.list.list->size())
         throw SalaError("Index out of range");
-    return data.list.list->at(i);
+    return data.list.list->at(static_cast<size_t>(i));
 }
 inline SalaObj SalaObj::char_at(int i) // actually returns a string of the char
 {

@@ -34,7 +34,7 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
         comm->CommPostMessage(Communicator::NUM_RECORDS,
                               (m_sel_only ? map.getSelSet().size() : map.getConnections().size()));
     }
-    int reccount = 0;
+    size_t reccount = 0;
 
     // record axial line refs for topological analysis
     std::vector<int> axialrefs;

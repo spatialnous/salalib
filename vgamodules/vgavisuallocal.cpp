@@ -28,7 +28,8 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simpl
     AnalysisResult result;
 
     std::string colText = "";
-    int cluster_col = -1, control_col = -1, controllability_col = -1;
+    std::optional<size_t> cluster_col = std::nullopt, control_col = std::nullopt,
+                          controllability_col = std::nullopt;
     if (!simple_version) {
         colText = "Visual Clustering Coefficient";
         cluster_col = map.getAttributeTable().insertOrResetColumn(colText);
@@ -41,7 +42,7 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simpl
         result.addAttribute(colText);
     }
 
-    int count = 0;
+    size_t count = 0;
 
     for (size_t i = 0; i < map.getCols(); i++) {
         for (size_t j = 0; j < map.getRows(); j++) {
@@ -91,16 +92,17 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simpl
 #ifndef _COMPILE_dX_SIMPLE_VERSION
                 if (!simple_version) {
                     if (neighbourhood.size() > 1) {
-                        row.setValue(cluster_col,
+                        row.setValue(cluster_col.value(),
                                      float(cluster / double(neighbourhood.size() *
                                                             (neighbourhood.size() - 1.0))));
-                        row.setValue(control_col, float(control));
-                        row.setValue(controllability_col, float(double(neighbourhood.size()) /
-                                                                double(totalneighbourhood.size())));
+                        row.setValue(control_col.value(), float(control));
+                        row.setValue(controllability_col.value(),
+                                     float(double(neighbourhood.size()) /
+                                           double(totalneighbourhood.size())));
                     } else {
-                        row.setValue(cluster_col, -1);
-                        row.setValue(control_col, -1);
-                        row.setValue(controllability_col, -1);
+                        row.setValue(cluster_col.value(), -1);
+                        row.setValue(control_col.value(), -1);
+                        row.setValue(controllability_col.value(), -1);
                     }
                 }
 #endif
@@ -119,7 +121,7 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simpl
 
 #ifndef _COMPILE_dX_SIMPLE_VERSION
     if (!simple_version)
-        map.setDisplayedAttribute(cluster_col);
+        map.setDisplayedAttribute(cluster_col.value());
 #endif
 
     result.completed = true;

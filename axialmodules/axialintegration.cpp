@@ -158,7 +158,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         //
     }
     // then look up all the columns... eek:
-    std::vector<int> choice_col, n_choice_col, w_choice_col, nw_choice_col, entropy_col,
+    std::vector<size_t> choice_col, n_choice_col, w_choice_col, nw_choice_col, entropy_col,
         integ_dv_col, integ_pv_col, integ_tk_col, intensity_col, depth_col, count_col,
         rel_entropy_col, penn_norm_col, w_depth_col, total_weight_col, ra_col, rra_col, td_col,
         harmonic_col;
@@ -249,9 +249,8 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
 
     bool *covered = new bool[map.getShapeCount()];
 
-    size_t i = -1;
+    size_t i = 0;
     for (auto &iter : attributes) {
-        i++;
         AttributeRow &row = iter.getRow();
         for (size_t j = 0; j < map.getShapeCount(); j++) {
             covered[j] = false;
@@ -468,12 +467,12 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 comm->CommPostMessage(Communicator::CURRENT_RECORD, i);
             }
         }
+        i++;
     }
     delete[] covered;
     if (m_choice) {
-        i = -1;
+        i = 0;
         for (auto &iter : attributes) {
-            i++;
             AttributeRow &row = iter.getRow();
             double total_choice = 0.0, w_total_choice = 0.0;
             for (size_t r = 0; r < radii.size(); r++) {
@@ -504,6 +503,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                     }
                 }
             }
+            i++;
         }
         for (size_t i = 0; i < map.getShapeCount(); i++) {
             // TODO: At this moment, GCC triggers a warning here. Find

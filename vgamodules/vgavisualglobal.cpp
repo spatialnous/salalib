@@ -74,14 +74,14 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simp
     }
 #endif
 
-    int count = 0;
+    size_t count = 0;
 
     depthmapX::RowMatrix<int> miscs(map.getRows(), map.getCols());
     depthmapX::RowMatrix<PixelRef> extents(map.getRows(), map.getCols());
 
     for (size_t i = 0; i < map.getCols(); i++) {
         for (size_t j = 0; j < map.getRows(); j++) {
-            PixelRef curs = PixelRef(i, j);
+            PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
             if (map.getPoint(curs).filled()) {
 
                 if ((map.getPoint(curs).contextfilled() && !curs.iseven()) || (m_gates_only)) {
@@ -104,7 +104,7 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simp
                 search_tree.push_back(PixelRefVector());
                 search_tree.back().push_back(curs);
 
-                int level = 0;
+                size_t level = 0;
                 while (search_tree[level].size()) {
                     search_tree.push_back(PixelRefVector());
                     const PixelRefVector &searchTreeAtLevel = search_tree[level];
@@ -118,7 +118,7 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simp
                             total_nodes += 1;
                             distribution.back() += 1;
                             if ((int)m_radius == -1 ||
-                                (level < (int)m_radius &&
+                                (level < static_cast<size_t>(m_radius) &&
                                  (!p.contextfilled() || currLvlIter->iseven()))) {
                                 extractUnseen(p.getNode(), search_tree[level + 1], miscs, extents);
                                 pmisc = ~0;

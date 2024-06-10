@@ -243,7 +243,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
             }
         }
     }
-    std::vector<int> choice_col, w_choice_col, w_choice_col2, count_col, integ_col, w_integ_col,
+    std::vector<size_t> choice_col, w_choice_col, w_choice_col2, count_col, integ_col, w_integ_col,
         td_col, w_td_col, total_weight_col;
     // then look them up! eek....
     for (r = 0; r < radius_unconverted.size(); r++) {
@@ -581,7 +581,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
             }
         }
         // set the attributes for this node:
-        for (int k = 0; k < radiussize; k++) {
+        for (size_t k = 0; k < radiussize; k++) {
             // note, curs_total_depth must use double as mantissa can get too long for int in large
             // systems
             double curs_node_count = 0.0, curs_total_depth = 0.0;

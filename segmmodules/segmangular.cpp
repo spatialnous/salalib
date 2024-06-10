@@ -50,9 +50,9 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         radii.push_back(-1.0);
     }
 
-    std::vector<int> depth_col, count_col, total_col;
+    std::vector<size_t> depth_col, count_col, total_col;
     // first enter table values
-    for (int radius : radii) {
+    for (auto radius : radii) {
         std::string radius_text = makeRadiusText(Options::RADIUS_ANGULAR, radius);
         std::string depth_col_text = std::string("Angular Mean Depth") + radius_text;
         attributes.insertOrResetColumn(depth_col_text.c_str());
@@ -65,7 +65,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         result.addAttribute(total_col_text);
     }
 
-    for (int radius : radii) {
+    for (auto radius : radii) {
         std::string radius_text = makeRadiusText(Options::RADIUS_ANGULAR, radius);
         std::string depth_col_text = std::string("Angular Mean Depth") + radius_text;
         depth_col.push_back(attributes.getColumnIndex(depth_col_text.c_str()));

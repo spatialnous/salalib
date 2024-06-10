@@ -4,9 +4,12 @@ set(genlib genlib)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wconversion")
+    set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic)
+    # There's currently too many of these conversion warnings
+    # disable and check individually
+    set(COMPILE_WARNINGS ${COMPILE_WARNINGS} -Wno-sign-conversion -Wno-sign-compare)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4 /EHsc")
+    set(COMPILE_WARNINGS  "/W4 /EHsc")
 endif()
 
 set(genlib_HDRS
@@ -35,3 +38,5 @@ set(genlib_SRCS
 add_compile_definitions(GENLIB_LIBRARY)
 
 add_library(${genlib} STATIC ${genlib_HDRS} ${genlib_SRCS})
+
+target_compile_options(${genlib} PRIVATE ${COMPILE_WARNINGS})

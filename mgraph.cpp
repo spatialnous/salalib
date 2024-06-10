@@ -1227,7 +1227,7 @@ bool MetaGraph::makeAllLineMap(Communicator *communicator, const Point2f &seed) 
     try {
         // this is an index to look up the all line map, used by UI to determine if
         // can make fewest line map note: it is not saved for historical reasons
-        if (m_all_line_map.has_value()) {
+        if (hasAllLineMap()) {
             removeShapeGraph(m_all_line_map.value());
             m_all_line_map = std::nullopt;
         }
@@ -1238,7 +1238,7 @@ bool MetaGraph::makeAllLineMap(Communicator *communicator, const Point2f &seed) 
             m_shapeGraphs.push_back(std::move(allm));
         }
 
-        m_all_line_map = int(m_shapeGraphs.size() - 1);
+        m_all_line_map = m_shapeGraphs.size() - 1;
         setDisplayedShapeGraphRef(m_all_line_map.value());
     } catch (Communicator::CancelledException) {
         mapMade = false;
@@ -1263,7 +1263,7 @@ bool MetaGraph::makeFewestLineMap(Communicator *communicator, int replace) {
 
     try {
         // no all line map
-        if (!m_all_line_map.has_value()) {
+        if (!hasAllLineMap()) {
             return false;
         }
 
@@ -2990,7 +2990,7 @@ bool MetaGraph::readShapeGraphs(std::istream &stream) {
             // this is an index to look up the all line map, used by UI to determine
             // if can make fewest line map note: it is not saved for historical
             // reasons will get confused by more than one all line map
-            m_all_line_map = int(i);
+            m_all_line_map = i;
 
             // there is currently only one:
             break;
@@ -3036,7 +3036,7 @@ bool MetaGraph::writeShapeGraphs(std::ofstream &stream, bool displayedmaponly) {
         m_shapeGraphs[getDisplayedShapeGraphRef()]->write(stream);
     }
 
-    if (!m_all_line_map.has_value()) {
+    if (!hasAllLineMap()) {
         std::vector<PolyConnector> temp_poly_connections;
         std::vector<RadialLine> temp_radial_lines;
 

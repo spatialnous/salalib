@@ -227,7 +227,7 @@ class MetaGraph : public FileProperties {
     bool analyseTopoMet(Communicator *communicator,
                         Options options); // <- options copied to keep thread safe
     //
-    bool hasAllLineMap() { return m_all_line_map != -1; }
+    bool hasAllLineMap() { return m_all_line_map.has_value(); }
     bool hasFewestLineMaps() {
         for (const auto &shapeGraph : m_shapeGraphs) {
             if (shapeGraph->getName() == "Fewest-Line Map (Subsets)" ||

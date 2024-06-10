@@ -4,12 +4,12 @@ set(salalib salalib)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
+    set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic)
     # There's currently too many of these conversion warnings
     # disable and check individually
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-conversion -Wno-sign-compare")
+    set(COMPILE_WARNINGS ${COMPILE_WARNINGS} -Wno-sign-conversion -Wno-sign-compare)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4 /EHsc")
+    set(COMPILE_WARNINGS  "/W4 /EHsc")
 endif()
 
 set(salalib_HDRS
@@ -93,6 +93,8 @@ add_compile_definitions(_DEPTHMAP SALALIB_LIBRARY)
 # of this particular project to IDEs that open it
 add_library(${salalib} STATIC ${salalib_HDRS} ${salalib_SRCS}
     ${vgamodules_SRCS} ${axialmodules_SRCS} ${segmmodules_SRCS} ${parsers_SRCS})
+
+target_compile_options(${salalib} PRIVATE ${COMPILE_WARNINGS})
 
 add_subdirectory(vgamodules)
 add_subdirectory(axialmodules)

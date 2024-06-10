@@ -236,7 +236,7 @@ void Bin::make(const PixelRefVector &pixels, char dir) {
             }
 
             m_pixel_vecs.push_back(cur);
-            m_node_count = pixels.size();
+            m_node_count = static_cast<unsigned short>(pixels.size());
         } else {
             // Reorder the pixels:
             if (m_dir == PixelRef::HORIZONTAL) {
@@ -278,7 +278,7 @@ void Bin::make(const PixelRefVector &pixels, char dir) {
                 m_pixel_vecs.back().m_end = *pixels_v.rbegin();
             }
 
-            m_node_count = pixels.size();
+            m_node_count = static_cast<unsigned short>(pixels.size());
         }
     }
 }
@@ -432,10 +432,10 @@ std::ostream &Bin::write(std::ostream &stream) {
             m_pixel_vecs[0].write(stream, m_dir);
         } else {
             // TODO: Remove this limitation in the next version of the .graph format
-            unsigned short length = m_pixel_vecs.size();
+            auto length = static_cast<unsigned short>(m_pixel_vecs.size());
             stream.write((char *)&length, sizeof(length));
             m_pixel_vecs[0].write(stream, m_dir);
-            for (int i = 1; i < length; i++) {
+            for (size_t i = 1; i < length; i++) {
                 m_pixel_vecs[i].write(stream, m_dir, m_pixel_vecs[i - 1]);
             }
         }
@@ -466,20 +466,20 @@ std::istream &PixelVec::read(std::istream &stream, const char dir) {
     stream.read((char *)&runlength, sizeof(runlength));
     switch (dir) {
     case PixelRef::POSDIAGONAL:
-        m_end.x = m_start.x + runlength;
-        m_end.y = m_start.y + runlength;
+        m_end.x = m_start.x + static_cast<short>(runlength);
+        m_end.y = m_start.y + static_cast<short>(runlength);
         break;
     case PixelRef::NEGDIAGONAL:
-        m_end.x = m_start.x + runlength;
-        m_end.y = m_start.y - runlength;
+        m_end.x = m_start.x + static_cast<short>(runlength);
+        m_end.y = m_start.y - static_cast<short>(runlength);
         break;
     case PixelRef::HORIZONTAL:
-        m_end.x = m_start.x + runlength;
+        m_end.x = m_start.x + static_cast<short>(runlength);
         m_end.y = m_start.y;
         break;
     case PixelRef::VERTICAL:
         m_end.x = m_start.x;
-        m_end.y = m_start.y + runlength;
+        m_end.y = m_start.y + static_cast<short>(runlength);
         break;
     }
     return stream;
@@ -492,10 +492,10 @@ std::ostream &PixelVec::write(std::ostream &stream, const char dir) {
     case PixelRef::HORIZONTAL:
     case PixelRef::POSDIAGONAL:
     case PixelRef::NEGDIAGONAL:
-        runlength = m_end.x - m_start.x;
+        runlength = static_cast<unsigned short>(m_end.x - m_start.x);
         break;
     case PixelRef::VERTICAL:
-        runlength = m_end.y - m_start.y;
+        runlength = static_cast<unsigned short>(m_end.y - m_start.y);
         break;
     }
     stream.write((char *)&runlength, sizeof(runlength));
@@ -536,13 +536,13 @@ std::ostream &PixelVec::write(std::ostream &stream, const char dir, const PixelV
     switch (dir) {
     case PixelRef::HORIZONTAL:
         stream.write((char *)&(m_start.x), sizeof(m_start.x));
-        shiftlength.runlength = m_end.x - m_start.x;
-        shiftlength.shift = m_start.y - context.m_start.y;
+        shiftlength.runlength = static_cast<unsigned short>(m_end.x - m_start.x);
+        shiftlength.shift = static_cast<unsigned short>(m_start.y - context.m_start.y);
         break;
     case PixelRef::VERTICAL:
         stream.write((char *)&(m_start.y), sizeof(m_start.y));
-        shiftlength.runlength = m_end.y - m_start.y;
-        shiftlength.shift = m_start.x - context.m_start.x;
+        shiftlength.runlength = static_cast<unsigned short>(m_end.y - m_start.y);
+        shiftlength.shift = static_cast<unsigned short>(m_start.x - context.m_start.x);
         break;
     }
     stream.write((char *)&shiftlength, sizeof(shiftlength));

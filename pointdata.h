@@ -129,7 +129,7 @@ class PointMap : public PixelBase {
     PointMap(const PointMap &) = delete;
     PointMap &operator=(const PointMap &) = delete;
 
-    void communicate(time_t &atime, Communicator *comm, int record);
+    void communicate(time_t &atime, Communicator *comm, size_t record);
     // constrain is constrain to existing rows / cols
     PixelRef pixelate(const Point2f &p, bool constrain = true, int scalefactor = 1) const;
     Point2f depixelate(const PixelRef &p, double scalefactor = 1.0) const; // Inlined below
@@ -160,7 +160,7 @@ class PointMap : public PixelBase {
     bool canUndo() const { return !m_processed && m_undocounter != 0; }
     void outputPoints(std::ostream &stream, char delim);
     void outputMergeLines(std::ostream &stream, char delim);
-    int tagState(bool settag);
+    size_t tagState(bool settag);
     bool sparkGraph2(Communicator *comm, bool boundarygraph, double maxdist);
     bool unmake(bool removeLinks);
     bool sparkPixel2(PixelRef curs, int make, double maxdist = -1.0);

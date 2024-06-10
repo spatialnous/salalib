@@ -203,8 +203,8 @@ void ShapeMap::copy(const ShapeMap &sourcemap, int copyflags) {
                    sourcemap.m_attributes->getColumnName(b);
         });
 
-        for (int idx : indices) {
-            int outcol =
+        for (auto idx : indices) {
+            auto outcol =
                 m_attributes->insertOrResetColumn(sourcemap.m_attributes->getColumnName(idx));
             // n.b. outcol not necessarily the same as incol, although row position in
             // table (j) should match
@@ -944,7 +944,7 @@ void ShapeMap::removeShape(int shaperef, bool undoing) {
         // note that the connections have no key for speed when processing,
         // we rely on the index order matching the index order of the shapes
         // and the attributes, and simply change all references (ick!)
-        int conn_col = m_attributes->getColumnIndex("Connectivity");
+        auto conn_col = m_attributes->getColumnIndex("Connectivity");
 
         // TODO: Replace with iterators
         for (size_t i = m_connectors.size() - 1; static_cast<int>(i) != -1; i--) {
@@ -953,13 +953,14 @@ void ShapeMap::removeShape(int shaperef, bool undoing) {
             }
             for (size_t j = m_connectors[i].m_connections.size() - 1; static_cast<int>(j) != -1;
                  j--) {
-                if (m_connectors[i].m_connections[j] == int(rowid)) {
+                if (m_connectors[i].m_connections[j] == rowid) {
                     m_connectors[i].m_connections.erase(m_connectors[i].m_connections.begin() +
                                                         int(j));
-                    if (conn_col != -1) {
-                        auto &row = getAttributeRowFromShapeIndex(i);
-                        row.incrValue(conn_col, -1.0f);
-                    }
+                    // getColumnIndex will throw if the column is not found
+                    // if (conn_col != -1) {
+                    auto &row = getAttributeRowFromShapeIndex(i);
+                    row.incrValue(conn_col, -1.0f);
+                    // }
                 } else if (m_connectors[i].m_connections[j] > int(rowid)) {
                     m_connectors[i].m_connections[j] -= 1;
                 }
@@ -971,22 +972,22 @@ void ShapeMap::removeShape(int shaperef, bool undoing) {
 
         // take out explicit links and unlinks (note, undo won't restore these):
         for (auto revIter = m_links.rbegin(); revIter != m_links.rend(); ++revIter) {
-            if (revIter->a == static_cast<int>(rowid) || revIter->b == static_cast<int>(rowid)) {
+            if (revIter->a == rowid || revIter->b == rowid) {
                 m_links.erase(std::next(revIter).base());
             } else {
-                if (revIter->a > int(rowid))
+                if (revIter->a > rowid)
                     revIter->a -= 1;
-                if (revIter->b > int(rowid))
+                if (revIter->b > rowid)
                     revIter->b -= 1;
             }
         }
         for (auto revIter = m_unlinks.rbegin(); revIter != m_unlinks.rend(); ++revIter) {
-            if (revIter->a == static_cast<int>(rowid) || revIter->b == static_cast<int>(rowid)) {
+            if (revIter->a == rowid || revIter->b == rowid) {
                 m_unlinks.erase(std::next(revIter).base());
             } else {
-                if (revIter->a > int(rowid))
+                if (revIter->a > rowid)
                     revIter->a -= 1;
-                if (revIter->b > int(rowid))
+                if (revIter->b > rowid)
                     revIter->b -= 1;
             }
         }

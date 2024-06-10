@@ -27,7 +27,7 @@ AgentSet::AgentSet() {
 
 void AgentSet::init(int agent, int trail_num) {
     if (m_release_locations.size()) {
-        int which = pafrand() % m_release_locations.size();
+        auto which = pafrand() % m_release_locations.size();
         agents[agent].onInit(m_release_locations[which], trail_num);
     } else {
         const PointMap &map = agents[agent].getPointMap();

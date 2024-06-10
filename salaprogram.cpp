@@ -56,6 +56,9 @@ std::vector<SalaFuncLabel> g_sala_logical_ops;
 std::vector<SalaFuncLabel> g_sala_global_funcs;
 std::vector<SalaMemberFuncLabel> g_sala_member_funcs;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+
 void loadSalaProgram() {
     // math ops
     g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_ADD, "+", "add"));
@@ -1069,7 +1072,7 @@ void SalaCommand::evaluate(SalaObj &obj, bool &ret, bool &ifhandled) {
             if (len != 0) {
                 for (int i = 0; i < len; i++) {
                     // reset all my stack (actually, all parent functions should do this!)
-                    for (auto varName : m_var_names) {
+                    for (const auto &varName : m_var_names) {
                         m_program->m_var_stack[varName.second].uninit();
                     }
                     m_program->m_var_stack[m_for_iter.data.var] = list.data.list.list->at(i);
@@ -1722,3 +1725,4 @@ int SalaObj::precedence() const {
     }
     return prec;
 }
+#pragma GCC diagnostic pop

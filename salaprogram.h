@@ -416,8 +416,10 @@ class SalaProgram {
 // TODO: GCC complains that SalaGrf::node may be uninitialized
 // but salaprogram is a generally hacky part of the codebase
 // so we're just going to ignore it for the moment
+#if !defined(__has_warning) || __has_warning("-Wmaybe-uninitialized")
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 inline SalaObj::SalaObj(const SalaObj &obj) {
     type = obj.type;
     switch (obj.type) {
@@ -475,7 +477,9 @@ inline SalaObj::SalaObj(const SalaObj &obj) {
         throw SalaError("Cannot instantiate unknown type");
     }
 }
+#if !defined(__has_warning) || __has_warning("-Wmaybe-uninitialized")
 #pragma GCC diagnostic pop
+#endif
 
 inline SalaObj &SalaObj::operator=(const SalaObj &obj) {
     if (this != &obj) {
@@ -879,10 +883,10 @@ inline SalaObj &SalaObj::list_at(int i) {
 inline SalaObj SalaObj::char_at(int i) // actually returns a string of the char
 {
     if (i < 0)
-        i += data.str.length();
+        i += static_cast<int>(data.str.length());
     if (i < 0 || i >= static_cast<int>(data.str.length()))
         throw SalaError("String index out of range");
-    return SalaObj(std::string(1, data.str.char_at(i)));
+    return SalaObj(std::string(1, data.str.char_at(static_cast<size_t>(i))));
 }
 inline int SalaObj::length() {
     if (type & S_LIST)

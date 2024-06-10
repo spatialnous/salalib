@@ -40,7 +40,7 @@ void AgentEngine::run(Communicator *comm, PointMap *pointmap) {
     }
 
     AttributeTable &table = pointmap->getAttributeTable();
-    int displaycol = table.getOrInsertColumn(g_col_total_counts);
+    auto displaycol = table.getOrInsertColumn(g_col_total_counts);
 
     int output_mode = Agent::OUTPUT_COUNTS;
     if (m_gatelayer != std::nullopt) {
@@ -63,10 +63,10 @@ void AgentEngine::run(Communicator *comm, PointMap *pointmap) {
         agentSet.agents.clear();
     }
 
-    for (int i = 0; i < m_timesteps; i++) {
+    for (size_t i = 0; i < m_timesteps; i++) {
         for (auto &agentSet : agentSets) {
             int q = invcumpoisson(prandomr(), agentSet.m_release_rate);
-            int length = agentSet.agents.size();
+            auto length = agentSet.agents.size();
             int k;
             for (k = 0; k < q; k++) {
                 agentSet.agents.push_back(Agent(&(agentSet), pointmap, output_mode));

@@ -26,7 +26,7 @@ AnalysisResult VGAVisualGlobalDepth::run(Communicator *, PointMap &map, bool) {
 
     // n.b., insert columns sets values to -1 if the column already exists
     std::string colText = "Visual Step Depth";
-    int col = attributes.insertOrResetColumn(colText);
+    auto col = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
@@ -76,7 +76,7 @@ AnalysisResult VGAVisualGlobalDepth::run(Communicator *, PointMap &map, bool) {
 
     // force redisplay:
     map.setDisplayedAttribute(-2);
-    map.setDisplayedAttribute(col);
+    map.setDisplayedAttribute(static_cast<int>(col));
 
     result.completed = true;
     return result;

@@ -26,12 +26,12 @@ AnalysisResult VGAMetricDepth::run(Communicator *, PointMap &map, bool) {
 
     // n.b., insert columns sets values to -1 if the column already exists
     std::string colText = "Metric Step Shortest-Path Angle";
-    int path_angle_col = attributes.insertOrResetColumn(colText);
+    auto path_angle_col = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
     colText = "Metric Step Shortest-Path Length";
-    int path_length_col = attributes.insertOrResetColumn(colText);
+    auto path_length_col = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
-    int dist_col = -1;
+    std::optional<size_t> dist_col = std::nullopt;
     if (map.getSelSet().size() == 1) {
         colText = "Metric Straight-Line Distance";
         // Note: Euclidean distance is currently only calculated from a single point
@@ -69,7 +69,7 @@ AnalysisResult VGAMetricDepth::run(Communicator *, PointMap &map, bool) {
             row.setValue(path_angle_col, float(p.m_cumangle));
             if (map.getSelSet().size() == 1) {
                 // Note: Euclidean distance is currently only calculated from a single point
-                row.setValue(dist_col,
+                row.setValue(dist_col.value(),
                              float(map.getSpacing() * dist(here.pixel, *map.getSelSet().begin())));
             }
             if (!p.getMergePixel().empty()) {
@@ -83,8 +83,9 @@ AnalysisResult VGAMetricDepth::run(Communicator *, PointMap &map, bool) {
                     if (map.getSelSet().size() == 1) {
                         // Note: Euclidean distance is currently only calculated from a single point
                         mergePixelRow.setValue(
-                            dist_col, float(map.getSpacing() *
-                                            dist(p.getMergePixel(), *map.getSelSet().begin())));
+                            dist_col.value(),
+                            float(map.getSpacing() *
+                                  dist(p.getMergePixel(), *map.getSelSet().begin())));
                     }
                     p2.getNode().extractMetric(search_list, &map,
                                                MetricTriple(here.dist, p.getMergePixel(), NoPixel));

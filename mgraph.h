@@ -117,7 +117,7 @@ class MetaGraph : public FileProperties {
     }
 
     std::vector<PointMap> &getPointMaps() { return m_pointMaps; }
-    bool hasDisplayedPointMap() { return m_displayed_pointmap.has_value(); }
+    bool hasDisplayedPointMap() const { return m_displayed_pointmap.has_value(); }
     PointMap &getDisplayedPointMap() { return m_pointMaps[m_displayed_pointmap.value()]; }
     const PointMap &getDisplayedPointMap() const {
         return m_pointMaps[m_displayed_pointmap.value()];
@@ -245,7 +245,7 @@ class MetaGraph : public FileProperties {
                            std::optional<size_t> col_in, size_t col_out, int push_func,
                            bool count_col = false);
     //
-    int getDisplayedMapRef() const;
+    std::optional<size_t> getDisplayedMapRef() const;
     //
     // NB -- returns 0 (not editable), 1 (editable off) or 2 (editable on)
     int isEditable() const;
@@ -253,7 +253,7 @@ class MetaGraph : public FileProperties {
     void undo();
 
     std::optional<size_t> m_displayed_datamap = std::nullopt;
-    bool hasDisplayedDataMap() { return m_displayed_datamap.has_value(); }
+    bool hasDisplayedDataMap() const { return m_displayed_datamap.has_value(); }
     ShapeMap &getDisplayedDataMap() { return m_dataMaps[m_displayed_datamap.value()]; }
     const ShapeMap &getDisplayedDataMap() const { return m_dataMaps[m_displayed_datamap.value()]; }
     size_t getDisplayedDataMapRef() const { return m_displayed_datamap.value(); }
@@ -285,7 +285,7 @@ class MetaGraph : public FileProperties {
     }
 
     std::vector<std::unique_ptr<ShapeGraph>> &getShapeGraphs() { return m_shapeGraphs; }
-    bool hasDisplayedShapeGraph() { return m_displayed_shapegraph.has_value(); }
+    bool hasDisplayedShapeGraph() const { return m_displayed_shapegraph.has_value(); }
     ShapeGraph &getDisplayedShapeGraph() {
         return *m_shapeGraphs[m_displayed_shapegraph.value()].get();
     }
@@ -325,17 +325,20 @@ class MetaGraph : public FileProperties {
     //
     int getDisplayedAttribute() const;
     void setDisplayedAttribute(int col);
-    int addAttribute(const std::string &name);
+    std::optional<size_t> addAttribute(const std::string &name);
     void removeAttribute(int col);
-    bool isAttributeLocked(int col);
+    bool isAttributeLocked(size_t col);
     AttributeTable &getAttributeTable(std::optional<size_t> type = std::nullopt,
                                       std::optional<size_t> layer = std::nullopt);
     const AttributeTable &getAttributeTable(std::optional<size_t> type = std::nullopt,
                                             std::optional<size_t> layer = std::nullopt) const;
-    LayerManagerImpl &getLayers(int type = -1, int layer = -1);
-    const LayerManagerImpl &getLayers(int type = -1, int layer = -1) const;
-    AttributeTableHandle &getAttributeTableHandle(int type = -1, int layer = -1);
-    const AttributeTableHandle &getAttributeTableHandle(int type = -1, int layer = -1) const;
+    LayerManagerImpl &getLayers(int type = -1, std::optional<size_t> layer = std::nullopt);
+    const LayerManagerImpl &getLayers(int type = -1,
+                                      std::optional<size_t> layer = std::nullopt) const;
+    AttributeTableHandle &getAttributeTableHandle(int type = -1,
+                                                  std::optional<size_t> layer = std::nullopt);
+    const AttributeTableHandle &
+    getAttributeTableHandle(int type = -1, std::optional<size_t> layer = std::nullopt) const;
 
     int getLineFileCount() const { return (int)m_drawingFiles.size(); }
 
@@ -530,7 +533,8 @@ class MetaGraph : public FileProperties {
     //
   public:
     // thru vision
-    bool analyseThruVision(Communicator *comm = NULL, int gatelayer = -1);
+    bool analyseThruVision(Communicator *comm = NULL,
+                           std::optional<size_t> gatelayer = std::nullopt);
     // BSP tree for making isovists
   protected:
     BSPNode *m_bsp_root;

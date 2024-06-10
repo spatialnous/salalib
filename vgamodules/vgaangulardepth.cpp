@@ -26,7 +26,7 @@ AnalysisResult VGAAngularDepth::run(Communicator *, PointMap &map, bool) {
 
     // n.b., insert columns sets values to -1 if the column already exists
     std::string colText = "Angular Step Depth";
-    int path_angle_col = attributes.insertOrResetColumn(colText);
+    auto path_angle_col = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {

@@ -166,7 +166,7 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
             if (nextduplicate < duplicates.size() && duplicates[nextduplicate] == i) {
                 // duplicate last row:
                 if (lastrow) {
-                    for (int colindex : colindexes) {
+                    for (auto colindex : colindexes) {
                         row.setValue(colindex, lastrow->getValue(colindex));
                     }
                 }
@@ -503,7 +503,7 @@ void MapInfoData::writetable(std::ostream &miffile, std::ostream &midfile,
         return attributes.getColumnName(a) < attributes.getColumnName(b);
     });
 
-    for (int idx : indices) {
+    for (auto idx : indices) {
         std::string colname = attributes.getColumnName(idx);
         miffile << "  ";
         bool lastalpha = false;
@@ -531,7 +531,7 @@ void MapInfoData::writetable(std::ostream &miffile, std::ostream &midfile,
         */
         if (isObjectVisible(layers, iter->getRow())) {
             midfile << rowKey;
-            for (int idx : indices) {
+            for (auto idx : indices) {
                 midfile << m_delimiter << iter->getRow().getValue(idx);
             }
             midfile << std::endl;

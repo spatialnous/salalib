@@ -160,7 +160,7 @@ void ShapeGraph::outputNet(std::ostream &netfile) const {
             const Connector &conn = m_connectors[j];
             for (size_t k = 0; k < conn.m_connections.size(); k++) {
                 auto to = conn.m_connections[k];
-                if (static_cast<int>(j) < to) {
+                if (j < to) {
                     netfile << (j + 1) << " " << (to + 1) << " 1" << std::endl;
                 }
             }
@@ -354,7 +354,7 @@ void ShapeGraph::writeSegmentConnectionsAsPairsCSV(std::ostream &stream) {
 
 void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {
     std::vector<Point2f> closepoints;
-    std::vector<std::pair<int, int>> intersections;
+    std::vector<std::pair<size_t, size_t>> intersections;
     PixelRef pix = pixelate(unlinkPoint);
     std::vector<ShapeRef> &pix_shapes =
         m_pixel_shapes(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
@@ -363,15 +363,15 @@ void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {
         for (auto jter = iter; jter != pix_shapes.end(); ++jter) {
             auto aIter = m_shapes.find(int(iter->m_shape_ref));
             auto bIter = m_shapes.find(int(jter->m_shape_ref));
-            int a = int(std::distance(m_shapes.begin(), aIter));
-            int b = int(std::distance(m_shapes.begin(), bIter));
+            auto a = static_cast<size_t>(std::distance(m_shapes.begin(), aIter));
+            auto b = static_cast<size_t>(std::distance(m_shapes.begin(), bIter));
             auto &connections = m_connectors[size_t(a)].m_connections;
             if (aIter != m_shapes.end() && bIter != m_shapes.end() && aIter->second.isLine() &&
                 bIter->second.isLine() &&
                 std::find(connections.begin(), connections.end(), b) != connections.end()) {
                 closepoints.push_back(intersection_point(aIter->second.getLine(),
                                                          bIter->second.getLine(), TOLERANCE_A));
-                intersections.push_back(std::pair<int, int>(a, b));
+                intersections.push_back(std::make_pair(a, b));
             }
         }
     }
@@ -458,12 +458,12 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, static_cast<int>(lineConnectors.size()));
+        comm->CommPostMessage(Communicator::NUM_RECORDS, lineConnectors.size());
     }
 
     double maxdim = __max(m_region.width(), m_region.height());
 
-    int count = 0;
+    size_t count = 0;
     for (auto &lineConnector_a : lineConnectors) {
         Connector &connectionset_a = lineConnector_a.second.m_connector;
         const Line &line_a = lineConnector_a.second.m_line;
@@ -596,7 +596,7 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
             // note: more than one break at the same place allowed
             auto shapeJ =
                 depthmapX::getMapAtIndex(m_shapes, static_cast<size_t>(connections[j]))->second;
-            if (static_cast<int>(i) != connections[j] && shapeJ.isLine()) {
+            if (i != connections[j] && shapeJ.isLine()) {
                 breaks.push_back(std::make_pair(
                     parity * line.intersection_point(shapeJ.getLine(), axis, TOLERANCE_A),
                     connections[j]));

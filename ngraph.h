@@ -47,6 +47,7 @@ class Bin {
     friend class Node;
 
   protected:
+    // TODO: in new version increase precision?
     unsigned short m_node_count;
     float m_distance;
     float m_occ_distance;

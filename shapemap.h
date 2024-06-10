@@ -308,6 +308,8 @@ class ShapeMap : public PixelBase {
     ShapeMap(const ShapeMap &) = delete;
     ShapeMap &operator=(const ShapeMap &other) = delete;
 
+    virtual ~ShapeMap() = default;
+
     // TODO: These three functions should be refactored out of the code as much as possible
     // they are only left here because they're being used by various components that still
     // access the attribute table through indices. Once these are removed these functions

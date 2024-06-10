@@ -113,6 +113,7 @@ struct RadialLine : public RadialKey {
         nextvertex = rl.nextvertex;
     }
     bool cuts(const Line &l) const;
+    RadialLine &operator=(const RadialLine &) = default;
 };
 
 struct RadialSegment {

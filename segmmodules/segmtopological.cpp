@@ -102,8 +102,7 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
             TopoMetSegmentRef(cursor, Connector::SEG_CONN_ALL, rootseglength * 0.5, -1);
         int open = 1;
         unsigned int segdepth = 0;
-        double total = 0.0, wtotal = 0.0, wtotaldepth = 0.0, totalsegdepth = 0.0,
-               totalmetdepth = 0.0;
+        double total = 0.0, wtotal = 0.0, wtotaldepth = 0.0, totalsegdepth = 0.0;
         while (open != 0) {
             while (list[bin].size() == 0) {
                 bin++;
@@ -125,7 +124,6 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
             //
             double len = seglengths[here.ref];
             totalsegdepth += segdepth;
-            totalmetdepth += here.dist - len * 0.5; // preloaded with length ahead
             wtotal += len;
             wtotaldepth += len * segdepth;
 

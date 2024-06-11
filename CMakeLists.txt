@@ -1,7 +1,5 @@
 set(salalib salalib)
 
-#set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
-
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic)

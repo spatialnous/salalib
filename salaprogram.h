@@ -91,12 +91,15 @@ struct SalaList {
 };
 
 struct SalaGrf {
-    int node;
+    int node = 0;
     union Map {
         PointMap *point; // vga
         ShapeMap *shape; // everything else
     };
     Map map;
+
+  public:
+    SalaGrf() : map(){};
 };
 
 // SalaObj is 16 bytes, which is larger than I intended, but it appears
@@ -215,7 +218,7 @@ class SalaObj {
         int var;
         int count; // used by brackets to count how many objects they have
     };
-    Data data;
+    Data data{};
     Type type;
 
   public:

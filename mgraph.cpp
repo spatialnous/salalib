@@ -1300,7 +1300,7 @@ bool MetaGraph::makeFewestLineMap(Communicator *communicator, int replace) {
                 }
             }
 
-            if (index != -1) {
+            if (index.has_value()) {
                 removeShapeGraph(index.value());
             }
         }

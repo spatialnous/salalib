@@ -2,7 +2,7 @@ set(genlib genlib)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic)
+    set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(COMPILE_WARNINGS /W4 /Wall)
 endif()

@@ -3,11 +3,8 @@ set(salalib salalib)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic)
-    # There's currently too many of these conversion warnings
-    # disable and check individually
-    set(COMPILE_WARNINGS ${COMPILE_WARNINGS} -Wno-sign-conversion)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    set(COMPILE_WARNINGS  "/W4 /Wall")
+    set(COMPILE_WARNINGS /W4 /Wall)
 endif()
 
 set(salalib_HDRS

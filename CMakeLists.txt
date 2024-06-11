@@ -4,7 +4,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    set(COMPILE_WARNINGS  "/W4 /Wall")
+    set(COMPILE_WARNINGS /W4 /Wall)
 endif()
 
 set(genlib_HDRS

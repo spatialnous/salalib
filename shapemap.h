@@ -407,7 +407,7 @@ class ShapeMap : public PixelBase {
     // retrieve lists of polys point intersects:
     std::vector<size_t> pointInPolyList(const Point2f &p) const;
     // TODO: Fix casting -1 to size_t
-    std::vector<size_t> lineInPolyList(const Line &li, size_t lineref = static_cast<size_t>(-1),
+    std::vector<size_t> lineInPolyList(const Line &li, std::optional<size_t> lineref = std::nullopt,
                                        double tolerance = 0.0) const;
     std::vector<size_t> polyInPolyList(int polyref, double tolerance = 0.0) const;
     std::vector<size_t> shapeInPolyList(const SalaShape &shape);

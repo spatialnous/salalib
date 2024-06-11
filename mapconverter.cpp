@@ -523,7 +523,7 @@ MapConverter::convertAxialToSegment(Communicator *, ShapeGraph &axialMap, const 
     // create map layer...
     std::unique_ptr<ShapeGraph> segmap(new ShapeGraph(name, ShapeMap::SEGMENTMAP));
 
-    segmap->init(int(lines.size()), axialMap.getRegion());
+    segmap->init(lines.size(), axialMap.getRegion());
     segmap->initialiseAttributesSegment();
 
     for (size_t k = 0; k < lines.size(); k++) {

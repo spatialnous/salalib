@@ -1507,7 +1507,7 @@ std::vector<size_t> ShapeMap::pointInPolyList(const Point2f &p) const {
 
 // note, lineref is only used as an "exclude self" test when called from
 // getShapeConnections
-std::vector<size_t> ShapeMap::lineInPolyList(const Line &li_orig, size_t lineref,
+std::vector<size_t> ShapeMap::lineInPolyList(const Line &li_orig, std::optional<size_t> lineref,
                                              double tolerance) const {
     std::vector<size_t> shapeindexlist;
     if (!intersect_region(m_region, li_orig)) {
@@ -1532,7 +1532,7 @@ std::vector<size_t> ShapeMap::lineInPolyList(const Line &li_orig, size_t lineref
             for (const ShapeRef &shape : shapes) {
                 // slow to do this as it can repeat -- really need to use a linetest
                 // like structure to avoid retest of polygon lines
-                if (shape.m_shape_ref != lineref &&
+                if (lineref.has_value() && shape.m_shape_ref != lineref.value() &&
                     shape.m_tags & (ShapeRef::SHAPE_EDGE | ShapeRef::SHAPE_INTERNAL_EDGE |
                                     ShapeRef::SHAPE_OPEN)) {
                     auto shapeIter = m_shapes.find(static_cast<int>(shape.m_shape_ref));

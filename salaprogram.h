@@ -413,13 +413,6 @@ class SalaProgram {
     std::string getLastErrorMessage() const;
 };
 
-// TODO: GCC complains that SalaGrf::node may be uninitialized
-// but salaprogram is a generally hacky part of the codebase
-// so we're just going to ignore it for the moment
-#if !defined(__has_warning) || __has_warning("-Wmaybe-uninitialized")
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-#endif
 inline SalaObj::SalaObj(const SalaObj &obj) {
     type = obj.type;
     switch (obj.type) {
@@ -477,9 +470,6 @@ inline SalaObj::SalaObj(const SalaObj &obj) {
         throw SalaError("Cannot instantiate unknown type");
     }
 }
-#if !defined(__has_warning) || __has_warning("-Wmaybe-uninitialized")
-#pragma GCC diagnostic pop
-#endif
 
 inline SalaObj &SalaObj::operator=(const SalaObj &obj) {
     if (this != &obj) {

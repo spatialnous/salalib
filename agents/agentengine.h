@@ -26,7 +26,7 @@ class AgentEngine {
   public: // public for now for speed
     std::vector<AgentSet> agentSets;
     std::optional<size_t> m_gatelayer = std::nullopt;
-    int m_timesteps;
+    size_t m_timesteps;
 
   public:
     bool m_record_trails;

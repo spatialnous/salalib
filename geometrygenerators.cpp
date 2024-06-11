@@ -18,7 +18,7 @@
 std::vector<Point2f> GeometryGenerators::generateDiskTriangles(size_t sides, float radius,
                                                                Point2f position) {
     std::vector<Point2f> diskTriangles;
-    for (int i = 0; i < sides; i++) {
+    for (size_t i = 0; i < sides; i++) {
         diskTriangles.push_back(Point2f(position.x, position.y));
         diskTriangles.push_back(Point2f(position.x + radius * sin(2 * M_PI * (i + 1) / sides),
                                         position.y + radius * cos(2 * M_PI * (i + 1) / sides)));
@@ -51,7 +51,7 @@ GeometryGenerators::generateMultipleDiskTriangles(size_t sides, float radius,
 std::vector<SimpleLine> GeometryGenerators::generateCircleLines(size_t sides, float radius,
                                                                 Point2f position) {
     std::vector<SimpleLine> cirleLines;
-    for (int i = 0; i < sides; i++) {
+    for (size_t i = 0; i < sides; i++) {
         cirleLines.push_back(
             SimpleLine(Point2f(position.x + radius * sin(2 * M_PI * (i + 1) / sides),
                                position.y + radius * cos(2 * M_PI * (i + 1) / sides)),

@@ -672,47 +672,45 @@ bool ShapeMap::moveShape(int shaperef, const Line &line, bool undoing) {
         }
     }
 
-    auto rowid = std::distance(m_shapes.begin(), shapeIter);
+    auto rowid = static_cast<size_t>(std::distance(m_shapes.begin(), shapeIter));
     AttributeRow &row = m_attributes->getRow(AttributeKey(shapeIter->first));
     // change connections:
     if (m_hasgraph) {
 
-        const std::vector<size_t> oldconnections = m_connectors[size_t(rowid)].m_connections;
+        const std::vector<size_t> oldconnections = m_connectors[rowid].m_connections;
 
         auto conn_col = m_attributes->getOrInsertLockedColumn("Connectivity");
 
         if (isAxialMap()) {
             // line connections optimised for line-line intersection
-            m_connectors[size_t(rowid)].m_connections = getLineConnections(
+            m_connectors[rowid].m_connections = getLineConnections(
                 shaperef, TOLERANCE_B * __max(m_region.height(), m_region.width()));
         } else {
-            m_connectors[size_t(rowid)].m_connections = getShapeConnections(
+            m_connectors[rowid].m_connections = getShapeConnections(
                 shaperef, TOLERANCE_B * __max(m_region.height(), m_region.width()));
         }
 
-        std::vector<size_t> &newconnections = m_connectors[size_t(rowid)].m_connections;
+        std::vector<size_t> &newconnections = m_connectors[rowid].m_connections;
         row.setValue(conn_col, float(newconnections.size()));
         if (isAxialMap()) {
             auto leng_col = m_attributes->getOrInsertLockedColumn("Line Length");
             row.setValue(leng_col,
-                         (float)depthmapX::getMapAtIndex(m_shapes, static_cast<size_t>(rowid))
-                             ->second.getLength());
+                         (float)depthmapX::getMapAtIndex(m_shapes, rowid)->second.getLength());
         }
 
         // now go through our old connections, and remove ourself:
         for (auto oldconnection : oldconnections) {
-            if (oldconnection != static_cast<size_t>(rowid)) { // <- exclude self!
+            if (oldconnection != rowid) { // <- exclude self!
                 auto &connections = m_connectors[size_t(oldconnection)].m_connections;
-                depthmapX::findAndErase(connections, static_cast<size_t>(rowid));
+                depthmapX::findAndErase(connections, rowid);
                 auto &oldConnectionRow = getAttributeRowFromShapeIndex(oldconnection);
                 oldConnectionRow.incrValue(conn_col, -1.0f);
             }
         }
         // now go through our new connections, and add ourself:
-        for (auto newconnection : m_connectors[size_t(rowid)].m_connections) {
-            if (newconnection != static_cast<size_t>(rowid)) { // <- exclude self!
-                depthmapX::insert_sorted(m_connectors[size_t(newconnection)].m_connections,
-                                         static_cast<size_t>(rowid));
+        for (auto newconnection : m_connectors[rowid].m_connections) {
+            if (newconnection != rowid) { // <- exclude self!
+                depthmapX::insert_sorted(m_connectors[newconnection].m_connections, rowid);
                 auto &newConnectionRow = getAttributeRowFromShapeIndex(newconnection);
                 newConnectionRow.incrValue(conn_col);
             }
@@ -733,8 +731,7 @@ bool ShapeMap::moveShape(int shaperef, const Line &line, bool undoing) {
                 } else {
                     // enforce:
                     depthmapX::findAndErase(newconnections, connb.value());
-                    depthmapX::findAndErase(m_connectors[connb.value()].m_connections,
-                                            static_cast<size_t>(rowid));
+                    depthmapX::findAndErase(m_connectors[connb.value()].m_connections, rowid);
                     auto &connbRow = getAttributeRowFromShapeIndex(connb.value());
                     connbRow.incrValue(conn_col, -1.0f);
                     row.incrValue(conn_col, -1.0f);
@@ -756,8 +753,7 @@ bool ShapeMap::moveShape(int shaperef, const Line &line, bool undoing) {
                 } else {
                     // enforce:
                     depthmapX::insert_sorted(newconnections, connb.value());
-                    depthmapX::insert_sorted(m_connectors[connb.value()].m_connections,
-                                             static_cast<size_t>(rowid));
+                    depthmapX::insert_sorted(m_connectors[connb.value()].m_connections, rowid);
                     auto &connbRow = getAttributeRowFromShapeIndex(connb.value());
                     connbRow.incrValue(conn_col);
                     row.incrValue(conn_col);
@@ -961,7 +957,7 @@ void ShapeMap::removeShape(int shaperef, bool undoing) {
                     auto &row = getAttributeRowFromShapeIndex(i);
                     row.incrValue(conn_col, -1.0f);
                     // }
-                } else if (m_connectors[i].m_connections[j] > int(rowid)) {
+                } else if (m_connectors[i].m_connections[j] > rowid) {
                     m_connectors[i].m_connections[j] -= 1;
                 }
             }
@@ -1020,10 +1016,11 @@ void ShapeMap::undo() {
     } else if (event.m_action == SalaEvent::SALA_DELETED) {
 
         makeShape(event.m_geometry, event.m_shape_ref);
-        int rowid = std::distance(m_shapes.begin(), m_shapes.find(event.m_shape_ref));
-        auto &row = m_attributes->getRow(AttributeKey(event.m_shape_ref));
+        auto rowIt = m_shapes.find(event.m_shape_ref);
 
-        if (rowid != -1 && m_hasgraph) {
+        if (rowIt != m_shapes.end() && m_hasgraph) {
+            auto rowid = static_cast<size_t>(std::distance(m_shapes.begin(), rowIt));
+            auto &row = m_attributes->getRow(AttributeKey(event.m_shape_ref));
             // redo connections... n.b. TO DO this is intended to use the slower "any
             // connection" method, so it can handle any sort of graph
             // ...but that doesn't exist yet, so for the moment do lines:
@@ -1059,26 +1056,23 @@ void ShapeMap::undo() {
             }
             //
             // calculate this line's connections
-            m_connectors[size_t(rowid)].m_connections = getLineConnections(
+            m_connectors[rowid].m_connections = getLineConnections(
                 event.m_shape_ref, TOLERANCE_B * __max(m_region.height(), m_region.width()));
             // update:
             auto conn_col = m_attributes->getOrInsertLockedColumn("Connectivity");
-            row.setValue(conn_col,
-                         float(m_connectors[static_cast<size_t>(rowid)].m_connections.size()));
+            row.setValue(conn_col, float(m_connectors[rowid].m_connections.size()));
             //
             if (event.m_geometry.isLine()) {
                 auto leng_col = m_attributes->getOrInsertLockedColumn("Line Length");
                 row.setValue(leng_col,
-                             (float)depthmapX::getMapAtIndex(m_shapes, static_cast<size_t>(rowid))
-                                 ->second.getLength());
+                             (float)depthmapX::getMapAtIndex(m_shapes, rowid)->second.getLength());
             }
             //
             // now go through our connections, and add ourself:
-            const auto &connections = m_connectors[size_t(rowid)].m_connections;
+            const auto &connections = m_connectors[rowid].m_connections;
             for (auto connection : connections) {
-                if (connection != static_cast<size_t>(rowid)) { // <- exclude self!
-                    depthmapX::insert_sorted(m_connectors[size_t(connection)].m_connections,
-                                             static_cast<size_t>(rowid));
+                if (connection != rowid) { // <- exclude self!
+                    depthmapX::insert_sorted(m_connectors[connection].m_connections, rowid);
                     auto &row = getAttributeRowFromShapeIndex(connection);
                     row.incrValue(conn_col);
                 }
@@ -2800,7 +2794,9 @@ bool ShapeMap::findNextShape(bool &nextlayer) const {
         return false;
     }
 
-    while (++m_current < (int)m_shapes.size() && m_display_shapes[m_current] == -1)
+    // TODO: Remove static_cast<size_t>(-1)
+    while (++m_current < (int)m_shapes.size() &&
+           m_display_shapes[m_current] == static_cast<size_t>(-1))
         ;
 
     if (m_current < (int)m_shapes.size()) {
@@ -2977,7 +2973,7 @@ bool ShapeMap::linkShapes(size_t index1, size_t index2, bool refresh) {
         auto &row2 = getAttributeRowFromShapeIndex(index2);
         row1.incrValue(conn_col);
         row2.incrValue(conn_col);
-        if (refresh && getDisplayedAttribute() == conn_col) {
+        if (refresh && getDisplayedAttribute() == static_cast<int>(conn_col)) {
             invalidateDisplayedAttribute();
             setDisplayedAttribute(conn_col); // <- reflect changes to connectivity counts
         }
@@ -3071,7 +3067,7 @@ bool ShapeMap::unlinkShapes(size_t index1, size_t index2, bool refresh) {
         auto &row2 = getAttributeRowFromShapeIndex(index2);
         row1.incrValue(conn_col, -1.0f);
         row2.incrValue(conn_col, -1.0f);
-        if (refresh && getDisplayedAttribute() == conn_col) {
+        if (refresh && getDisplayedAttribute() == static_cast<int>(conn_col)) {
             invalidateDisplayedAttribute();
             setDisplayedAttribute(conn_col); // <- reflect changes to connectivity counts
         }
@@ -3117,7 +3113,7 @@ bool ShapeMap::unlinkShapesByKey(int key1, int key2, bool refresh) {
         auto &row2 = m_attributes->getRow(AttributeKey(key1));
         row1.incrValue(conn_col, -1.0f);
         row2.incrValue(conn_col, -1.0f);
-        if (refresh && getDisplayedAttribute() == conn_col) {
+        if (refresh && getDisplayedAttribute() == static_cast<int>(conn_col)) {
             invalidateDisplayedAttribute();
             setDisplayedAttribute(conn_col); // <- reflect changes to connectivity counts
         }

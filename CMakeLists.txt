@@ -7,7 +7,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic)
     # There's currently too many of these conversion warnings
     # disable and check individually
-    set(COMPILE_WARNINGS ${COMPILE_WARNINGS} -Wno-sign-conversion -Wno-sign-compare)
+    set(COMPILE_WARNINGS ${COMPILE_WARNINGS} -Wno-sign-conversion)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(COMPILE_WARNINGS  "/W4 /EHsc")
 endif()

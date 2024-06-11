@@ -68,7 +68,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
 
         removedflag = false;
         for (size_t i = 0; i < m_axialconns.size(); i++) {
-            int ii = m_vps[i].index;
+            auto ii = static_cast<size_t>(m_vps[i].index);
             if (m_removed[ii] || !m_affected[ii] || m_vital[ii]) {
                 continue;
             }
@@ -94,7 +94,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
             m_affected[ii] = false;
             bool subset = false;
             for (size_t j = 0; j < axa.m_connections.size(); j++) {
-                int indextob = axa.m_connections[j];
+                auto indextob = axa.m_connections[j];
                 if (indextob == ii ||
                     m_removed[indextob]) { // <- removed[indextob] should never happen
                                            // as it should have been removed below

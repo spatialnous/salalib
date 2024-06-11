@@ -388,9 +388,9 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
         }
     }
 
-    int radiussize = radius.size();
+    auto radiussize = radius.size();
     int radiusmask = 0;
-    for (int i = 0; i < radiussize; i++) {
+    for (size_t i = 0; i < radiussize; i++) {
         radiusmask |= (1 << i);
     }
 
@@ -411,7 +411,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
         }
         for (size_t j = 0; j < map.getConnections().size(); j++) {
             for (int dir = 0; dir < 2; dir++) {
-                for (int k = 0; k < radiussize; k++) {
+                for (size_t k = 0; k < radiussize; k++) {
                     audittrail[j][k][dir].clearLine();
                 }
                 uncovered[j][dir] = radiusmask;
@@ -458,7 +458,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                     while (((coverage >> rbin) & 0x1) == 0)
                         rbin++;
                     rbinbase = rbin;
-                    while (rbin < radiussize) {
+                    while (rbin < static_cast<int>(radiussize)) {
                         if (((coverage >> rbin) & 0x1) == 1) {
                             audittrail[ref][rbin][dir].depth = depthlevel;
                             audittrail[ref][rbin][dir].previous = lineindex.previous;
@@ -498,19 +498,19 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                             seglength = lengths[conn.ref];
                             switch (m_radius_type) {
                             case Options::RADIUS_ANGULAR:
-                                while (rbin != radiussize && radius[rbin] != -1 &&
+                                while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        depthlevel + extradepth > (int)radius[rbin]) {
                                     rbin++;
                                 }
                                 break;
                             case Options::RADIUS_METRIC:
-                                while (rbin != radiussize && radius[rbin] != -1 &&
+                                while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        lineindex.metricdepth + seglength * 0.5 > radius[rbin]) {
                                     rbin++;
                                 }
                                 break;
                             case Options::RADIUS_STEPS:
-                                if (rbin != radiussize && radius[rbin] != -1 &&
+                                if (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                     lineindex.segdepth >= (int)radius[rbin]) {
                                     rbin++;
                                 }
@@ -549,19 +549,19 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                             seglength = lengths[conn.ref];
                             switch (m_radius_type) {
                             case Options::RADIUS_ANGULAR:
-                                while (rbin != radiussize && radius[rbin] != -1 &&
+                                while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        depthlevel + extradepth > (int)radius[rbin]) {
                                     rbin++;
                                 }
                                 break;
                             case Options::RADIUS_METRIC:
-                                while (rbin != radiussize && radius[rbin] != -1 &&
+                                while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        lineindex.metricdepth + seglength * 0.5 > radius[rbin]) {
                                     rbin++;
                                 }
                                 break;
                             case Options::RADIUS_STEPS:
-                                if (rbin != radiussize && radius[rbin] != -1 &&
+                                if (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                     lineindex.segdepth >= (int)radius[rbin]) {
                                     rbin++;
                                 }
@@ -778,7 +778,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
         }
     }
     for (size_t i = 0; i < map.getConnections().size(); i++) {
-        for (int j = 0; j < radiussize; j++) {
+        for (size_t j = 0; j < radiussize; j++) {
             delete[] audittrail[i][j];
         }
         delete[] audittrail[i];

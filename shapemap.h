@@ -142,7 +142,18 @@ class SalaShape {
         m_area = 0.0;
         m_perimeter = m_region.length();
     }
-    //
+    bool operator==(const SalaShape &other) const {
+        return                                     //
+            m_type == other.getType() &&           //
+            m_centroid == other.getCentroid() &&   //
+            m_draworder == other.getDrawOrder() && //
+            m_region == other.getLine() &&         //
+            m_area == other.getArea() &&           //
+            m_perimeter == other.getPerimeter();
+    }
+    unsigned char getType() const { return m_type; }
+    int getDrawOrder() const { return m_draworder; }
+
     bool isOpen() const { return (m_type & SHAPE_CLOSED) == 0; }
     bool isClosed() const { return (m_type & SHAPE_CLOSED) == SHAPE_CLOSED; }
     bool isPoint() const { return (m_type == SHAPE_POINT); }

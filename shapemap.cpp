@@ -218,7 +218,7 @@ void ShapeMap::copy(const ShapeMap &sourcemap, int copyflags) {
         }
     }
 
-    if ((copyflags & ShapeMap::COPY_ATTRIBUTES) == ShapeMap::COPY_GRAPH) {
+    if ((copyflags & ShapeMap::COPY_GRAPH) == ShapeMap::COPY_GRAPH) {
         if (sourcemap.m_hasgraph) {
             m_hasgraph = true;
             // straight copy:

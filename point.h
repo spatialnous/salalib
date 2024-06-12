@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -16,8 +15,8 @@
 
 #pragma once
 
-#include "salalib/ngraph.h"
-#include "salalib/pixelref.h"
+#include "ngraph.h"
+#include "pixelref.h"
 
 #include "genlib/p2dpoly.h"
 

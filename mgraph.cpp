@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 // Copyright (C) 2024, Petros Koutsolampros
 
@@ -17,42 +16,40 @@
 
 // The meta graph
 
-#include "salalib/mgraph.h"
-#include "salalib/alllinemap.h"
-#include "salalib/isovist.h"
-#include "salalib/mapconverter.h"
+#include "mgraph.h"
 
-#include "salalib/importutils.h"
-#include "salalib/parsers/ntfp.h"
-#include "salalib/parsers/tigerp.h"
-
-#include "salalib/agents/agenthelpers.h"
-#include "salalib/axialmodules/axialintegration.h"
-#include "salalib/axialmodules/axiallocal.h"
-#include "salalib/axialmodules/axialstepdepth.h"
-#include "salalib/segmmodules/segmangular.h"
-#include "salalib/segmmodules/segmmetric.h"
-#include "salalib/segmmodules/segmmetricpd.h"
-#include "salalib/segmmodules/segmtopological.h"
-#include "salalib/segmmodules/segmtopologicalpd.h"
-#include "salalib/segmmodules/segmtulip.h"
-#include "salalib/segmmodules/segmtulipdepth.h"
-#include "salalib/vgamodules/vgaangular.h"
-#include "salalib/vgamodules/vgaangulardepth.h"
-#include "salalib/vgamodules/vgaisovist.h"
-#include "salalib/vgamodules/vgametric.h"
-#include "salalib/vgamodules/vgametricdepth.h"
-#include "salalib/vgamodules/vgathroughvision.h"
-#include "salalib/vgamodules/vgavisualglobal.h"
-#include "salalib/vgamodules/vgavisualglobaldepth.h"
-#include "salalib/vgamodules/vgavisuallocal.h"
+#include "agents/agenthelpers.h"
+#include "alllinemap.h"
+#include "axialmodules/axialintegration.h"
+#include "axialmodules/axiallocal.h"
+#include "axialmodules/axialstepdepth.h"
+#include "importutils.h"
+#include "isovist.h"
+#include "mapconverter.h"
+#include "parsers/ntfp.h"
+#include "parsers/tigerp.h"
+#include "segmmodules/segmangular.h"
+#include "segmmodules/segmmetric.h"
+#include "segmmodules/segmmetricpd.h"
+#include "segmmodules/segmtopological.h"
+#include "segmmodules/segmtopologicalpd.h"
+#include "segmmodules/segmtulip.h"
+#include "segmmodules/segmtulipdepth.h"
+#include "vgamodules/vgaangular.h"
+#include "vgamodules/vgaangulardepth.h"
+#include "vgamodules/vgaisovist.h"
+#include "vgamodules/vgametric.h"
+#include "vgamodules/vgametricdepth.h"
+#include "vgamodules/vgathroughvision.h"
+#include "vgamodules/vgavisualglobal.h"
+#include "vgamodules/vgavisualglobaldepth.h"
+#include "vgamodules/vgavisuallocal.h"
 
 #include "genlib/comm.h"
 #include "genlib/p2dpoly.h"
 #include "genlib/readwritehelpers.h"
 
-#include "math.h"
-
+#include <math.h>
 #include <sstream>
 #include <tuple>
 

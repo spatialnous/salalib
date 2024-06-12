@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 // Copyright (C) 2024, Petros Koutsolampros
 
@@ -19,15 +18,15 @@
 
 // Interface: the meta graph loads and holds all sorts of arbitrary data...
 
-#include "salalib/agents/agentengine.h" // for agent engine interface
-#include "salalib/connector.h"
-#include "salalib/fileproperties.h"
-#include "salalib/importtypedefs.h"
-#include "salalib/options.h"
-#include "salalib/pointdata.h"
-#include "salalib/shapegraph.h"
-#include "salalib/shapemap.h"
-#include "salalib/spacepix.h"
+#include "agents/agentengine.h" // for agent engine interface
+#include "connector.h"
+#include "fileproperties.h"
+#include "importtypedefs.h"
+#include "options.h"
+#include "pointdata.h"
+#include "shapegraph.h"
+#include "shapemap.h"
+#include "spacepix.h"
 
 #include "genlib/bsptree.h"
 #include "genlib/p2dpoly.h"

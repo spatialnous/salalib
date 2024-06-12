@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -18,13 +17,14 @@
 
 // spatial data
 
-#include "salalib/spacepix.h"
+#include "spacepix.h"
 
 #include "genlib/containerutils.h"
 #include "genlib/readwritehelpers.h"
 #include "genlib/stringutils.h"
 
 #include <float.h>
+#include <fstream>
 #include <math.h>
 #include <set>
 

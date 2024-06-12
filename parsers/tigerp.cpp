@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 // Copyright (C) 2018, Petros Koutsolampros
 
@@ -19,7 +18,7 @@
 
 // Quick Tiger line parser (type 1 records)
 
-#include "salalib/parsers/tigerp.h"
+#include "tigerp.h"
 
 #include "genlib/comm.h"
 

@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -16,8 +15,10 @@
 
 #pragma once
 
-#include "salalib/connector.h"
-#include "salalib/shapemap.h"
+#include "connector.h"
+#include "shapemap.h"
+
+#include "genlib/comm.h"
 
 #include <set>
 

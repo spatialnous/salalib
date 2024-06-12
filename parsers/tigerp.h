@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 // Copyright (C) 2018, Petros Koutsolampros
 
@@ -17,8 +16,11 @@
 
 #pragma once
 
+#include "genlib/comm.h"
 #include "genlib/p2dpoly.h"
+
 #include <map>
+#include <string>
 #include <vector>
 
 // look up is the tiger (major) line category:

@@ -1,4 +1,4 @@
-// salaprogram.h - a component of the depthmapX - spatial network analysis platform
+
 // SalaScripting language
 // Copyright (C) 2011-2012, Tasos Varoudis
 
@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "salalib/attributetable.h"
+#include "attributetable.h"
 
 #include "genlib/stringutils.h"
 

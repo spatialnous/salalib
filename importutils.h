@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Petros Koutsolampros
+// Copyright (C) 2017, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include "salalib/importtypedefs.h"
-#include "salalib/mgraph.h"
-#include "salalib/parsers/dxfp.h"
+#include "importtypedefs.h"
+#include "mgraph.h"
+#include "parsers/dxfp.h"
 
 #include <map>
 #include <vector>

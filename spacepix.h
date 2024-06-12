@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 // Copyright (C) 2018, Petros Koutsolampros
 
@@ -19,8 +18,8 @@
 
 #pragma once
 
-#include "salalib/pafcolor.h"
-#include "salalib/pixelref.h"
+#include "pafcolor.h"
+#include "pixelref.h"
 
 #include "genlib/p2dpoly.h"
 #include "genlib/simplematrix.h"

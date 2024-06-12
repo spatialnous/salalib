@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -14,13 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __POINTDATA_H__
-#define __POINTDATA_H__
+#pragma once
 
-#include "salalib/attributetable.h"
-#include "salalib/point.h"
-#include "salalib/spacepixfile.h"
+#include "attributetable.h"
+#include "point.h"
+#include "spacepixfile.h"
 
+#include "genlib/comm.h"
 #include "genlib/exceptions.h"
 
 #include <deque>
@@ -683,5 +682,3 @@ inline int q_opposite(int bin) {
 
     return flagoctant(opposing_bin);
 }
-
-#endif

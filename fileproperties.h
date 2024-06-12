@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -14,10 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __FILEPROPERTIES_H__
-#define __FILEPROPERTIES_H__
+#pragma once
 
 #include "genlib/stringutils.h"
+
 class FileProperties {
   protected:
     std::string m_create_person;
@@ -78,5 +77,3 @@ inline bool FileProperties::write(std::ostream &stream) {
 
     return true;
 }
-
-#endif

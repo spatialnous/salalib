@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Petros Koutsolampros
+// Copyright (C) 2017, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 #pragma once
 
 #include "genlib/p2dpoly.h"
+
 #include <vector>
 
 class GeometryGenerators {

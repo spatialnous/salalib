@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -16,18 +15,16 @@
 
 // Point data
 
-#include "salalib/pointdata.h"
-#include "salalib/attributetable.h"
-#include "salalib/attributetablehelpers.h"
-#include "salalib/isovist.h"
-#include "salalib/mgraph.h" // Metagraphs are used...
-#include "salalib/ngraph.h"
-#include "salalib/parsers/mapinfodata.h" // for mapinfo interface
-#include "salalib/vgamodules/vgavisualglobal.h"
-#include "salalib/vgamodules/vgavisuallocal.h"
+#include "pointdata.h"
+
+#include "attributetable.h"
+#include "attributetablehelpers.h"
+#include "ngraph.h"
+#include "parsers/mapinfodata.h" // for mapinfo interface
 
 #include "genlib/comm.h" // for communicator
 #include "genlib/containerutils.h"
+#include "genlib/pflipper.h"
 #include "genlib/stringutils.h"
 
 #include <math.h>

@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -16,10 +15,11 @@
 
 // This is my code to make a set of axial lines from a set of boundary lines
 
-#include "salalib/shapegraph.h"
-#include "salalib/axialpolygons.h"
-#include "salalib/parsers/mapinfodata.h"
-#include "salalib/tolerances.h"
+#include "shapegraph.h"
+
+#include "axialpolygons.h"
+#include "parsers/mapinfodata.h"
+#include "tolerances.h"
 
 #include "genlib/comm.h" // For communicator
 #include "genlib/containerutils.h"

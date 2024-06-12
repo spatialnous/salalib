@@ -1,6 +1,6 @@
-// Copyright (C) 2000-2010 University College London, Alasdair Turner
-// Copyright (C) 2011-2012 Tasos Varoudis
-// Copyright (C) 2017-2024 Petros Koutsolampros
+// Copyright (C) 2000-2010, University College London, Alasdair Turner
+// Copyright (C) 2011-2012, Tasos Varoudis
+// Copyright (C) 2017-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "salalib/spacepixfile.h"
+#include "spacepixfile.h"
 
 #include "genlib/stringutils.h"
+
+#include <fstream>
 
 void SpacePixelFile::makeViewportShapes(const QtRegion &viewport) const {
     m_current_layer = -1;

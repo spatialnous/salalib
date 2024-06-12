@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Petros Koutsolampros
+// Copyright (C) 2017, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,11 +14,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "entityparsing.h"
+
+#include "genlib/stringutils.h"
+
 #include <cstdlib>
 #include <exception>
 #include <sstream>
-
-#include "genlib/stringutils.h"
 
 namespace EntityParsing {
 

@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -14,8 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "salalib/point.h"
-#include "salalib/ngraph.h"
+#include "point.h"
+
+#include "ngraph.h"
 
 float Point::getBinDistance(int i) { return m_node->bindistance(i); }
 

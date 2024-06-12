@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2024 Petros Koutsolampros
+// Copyright (C) 2018-2024, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 
 // Interface to handle different kinds of VGA analysis
 
-#include "salalib/analysisresult.h"
-#include "salalib/options.h"
-#include "salalib/shapegraph.h"
+#include "analysisresult.h"
+#include "options.h"
+#include "shapegraph.h"
 
 #include "genlib/comm.h"
 #include "genlib/stringutils.h"

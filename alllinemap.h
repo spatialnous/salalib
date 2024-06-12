@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
 // Copyright (C) 2017-2024, Petros Koutsolampros
@@ -18,9 +17,9 @@
 
 #pragma once
 
-#include "salalib/axialpolygons.h"
-#include "salalib/shapegraph.h"
-#include "salalib/spacepixfile.h"
+#include "axialpolygons.h"
+#include "shapegraph.h"
+#include "spacepixfile.h"
 
 class AllLineMap : public ShapeGraph {
   public:

@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
 // Copyright (C) 2017-2024, Petros Koutsolampros
@@ -18,8 +17,8 @@
 
 #include "alllinemap.h"
 
-#include "salalib/axialminimiser.h"
-#include "salalib/tolerances.h"
+#include "axialminimiser.h"
+#include "tolerances.h"
 
 #include "genlib/exceptions.h"
 

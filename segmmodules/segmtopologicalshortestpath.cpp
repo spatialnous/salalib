@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2000-2010, University College London, Alasdair Turner
 // Copyright (C) 2011-2012, Tasos Varoudis
 // Copyright (C) 2017-2018, Petros Koutsolampros
@@ -18,7 +17,7 @@
 
 #include "segmtopologicalshortestpath.h"
 
-#include "salalib/segmmodules/segmhelpers.h"
+#include "segmhelpers.h"
 
 AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
 

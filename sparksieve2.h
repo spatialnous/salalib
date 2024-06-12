@@ -1,4 +1,3 @@
-// sala - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -16,14 +15,14 @@
 
 // This is my code to make a set of axial lines from a set of boundary lines
 
-#ifndef __SPARKSIEVE2_H__
-#define __SPARKSIEVE2_H__
+#pragma once
 
 #include "genlib/p2dpoly.h"
 
 #include <float.h>
 #include <list>
 #include <map>
+#include <vector>
 
 class sparkSieve2 {
   public:
@@ -75,5 +74,3 @@ inline bool operator<(const sparkSieve2::sparkZone2 &a, const sparkSieve2::spark
 inline bool operator>(const sparkSieve2::sparkZone2 &a, const sparkSieve2::sparkZone2 &b) {
     return (a.start == b.start) ? (a.end < b.end) : (a.start > b.start);
 }
-
-#endif

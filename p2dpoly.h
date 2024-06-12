@@ -321,7 +321,10 @@ class QtRegion {
         top_right = r.top_right;
         return *this;
     }
-    //
+    bool operator==(const QtRegion &other) const {
+        return bottom_left == other.bottom_left && top_right == other.top_right;
+    }
+
     double height() const { return fabs(top_right.y - bottom_left.y); }
     double width() const
     // The assumption that top_right.x is always > bottom_left.x is not always true.
@@ -444,7 +447,13 @@ class Line : public QtRegion {
         bits = l.bits;
         return *this;
     }
-    //
+    bool operator==(const Line &other) const {
+        // we could be comparing QtRegion and then the bits, but this
+        // is a line, and the two functions t_start and t_end seem
+        // to provide all the necessary information for the test.
+        return t_start() == other.t_start() && t_end() == other.t_end();
+    }
+
     friend bool intersect_line(const Line &a, const Line &b, double tolerance);
     friend bool intersect_line_no_touch(const Line &a, const Line &b, double tolerance);
     friend int intersect_line_distinguish(const Line &a, const Line &b, double tolerance);

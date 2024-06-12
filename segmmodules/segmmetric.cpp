@@ -201,5 +201,7 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
         map.setDisplayedAttribute(attributes.getColumnIndex(meandepthcol.c_str()));
     }
 
+    result.completed = true;
+
     return result;
 }

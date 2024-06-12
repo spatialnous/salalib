@@ -1,4 +1,3 @@
-// genlib - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -14,8 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __XMLPARSE_H__
-#define __XMLPARSE_H__
+#pragma once
 
 #include <algorithm>
 #include <fstream>
@@ -42,5 +40,3 @@ struct xmlerror {
     std::string error;
     xmlerror(const std::string &e = std::string()) { error = e; }
 };
-
-#endif

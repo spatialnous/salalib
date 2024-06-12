@@ -1,4 +1,3 @@
-// genlib - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -20,6 +19,7 @@
 
 #include <cmath>
 #include <float.h>
+#include <vector>
 
 //////////////////////////////////////////////////////////////////////////////////////
 

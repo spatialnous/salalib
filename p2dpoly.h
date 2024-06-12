@@ -1,4 +1,3 @@
-// genlib - a component of the depthmapX - spatial network analysis platform
 // Copyright (C) 2011-2012, Tasos Varoudis
 
 // This program is free software: you can redistribute it and/or modify
@@ -24,8 +23,7 @@
 // Using doubles right the way through can really eat memory for isovist
 // polygon files, thus we use a defined type, change as appropriate:
 
-#include "genlib/comm.h" // communicator used in BSP tree construction
-#include "genlib/pafmath.h"
+#include "pafmath.h"
 
 #include <algorithm>
 

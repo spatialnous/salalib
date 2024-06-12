@@ -1,5 +1,5 @@
-// Copyright (C) 2017 Christian Sailer
-// Copyright (C) 2018 Petros Koutsolampros
+// Copyright (C) 2017, Christian Sailer
+// Copyright (C) 2018, Petros Koutsolampros
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "genlib/exceptions.h"
+#include "exceptions.h"
 
 #include <iostream>
 #include <map>

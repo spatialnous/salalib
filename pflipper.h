@@ -1,4 +1,4 @@
-// Copyright (c) 1996-2011 Alasdair Turner (a.turner@ucl.ac.uk)
+// Copyright (c) 1996-2011, Alasdair Turner (a.turner@ucl.ac.uk)
 //
 //-----------------------------------------------------------------------------
 //  This library is free software; you can redistribute it and/or

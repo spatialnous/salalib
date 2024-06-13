@@ -95,7 +95,7 @@ class PointMap : public PixelBase {
   public:
     PointMap(const QtRegion &parentRegion, const std::string &name = std::string("VGA Map"));
     virtual ~PointMap() {}
-    void copy(const PointMap &other);
+    void copy(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
     const std::string &getName() const { return m_name; }
 
     PointMap(PointMap &&other)

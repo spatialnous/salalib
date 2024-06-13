@@ -54,37 +54,65 @@ PointMap::PointMap(const QtRegion &parentRegion, const std::string &name)
     m_displayed_attribute = -2;
 }
 
-void PointMap::copy(const PointMap &other) {
-    m_name = other.getName();
-    m_region = other.getRegion();
+void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattributes) {
+    m_name = sourcemap.getName();
+    m_region = sourcemap.getRegion();
+    m_parentRegion = sourcemap.m_parentRegion;
 
-    m_cols = other.getCols();
-    m_rows = other.getRows();
-    m_filled_point_count = other.getFilledPointCount();
+    m_cols = sourcemap.getCols();
+    m_rows = sourcemap.getRows();
+    m_filled_point_count = sourcemap.getFilledPointCount();
 
-    m_spacing = other.getSpacing();
+    m_spacing = sourcemap.getSpacing();
 
-    m_initialised = other.m_initialised;
-    m_blockedlines = other.m_blockedlines;
-    m_processed = other.m_processed;
-    m_boundarygraph = other.m_boundarygraph;
+    m_initialised = sourcemap.m_initialised;
+    m_blockedlines = sourcemap.m_blockedlines;
+    m_processed = sourcemap.m_processed;
+    m_boundarygraph = sourcemap.m_boundarygraph;
 
-    m_selection = other.m_selection;
-    m_pinned_selection = other.m_pinned_selection;
-    m_undocounter = other.m_undocounter;
+    m_selection = sourcemap.m_selection;
+    m_pinned_selection = sourcemap.m_pinned_selection;
+    m_undocounter = sourcemap.m_undocounter;
 
     // screen
-    m_viewing_deprecated = other.m_viewing_deprecated;
-    m_draw_step = other.m_draw_step;
+    m_viewing_deprecated = sourcemap.m_viewing_deprecated;
+    m_draw_step = sourcemap.m_draw_step;
 
-    s_bl = other.s_bl;
-    s_tr = other.s_tr;
-    curmergeline = other.curmergeline;
-    m_offset = other.m_offset;
-    m_bottom_left = other.m_bottom_left;
+    s_bl = sourcemap.s_bl;
+    s_tr = sourcemap.s_tr;
+    curmergeline = sourcemap.curmergeline;
+    m_offset = sourcemap.m_offset;
+    m_bottom_left = sourcemap.m_bottom_left;
 
     // -2 follows axial map convention, where -1 is the reference number
-    m_displayed_attribute = other.m_displayed_attribute;
+    m_displayed_attribute = sourcemap.m_displayed_attribute;
+    if (copypoints) {
+        m_points = sourcemap.m_points;
+    }
+    if (copyattributes) {
+
+        std::vector<size_t> indices(sourcemap.m_attributes->getNumColumns());
+        std::iota(indices.begin(), indices.end(), static_cast<size_t>(0));
+
+        std::sort(indices.begin(), indices.end(), [&](size_t a, size_t b) {
+            return sourcemap.m_attributes->getColumnName(a) <
+                   sourcemap.m_attributes->getColumnName(b);
+        });
+
+        for (auto idx : indices) {
+            auto outcol =
+                m_attributes->insertOrResetColumn(sourcemap.m_attributes->getColumnName(idx));
+            // n.b. outcol not necessarily the same as incol, although row position in
+            // table (j) should match
+
+            auto targetIter = m_attributes->begin();
+            for (auto sourceIter = sourcemap.m_attributes->begin();
+                 sourceIter != sourcemap.m_attributes->end(); sourceIter++) {
+                targetIter->getRow().setValue(outcol, sourceIter->getRow().getValue(idx));
+                targetIter++;
+            }
+        }
+    }
 }
 
 void PointMap::communicate(time_t &atime, Communicator *comm, size_t record) {

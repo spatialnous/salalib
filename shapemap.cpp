@@ -168,6 +168,7 @@ void ShapeMap::init(size_t size, const QtRegion &r) {
 // this makes an exact copy, keep the reference numbers and so on:
 
 void ShapeMap::copy(const ShapeMap &sourcemap, int copyflags) {
+    m_map_type = sourcemap.m_map_type;
     if ((copyflags & ShapeMap::COPY_GEOMETRY) == ShapeMap::COPY_GEOMETRY) {
         m_shapes.clear();
         init(sourcemap.m_shapes.size(), sourcemap.m_region);

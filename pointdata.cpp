@@ -86,7 +86,7 @@ void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattribu
 
     // -2 follows axial map convention, where -1 is the reference number
     m_displayed_attribute = sourcemap.m_displayed_attribute;
-    if (copypoints) {
+    if (copypoints || copyattributes) {
         m_points = sourcemap.m_points;
     }
     if (copyattributes) {
@@ -99,6 +99,10 @@ void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattribu
                    sourcemap.m_attributes->getColumnName(b);
         });
 
+        for (auto sourceIter = sourcemap.m_attributes->begin();
+             sourceIter != sourcemap.m_attributes->end(); sourceIter++) {
+            m_attributes->addRow(sourceIter->getKey());
+        }
         for (auto idx : indices) {
             auto outcol =
                 m_attributes->insertOrResetColumn(sourcemap.m_attributes->getColumnName(idx));

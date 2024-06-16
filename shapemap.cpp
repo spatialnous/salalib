@@ -3349,9 +3349,7 @@ std::vector<SimpleLine> ShapeMap::getAllShapesAsLines() const {
 std::vector<std::pair<SimpleLine, PafColor>> ShapeMap::getAllLinesWithColour() {
     std::vector<std::pair<SimpleLine, PafColor>> colouredLines;
     std::map<int, SalaShape> &allShapes = getAllShapes();
-    int k = -1;
     for (auto &refShape : allShapes) {
-        k++;
         SalaShape &shape = refShape.second;
         PafColor colour(dXreimpl::getDisplayColor(
             AttributeKey(refShape.first), m_attributes->getRow(AttributeKey(refShape.first)),

@@ -516,7 +516,6 @@ void PointMap::outputPoints(std::ostream &stream, char delim) {
     stream << "Ref" << delim << "x" << delim << "y" << std::endl;
     stream.precision(12);
 
-    int count = 0;
     for (size_t i = 0; i < m_cols; i++) {
         for (size_t j = 0; j < m_rows; j++) {
 
@@ -526,7 +525,6 @@ void PointMap::outputPoints(std::ostream &stream, char delim) {
 
                 Point2f p = depixelate(curs);
                 stream << curs << delim << p.x << delim << p.y << std::endl;
-                count++;
             }
         }
     }

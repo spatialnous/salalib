@@ -15,6 +15,7 @@
 
 #include <deque>
 #include <map>
+#include <string>
 
 class SalaShape;
 

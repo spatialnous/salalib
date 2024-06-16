@@ -287,7 +287,7 @@ class ShapeMap : public PixelBase {
 
   public:
     ShapeMap(const std::string &name = std::string(), int type = EMPTYMAP);
-    void copy(const ShapeMap &shapemap, int copyflags = 0);
+    void copy(const ShapeMap &shapemap, int copyflags = 0, bool copyMapType = false);
 
     ShapeMap(ShapeMap &&other)
         : m_name(std::move(other.m_name)), m_pixel_shapes(std::move(other.m_pixel_shapes)),

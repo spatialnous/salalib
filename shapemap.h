@@ -287,6 +287,10 @@ class ShapeMap : public PixelBase {
 
   public:
     ShapeMap(const std::string &name = std::string(), int type = EMPTYMAP);
+
+    // TODO: copyMapType is currently set to false, because previous versions
+    // of the library assume this, and some regression tests fail. Update
+    // on next regression baseline executabled
     void copy(const ShapeMap &shapemap, int copyflags = 0, bool copyMapType = false);
 
     ShapeMap(ShapeMap &&other)

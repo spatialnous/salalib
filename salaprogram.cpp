@@ -44,9 +44,6 @@ std::vector<SalaFuncLabel> g_sala_logical_ops;
 std::vector<SalaFuncLabel> g_sala_global_funcs;
 std::vector<SalaMemberFuncLabel> g_sala_member_funcs;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-
 void loadSalaProgram() {
     // math ops
     g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_ADD, "+", "add"));
@@ -1713,4 +1710,3 @@ int SalaObj::precedence() const {
     }
     return prec;
 }
-#pragma GCC diagnostic pop

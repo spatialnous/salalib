@@ -2944,8 +2944,8 @@ bool ShapeMap::linkShapes(size_t index1, size_t index2, bool refresh) {
             update = true;
         } else {
             // then check not linked already
-            auto &connections1 = m_connectors[size_t(index1)].m_connections;
-            auto &connections2 = m_connectors[size_t(index2)].m_connections;
+            auto &connections1 = m_connectors[index1].m_connections;
+            auto &connections2 = m_connectors[index2].m_connections;
             auto linkIter1 = std::find(connections1.begin(), connections1.end(), index2);
             auto linkIter2 = std::find(connections2.begin(), connections2.end(), index1);
             if (linkIter1 == connections1.end() && linkIter2 == connections2.end()) {
@@ -2957,8 +2957,8 @@ bool ShapeMap::linkShapes(size_t index1, size_t index2, bool refresh) {
     }
 
     if (update) {
-        depthmapX::insert_sorted(m_connectors[size_t(index1)].m_connections, index2);
-        depthmapX::insert_sorted(m_connectors[size_t(index2)].m_connections, index1);
+        depthmapX::insert_sorted(m_connectors[index1].m_connections, index2);
+        depthmapX::insert_sorted(m_connectors[index2].m_connections, index1);
         auto &row1 = getAttributeRowFromShapeIndex(index1);
         auto &row2 = getAttributeRowFromShapeIndex(index2);
         row1.incrValue(conn_col);

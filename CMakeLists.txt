@@ -5,11 +5,13 @@
 
 set(salalib salalib)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic)
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    set(COMPILE_WARNINGS /W4 /EHsc)
+if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+        "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic)
+    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+        set(COMPILE_WARNINGS /W4 /EHsc)
+    endif()
 endif()
 
 set(salalib_HDRS

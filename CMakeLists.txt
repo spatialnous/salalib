@@ -19,7 +19,6 @@ set(genlib_HDRS
     comm.h
     containerutils.h
     exceptions.h
-    linreg.h
     p2dpoly.h
     pafmath.h
     pflipper.h

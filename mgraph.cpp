@@ -2334,7 +2334,7 @@ std::optional<size_t> MetaGraph::addAttribute(const std::string &name) {
     return col;
 }
 
-void MetaGraph::removeAttribute(int col) {
+void MetaGraph::removeAttribute(size_t col) {
     switch (m_view_class & VIEWFRONT) {
     case VIEWVGA:
         getDisplayedPointMap().removeAttribute(col);

@@ -71,12 +71,13 @@ PixelRefVector PixelBase::pixelateLine(Line l, int scalefactor) const {
     if (a.x == b.x) {
         while (a.y < b.y) {
             a.y += 1;
-            pixel_list.push_back(PixelRef(a.x, parity * a.y));
+            pixel_list.push_back(PixelRef(a.x, static_cast<short>(parity * a.y)));
         }
     } else if (a.y == b.y) {
         while (a.x < b.x) {
             a.x += 1;
-            pixel_list.push_back(PixelRef(a.x, parity * a.y)); // Lines always go left to right
+            pixel_list.push_back(
+                PixelRef(a.x, static_cast<short>(parity * a.y))); // Lines always go left to right
         }
     } else {
 
@@ -88,43 +89,46 @@ PixelRefVector PixelBase::pixelateLine(Line l, int scalefactor) const {
 
         while (a.x < b.x || a.y < b.y) {
             PixelRef e;
-            e.y = parity *
-                  int(double(scaledrows) *
-                      (x0_const + parity * hw_ratio * (double(a.x + 1) / double(scaledcols))));
+            e.y = static_cast<short>(
+                parity *
+                int(double(scaledrows) *
+                    (x0_const + parity * hw_ratio * (double(a.x + 1) / double(scaledcols)))));
             // Note when decending 1.5 -> 1 and ascending 1.5 -> 2
             if (parity < 0) {
-                e.x = int(double(scaledcols) *
-                          (y0_const + wh_ratio * (double(a.y) / double(scaledrows))));
+                e.x =
+                    static_cast<short>(double(scaledcols) *
+                                       (y0_const + wh_ratio * (double(a.y) / double(scaledrows))));
             } else {
-                e.x = int(double(scaledcols) *
-                          (y0_const + wh_ratio * (double(a.y + 1) / double(scaledrows))));
+                e.x = static_cast<short>(
+                    double(scaledcols) *
+                    (y0_const + wh_ratio * (double(a.y + 1) / double(scaledrows))));
             }
 
             if (a.y < e.y) {
                 while (a.y < e.y && a.y < b.y) {
                     a.y += 1;
-                    pixel_list.push_back(PixelRef(a.x, parity * a.y));
+                    pixel_list.push_back(PixelRef(a.x, static_cast<short>(parity * a.y)));
                 }
                 if (a.x < b.x) {
                     a.x += 1;
-                    pixel_list.push_back(PixelRef(a.x, parity * a.y));
+                    pixel_list.push_back(PixelRef(a.x, static_cast<short>(parity * a.y)));
                 }
             } else if (a.x < e.x) {
                 while (a.x < e.x && a.x < b.x) {
                     a.x += 1;
-                    pixel_list.push_back(PixelRef(a.x, parity * a.y));
+                    pixel_list.push_back(PixelRef(a.x, static_cast<short>(parity * a.y)));
                 }
                 if (a.y < b.y) {
                     a.y += 1;
-                    pixel_list.push_back(PixelRef(a.x, parity * a.y));
+                    pixel_list.push_back(PixelRef(a.x, static_cast<short>(parity * a.y)));
                 }
             } else {
                 // Special case: exactly diagonal step (should only require one step):
                 // (Should actually never happen) (Doesn't: checked with RFH)
                 a.x += 1;
-                pixel_list.push_back(PixelRef(a.x, parity * a.y));
+                pixel_list.push_back(PixelRef(a.x, static_cast<short>(parity * a.y)));
                 a.y += 1;
-                pixel_list.push_back(PixelRef(a.x, parity * a.y));
+                pixel_list.push_back(PixelRef(a.x, static_cast<short>(parity * a.y)));
             }
         }
     }
@@ -140,7 +144,7 @@ PixelRefVector PixelBase::pixelateLineTouching(Line l, double tolerance) const {
     // now assume that scaling to region then scaling up is going to give
     // pixelation this is not necessarily the case!
     l.normalScale(m_region);
-    l.scale(Point2f(m_cols, m_rows));
+    l.scale(Point2f(static_cast<double>(m_cols), static_cast<double>(m_rows)));
 
     // but it does give us a nice line...
     int dir;
@@ -159,28 +163,29 @@ PixelRefVector PixelBase::pixelateLineTouching(Line l, double tolerance) const {
         grad = l.grad(XAXIS);
         constant = l.constant(XAXIS);
     }
-    PixelRef bounds(m_cols, m_rows);
+    PixelRef bounds(static_cast<short>(m_cols), static_cast<short>(m_rows));
 
     if (dir == XAXIS) {
         int first = (int)floor(l.ax() - tolerance);
         int last = (int)floor(l.bx() + tolerance);
         for (int i = first; i <= last; i++) {
-            int j1 = (int)floor((first == i ? l.ax() : double(i)) * grad + constant -
+            int j1 = (int)floor((first == i ? l.ax() : static_cast<double>(i)) * grad + constant -
                                 l.sign() * tolerance);
-            int j2 = (int)floor((last == i ? l.bx() : double(i + 1)) * grad + constant +
-                                l.sign() * tolerance);
-            if (bounds.encloses(PixelRef(i, j1))) {
-                pixel_list.push_back(PixelRef(i, j1));
+            int j2 = (int)floor((last == i ? l.bx() : static_cast<double>(i + 1)) * grad +
+                                constant + l.sign() * tolerance);
+            if (bounds.encloses(PixelRef(static_cast<short>(i), static_cast<short>(j1)))) {
+                pixel_list.push_back(PixelRef(static_cast<short>(i), static_cast<short>(j1)));
             }
             if (j1 != j2) {
-                if (bounds.encloses(PixelRef(i, j2))) {
-                    pixel_list.push_back(PixelRef(i, j2));
+                if (bounds.encloses(PixelRef(static_cast<short>(i), static_cast<short>(j2)))) {
+                    pixel_list.push_back(PixelRef(static_cast<short>(i), static_cast<short>(j2)));
                 }
                 if (abs(j2 - j1) == 2) {
                     // this rare event happens if lines are exactly diagonal
                     int j3 = (j1 + j2) / 2;
-                    if (bounds.encloses(PixelRef(i, j3))) {
-                        pixel_list.push_back(PixelRef(i, j3));
+                    if (bounds.encloses(PixelRef(static_cast<short>(i), static_cast<short>(j3)))) {
+                        pixel_list.push_back(
+                            PixelRef(static_cast<short>(i), static_cast<short>(j3)));
                     }
                 }
             }
@@ -193,18 +198,19 @@ PixelRefVector PixelBase::pixelateLineTouching(Line l, double tolerance) const {
                                 l.sign() * tolerance);
             int j2 = (int)floor((last == i ? l.top_right.y : double(i + 1)) * grad + constant +
                                 l.sign() * tolerance);
-            if (bounds.encloses(PixelRef(j1, i))) {
-                pixel_list.push_back(PixelRef(j1, i));
+            if (bounds.encloses(PixelRef(static_cast<short>(j1), static_cast<short>(i)))) {
+                pixel_list.push_back(PixelRef(static_cast<short>(j1), static_cast<short>(i)));
             }
             if (j1 != j2) {
-                if (bounds.encloses(PixelRef(j2, i))) {
-                    pixel_list.push_back(PixelRef(j2, i));
+                if (bounds.encloses(PixelRef(static_cast<short>(j2), static_cast<short>(i)))) {
+                    pixel_list.push_back(PixelRef(static_cast<short>(j2), static_cast<short>(i)));
                 }
                 if (abs(j2 - j1) == 2) {
                     // this rare event happens if lines are exactly diagonal
                     int j3 = (j1 + j2) / 2;
-                    if (bounds.encloses(PixelRef(j3, i))) {
-                        pixel_list.push_back(PixelRef(j3, i));
+                    if (bounds.encloses(PixelRef(static_cast<short>(j3), static_cast<short>(i)))) {
+                        pixel_list.push_back(
+                            PixelRef(static_cast<short>(j3), static_cast<short>(i)));
                     }
                 }
             }
@@ -335,17 +341,17 @@ PixelRef SpacePixel::pixelate(const Point2f &p, bool constrain, int) const {
     Point2f p1 = p;
     p1.normalScale(m_region);
 
-    r.x = short(p1.x * double(m_cols - 1e-9));
+    r.x = short(p1.x * double(static_cast<double>(m_cols) - 1e-9));
     if (constrain) {
         if (r.x >= static_cast<short>(m_cols))
-            r.x = m_cols - 1;
+            r.x = static_cast<short>(m_cols) - 1;
         else if (r.x < 0)
             r.x = 0;
     }
-    r.y = short(p1.y * double(m_rows - 1e-9));
+    r.y = short(p1.y * double(static_cast<double>(m_rows) - 1e-9));
     if (constrain) {
         if (r.y >= static_cast<short>(m_rows))
-            r.y = m_rows - 1;
+            r.y = static_cast<short>(m_rows) - 1;
         else if (r.y < 0)
             r.y = 0;
     }
@@ -391,7 +397,8 @@ bool SpacePixel::findNextLine(bool &nextlayer) const {
     if (m_newline) // after adding a line you must reinitialise the display lines
         return false;
 
-    while (++m_current < (int)m_lines.size() && m_display_lines[m_current] == 0)
+    while (++m_current < (int)m_lines.size() &&
+           m_display_lines[static_cast<size_t>(m_current)] == 0)
         ;
 
     if (m_current < (int)m_lines.size()) {
@@ -404,7 +411,7 @@ bool SpacePixel::findNextLine(bool &nextlayer) const {
 }
 
 const Line &SpacePixel::getNextLine() const {
-    m_display_lines[m_current] = 0; // You've drawn it
+    m_display_lines[static_cast<size_t>(m_current)] = 0; // You've drawn it
     /*
     // Fixing: removed rectangle scaling
     l.denormalScale( m_region );

@@ -314,7 +314,7 @@ class MetaGraph : public FileProperties {
     int getDisplayedAttribute() const;
     void setDisplayedAttribute(int col);
     std::optional<size_t> addAttribute(const std::string &name);
-    void removeAttribute(int col);
+    void removeAttribute(size_t col);
     bool isAttributeLocked(size_t col);
     AttributeTable &getAttributeTable(std::optional<size_t> type = std::nullopt,
                                       std::optional<size_t> layer = std::nullopt);

@@ -70,10 +70,11 @@ int invcumpoisson(double p, double lambda) {
         p = 1 - 1e-9;
     }
     double f = exp(-lambda);
+    double c = f;
     int i = 0;
-    for (double c = f; c < p; c += f) {
-        i++;
-        f *= lambda / double(i);
+    for (; c < p; i++) {
+        f *= lambda / double(i + 1);
+        c += f;
     }
     return i;
 }

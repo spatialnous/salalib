@@ -13,8 +13,8 @@
 
 struct NtfPoint {
     int m_chars;
-    int a;
-    int b;
+    int a = 0;
+    int b = 0;
     NtfPoint(int chars = 10) // apparently 10 is NTF default
     {
         m_chars = chars;

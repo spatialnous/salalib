@@ -320,13 +320,6 @@ class MetaGraph : public FileProperties {
                                       std::optional<size_t> layer = std::nullopt);
     const AttributeTable &getAttributeTable(std::optional<size_t> type = std::nullopt,
                                             std::optional<size_t> layer = std::nullopt) const;
-    LayerManagerImpl &getLayers(int type = -1, std::optional<size_t> layer = std::nullopt);
-    const LayerManagerImpl &getLayers(int type = -1,
-                                      std::optional<size_t> layer = std::nullopt) const;
-    AttributeTableHandle &getAttributeTableHandle(int type = -1,
-                                                  std::optional<size_t> layer = std::nullopt);
-    const AttributeTableHandle &
-    getAttributeTableHandle(int type = -1, std::optional<size_t> layer = std::nullopt) const;
 
     int getLineFileCount() const { return (int)m_drawingFiles.size(); }
 

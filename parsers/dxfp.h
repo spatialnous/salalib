@@ -299,9 +299,9 @@ class DxfLwPolyLine : public DxfPolyLine {
 class DxfArc : public DxfEntity, public DxfRegion {
     friend class DxfParser;
     DxfVertex m_centre;
-    double m_radius;
-    mutable double m_start;
-    double m_end;
+    double m_radius = -1;
+    mutable double m_start = -1;
+    double m_end = -1;
 
   public:
     DxfArc(int tag = -1);
@@ -348,9 +348,9 @@ class DxfEllipse : public DxfEntity, public DxfRegion {
     DxfVertex m_centre;
     DxfVertex m_majorAxisEndPoint;
     DxfVertex m_extrusionDirection;
-    double m_minorMajorAxisRatio;
-    mutable double m_start;
-    double m_end;
+    double m_minorMajorAxisRatio = 1;
+    mutable double m_start = -1;
+    double m_end = -1;
 
   public:
     DxfEllipse(int tag = -1);
@@ -398,7 +398,7 @@ class DxfEllipse : public DxfEntity, public DxfRegion {
 class DxfCircle : public DxfEntity, public DxfRegion {
     friend class DxfParser;
     DxfVertex m_centre;
-    double m_radius;
+    double m_radius = -1;
 
   public:
     DxfCircle(int tag = -1);

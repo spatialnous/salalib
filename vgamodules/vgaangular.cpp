@@ -35,14 +35,14 @@ AnalysisResult VGAAngular::run(Communicator *comm, PointMap &map, bool) {
     int mean_depth_col = attributes.getOrInsertColumn(mean_depth_col_text.c_str());
     result.addAttribute(mean_depth_col_text);
     std::string total_detph_col_text = std::string("Angular Total Depth") + radius_text;
-    int total_depth_col = attributes.getOrInsertColumn(total_detph_col_text.c_str());
+    attributes.getOrInsertColumn(total_detph_col_text.c_str());
     result.addAttribute(total_detph_col_text);
     std::string count_col_text = std::string("Angular Node Count") + radius_text;
     int count_col = attributes.getOrInsertColumn(count_col_text.c_str());
     result.addAttribute(count_col_text);
 
     // TODO: Binary compatibility. Remove in re-examination
-    total_depth_col = attributes.getOrInsertColumn(total_detph_col_text.c_str());
+    int total_depth_col = attributes.getOrInsertColumn(total_detph_col_text.c_str());
     result.addAttribute(total_detph_col_text);
 
     int count = 0;

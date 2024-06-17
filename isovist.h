@@ -32,6 +32,7 @@ struct IsoSeg {
         startpoint = pstart;
         endpoint = pend;
         tagdelete = false;
+        quadrant = 0;
         tag = t;
     }
     friend bool operator==(const IsoSeg &b1, const IsoSeg &b2);

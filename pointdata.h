@@ -567,6 +567,8 @@ inline int processoctant(int bin) {
     case 31:
         q = 3;
         break;
+    default:
+        throw std::runtime_error("bin can only be between 0 and 31");
     }
 
     return (1 << q);

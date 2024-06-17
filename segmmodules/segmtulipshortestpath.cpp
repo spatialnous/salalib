@@ -48,12 +48,11 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
     }
 
     std::map<unsigned int, unsigned int> parents;
-    bool refFound = false;
 
     int depthlevel = 0;
     auto binIter = bins.begin();
     int currentbin = 0;
-    while (opencount && !refFound) {
+    while (opencount) {
         while (binIter->empty()) {
             depthlevel++;
             binIter++;
@@ -114,7 +113,6 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
                 }
             }
             if (lineindex.ref == refTo) {
-                refFound = true;
                 break;
             }
         }

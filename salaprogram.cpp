@@ -481,7 +481,7 @@ int SalaCommand::parse(std::istream &program, int line) {
         case '%':
         case '^':
             if (!buffer.empty()) {
-                last = decode(buffer);
+                decode(buffer);
                 buffer.clear();
             }
             last = decode(std::string(1, alpha));
@@ -522,7 +522,7 @@ int SalaCommand::parse(std::istream &program, int line) {
         case ')':
             // note: the closing bracket forms a data packet:
             if (!buffer.empty()) {
-                last = decode(buffer);
+                decode(buffer);
                 buffer.clear();
             }
             pushFunc(SalaObj::S_CLOSE_BRACKET);
@@ -566,7 +566,7 @@ int SalaCommand::parse(std::istream &program, int line) {
         case ']':
             // note: the closing bracket forms a data packet:
             if (!buffer.empty()) {
-                last = decode(buffer);
+                decode(buffer);
                 buffer.clear();
             }
             pushFunc(SalaObj::S_CLOSE_SQR_BRACKET);
@@ -574,7 +574,7 @@ int SalaCommand::parse(std::istream &program, int line) {
             break;
         case ',':
             if (!buffer.empty()) {
-                last = decode(buffer);
+                decode(buffer);
                 buffer.clear();
             }
             pushFunc(SalaObj::S_COMMA);
@@ -719,7 +719,6 @@ int SalaCommand::parse(std::istream &program, int line) {
     if (!buffer.empty()) {
         decode(buffer);
         buffer.clear();
-        last = SP_DATA;
     }
     // push remaining functions onto eval stack:
     while (m_func_stack.size()) {

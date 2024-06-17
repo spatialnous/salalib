@@ -467,7 +467,6 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
             polygon.push_back(key);
             Point2f curr = vertPoss.second.at(j);
             Point2f last = key;
-            bool good = true;
             while (curr != key) {
                 auto vertPossIter = m_vertex_possibles.find(curr);
                 polygon.push_back(curr);
@@ -500,10 +499,7 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                 last = curr;
                 curr = vertPossIter->second.at(winner);
             }
-            if (good) {
-                polygons.push_back(polygon);
-            }
-            good = true;
+            polygons.push_back(polygon);
         }
     }
 }

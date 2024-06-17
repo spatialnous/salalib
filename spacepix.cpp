@@ -57,8 +57,8 @@ PixelRefVector PixelBase::pixelateLine(Line l, int scalefactor) const {
 
     pixel_list.push_back(a);
 
-    int scaledcols = m_cols * scalefactor;
-    int scaledrows = m_rows * scalefactor;
+    int scaledcols = static_cast<int>(m_cols) * scalefactor;
+    int scaledrows = static_cast<int>(m_rows) * scalefactor;
 
     int parity = 1; // Line goes upwards
     if (a.y > b.y) {

@@ -7,7 +7,6 @@
 #include "genlib/containerutils.h"
 #include "genlib/readwritehelpers.h"
 
-#include <float.h>
 #include <fstream>
 #include <math.h>
 #include <time.h>

@@ -53,7 +53,8 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
-    for (size_t i = 0; i < filled.size(); i++) {
+    // openmp i needs to be signed int
+    for (int i = 0; i < static_cast<int>(filled.size()); i++) {
 
         if ((m_map.getPoint(filled[i]).contextfilled() && !filled[i].iseven()) || (m_gatesOnly)) {
             count++;

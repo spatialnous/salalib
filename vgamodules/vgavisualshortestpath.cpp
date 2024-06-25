@@ -136,6 +136,8 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
                 m_map.setDisplayedAttribute(path_col);
 
                 result.completed = true;
+
+                return result;
             }
         }
         level++;

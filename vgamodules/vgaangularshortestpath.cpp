@@ -12,10 +12,18 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
 
     auto &attributes = m_map.getAttributeTable();
 
-    int path_col = attributes.insertOrResetColumn("Angular Shortest Path");
-    int linked_col = attributes.insertOrResetColumn("Angular Shortest Path Linked");
-    int order_col = attributes.insertOrResetColumn("Angular Shortest Path Order");
-    int zone_col = attributes.insertOrResetColumn("Angular Shortest Path Zone");
+    std::string path_col_name = "Angular Shortest Path";
+    int path_col = attributes.insertOrResetColumn(path_col_name);
+    result.addAttribute(path_col_name);
+    std::string linked_col_name = "Angular Shortest Path Linked";
+    int linked_col = attributes.insertOrResetColumn(linked_col_name);
+    result.addAttribute(linked_col_name);
+    std::string order_col_name = "Angular Shortest Path Order";
+    int order_col = attributes.insertOrResetColumn(order_col_name);
+    result.addAttribute(order_col_name);
+    std::string zone_col_name = "Angular Shortest Path Zone";
+    int zone_col = attributes.insertOrResetColumn(zone_col_name);
+    result.addAttribute(zone_col_name);
 
     for (auto &row : attributes) {
         PixelRef pix = PixelRef(row.getKey().value);
@@ -141,6 +149,8 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
         m_map.setDisplayedAttribute(path_col);
 
         result.completed = true;
+
+        return result;
     }
 
     return result;

@@ -19,6 +19,13 @@ target_sources(salalib
        vgavisualglobalopenmp.cpp
        vgavisuallocaladjmatrix.cpp
        vgavisuallocalopenmp.cpp
+       vgavisualshortestpath.cpp
+       vgametricshortestpathtomany.cpp
+       vgametricshortestpath.cpp
+       vgametricdepthlinkcost.cpp
+       vgaisovistzone.cpp
+       vgaangularshortestpath.cpp
+       extractlinkdata.cpp
     PUBLIC
        vgaangular.h
        vgametric.h
@@ -34,4 +41,11 @@ target_sources(salalib
        vgavisualglobalopenmp.h
        vgavisuallocaladjmatrix.h
        vgavisuallocalopenmp.h
+       vgavisualshortestpath.h
+       vgametricshortestpathtomany.h
+       vgametricshortestpath.h
+       vgametricdepthlinkcost.h
+       vgaisovistzone.h
+       vgaangularshortestpath.h
+       extractlinkdata.h
 )

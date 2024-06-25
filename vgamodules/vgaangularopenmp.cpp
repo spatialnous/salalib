@@ -14,6 +14,10 @@
 
 AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
+#if !defined(_OPENMP)
+    std::cerr << "OpenMP NOT available, only running on a single core" << std::endl;
+#endif
+
     time_t atime = 0;
 
     if (comm) {

@@ -98,6 +98,11 @@ add_library(${salalib} STATIC ${salalib_HDRS} ${salalib_SRCS}
 
 target_compile_options(${salalib} PRIVATE ${COMPILE_WARNINGS})
 
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(${salalib} PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
 add_subdirectory(vgamodules)
 add_subdirectory(axialmodules)
 add_subdirectory(segmmodules)

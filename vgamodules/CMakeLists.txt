@@ -14,6 +14,11 @@ target_sources(salalib
        vgaangulardepth.cpp
        vgametricdepth.cpp
        vgavisualglobaldepth.cpp
+       vgaangularopenmp.cpp
+       vgametricopenmp.cpp
+       vgavisualglobalopenmp.cpp
+       vgavisuallocaladjmatrix.cpp
+       vgavisuallocalopenmp.cpp
     PUBLIC
        vgaangular.h
        vgametric.h
@@ -23,4 +28,10 @@ target_sources(salalib
        vgavisualglobaldepth.h
        vgaisovist.h
        vgathroughvision.h
-       vgavisuallocal.h)
+       vgavisuallocal.h
+       vgaangularopenmp.h
+       vgametricopenmp.h
+       vgavisualglobalopenmp.h
+       vgavisuallocaladjmatrix.h
+       vgavisuallocalopenmp.h
+)

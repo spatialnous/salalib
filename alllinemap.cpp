@@ -113,7 +113,6 @@ void AllLineMap::generate(Communicator *comm, std::vector<Line> &lines, QtRegion
     }
 
     // cut out duplicates:
-    int removed = 0; // for testing purposes
     for (size_t j = 0; j < axiallines.size(); j++) {
         for (size_t k = axiallines.size() - 1; k > j; k--) {
             double maxdim = __max(region.width(), region.height());
@@ -124,7 +123,6 @@ void AllLineMap::generate(Communicator *comm, std::vector<Line> &lines, QtRegion
                 }
                 preaxialdata.erase(preaxialdata.begin() + int(k));
                 axiallines.erase(axiallines.begin() + int(k));
-                removed++;
             }
         }
     }

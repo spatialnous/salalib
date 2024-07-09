@@ -58,7 +58,7 @@ namespace dXreadwrite {
     }
 
     template <typename T, typename F>
-    void writeCastVector(std::ostream &stream, std::vector<F> &vecF) {
+    void writeCastVector(std::ostream &stream, const std::vector<F> &vecF) {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
         if (vecF.size() > size_t(static_cast<unsigned int>(-1))) {

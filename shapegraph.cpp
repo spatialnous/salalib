@@ -62,9 +62,6 @@ void ShapeGraph::makeConnections(const KeyVertices &keyvertices) {
         }
         i++;
     }
-
-    m_displayed_attribute = -1; // <- override if it's already showing
-    setDisplayedAttribute(static_cast<int>(conn_col));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +152,8 @@ void ShapeGraph::outputNet(std::ostream &netfile) const {
     }
 }
 
-bool ShapeGraph::read(std::istream &stream) {
+bool ShapeGraph::readShapeGraphData(std::istream &stream) {
+
     m_attributes->clear();
     m_connectors.clear();
     m_map_type = ShapeMap::EMPTYMAP;
@@ -170,81 +168,19 @@ bool ShapeGraph::read(std::istream &stream) {
         dXreadwrite::readIntoVector(stream, tempVec);
         m_keyvertices.push_back(std::set<int>(tempVec.begin(), tempVec.end()));
     }
+    return true;
+}
+
+std::tuple<bool, bool, bool, int> ShapeGraph::read(std::istream &stream) {
+    bool read = readShapeGraphData(stream);
     // now base class read:
-    ShapeMap::read(stream);
+    auto shapeMapReadResult = ShapeMap::read(stream);
+    std::get<0>(shapeMapReadResult) = read && std::get<0>(shapeMapReadResult);
 
-    return true;
+    return shapeMapReadResult;
 }
 
-bool ShapeGraph::readold(std::istream &stream) {
-    // read in from old base class
-    SpacePixel linemap;
-    linemap.read(stream);
-    const std::map<int, LineTest> &lines = linemap.getAllLines();
-
-    m_name = linemap.getName();
-
-    // now copy to new base class:
-    init(lines.size(), linemap.getRegion());
-    for (const auto &line : lines) {
-        makeLineShape(line.second.line);
-    }
-    // n.b., we now have to reclear attributes!
-    m_attributes->clear();
-
-    // continue old read:
-    int pushmap = -1;
-
-    char segmentmapc;
-    stream.get(segmentmapc);
-    if (segmentmapc == '1') {
-        m_map_type = ShapeMap::SEGMENTMAP;
-    } else {
-        m_map_type = ShapeMap::AXIALMAP;
-    }
-
-    char gatemapc;
-    stream.get(gatemapc);
-    if (gatemapc == '1') {
-        m_map_type = ShapeMap::DATAMAP;
-    }
-    stream.read((char *)&pushmap, sizeof(pushmap));
-
-    int displayed_attribute; // n.b., temp variable necessary to force recalc below
-    stream.read((char *)&displayed_attribute, sizeof(displayed_attribute));
-
-    m_attributes->read(stream, m_layers);
-    int size;
-    stream.read((char *)&size, sizeof(size));
-    for (int j = 0; j < size; j++) {
-        m_keyvertices.push_back(std::set<int>()); // <- these were stored with the connector
-        int key;
-        stream.read((char *)&key, sizeof(key)); // <- key deprecated
-        m_connectors.push_back(Connector());
-        m_connectors[size_t(j)].read(stream);
-    }
-    stream.read((char *)&m_keyvertexcount, sizeof(m_keyvertexcount));
-
-    dXreadwrite::readIntoVector(stream, m_links);
-    dXreadwrite::readIntoVector(stream, m_unlinks);
-
-    char x;
-    stream.get(x);
-    if (x == 'm') {
-        m_mapinfodata = MapInfoData();
-        m_mapinfodata.read(stream);
-        m_hasMapInfoData = true;
-    }
-
-    // now, as soon as loaded, must recalculate our screen display:
-    // note m_displayed_attribute should be -2 in order to force recalc...
-    m_displayed_attribute = -2;
-    setDisplayedAttribute(displayed_attribute);
-
-    return true;
-}
-
-bool ShapeGraph::write(std::ofstream &stream) {
+bool ShapeGraph::writeShapeGraphData(std::ostream &stream) const {
     // note keyvertexcount and keyvertices are different things!  (length keyvertices not the same
     // as keyvertexcount!)
     stream.write((char *)&m_keyvertexcount, sizeof(m_keyvertexcount));
@@ -254,11 +190,16 @@ bool ShapeGraph::write(std::ofstream &stream) {
         dXreadwrite::writeVector(
             stream, std::vector<int>(m_keyvertices[i].begin(), m_keyvertices[i].end()));
     }
+    return true;
+}
+
+bool ShapeGraph::write(std::ostream &stream, std::tuple<bool, bool, int> displayData) const {
+    bool written = writeShapeGraphData(stream);
 
     // now simply run base class write:
-    ShapeMap::write(stream);
+    written = written & ShapeMap::write(stream, displayData);
 
-    return true;
+    return written;
 }
 
 void ShapeGraph::writeAxialConnectionsAsDotGraph(std::ostream &stream) {
@@ -374,7 +315,7 @@ void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {
     }
     if (minpair != -1) {
         auto &intersection = intersections[size_t(minpair)];
-        unlinkShapes(intersection.first, intersection.second, false);
+        unlinkShapes(intersection.first, intersection.second);
     } else {
         std::cerr << "eek!";
     }
@@ -396,14 +337,6 @@ void ShapeGraph::unlinkFromShapeMap(const ShapeMap &shapemap) {
         if (polygon.second.isPoint()) {
             unlinkAtPoint(polygon.second.getPoint());
         }
-    }
-
-    // reset displayed attribute if it happens to be "Connectivity":
-    auto conn_col = m_attributes->getColumnIndex("Connectivity");
-    if (getDisplayedAttribute() == static_cast<int>(conn_col)) {
-        invalidateDisplayedAttribute();
-        setDisplayedAttribute(
-            static_cast<int>(conn_col)); // <- reflect changes to connectivity counts
     }
 }
 
@@ -791,9 +724,6 @@ void ShapeGraph::makeSegmentConnections(std::vector<Connector> &connectionset) {
         // free up connectionset as we go along:
         connectionset[size_t(i)] = Connector();
     }
-
-    m_displayed_attribute = -2; // <- override if it's already showing
-    setDisplayedAttribute(static_cast<int>(uw_conn_col));
 }
 
 // this pushes axial map values to a segment map

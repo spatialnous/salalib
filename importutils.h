@@ -5,15 +5,15 @@
 #pragma once
 
 #include "importtypedefs.h"
-#include "mgraph.h"
 #include "parsers/dxfp.h"
+#include "shapemap.h"
 
 #include <map>
 #include <vector>
 
 namespace depthmapX {
-    bool importFile(MetaGraph &mgraph, std::istream &stream, Communicator *communicator,
-                    std::string name, ImportType mapType, ImportFileType fileType);
+    std::vector<ShapeMap> importFile(std::istream &stream, Communicator *communicator,
+                                     std::string name, ImportType mapType, ImportFileType fileType);
     bool importTxt(ShapeMap &shapeMap, std::istream &stream, char delimiter);
     depthmapX::Table csvToTable(std::istream &stream, char delimiter);
     std::vector<Line> extractLines(ColumnData &x1col, ColumnData &y1col, ColumnData &x2col,
@@ -24,4 +24,8 @@ namespace depthmapX {
     std::map<int, Point2f> extractPointsWithRefs(ColumnData &x, ColumnData &y, ColumnData &ref);
     bool importDxfLayer(const DxfLayer &dxfLayer, ShapeMap &shapeMap);
     bool importAttributes(AttributeTable &attributes, std::istream &stream, char delimiter);
+    std::vector<ShapeMap> loadCat(std::istream &stream, Communicator *communicator,
+                                  ImportType mapType);
+    std::vector<ShapeMap> loadRT1(const std::vector<std::string> &fileset,
+                                  Communicator *communicator, ImportType mapType);
 } // namespace depthmapX

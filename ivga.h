@@ -7,7 +7,7 @@
 // Interface to handle different kinds of VGA analysis
 
 #include "analysisresult.h"
-#include "pointdata.h"
+#include "pointmap.h"
 
 #include "genlib/comm.h"
 

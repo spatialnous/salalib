@@ -8,7 +8,7 @@
 
 #include "salalib/ianalysis.h"
 #include "salalib/pixelref.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 class VGAVisualLocalOpenMP : public IAnalysis {
   private:
@@ -18,6 +18,14 @@ class VGAVisualLocalOpenMP : public IAnalysis {
     };
 
     void dumpNeighbourhood(Node &node, std::set<PixelRef> &hood) const;
+
+  public:
+    struct Column {
+        inline static const std::string                                      //
+            VISUAL_CLUSTERING_COEFFICIENT = "Visual Clustering Coefficient", //
+            VISUAL_CONTROL = "Visual Control",                               //
+            VISUAL_CONTROLLABILITY = "Visual Controllability";               //
+    };
 
   public:
     VGAVisualLocalOpenMP(PointMap &map) : m_map(map) {}

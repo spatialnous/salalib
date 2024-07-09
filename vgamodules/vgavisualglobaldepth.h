@@ -8,12 +8,22 @@
 
 #include "salalib/ivga.h"
 #include "salalib/pixelref.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 #include "genlib/simplematrix.h"
 
 class VGAVisualGlobalDepth : IVGA {
+
+    std::set<int> &m_originRefs;
+
   public:
+    struct Column {
+        inline static const std::string              //
+            VISUAL_STEP_DEPTH = "Visual Step Depth"; //
+    };
+
+  public:
+    VGAVisualGlobalDepth(std::set<int> &originRefs) : m_originRefs(originRefs) {}
     std::string getAnalysisName() const override { return "Global Visibility Depth"; }
     AnalysisResult run(Communicator *comm, PointMap &map, bool simple_version) override;
     void extractUnseen(Node &node, PixelRefVector &pixels, depthmapX::RowMatrix<int> &miscs,

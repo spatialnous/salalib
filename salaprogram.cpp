@@ -23,7 +23,7 @@
 #include "salalib/salaprogram.h"
 #include "salalib/connector.h"
 #include "salalib/ngraph.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 #include "salalib/shapemap.h"
 
 #include <cmath>

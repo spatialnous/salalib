@@ -40,7 +40,7 @@ class FileProperties {
     const std::string &getDescription() const { return m_description; }
     //
     bool read(std::istream &stream);
-    bool write(std::ostream &stream);
+    bool write(std::ostream &stream) const;
 };
 
 inline bool FileProperties::read(std::istream &stream) {
@@ -55,7 +55,7 @@ inline bool FileProperties::read(std::istream &stream) {
     return true;
 }
 
-inline bool FileProperties::write(std::ostream &stream) {
+inline bool FileProperties::write(std::ostream &stream) const {
     dXstring::writeString(stream, m_create_person);
     dXstring::writeString(stream, m_create_organization);
     dXstring::writeString(stream, m_create_date);

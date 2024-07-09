@@ -24,5 +24,5 @@ namespace depthmapX {
 
     enum ImportType { DRAWINGMAP, DATAMAP };
 
-    enum ImportFileType { CSV, TSV, DXF };
+    enum ImportFileType { CSV, TSV, DXF, CAT, RT1, NTF };
 } // namespace depthmapX

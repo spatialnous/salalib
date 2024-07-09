@@ -29,12 +29,10 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
     }
 
     int maxbin;
-    std::string prefix;
-    prefix = "Metric ";
     maxbin = 512;
-    std::string depthcol = prefix + "Step Depth";
-    attributes.insertOrResetColumn(depthcol.c_str());
-    result.addAttribute(depthcol);
+
+    auto sdColIdx = attributes.insertOrResetColumn(Column::METRIC_STEP_DEPTH);
+    result.addAttribute(Column::METRIC_STEP_DEPTH);
 
     std::vector<unsigned int> seen(map.getShapeCount());
     std::vector<TopoMetSegmentRef> audittrail(map.getShapeCount());
@@ -44,7 +42,7 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
     for (size_t i = 0; i < map.getShapeCount(); i++) {
         seen[i] = 0xffffffff;
     }
-    for (auto &cursor : map.getSelSet()) {
+    for (auto &cursor : m_originRefs) {
         seen[cursor] = 0;
         open++;
         double length = seglengths[cursor];
@@ -52,7 +50,7 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
         // better to divide by 511 but have 512 bins...
         list[(int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(cursor);
         AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
-        row.setValue(depthcol.c_str(), 0);
+        row.setValue(sdColIdx, 0);
     }
 
     unsigned int segdepth = 0;
@@ -105,13 +103,11 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
                 list[(bin + int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
                     connected_cursor);
                 AttributeRow &row = map.getAttributeRowFromShapeIndex(connected_cursor);
-                row.setValue(depthcol.c_str(), here.dist + length * 0.5);
+                row.setValue(sdColIdx, here.dist + length * 0.5);
             }
             iter++;
         }
     }
-
-    map.setDisplayedAttribute(attributes.getColumnIndex(depthcol.c_str()));
 
     result.completed = true;
 

@@ -7,7 +7,7 @@
 // Interface to handle different kinds of VGA analysis
 
 #include "analysisresult.h"
-#include "options.h"
+#include "radiustype.h"
 #include "shapegraph.h"
 
 #include "genlib/comm.h"
@@ -35,13 +35,13 @@ class ISegment {
         return radius_text;
     }
 
-    static std::string makeRadiusText(int radius_type, double radius) {
+    static std::string makeRadiusText(RadiusType radius_type, double radius) {
         std::string radius_text;
         if (radius != -1) {
-            if (radius_type == Options::RADIUS_STEPS) {
+            if (radius_type == RadiusType::TOPOLOGICAL) {
                 radius_text =
                     std::string(" R") + dXstring::formatString(int(radius), "%d") + " step";
-            } else if (radius_type == Options::RADIUS_METRIC) {
+            } else if (radius_type == RadiusType::METRIC) {
                 radius_text = std::string(" R") + makeFloatRadiusText(radius) + " metric";
             } else { // radius angular
                 radius_text = std::string(" R") + makeFloatRadiusText(radius);

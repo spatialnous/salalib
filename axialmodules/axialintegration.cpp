@@ -7,7 +7,95 @@
 #include "axialintegration.h"
 
 #include "genlib/pflipper.h"
-#include "genlib/stringutils.h"
+
+std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> radii,
+                                                              std::string weightingColName,
+                                                              bool simple_version) {
+    std::vector<std::string> newColumns;
+    for (int radius : radii) {
+
+        // Columns that are always created
+        newColumns.push_back(getFormattedColumn( //
+            Column::MEAN_DEPTH, radius));
+        newColumns.push_back(getFormattedColumn( //
+            Column::NODE_COUNT, radius));
+        newColumns.push_back(getFormattedColumn( //
+            Column::INTEGRATION, radius, std::nullopt, Normalisation::HH));
+
+        if (m_weighted_measure_col != -1) {
+            newColumns.push_back(getFormattedColumn( //
+                Column::MEAN_DEPTH, radius, weightingColName));
+            newColumns.push_back(getFormattedColumn( //
+                Column::TOTAL, radius, weightingColName));
+        }
+
+        if (!simple_version) {
+            // columns only when simple-version is not selected
+            newColumns.push_back(getFormattedColumn( //
+                Column::ENTROPY, radius));
+            newColumns.push_back(getFormattedColumn( //
+                Column::INTEGRATION, radius, std::nullopt, Normalisation::PV));
+            newColumns.push_back(getFormattedColumn( //
+                Column::INTEGRATION, radius, std::nullopt, Normalisation::TK));
+            newColumns.push_back(getFormattedColumn( //
+                Column::INTENSITY, radius));
+            newColumns.push_back(getFormattedColumn( //
+                Column::HARMONIC_MEAN_DEPTH, radius));
+            newColumns.push_back(getFormattedColumn( //
+                Column::RELATIVISED_ENTROPY, radius));
+        }
+
+        if (m_choice) {
+            // Columns that are only created when choice is selected
+            newColumns.push_back(getFormattedColumn( //
+                Column::CHOICE, radius));
+            newColumns.push_back(getFormattedColumn( //
+                Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
+            if (m_weighted_measure_col != -1) {
+                newColumns.push_back(getFormattedColumn( //
+                    Column::CHOICE, radius, weightingColName));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::CHOICE, radius, weightingColName, Normalisation::NORM));
+            }
+        }
+
+        if (m_fulloutput) {
+            newColumns.push_back(getFormattedColumn( //
+                Column::RA, radius));
+
+            if (!simple_version) {
+                newColumns.push_back(getFormattedColumn( //
+                    Column::RA, radius, std::nullopt, Normalisation::PENN));
+
+                newColumns.push_back(getFormattedColumn( //
+                    Column::RRA, radius));
+            }
+
+            newColumns.push_back(getFormattedColumn( //
+                Column::TOTAL_DEPTH, radius));
+        }
+    }
+    return newColumns;
+}
+
+std::vector<int> AxialIntegration::getFormattedRadii(std::set<double> radiusSet) {
+    // note: radius must be sorted lowest to highest, but if -1 occurs ("radius n") it needs to be
+    // last...
+    // ...to ensure no mess ups, we'll re-sort here:
+    bool radius_n = false;
+    std::vector<int> radii;
+    for (double radius : radiusSet) {
+        if (radius < 0) {
+            radius_n = true;
+        } else {
+            radii.push_back(static_cast<int>(radius));
+        }
+    }
+    if (radius_n) {
+        radii.push_back(-1);
+    }
+    return radii;
+}
 
 AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_version) {
     // note, from 10.0, Depthmap no longer includes *self* connections on axial lines
@@ -23,21 +111,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    // note: radius must be sorted lowest to highest, but if -1 occurs ("radius n") it needs to be
-    // last...
-    // ...to ensure no mess ups, we'll re-sort here:
-    bool radius_n = false;
-    std::vector<int> radii;
-    for (double radius : m_radius_set) {
-        if (radius < 0) {
-            radius_n = true;
-        } else {
-            radii.push_back(static_cast<int>(radius));
-        }
-    }
-    if (radius_n) {
-        radii.push_back(-1);
-    }
+    std::vector<int> radii = getFormattedRadii(m_radius_set);
 
     // retrieve weighted col data, as this may well be overwritten in the new analysis:
     std::vector<double> weights;
@@ -51,100 +125,12 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
     }
 
     // first enter the required attribute columns:
-    for (int radius : radii) {
-        std::string radius_text;
-        if (radius != -1) {
-            radius_text = dXstring::formatString(radius, " R%d");
-        }
-        if (m_choice) {
-            std::string choice_col_text = std::string("Choice") + radius_text;
-            attributes.insertOrResetColumn(choice_col_text.c_str());
-            result.addAttribute(choice_col_text);
-            std::string n_choice_col_text = std::string("Choice [Norm]") + radius_text;
-            attributes.insertOrResetColumn(n_choice_col_text.c_str());
-            result.addAttribute(n_choice_col_text);
-            if (m_weighted_measure_col != -1) {
-                std::string w_choice_col_text =
-                    std::string("Choice [") + weighting_col_text + " Wgt]" + radius_text;
-                attributes.insertOrResetColumn(w_choice_col_text.c_str());
-                result.addAttribute(w_choice_col_text);
-                std::string nw_choice_col_text =
-                    std::string("Choice [") + weighting_col_text + " Wgt][Norm]" + radius_text;
-                attributes.insertOrResetColumn(nw_choice_col_text.c_str());
-                result.addAttribute(nw_choice_col_text);
-            }
-        }
-
-        if (!simple_version) {
-            std::string entropy_col_text = std::string("Entropy") + radius_text;
-            attributes.insertOrResetColumn(entropy_col_text.c_str());
-            result.addAttribute(entropy_col_text);
-        }
-
-        std::string integ_dv_col_text = std::string("Integration [HH]") + radius_text;
-        attributes.insertOrResetColumn(integ_dv_col_text.c_str());
-        result.addAttribute(integ_dv_col_text);
-
-        if (!simple_version) {
-            std::string integ_pv_col_text = std::string("Integration [P-value]") + radius_text;
-            attributes.insertOrResetColumn(integ_pv_col_text.c_str());
-            result.addAttribute(integ_pv_col_text);
-            std::string integ_tk_col_text = std::string("Integration [Tekl]") + radius_text;
-            attributes.insertOrResetColumn(integ_tk_col_text.c_str());
-            result.addAttribute(integ_tk_col_text);
-            std::string intensity_col_text = std::string("Intensity") + radius_text;
-            attributes.insertOrResetColumn(intensity_col_text.c_str());
-            result.addAttribute(intensity_col_text);
-            std::string harmonic_col_text = std::string("Harmonic Mean Depth") + radius_text;
-            attributes.insertOrResetColumn(harmonic_col_text.c_str());
-            result.addAttribute(harmonic_col_text);
-        }
-
-        std::string depth_col_text = std::string("Mean Depth") + radius_text;
-        attributes.insertOrResetColumn(depth_col_text.c_str());
-        result.addAttribute(depth_col_text);
-        std::string count_col_text = std::string("Node Count") + radius_text;
-        attributes.insertOrResetColumn(count_col_text.c_str());
-        result.addAttribute(count_col_text);
-
-        if (!simple_version) {
-            std::string rel_entropy_col_text = std::string("Relativised Entropy") + radius_text;
-            attributes.insertOrResetColumn(rel_entropy_col_text);
-            result.addAttribute(rel_entropy_col_text);
-        }
-
-        if (m_weighted_measure_col != -1) {
-            std::string w_md_col_text =
-                std::string("Mean Depth [") + weighting_col_text + " Wgt]" + radius_text;
-            attributes.insertOrResetColumn(w_md_col_text.c_str());
-            result.addAttribute(w_md_col_text);
-            std::string total_weight_text =
-                std::string("Total ") + weighting_col_text + radius_text;
-            attributes.insertOrResetColumn(total_weight_text.c_str());
-            result.addAttribute(total_weight_text);
-        }
-        if (m_fulloutput) {
-            if (!simple_version) {
-                std::string penn_norm_text = std::string("RA [Penn]") + radius_text;
-                attributes.insertOrResetColumn(penn_norm_text);
-                result.addAttribute(penn_norm_text);
-            }
-            std::string ra_col_text = std::string("RA") + radius_text;
-            attributes.insertOrResetColumn(ra_col_text.c_str());
-            result.addAttribute(ra_col_text);
-
-            if (!simple_version) {
-                std::string rra_col_text = std::string("RRA") + radius_text;
-                attributes.insertOrResetColumn(rra_col_text.c_str());
-                result.addAttribute(rra_col_text);
-            }
-
-            std::string td_col_text = std::string("Total Depth") + radius_text;
-            attributes.insertOrResetColumn(td_col_text.c_str());
-            result.addAttribute(td_col_text);
-        }
-        //
+    auto newColumns = getRequiredColumns(radii, weighting_col_text, simple_version);
+    for (auto &col : newColumns) {
+        attributes.insertOrResetColumn(col);
+        result.addAttribute(col);
     }
+
     // then look up all the columns... eek:
     std::vector<size_t> choice_col, n_choice_col, w_choice_col, nw_choice_col, entropy_col,
         integ_dv_col, integ_pv_col, integ_tk_col, intensity_col, depth_col, count_col,
@@ -152,73 +138,66 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         harmonic_col;
     for (int radius : radii) {
         std::string radius_text;
-        if (radius != -1) {
-            radius_text = std::string(" R") + dXstring::formatString(int(radius), "%d");
-        }
+
         if (m_choice) {
-            std::string choice_col_text = std::string("Choice") + radius_text;
-            choice_col.push_back(attributes.getColumnIndex(choice_col_text.c_str()));
-            std::string n_choice_col_text = std::string("Choice [Norm]") + radius_text;
-            n_choice_col.push_back(attributes.getColumnIndex(n_choice_col_text.c_str()));
+            choice_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::CHOICE, radius, std::nullopt, std::nullopt));
+            n_choice_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
             if (m_weighted_measure_col != -1) {
-                std::string w_choice_col_text =
-                    std::string("Choice [") + weighting_col_text + " Wgt]" + radius_text;
-                w_choice_col.push_back(attributes.getColumnIndex(w_choice_col_text.c_str()));
-                std::string nw_choice_col_text =
-                    std::string("Choice [") + weighting_col_text + " Wgt][Norm]" + radius_text;
-                nw_choice_col.push_back(attributes.getColumnIndex(nw_choice_col_text.c_str()));
+                w_choice_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::CHOICE, radius, weighting_col_text, std::nullopt));
+                nw_choice_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::CHOICE, radius, weighting_col_text, Normalisation::NORM));
             }
         }
         if (!simple_version) {
-            std::string entropy_col_text = std::string("Entropy") + radius_text;
-            entropy_col.push_back(attributes.getColumnIndex(entropy_col_text.c_str()));
+            entropy_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::ENTROPY, radius, std::nullopt, std::nullopt));
         }
 
-        std::string integ_dv_col_text = std::string("Integration [HH]") + radius_text;
-        integ_dv_col.push_back(attributes.getColumnIndex(integ_dv_col_text.c_str()));
+        integ_dv_col.push_back(getFormattedColumnIdx( //
+            attributes, Column::INTEGRATION, radius, std::nullopt, Normalisation::HH));
 
         if (!simple_version) {
-            std::string integ_pv_col_text = std::string("Integration [P-value]") + radius_text;
-            integ_pv_col.push_back(attributes.getColumnIndex(integ_pv_col_text.c_str()));
-            std::string integ_tk_col_text = std::string("Integration [Tekl]") + radius_text;
-            integ_tk_col.push_back(attributes.getColumnIndex(integ_tk_col_text.c_str()));
-            std::string intensity_col_text = std::string("Intensity") + radius_text;
-            intensity_col.push_back(attributes.getColumnIndex(intensity_col_text.c_str()));
-            std::string harmonic_col_text = std::string("Harmonic Mean Depth") + radius_text;
-            harmonic_col.push_back(attributes.getColumnIndex(harmonic_col_text.c_str()));
+            integ_pv_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::INTEGRATION, radius, std::nullopt, Normalisation::PV));
+            integ_tk_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::INTEGRATION, radius, std::nullopt, Normalisation::TK));
+            intensity_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::INTENSITY, radius, std::nullopt, std::nullopt));
+            harmonic_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::HARMONIC_MEAN_DEPTH, radius, std::nullopt, std::nullopt));
         }
 
-        std::string depth_col_text = std::string("Mean Depth") + radius_text;
-        depth_col.push_back(attributes.getColumnIndex(depth_col_text.c_str()));
-        std::string count_col_text = std::string("Node Count") + radius_text;
-        count_col.push_back(attributes.getColumnIndex(count_col_text.c_str()));
+        depth_col.push_back(getFormattedColumnIdx( //
+            attributes, Column::MEAN_DEPTH, radius, std::nullopt, std::nullopt));
+        count_col.push_back(getFormattedColumnIdx( //
+            attributes, Column::NODE_COUNT, radius, std::nullopt, std::nullopt));
 
         if (!simple_version) {
-            std::string rel_entropy_col_text = std::string("Relativised Entropy") + radius_text;
-            rel_entropy_col.push_back(attributes.getColumnIndex(rel_entropy_col_text.c_str()));
+            rel_entropy_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::RELATIVISED_ENTROPY, radius, std::nullopt, std::nullopt));
         }
 
         if (m_weighted_measure_col != -1) {
-            std::string w_md_col_text =
-                std::string("Mean Depth [") + weighting_col_text + " Wgt]" + radius_text;
-            w_depth_col.push_back(attributes.getColumnIndex(w_md_col_text.c_str()));
-            std::string total_weight_col_text =
-                std::string("Total ") + weighting_col_text + radius_text;
-            total_weight_col.push_back(attributes.getColumnIndex(total_weight_col_text.c_str()));
+            w_depth_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::MEAN_DEPTH, radius, weighting_col_text, std::nullopt));
+            total_weight_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::TOTAL, radius, weighting_col_text, std::nullopt));
         }
         if (m_fulloutput) {
-            std::string ra_col_text = std::string("RA") + radius_text;
-            ra_col.push_back(attributes.getColumnIndex(ra_col_text.c_str()));
+            ra_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::RA, radius, std::nullopt, std::nullopt));
 
             if (!simple_version) {
-                std::string penn_norm_text = std::string("RA [Penn]") + radius_text;
-                penn_norm_col.push_back(attributes.getColumnIndex(penn_norm_text));
-                std::string rra_col_text = std::string("RRA") + radius_text;
-                rra_col.push_back(attributes.getColumnIndex(rra_col_text.c_str()));
+                penn_norm_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::RA, radius, std::nullopt, Normalisation::PENN));
+                rra_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::RRA, radius, std::nullopt, std::nullopt));
             }
-
-            std::string td_col_text = std::string("Total Depth") + radius_text;
-            td_col.push_back(attributes.getColumnIndex(td_col_text.c_str()));
+            td_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::TOTAL_DEPTH, radius, std::nullopt, std::nullopt));
         }
     }
 
@@ -500,9 +479,6 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         }
         delete[] audittrail;
     }
-
-    map.setDisplayedAttribute(-1); // <- override if it's already showing
-    map.setDisplayedAttribute(integ_dv_col.back());
 
     result.completed = true;
 

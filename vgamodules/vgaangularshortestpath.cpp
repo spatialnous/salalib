@@ -12,16 +12,16 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
 
     auto &attributes = m_map.getAttributeTable();
 
-    std::string path_col_name = "Angular Shortest Path";
+    std::string path_col_name = Column::ANGULAR_SHORTEST_PATH;
     int path_col = attributes.insertOrResetColumn(path_col_name);
     result.addAttribute(path_col_name);
-    std::string linked_col_name = "Angular Shortest Path Linked";
+    std::string linked_col_name = Column::ANGULAR_SHORTEST_PATH_LINKED;
     int linked_col = attributes.insertOrResetColumn(linked_col_name);
     result.addAttribute(linked_col_name);
-    std::string order_col_name = "Angular Shortest Path Order";
+    std::string order_col_name = Column::ANGULAR_SHORTEST_PATH_ORDER;
     int order_col = attributes.insertOrResetColumn(order_col_name);
     result.addAttribute(order_col_name);
-    std::string zone_col_name = "Angular Shortest Path Zone";
+    std::string zone_col_name = Column::ANGULAR_SHORTEST_PATH_ZONE;
     int zone_col = attributes.insertOrResetColumn(zone_col_name);
     result.addAttribute(zone_col_name);
 
@@ -144,9 +144,6 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
             currParent = parents.find(currParent->second);
             counter++;
         }
-
-        m_map.overrideDisplayedAttribute(-2);
-        m_map.setDisplayedAttribute(path_col);
 
         result.completed = true;
 

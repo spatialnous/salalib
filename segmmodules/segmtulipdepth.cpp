@@ -14,10 +14,8 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
 
     AnalysisResult result;
 
-    std::string stepdepth_col_text = "Angular Step Depth";
-
-    int stepdepth_col = attributes.insertOrResetColumn(stepdepth_col_text.c_str());
-    result.addAttribute(stepdepth_col_text);
+    int stepdepth_col = attributes.insertOrResetColumn(Column::ANGULAR_STEP_DEPTH);
+    result.addAttribute(Column::ANGULAR_STEP_DEPTH);
 
     // The original code set tulip_bins to 1024, divided by two and added one
     // in order to duplicate previous code (using a semicircle of tulip bins)
@@ -30,7 +28,7 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
     std::vector<std::vector<SegmentData>> bins(tulip_bins);
 
     int opencount = 0;
-    for (auto &sel : map.getSelSet()) {
+    for (auto &sel : m_originRefs) {
         int row = depthmapX::getMapAtIndex(map.getAllShapes(), sel)->first;
         if (row != -1) {
             bins[0].push_back(SegmentData(0, row, SegmentRef(), 0, 0.0, 0));
@@ -96,9 +94,6 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
             }
         }
     }
-
-    map.setDisplayedAttribute(-2); // <- override if it's already showing
-    map.setDisplayedAttribute(stepdepth_col);
 
     result.completed = true;
 

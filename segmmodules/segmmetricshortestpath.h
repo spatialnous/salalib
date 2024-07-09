@@ -12,9 +12,18 @@
 class SegmentMetricShortestPath : public IAnalysis {
   private:
     ShapeGraph &m_map;
+    int m_refFrom, m_refTo;
 
   public:
-    SegmentMetricShortestPath(ShapeGraph &map) : m_map(map) {}
+    struct Column {
+        inline static const std::string                                //
+            METRIC_SHORTEST_PATH_DEPTH = "Metric Shortest Path Depth", //
+            METRIC_SHORTEST_PATH_ORDER = "Metric Shortest Path Order"; //
+    };
+
+  public:
+    SegmentMetricShortestPath(ShapeGraph &map, int refFrom, int refTo)
+        : m_map(map), m_refFrom(refFrom), m_refTo(refTo) {}
     std::string getAnalysisName() const override { return "Metric Shortest Path"; }
     AnalysisResult run(Communicator *) override;
 };

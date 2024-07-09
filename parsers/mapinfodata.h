@@ -58,5 +58,5 @@ class MapInfoData {
                     const LayerManagerImpl layers);
     //
     std::istream &read(std::istream &stream);
-    std::ostream &write(std::ostream &stream);
+    std::ostream &write(std::ostream &stream) const;
 };

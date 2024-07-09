@@ -19,26 +19,15 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
     }
     int zoneColumnIndex = -1;
     for (auto originPointSet : m_originPointSets) {
-        std::string zoneColumnName = "Isovist Zone Distance";
-        std::string inverseZoneColumnName = "Isovist Zone Inverse Square Distance";
-
         std::string originPointSetName = originPointSet.first;
+
+        std::string zoneColumnName = getFormattedColumn( //
+            Column::ISOVIST_ZONE_DISTANCE, originPointSetName, m_restrictDistance);
+        std::string inverseZoneColumnName = getFormattedColumn( //
+            Column::ISOVIST_ZONE_INV_SQ_DISTANCE, originPointSetName, m_restrictDistance);
+
         auto originPoints = originPointSet.second;
 
-        if (m_originPointSets.size() > 1) {
-            zoneColumnName += " [" + originPointSetName + "]";
-            inverseZoneColumnName += " [" + originPointSetName + "]";
-        }
-
-        if (m_restrictDistance > 0) {
-
-            std::stringstream restrictionText;
-            restrictionText << std::fixed << std::setprecision(2) << " (" << m_restrictDistance
-                            << ")" << std::flush;
-
-            zoneColumnName += restrictionText.str();
-            inverseZoneColumnName += restrictionText.str();
-        }
         zoneColumnIndex = attributes.insertOrResetColumn(zoneColumnName);
         result.addAttribute(zoneColumnName);
 
@@ -63,11 +52,9 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
         }
         int inverseZoneColumnIndex = attributes.insertOrResetColumn(inverseZoneColumnName);
         setColumnFormulaAndUpdate(m_map, inverseZoneColumnIndex,
-                                  "1/((value(\"" + zoneColumnName + "\") + 1) ^ 2)", false);
+                                  "1/((value(\"" + zoneColumnName + "\") + 1) ^ 2)", std::nullopt);
         result.addAttribute(inverseZoneColumnName);
     }
-    m_map.overrideDisplayedAttribute(-2);
-    m_map.setDisplayedAttribute(zoneColumnIndex);
 
     result.completed = true;
 
@@ -92,7 +79,8 @@ void VGAIsovistZone::extractMetric(Node n, std::set<MetricTriple> &pixels, Point
 }
 
 void VGAIsovistZone::setColumnFormulaAndUpdate(PointMap &pointmap, int columnIndex,
-                                               std::string formula, bool selectionOnly) {
+                                               std::string formula,
+                                               std::optional<const std::set<int>> selectionSet) {
     SalaObj program_context;
     SalaGrf graph;
     graph.map.point = &pointmap;
@@ -105,8 +93,8 @@ void VGAIsovistZone::setColumnFormulaAndUpdate(PointMap &pointmap, int columnInd
                                           proggy.getLastErrorMessage());
     } else {
         bool programCompleted;
-        if (selectionOnly) {
-            programCompleted = proggy.runupdate(columnIndex, pointmap.getSelSet());
+        if (selectionSet.has_value()) {
+            programCompleted = proggy.runupdate(columnIndex, selectionSet.value());
         } else {
             programCompleted = proggy.runupdate(columnIndex);
         }

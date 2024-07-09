@@ -8,6 +8,114 @@
 
 #include "genlib/stringutils.h"
 
+std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
+                                                          std::vector<double> radii) {
+    std::vector<std::string> newColumns;
+    std::string weighting_col_text2;
+    if (m_weighted_measure_col2 != -1) {
+        weighting_col_text2 = map.getAttributeTable().getColumnName(m_weighted_measure_col2);
+    }
+
+    std::string routeweight_col_text;
+    if (m_routeweight_col != -1) {
+        routeweight_col_text = map.getAttributeTable().getColumnName(m_routeweight_col);
+    }
+
+    std::string weighting_col_text;
+    if (m_weighted_measure_col != -1) {
+        weighting_col_text = map.getAttributeTable().getColumnName(m_weighted_measure_col);
+    }
+    for (auto radius : radii) {
+        if (m_choice) {
+            // EF routeweight *
+            if (m_routeweight_col != -1) {
+                newColumns.push_back(getFormattedColumn( //
+                    Column::CHOICE, m_tulip_bins, m_radius_type, radius, routeweight_col_text));
+                if (m_weighted_measure_col != -1) {
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::CHOICE, m_tulip_bins, m_radius_type, radius, routeweight_col_text,
+                        weighting_col_text));
+                }
+                // EFEF*
+                if (m_weighted_measure_col2 != -1) {
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::CHOICE, m_tulip_bins, m_radius_type, radius, routeweight_col_text,
+                        weighting_col_text, weighting_col_text2));
+                }
+                //*EFEF
+            }
+            //*EF routeweight
+            else {                                       // Normal run // TV
+                newColumns.push_back(getFormattedColumn( //
+                    Column::CHOICE, m_tulip_bins, m_radius_type, radius));
+                if (m_weighted_measure_col != -1) {
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::CHOICE, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                        weighting_col_text));
+                }
+                // EFEF*
+                if (m_weighted_measure_col2 != -1) {
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::CHOICE, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                        weighting_col_text, weighting_col_text2));
+                }
+                //*EFEF
+            }
+        }
+
+        // EF routeweight *
+        if (m_routeweight_col != -1) {
+            newColumns.push_back(getFormattedColumn( //
+                Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
+                routeweight_col_text)); // <- note, the fact this is a tulip is unnecessary
+            newColumns.push_back(getFormattedColumn( //
+                Column::INTEGRATION, m_tulip_bins, m_radius_type, radius, routeweight_col_text,
+                weighting_col_text));
+
+            newColumns.push_back(getFormattedColumn( //
+                Column::NODE_COUNT, m_tulip_bins, m_radius_type, radius,
+                routeweight_col_text)); // <- note, the fact this is a tulip is unnecessary
+            newColumns.push_back(getFormattedColumn( //
+                Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
+                routeweight_col_text)); // <- note, the fact this is a tulip is unnecessary
+
+            // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
+            newColumns.push_back(getFormattedColumn( //
+                Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius, routeweight_col_text,
+                weighting_col_text));
+            newColumns.push_back(getFormattedColumn( //
+                Column::TOTAL, m_tulip_bins, m_radius_type, radius, routeweight_col_text));
+
+        }
+        //*EF routeweight
+        else { // Normal run // TV
+
+            newColumns.push_back(getFormattedColumn( //
+                Column::INTEGRATION, m_tulip_bins, m_radius_type,
+                radius)); // <- note, the fact this is a tulip is unnecessary
+            newColumns.push_back(getFormattedColumn( //
+                Column::INTEGRATION, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                weighting_col_text)); // <- note, the fact this is a tulip is unnecessary
+
+            newColumns.push_back(getFormattedColumn( //
+                Column::NODE_COUNT, m_tulip_bins, m_radius_type,
+                radius)); // <- note, the fact this is a tulip is unnecessary
+            newColumns.push_back(getFormattedColumn( //
+                Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type,
+                radius)); // <- note, the fact this is a tulip is unnecessary
+
+            // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
+            newColumns.push_back(getFormattedColumn( //
+                Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                weighting_col_text));
+            newColumns.push_back(getFormattedColumn( //
+                Column::TOTAL, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                weighting_col_text));
+        }
+    }
+    return newColumns;
+}
+
 AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
 
     AnalysisResult result;
@@ -29,8 +137,9 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
 
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS,
-                              (m_sel_only ? map.getSelSet().size() : map.getConnections().size()));
+        comm->CommPostMessage(
+            Communicator::NUM_RECORDS,
+            (m_selSet.has_value() ? m_selSet->size() : map.getConnections().size()));
     }
 
     // note: radius must be sorted lowest to highest, but if -1 occurs ("radius n") it needs to be
@@ -102,241 +211,101 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
     }
     //*EFEF
 
+    auto newColumns = getRequiredColumns(map, radius_unconverted);
+    for (auto &col : newColumns) {
+        attributes.insertOrResetColumn(col);
+        result.addAttribute(col);
+    }
+
     std::string tulip_text = std::string("T") + dXstring::formatString(tulip_bins, "%d");
 
-    // first enter the required attribute columns:
-    size_t r;
-    for (r = 0; r < radius_unconverted.size(); r++) {
-        std::string radius_text = makeRadiusText(m_radius_type, radius_unconverted[r]);
-        if (m_choice) {
-            // EF routeweight *
-            if (routeweight_col != -1) {
-                std::string choice_col_text = tulip_text + " Choice [Route weight by " +
-                                              routeweight_col_text + "]" + radius_text;
-                attributes.insertOrResetColumn(choice_col_text.c_str());
-                result.addAttribute(choice_col_text);
-                if (m_weighted_measure_col != -1) {
-                    std::string w_choice_col_text = tulip_text + " Choice [[Route weight by " +
-                                                    routeweight_col_text + "][" +
-                                                    weighting_col_text + " Wgt]]" + radius_text;
-
-                    attributes.insertOrResetColumn(w_choice_col_text.c_str());
-                    result.addAttribute(w_choice_col_text);
-                }
-                // EFEF*
-                if (weighting_col2 != -1) {
-                    std::string w_choice_col_text2 =
-                        tulip_text + " Choice [[Route weight by " + routeweight_col_text + "][" +
-                        weighting_col_text + "-" + weighting_col_text2 + " Wgt]]" + radius_text;
-
-                    attributes.insertOrResetColumn(w_choice_col_text2.c_str());
-                    result.addAttribute(w_choice_col_text2);
-                }
-                //*EFEF
-            }
-            //*EF routeweight
-            else { // Normal run // TV
-                std::string choice_col_text = tulip_text + " Choice" + radius_text;
-                attributes.insertOrResetColumn(choice_col_text.c_str());
-                result.addAttribute(choice_col_text);
-                if (m_weighted_measure_col != -1) {
-                    std::string w_choice_col_text =
-                        tulip_text + " Choice [" + weighting_col_text + " Wgt]" + radius_text;
-                    attributes.insertOrResetColumn(w_choice_col_text.c_str());
-                    result.addAttribute(w_choice_col_text);
-                }
-                // EFEF*
-                if (weighting_col2 != -1) {
-                    std::string w_choice_col_text2 = tulip_text + " Choice [" + weighting_col_text +
-                                                     "-" + weighting_col_text2 + " Wgt]" +
-                                                     radius_text;
-                    attributes.insertOrResetColumn(w_choice_col_text2.c_str());
-                    result.addAttribute(w_choice_col_text2);
-                }
-                //*EFEF
-            }
-        }
-
-        // EF routeweight *
-        if (routeweight_col != -1) {
-            std::string integ_col_text =
-                tulip_text + " Integration [Route weight by " + routeweight_col_text + "]" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string w_integ_col_text = tulip_text + " Integration [[Route weight by " +
-                                           routeweight_col_text + "][" + weighting_col_text +
-                                           " Wgt]]" + radius_text;
-
-            std::string count_col_text =
-                tulip_text + " Node Count [Route weight by " + routeweight_col_text + "]" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string td_col_text =
-                tulip_text + " Total Depth [Route weight by " + routeweight_col_text + "]" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
-            std::string w_td_text = tulip_text + " Total Depth [[Route weight by " +
-                                    routeweight_col_text + "][" + weighting_col_text + " Wgt]]" +
-                                    radius_text;
-            std::string total_weight_text = tulip_text + " Total " + weighting_col_text +
-                                            " [Route weight by " + routeweight_col_text + "]" +
-                                            radius_text;
-
-            attributes.insertOrResetColumn(integ_col_text.c_str());
-            result.addAttribute(integ_col_text);
-            attributes.insertOrResetColumn(count_col_text.c_str());
-            result.addAttribute(count_col_text);
-            attributes.insertOrResetColumn(td_col_text.c_str());
-            result.addAttribute(td_col_text);
-            if (m_weighted_measure_col != -1) {
-                attributes.insertOrResetColumn(w_integ_col_text.c_str());
-                result.addAttribute(w_integ_col_text);
-                attributes.insertOrResetColumn(w_td_text.c_str());
-                result.addAttribute(w_td_text);
-                attributes.insertOrResetColumn(total_weight_text.c_str());
-                result.addAttribute(total_weight_text);
-            }
-        }
-        //*EF routeweight
-        else { // Normal run // TV
-            std::string integ_col_text =
-                tulip_text + " Integration" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string w_integ_col_text =
-                tulip_text + " Integration [" + weighting_col_text + " Wgt]" + radius_text;
-
-            std::string count_col_text =
-                tulip_text + " Node Count" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string td_col_text =
-                tulip_text + " Total Depth" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
-            std::string w_td_text =
-                tulip_text + " Total Depth [" + weighting_col_text + " Wgt]" + radius_text;
-            std::string total_weight_text =
-                tulip_text + " Total " + weighting_col_text + radius_text;
-
-            attributes.insertOrResetColumn(integ_col_text.c_str());
-            result.addAttribute(integ_col_text);
-            attributes.insertOrResetColumn(count_col_text.c_str());
-            result.addAttribute(count_col_text);
-            attributes.insertOrResetColumn(td_col_text.c_str());
-            result.addAttribute(td_col_text);
-            if (m_weighted_measure_col != -1) {
-                attributes.insertOrResetColumn(w_integ_col_text.c_str());
-                result.addAttribute(w_integ_col_text);
-                attributes.insertOrResetColumn(w_td_text.c_str());
-                result.addAttribute(w_td_text);
-                attributes.insertOrResetColumn(total_weight_text.c_str());
-                result.addAttribute(total_weight_text);
-            }
-        }
-    }
     std::vector<size_t> choice_col, w_choice_col, w_choice_col2, count_col, integ_col, w_integ_col,
         td_col, w_td_col, total_weight_col;
     // then look them up! eek....
-    for (r = 0; r < radius_unconverted.size(); r++) {
-        std::string radius_text = makeRadiusText(m_radius_type, radius_unconverted[r]);
+    for (auto radius : radius_unconverted) {
+        std::string radius_text = makeRadiusText(m_radius_type, radius);
         if (m_choice) {
             // EF routeweight *
             if (routeweight_col != -1) {
-                std::string choice_col_text = tulip_text + " Choice [Route weight by " +
-                                              routeweight_col_text + "]" + radius_text;
-                choice_col.push_back(attributes.getColumnIndex(choice_col_text.c_str()));
+                choice_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
+                    routeweight_col_text));
                 if (m_weighted_measure_col != -1) {
-                    std::string w_choice_col_text = tulip_text + " Choice [[Route weight by " +
-                                                    routeweight_col_text + "][" +
-                                                    weighting_col_text + " Wgt]]" + radius_text;
-                    w_choice_col.push_back(attributes.getColumnIndex(w_choice_col_text.c_str()));
+                    w_choice_col.push_back(getFormattedColumnIdx( //
+                        attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
+                        routeweight_col_text, weighting_col_text));
                 }
                 // EFEF*
                 if (weighting_col2 != -1) {
-                    std::string w_choice_col_text2 =
-                        tulip_text + " Choice [[Route weight by " + routeweight_col_text + "][" +
-                        weighting_col_text + "-" + weighting_col_text2 + " Wgt]]" + radius_text;
-                    w_choice_col2.push_back(attributes.getColumnIndex(w_choice_col_text2.c_str()));
+                    w_choice_col2.push_back(getFormattedColumnIdx( //
+                        attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
+                        routeweight_col_text, weighting_col_text, weighting_col_text2));
                 }
                 //*EFEF
             }
             //* EF routeweight
             else { // Normal run // TV
-                std::string choice_col_text = tulip_text + " Choice" + radius_text;
-                choice_col.push_back(attributes.getColumnIndex(choice_col_text.c_str()));
+
+                choice_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius));
                 if (m_weighted_measure_col != -1) {
-                    std::string w_choice_col_text =
-                        tulip_text + " Choice [" + weighting_col_text + " Wgt]" + radius_text;
-                    w_choice_col.push_back(attributes.getColumnIndex(w_choice_col_text.c_str()));
+                    w_choice_col.push_back(getFormattedColumnIdx( //
+                        attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
+                        std::nullopt, weighting_col_text));
                 }
                 // EFEF*
                 if (weighting_col2 != -1) {
-                    std::string w_choice_col_text2 = tulip_text + " Choice [" + weighting_col_text +
-                                                     "-" + weighting_col_text2 + " Wgt]" +
-                                                     radius_text;
-                    w_choice_col2.push_back(attributes.getColumnIndex(w_choice_col_text2.c_str()));
+                    w_choice_col2.push_back(getFormattedColumnIdx( //
+                        attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
+                        std::nullopt, weighting_col_text, weighting_col_text2));
                 }
                 //*EFEF
             }
         }
         // EF routeweight *
         if (routeweight_col != -1) {
-            std::string integ_col_text =
-                tulip_text + " Integration [Route weight by " + routeweight_col_text + "]" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string w_integ_col_text = tulip_text + " Integration [[Route weight by " +
-                                           routeweight_col_text + "][" + weighting_col_text +
-                                           " Wgt]]" + radius_text;
 
-            std::string count_col_text =
-                tulip_text + " Node Count [Route weight by " + routeweight_col_text + "]" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string td_col_text =
-                tulip_text + " Total Depth [Route weight by " + routeweight_col_text + "]" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string w_td_text = tulip_text + " Total Depth [[Route weight by " +
-                                    routeweight_col_text + "][" + weighting_col_text + " Wgt]]" +
-                                    radius_text;
-            std::string total_weight_col_text = tulip_text + " Total " + weighting_col_text +
-                                                " [Route weight by " + routeweight_col_text + "]" +
-                                                radius_text;
-
-            integ_col.push_back(attributes.getColumnIndex(integ_col_text.c_str()));
-            count_col.push_back(attributes.getColumnIndex(count_col_text.c_str()));
-            td_col.push_back(attributes.getColumnIndex(td_col_text.c_str()));
+            integ_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
+                routeweight_col_text));
+            count_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::NODE_COUNT, m_tulip_bins, m_radius_type, radius,
+                routeweight_col_text));
+            td_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
+                routeweight_col_text));
             if (m_weighted_measure_col != -1) {
                 // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
-                w_integ_col.push_back(attributes.getColumnIndex(w_integ_col_text.c_str()));
-                w_td_col.push_back(attributes.getColumnIndex(w_td_text.c_str()));
-                total_weight_col.push_back(
-                    attributes.getColumnIndex(total_weight_col_text.c_str()));
+                w_integ_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
+                    routeweight_col_text, weighting_col_text));
+                w_td_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
+                    routeweight_col_text, weighting_col_text));
+                total_weight_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::TOTAL, m_tulip_bins, m_radius_type, radius,
+                    routeweight_col_text));
             }
         }
         //* EF routeweight
-        else { // Normal run // TV
-            std::string integ_col_text =
-                tulip_text + " Integration" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string w_integ_col_text =
-                tulip_text + " Integration [" + weighting_col_text + " Wgt]" + radius_text;
-
-            std::string count_col_text =
-                tulip_text + " Node Count" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string td_col_text =
-                tulip_text + " Total Depth" +
-                radius_text; // <- note, the fact this is a tulip is unnecessary
-            std::string w_td_text =
-                tulip_text + " Total Depth [" + weighting_col_text + " Wgt]" + radius_text;
-            std::string total_weight_col_text =
-                tulip_text + " Total " + weighting_col_text + radius_text;
-
-            integ_col.push_back(attributes.getColumnIndex(integ_col_text.c_str()));
-            count_col.push_back(attributes.getColumnIndex(count_col_text.c_str()));
-            td_col.push_back(attributes.getColumnIndex(td_col_text.c_str()));
+        else {                                         // Normal run // TV
+            integ_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::INTEGRATION, m_tulip_bins, m_radius_type, radius));
+            count_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::NODE_COUNT, m_tulip_bins, m_radius_type, radius));
+            td_col.push_back(getFormattedColumnIdx( //
+                attributes, Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius));
             if (m_weighted_measure_col != -1) {
                 // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
-                w_integ_col.push_back(attributes.getColumnIndex(w_integ_col_text.c_str()));
-                w_td_col.push_back(attributes.getColumnIndex(w_td_text.c_str()));
-                total_weight_col.push_back(
-                    attributes.getColumnIndex(total_weight_col_text.c_str()));
+                w_integ_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
+                    std::nullopt, weighting_col_text));
+                w_td_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
+                    std::nullopt, weighting_col_text));
+                total_weight_col.push_back(getFormattedColumnIdx( //
+                    attributes, Column::TOTAL, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                    weighting_col_text));
             }
         }
     }
@@ -359,11 +328,12 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
         uncovered[i] = new unsigned int[2];
     }
     std::vector<double> radius;
-    for (r = 0; r < radius_unconverted.size(); r++) {
-        if (m_radius_type == Options::RADIUS_ANGULAR && radius_unconverted[r] != -1) {
-            radius.push_back(floor(radius_unconverted[r] * tulip_bins * 0.5));
+
+    for (auto uradius : radius_unconverted) {
+        if (m_radius_type == RadiusType::ANGULAR && uradius != -1) {
+            radius.push_back(floor(uradius * tulip_bins * 0.5));
         } else {
-            radius.push_back(radius_unconverted[r]);
+            radius.push_back(uradius);
         }
     }
     // entered once for each segment
@@ -383,13 +353,11 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
     }
 
     for (size_t cursor = 0; cursor < map.getConnections().size(); cursor++) {
-        AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
+        auto &shapeRef = map.getShapeRefFromIndex(cursor)->first;
+        AttributeRow &row = map.getAttributeTable().getRow(AttributeKey(shapeRef));
 
-        if (m_sel_only) {
-            // could use m_selection_set.searchindex(rowid) to find
-            // if this row is selected as m_selection_set is ordered for axial and segment maps, etc
-            // BUT, actually quicker to check the tag in the attributes that shows it's selected
-            if (!row.isSelected()) {
+        if (m_selSet.has_value()) {
+            if (m_selSet->find(shapeRef) == m_selSet->end()) {
                 continue;
             }
         }
@@ -485,23 +453,25 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                             }
                             seglength = lengths[conn.ref];
                             switch (m_radius_type) {
-                            case Options::RADIUS_ANGULAR:
+                            case RadiusType::ANGULAR:
                                 while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        depthlevel + extradepth > (int)radius[rbin]) {
                                     rbin++;
                                 }
                                 break;
-                            case Options::RADIUS_METRIC:
+                            case RadiusType::METRIC:
                                 while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        lineindex.metricdepth + seglength * 0.5 > radius[rbin]) {
                                     rbin++;
                                 }
                                 break;
-                            case Options::RADIUS_STEPS:
+                            case RadiusType::TOPOLOGICAL:
                                 if (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                     lineindex.segdepth >= (int)radius[rbin]) {
                                     rbin++;
                                 }
+                                break;
+                            case RadiusType::NONE:
                                 break;
                             }
                             if ((coverage >> rbin) != 0) {
@@ -536,23 +506,25 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                             }
                             seglength = lengths[conn.ref];
                             switch (m_radius_type) {
-                            case Options::RADIUS_ANGULAR:
+                            case RadiusType::ANGULAR:
                                 while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        depthlevel + extradepth > (int)radius[rbin]) {
                                     rbin++;
                                 }
                                 break;
-                            case Options::RADIUS_METRIC:
+                            case RadiusType::METRIC:
                                 while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        lineindex.metricdepth + seglength * 0.5 > radius[rbin]) {
                                     rbin++;
                                 }
                                 break;
-                            case Options::RADIUS_STEPS:
+                            case RadiusType::TOPOLOGICAL:
                                 if (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                     lineindex.segdepth >= (int)radius[rbin]) {
                                     rbin++;
                                 }
+                                break;
+                            case RadiusType::NONE:
                                 break;
                             }
                             if ((coverage >> rbin) != 0) {
@@ -775,12 +747,6 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
     delete[] audittrail;
     delete[] uncovered;
 
-    map.setDisplayedAttribute(-2); // <- override if it's already showing
-    if (m_choice) {
-        map.setDisplayedAttribute(choice_col.back());
-    } else {
-        map.setDisplayedAttribute(td_col.back());
-    }
     result.completed = processed_rows > 0;
 
     return result;

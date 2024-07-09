@@ -13,6 +13,21 @@ class SegmentAngular : ISegment {
     std::set<double> m_radius_set;
 
   public:
+    struct Column {
+        inline static const std::string                  //
+            ANGULAR_MEAN_DEPTH = "Angular Mean Depth",   //
+            ANGULAR_NODE_COUNT = "Angular Node Count",   //
+            ANGULAR_TOTAL_DEPTH = "Angular Total Depth"; //
+    };
+    static std::string getFormattedColumn(std::string column, double radius) {
+        std::string colName = column;
+        if (radius != -1.0) {
+            colName += makeRadiusText(RadiusType::ANGULAR, radius);
+        }
+        return colName;
+    }
+
+  public:
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool) override;
     SegmentAngular(std::set<double> radius_set) : m_radius_set(radius_set) {}

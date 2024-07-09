@@ -85,7 +85,7 @@ struct Connector {
     }
     //
     bool read(std::istream &stream);
-    bool write(std::ofstream &stream);
+    bool write(std::ostream &stream) const;
     //
     // Cursor extras
     enum { CONN_ALL, SEG_CONN_ALL, SEG_CONN_FW, SEG_CONN_BK };

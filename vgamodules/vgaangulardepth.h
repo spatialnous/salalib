@@ -7,10 +7,20 @@
 #pragma once
 
 #include "salalib/ivga.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 class VGAAngularDepth : IVGA {
+
+    std::set<int> &m_originRefs;
+
   public:
+    struct Column {
+        inline static const std::string                //
+            ANGULAR_STEP_DEPTH = "Angular Step Depth"; //
+    };
+
+  public:
+    VGAAngularDepth(std::set<int> &originRefs) : m_originRefs(originRefs) {}
     std::string getAnalysisName() const override { return "Angular Depth"; }
     AnalysisResult run(Communicator *comm, PointMap &map, bool) override;
 };

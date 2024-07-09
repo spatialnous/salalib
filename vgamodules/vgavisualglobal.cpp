@@ -6,8 +6,6 @@
 
 #include "vgavisualglobal.h"
 
-#include "genlib/stringutils.h"
-
 AnalysisResult VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simple_version) {
     time_t atime = 0;
     if (comm) {
@@ -23,40 +21,39 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simp
                           integ_dv_col = std::nullopt, integ_pv_col = std::nullopt,
                           integ_tk_col = std::nullopt, depth_col = std::nullopt,
                           count_col = std::nullopt;
-    std::string radius_text;
-    if (m_radius != -1) {
-        radius_text = std::string(" R") + dXstring::formatString(int(m_radius), "%d");
-    }
 
     // n.b. these must be entered in alphabetical order to preserve col indexing:
     // dX simple version test // TV
 #ifndef _COMPILE_dX_SIMPLE_VERSION
     if (!simple_version) {
-        std::string entropy_col_text = std::string("Visual Entropy") + radius_text;
+        std::string entropy_col_text = getColumnWithRadius(Column::VISUAL_ENTROPY, m_radius);
         entropy_col = attributes.insertOrResetColumn(entropy_col_text.c_str());
         result.addAttribute(entropy_col_text);
     }
 #endif
 
-    std::string integ_dv_col_text = std::string("Visual Integration [HH]") + radius_text;
+    std::string integ_dv_col_text = getColumnWithRadius(Column::VISUAL_INTEGRATION_HH, m_radius);
     integ_dv_col = attributes.insertOrResetColumn(integ_dv_col_text.c_str());
     result.addAttribute(integ_dv_col_text);
 
 #ifndef _COMPILE_dX_SIMPLE_VERSION
     if (!simple_version) {
-        std::string integ_pv_col_text = std::string("Visual Integration [P-value]") + radius_text;
+        std::string integ_pv_col_text =
+            getColumnWithRadius(Column::VISUAL_INTEGRATION_PV, m_radius);
         integ_pv_col = attributes.insertOrResetColumn(integ_pv_col_text.c_str());
         result.addAttribute(integ_pv_col_text);
-        std::string integ_tk_col_text = std::string("Visual Integration [Tekl]") + radius_text;
+        std::string integ_tk_col_text =
+            getColumnWithRadius(Column::VISUAL_INTEGRATION_TK, m_radius);
         integ_tk_col = attributes.insertOrResetColumn(integ_tk_col_text.c_str());
         result.addAttribute(integ_tk_col_text);
-        std::string depth_col_text = std::string("Visual Mean Depth") + radius_text;
+        std::string depth_col_text = getColumnWithRadius(Column::VISUAL_MEAN_DEPTH, m_radius);
         depth_col = attributes.insertOrResetColumn(depth_col_text.c_str());
         result.addAttribute(depth_col_text);
-        std::string count_col_text = std::string("Visual Node Count") + radius_text;
+        std::string count_col_text = getColumnWithRadius(Column::VISUAL_NODE_COUNT, m_radius);
         count_col = attributes.insertOrResetColumn(count_col_text.c_str());
         result.addAttribute(count_col_text);
-        std::string rel_entropy_col_text = std::string("Visual Relativised Entropy") + radius_text;
+        std::string rel_entropy_col_text =
+            getColumnWithRadius(Column::VISUAL_REL_ENTROPY, m_radius);
         rel_entropy_col = attributes.insertOrResetColumn(rel_entropy_col_text.c_str());
         result.addAttribute(rel_entropy_col_text);
     }
@@ -214,7 +211,6 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simp
             map.getPoint(curs).m_extent = extents(j, i);
         }
     }
-    map.setDisplayedAttribute(integ_dv_col.value());
 
     result.completed = true;
 

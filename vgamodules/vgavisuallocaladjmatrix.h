@@ -8,7 +8,7 @@
 
 #include "salalib/ianalysis.h"
 #include "salalib/pixelref.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 class VGAVisualLocalAdjMatrix : public IAnalysis {
   private:
@@ -21,8 +21,18 @@ class VGAVisualLocalAdjMatrix : public IAnalysis {
     void dumpNeighbourhood(Node &node, std::set<PixelRef> &hood) const;
 
   public:
+    struct Column {
+        inline static const std::string                                      //
+            VISUAL_CLUSTERING_COEFFICIENT = "Visual Clustering Coefficient", //
+            VISUAL_CONTROL = "Visual Control",                               //
+            VISUAL_CONTROLLABILITY = "Visual Controllability";               //
+    };
+
+  public:
     VGAVisualLocalAdjMatrix(PointMap &map, bool gates_only)
         : m_map(map), m_gates_only(gates_only) {}
-    std::string getAnalysisName() const override { return "Local Visibility Analysis (OpenMP)"; }
+    std::string getAnalysisName() const override {
+        return "Local Visibility Analysis (Adj. Matrix)";
+    }
     AnalysisResult run(Communicator *comm) override;
 };

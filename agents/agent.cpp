@@ -6,7 +6,7 @@
 
 #include "agent.h"
 
-#include "agenthelpers.h"
+#include "agentanalysis.h"
 
 Agent::Agent(AgentProgram *program, PointMap *pointmap, int output_mode) {
     m_program = program;
@@ -20,10 +20,11 @@ void Agent::onInit(PixelRef node, int trail_num) {
     m_loc = m_pointmap->depixelate(m_node);
     if (m_output_mode & OUTPUT_GATE_COUNTS) {
         // see note about gates in Through vision analysis
-        m_gate = (m_pointmap->getPoint(node).filled()) ? (int)m_pointmap->getAttributeTable()
-                                                             .getRow(AttributeKey(m_node))
-                                                             .getValue(g_col_gate)
-                                                       : -1;
+        m_gate = (m_pointmap->getPoint(node).filled())
+                     ? (int)m_pointmap->getAttributeTable()
+                           .getRow(AttributeKey(m_node))
+                           .getValue(AgentAnalysis::Column::INTERNAL_GATE)
+                     : -1;
     } else {
         m_gate = -1;
     }
@@ -84,14 +85,14 @@ void Agent::onMove() {
         if (m_pointmap->getPoint(m_node).filled()) {
             AttributeRow &row = m_pointmap->getAttributeTable().getRow(AttributeKey(m_node));
             if (m_output_mode & OUTPUT_COUNTS) {
-                row.incrValue(g_col_total_counts);
+                row.incrValue(AgentAnalysis::Column::GATE_COUNTS);
             }
             if (m_output_mode & OUTPUT_GATE_COUNTS) {
-                int obj = (int)row.getValue(g_col_gate);
+                int obj = (int)row.getValue(AgentAnalysis::Column::INTERNAL_GATE);
                 if (m_gate != obj) {
                     m_gate = obj;
                     if (m_gate != -1) {
-                        row.incrValue(g_col_gate_counts);
+                        row.incrValue(AgentAnalysis::Column::INTERNAL_GATE_COUNTS);
                         // actually crossed into a new gate:
                         m_gate_encountered = true;
                     }

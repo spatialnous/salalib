@@ -17,13 +17,13 @@ AnalysisResult AxialLocal::run(Communicator *comm, ShapeGraph &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    attributes.insertOrResetColumn("Control");
-    result.addAttribute("Control");
-    attributes.insertOrResetColumn("Controllability");
-    result.addAttribute("Controllability");
+    attributes.insertOrResetColumn(Column::CONTROL);
+    result.addAttribute(Column::CONTROL);
+    attributes.insertOrResetColumn(Column::CONTROLLABILITY);
+    result.addAttribute(Column::CONTROLLABILITY);
 
-    size_t control_col = attributes.getColumnIndex("Control");
-    size_t controllability_col = attributes.getColumnIndex("Controllability");
+    size_t control_col = attributes.getColumnIndex(Column::CONTROL);
+    size_t controllability_col = attributes.getColumnIndex(Column::CONTROLLABILITY);
 
     // n.b., for this operation we assume continuous line referencing from zero (this is silly?)
     // has already failed due to this!  when intro hand drawn fewest line (where user may have

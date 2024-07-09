@@ -4,12 +4,13 @@
 
 // Point data
 
-#include "pointdata.h"
+#include "pointmap.h"
 
 #include "attributetable.h"
-#include "attributetablehelpers.h"
 #include "ngraph.h"
 #include "parsers/mapinfodata.h" // for mapinfo interface
+#include "salashape.h"
+#include "shapemap.h"
 
 #include "genlib/comm.h" // for communicator
 #include "genlib/containerutils.h"
@@ -23,8 +24,8 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 PointMap::PointMap(const QtRegion &parentRegion, const std::string &name)
-    : m_parentRegion(&parentRegion), m_points(0, 0), m_attributes(new AttributeTable()),
-      m_attribHandle(new AttributeTableHandle(*m_attributes)) {
+    : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())),
+      m_parentRegion(&parentRegion), m_points(0, 0) {
     m_name = name;
 
     m_cols = 0;
@@ -38,20 +39,7 @@ PointMap::PointMap(const QtRegion &parentRegion, const std::string &name)
     m_processed = false;
     m_boundarygraph = false;
 
-    m_selection = NO_SELECTION;
-    m_pinned_selection = false;
     m_undocounter = 0;
-
-    // screen
-    m_viewing_deprecated = -1;
-    m_draw_step = 1;
-
-    s_bl = NoPixel;
-    s_tr = NoPixel;
-    curmergeline = -1;
-
-    // -2 follows axial map convention, where -1 is the reference number
-    m_displayed_attribute = -2;
 }
 
 void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattributes) {
@@ -70,22 +58,11 @@ void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattribu
     m_processed = sourcemap.m_processed;
     m_boundarygraph = sourcemap.m_boundarygraph;
 
-    m_selection = sourcemap.m_selection;
-    m_pinned_selection = sourcemap.m_pinned_selection;
     m_undocounter = sourcemap.m_undocounter;
 
-    // screen
-    m_viewing_deprecated = sourcemap.m_viewing_deprecated;
-    m_draw_step = sourcemap.m_draw_step;
-
-    s_bl = sourcemap.s_bl;
-    s_tr = sourcemap.s_tr;
-    curmergeline = sourcemap.curmergeline;
     m_offset = sourcemap.m_offset;
     m_bottom_left = sourcemap.m_bottom_left;
 
-    // -2 follows axial map convention, where -1 is the reference number
-    m_displayed_attribute = sourcemap.m_displayed_attribute;
     if (copypoints || copyattributes) {
         m_points = sourcemap.m_points;
     }
@@ -182,7 +159,18 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
     return true;
 }
 
-bool PointMap::clearPoints() {
+bool PointMap::clearAllPoints() {
+    for (auto &point : m_points) {
+        if (point.filled()) {
+            point.set(Point::EMPTY, m_undocounter);
+        }
+    }
+    m_filled_point_count = 0;
+    m_merge_lines.clear();
+    return true;
+}
+
+bool PointMap::clearPointsInRange(PixelRef bl, PixelRef tr, std::set<int> &selSet) {
     if (!m_filled_point_count) {
         return false;
     }
@@ -192,54 +180,27 @@ bool PointMap::clearPoints() {
     // selection as opposed to a compound selection someday clean up
 
     m_undocounter++;
-    if (m_selection == NO_SELECTION) {
-        for (auto &point : m_points) {
-            if (point.filled()) {
-                point.set(Point::EMPTY, m_undocounter);
-            }
-        }
-        m_filled_point_count = 0;
-        m_merge_lines.clear();
-    } else if (m_selection & SINGLE_SELECTION) {
-        m_undocounter++;
-        for (auto i = s_bl.x; i <= s_tr.x; i++) {
-            for (auto j = s_bl.y; j <= s_tr.y; j++) {
-                Point &pnt = m_points(static_cast<size_t>(j), static_cast<size_t>(i));
-                if (pnt.m_state & (Point::SELECTED | Point::FILLED)) {
-                    pnt.set(Point::EMPTY, m_undocounter);
-                    if (!pnt.m_merge.empty()) {
-                        PixelRef p = pnt.m_merge;
-                        depthmapX::findAndErase(m_merge_lines, PixelRefPair(PixelRef(i, j), p));
-                        getPoint(p).m_merge = NoPixel;
-                        getPoint(p).m_state &= ~Point::MERGED;
-                    }
-                    m_filled_point_count--;
+
+    m_undocounter++;
+    for (auto i = bl.x; i <= tr.x; i++) {
+        for (auto j = bl.y; j <= tr.y; j++) {
+            PixelRef ref(j, i);
+            Point &pnt = getPoint(ref);
+            if (selSet.find(ref) != selSet.end() || (pnt.m_state & Point::FILLED)) {
+                pnt.set(Point::EMPTY, m_undocounter);
+                if (!pnt.m_merge.empty()) {
+                    PixelRef p = pnt.m_merge;
+                    auto &point = getPoint(p);
+                    depthmapX::findAndErase(
+                        m_merge_lines,
+                        PixelRefPair(PixelRef(static_cast<short>(i), static_cast<short>(j)), p));
+                    point.m_merge = NoPixel;
+                    point.m_state &= ~Point::MERGED;
                 }
-            }
-        }
-    } else { // COMPOUND_SELECTION (note, need to test bitwise now)
-        for (size_t i = 0; i < m_cols; i++) {
-            for (size_t j = 0; j < m_rows; j++) {
-                Point &pnt = m_points(j, i);
-                if (pnt.m_state & (Point::SELECTED | Point::FILLED)) {
-                    pnt.set(Point::EMPTY, m_undocounter);
-                    if (!pnt.m_merge.empty()) {
-                        PixelRef p = pnt.m_merge;
-                        depthmapX::findAndErase(
-                            m_merge_lines,
-                            PixelRefPair(PixelRef(static_cast<short>(i), static_cast<short>(j)),
-                                         p));
-                        getPoint(p).m_merge = NoPixel;
-                        getPoint(p).m_state &= ~Point::MERGED;
-                    }
-                    m_filled_point_count--;
-                }
+                m_filled_point_count--;
             }
         }
     }
-
-    m_selection_set.clear();
-    m_selection = NO_SELECTION;
 
     return true;
 }
@@ -599,7 +560,7 @@ void PointMap::outputNet(std::ostream &netfile) {
         }
     }
     netfile << "*Vertices " << graph.size() << std::endl;
-    double maxdim = __max(m_region.width(), m_region.height());
+    double maxdim = fmax(m_region.width(), m_region.height());
     Point2f offset = Point2f((maxdim - m_region.width()) / (2.0 * maxdim),
                              (maxdim - m_region.height()) / (2.0 * maxdim));
     size_t j = 0;
@@ -716,254 +677,6 @@ void PointMap::outputBinSummaries(std::ostream &myout) {
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-
-// Attribute Stuff
-
-void PointMap::setDisplayedAttribute(int col) {
-    if (m_displayed_attribute == col) {
-        return;
-    } else {
-        m_displayed_attribute = col;
-    }
-
-    m_attribHandle->setDisplayColIndex(m_displayed_attribute);
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-// Screen stuff
-
-void PointMap::setScreenPixel(double unit) {
-    if (unit / m_spacing > 1) {
-        m_draw_step = int(unit / m_spacing);
-    } else {
-        m_draw_step = 1;
-    }
-}
-
-void PointMap::makeViewportPoints(const QtRegion &viewport) const {
-    // n.b., relies on "constrain" being set to true
-    bl = pixelate(viewport.bottom_left, true);
-    cur = bl;   // cursor for points
-    cur.x -= 1; // findNext expects to find cur.x in the -1 position
-    rc = bl;    // cursor for grid lines
-    prc = bl;   // cursor for point centre grid lines
-    prc.x -= 1;
-    prc.y -= 1;
-    // n.b., relies on "constrain" being set to true
-    tr = pixelate(viewport.top_right, true);
-    curmergeline = -1;
-
-    m_finished = false;
-}
-
-bool PointMap::findNextPoint() const {
-    if (m_finished) {
-        return false;
-    }
-    do {
-        cur.x += static_cast<short>(m_draw_step);
-        if (cur.x > tr.x) {
-            cur.x = bl.x;
-            cur.y += static_cast<short>(m_draw_step);
-            if (cur.y > tr.y) {
-                cur = tr; // safety first --- this will at least return something
-                m_finished = true;
-                return false;
-            }
-        }
-    } while (!getPoint(cur).filled() && !getPoint(cur).blocked());
-    return true;
-}
-
-bool PointMap::findNextRow() const {
-    rc.y += 1;
-    if (rc.y > tr.y)
-        return false;
-    return true;
-}
-Line PointMap::getNextRow() const {
-    Point2f offset(m_spacing / 2.0, m_spacing / 2.0);
-    return Line(depixelate(PixelRef(bl.x, rc.y)) - offset,
-                depixelate(PixelRef(tr.x + 1, rc.y)) - offset);
-}
-bool PointMap::findNextPointRow() const {
-    prc.y += 1;
-    if (prc.y > tr.y)
-        return false;
-    return true;
-}
-Line PointMap::getNextPointRow() const {
-    Point2f offset(m_spacing / 2.0, 0);
-    return Line(depixelate(PixelRef(bl.x, prc.y)) - offset,
-                depixelate(PixelRef(tr.x + 1, prc.y)) - offset);
-}
-bool PointMap::findNextCol() const {
-    rc.x += 1;
-    if (rc.x > tr.x)
-        return false;
-    return true;
-}
-Line PointMap::getNextCol() const {
-    Point2f offset(m_spacing / 2.0, m_spacing / 2.0);
-    return Line(depixelate(PixelRef(rc.x, bl.y)) - offset,
-                depixelate(PixelRef(rc.x, tr.y + 1)) - offset);
-}
-bool PointMap::findNextPointCol() const {
-    prc.x += 1;
-    if (prc.x > tr.x)
-        return false;
-    return true;
-}
-Line PointMap::getNextPointCol() const {
-    Point2f offset(0.0, m_spacing / 2.0);
-    return Line(depixelate(PixelRef(prc.x, bl.y)) - offset,
-                depixelate(PixelRef(prc.x, tr.y + 1)) - offset);
-}
-
-bool PointMap::findNextMergeLine() const {
-    if (curmergeline < (int)m_merge_lines.size()) {
-        curmergeline++;
-    }
-    return (curmergeline < (int)m_merge_lines.size());
-}
-
-Line PointMap::getNextMergeLine() const {
-    if (curmergeline < (int)m_merge_lines.size()) {
-        return Line(depixelate(m_merge_lines[curmergeline].a),
-                    depixelate(m_merge_lines[curmergeline].b));
-    }
-    return Line();
-}
-
-bool PointMap::getPointSelected() const {
-    int state = pointState(cur);
-    if (state & Point::SELECTED) {
-        return true;
-    }
-    return false;
-}
-
-PafColor PointMap::getPointColor(PixelRef pixelRef) const {
-    PafColor color;
-    int state = pointState(pixelRef);
-    if (state & Point::HIGHLIGHT) {
-        return PafColor(SALA_HIGHLIGHTED_COLOR);
-    } else if (state & Point::SELECTED) {
-        return PafColor(SALA_SELECTED_COLOR);
-    } else {
-        if (state & Point::FILLED) {
-            if (m_processed) {
-                return dXreimpl::getDisplayColor(AttributeKey(pixelRef),
-                                                 m_attributes->getRow(AttributeKey(pixelRef)),
-                                                 *m_attribHandle.get(), true);
-            } else if (state & Point::EDGE) {
-                return PafColor(0x0077BB77);
-            } else if (state & Point::CONTEXTFILLED) {
-                return PafColor(0x007777BB);
-            } else {
-                return PafColor(0x00777777);
-            }
-        } else {
-            return PafColor();
-        }
-    }
-    return PafColor(); // <- note alpha channel set to transparent - will not be
-                       // drawn
-}
-
-PafColor PointMap::getCurrentPointColor() const { return getPointColor(cur); }
-
-/////////////////////////////////////////////////////////////////////////////////
-
-// Selection stuff
-
-// eventually we will use returned info to draw the selected point quickly
-
-bool PointMap::clearSel() {
-    if (m_selection == NO_SELECTION) {
-        return false;
-    }
-    for (auto &sel : m_selection_set) {
-        getPoint(sel).m_state &= ~Point::SELECTED;
-    }
-    m_selection_set.clear();
-    m_selection = NO_SELECTION;
-    m_attributes->deselectAllRows();
-    return true;
-}
-
-bool PointMap::setCurSel(QtRegion &r, bool add) {
-    if (m_selection == NO_SELECTION) {
-        add = false;
-    } else if (!add) {
-        // Since we started using point locations in the sel set this is a lot
-        // easier!
-        clearSel();
-    }
-
-    // n.b., assumes constrain set to true (for if you start the selection off the
-    // grid)
-    s_bl = pixelate(r.bottom_left, true);
-    s_tr = pixelate(r.top_right, true);
-
-    if (!add) {
-        m_sel_bounds = r;
-    } else {
-        m_sel_bounds = runion(m_sel_bounds, r);
-    }
-
-    int mask = 0;
-    mask |= Point::FILLED;
-
-    for (auto i = s_bl.x; i <= s_tr.x; i++) {
-        for (auto j = s_bl.y; j <= s_tr.y; j++) {
-            Point &pnt = m_points(static_cast<size_t>(j), static_cast<size_t>(i));
-            if ((pnt.m_state & mask) && (~pnt.m_state & Point::SELECTED)) {
-                pnt.m_state |= Point::SELECTED;
-                m_selection_set.insert(PixelRef(i, j));
-                if (add) {
-                    m_selection &= ~SINGLE_SELECTION;
-                    m_selection |= COMPOUND_SELECTION;
-                } else {
-                    m_selection |= SINGLE_SELECTION;
-                }
-                if (pnt.m_node) {
-                    m_attributes->getRow(AttributeKey(PixelRef(i, j))).setSelection(true);
-                }
-            }
-        }
-    }
-
-    // Set the region to our actual region:
-    r = QtRegion(depixelate(s_bl), depixelate(s_tr));
-
-    return true;
-}
-
-bool PointMap::setCurSel(const std::vector<int> &selset, bool add) {
-    // note: override cursel, can only be used with analysed pointdata:
-    if (!add) {
-        clearSel();
-    }
-    m_selection = COMPOUND_SELECTION;
-    // not sure what to do with m_sel_bounds (is it necessary?)
-    for (size_t i = 0; i < selset.size(); i++) {
-        PixelRef pix = selset[i];
-        if (includes(pix)) {
-            m_points(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x)).m_state |=
-                Point::SELECTED;
-            AttributeRow &row = m_attributes->getRow(AttributeKey(pix));
-            if (!row.isSelected()) {
-                row.setSelection(true);
-                m_selection_set.insert(pix);
-            }
-        }
-    }
-    return true;
-}
-
 // Helper function: is there a blocked point next to you?
 // ...rather scruffily goes round the eight adjacent points...
 
@@ -1019,11 +732,8 @@ bool PointMap::blockedAdjacent(const PixelRef p) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool PointMap::read(std::istream &stream) {
+bool PointMap::readMetadata(std::istream &stream) {
     m_name = dXstring::readString(stream);
-
-    // NOTE: You MUST set m_spacepix manually!
-    m_displayed_attribute = -1;
 
     stream.read((char *)&m_spacing, sizeof(m_spacing));
 
@@ -1041,12 +751,10 @@ bool PointMap::read(std::istream &stream) {
         QtRegion(Point2f(m_bottom_left.x - m_spacing / 2.0, m_bottom_left.y - m_spacing / 2.0),
                  Point2f(m_bottom_left.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
                          m_bottom_left.y + double(m_rows - 1) * m_spacing + m_spacing / 2.0));
+    return true;
+}
 
-    int displayed_attribute; // n.b., temp variable necessary to force recalc
-                             // below
-
-    // our data read
-    stream.read((char *)&displayed_attribute, sizeof(displayed_attribute));
+bool PointMap::readPointsAndAttributes(std::istream &stream) {
     m_attributes->read(stream, m_layers);
 
     m_points = depthmapX::ColumnMatrix<Point>(m_rows, m_cols);
@@ -1090,24 +798,29 @@ bool PointMap::read(std::istream &stream) {
         }
     }
 
-    m_selection = NO_SELECTION;
-    m_pinned_selection = false;
-
     m_initialised = true;
     m_blockedlines = false;
 
     stream.read((char *)&m_processed, sizeof(m_processed));
     stream.read((char *)&m_boundarygraph, sizeof(m_boundarygraph));
-
-    // now, as soon as loaded, must recalculate our screen display:
-    // note m_displayed_attribute should be -2 in order to force recalc...
-    m_displayed_attribute = -2;
-    setDisplayedAttribute(displayed_attribute);
-
     return true;
 }
 
-bool PointMap::write(std::ostream &stream) {
+std::tuple<bool, int> PointMap::read(std::istream &stream) {
+    bool read = readMetadata(stream);
+
+    // sala does not read or write display data by default any more.
+    // instead construct another read/write function for a GUI using
+    // the functions above and below
+    int displayedAttribute;
+    stream.read((char *)&displayedAttribute, sizeof(displayedAttribute));
+
+    read = read && readPointsAndAttributes(stream);
+
+    return std::make_tuple(read, displayedAttribute);
+}
+
+bool PointMap::writeMetadata(std::ostream &stream) const {
     dXstring::writeString(stream, m_name);
 
     stream.write((char *)&m_spacing, sizeof(m_spacing));
@@ -1120,12 +833,10 @@ bool PointMap::write(std::ostream &stream) {
     stream.write((char *)&m_filled_point_count, sizeof(m_filled_point_count));
 
     stream.write((char *)&m_bottom_left, sizeof(m_bottom_left));
+    return true;
+}
 
-    // TODO: Compatibility. The attribute columns will be stored sorted
-    // alphabetically so the displayed attribute needs to match that
-    auto sortedDisplayedAttribute =
-        static_cast<int>(m_attributes->getColumnSortedIndex(m_displayed_attribute));
-    stream.write((char *)&sortedDisplayedAttribute, sizeof(sortedDisplayedAttribute));
+bool PointMap::writePointsAndAttributes(std::ostream &stream) const {
 
     m_attributes->write(stream, m_layers);
 
@@ -1135,8 +846,16 @@ bool PointMap::write(std::ostream &stream) {
 
     stream.write((char *)&m_processed, sizeof(m_processed));
     stream.write((char *)&m_boundarygraph, sizeof(m_boundarygraph));
+    return true;
+}
 
-    return false;
+bool PointMap::write(std::ostream &stream, int displayedAttribute) const {
+    bool written = writeMetadata(stream);
+
+    stream.write((char *)&displayedAttribute, sizeof(displayedAttribute));
+
+    written = written && writePointsAndAttributes(stream);
+    return written;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1146,8 +865,6 @@ bool PointMap::write(std::ostream &stream) {
 // Visibility graph construction constants
 
 size_t PointMap::tagState(bool settag) {
-    m_selection_set.clear();
-    m_selection = NO_SELECTION;
 
     size_t count = 0;
 
@@ -1213,7 +930,7 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
 
     // attributes table set up
     // n.b. these must be entered in alphabetical order to preserve col indexing:
-    auto connectivity_col = m_attributes->insertOrResetLockedColumn("Connectivity");
+    m_attributes->insertOrResetLockedColumn("Connectivity");
     m_attributes->insertOrResetColumn("Point First Moment");
     m_attributes->insertOrResetColumn("Point Second Moment");
 
@@ -1258,7 +975,6 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
                             // Clear nodes
                             // Clear attributes
                             m_attributes->clear();
-                            m_displayed_attribute = -2;
                             //
                             throw Communicator::CancelledException();
                         }
@@ -1285,10 +1001,6 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
     if (boundarygraph) {
         m_boundarygraph = true;
     }
-
-    // override and reset:
-    m_displayed_attribute = -2;
-    setDisplayedAttribute(connectivity_col);
 
     return true;
 }
@@ -1320,8 +1032,6 @@ bool PointMap::unmake(bool removeLinks) {
 
     m_processed = false;
     m_boundarygraph = false;
-
-    m_displayed_attribute = -2;
 
     return true;
 }
@@ -1520,10 +1230,10 @@ bool PointMap::sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool PointMap::binDisplay(Communicator *) {
+bool PointMap::binDisplay(Communicator *, std::set<int> &selSet) {
     auto bindisplay_col = m_attributes->insertOrResetColumn("Node Bins");
 
-    for (auto &sel : m_selection_set) {
+    for (auto &sel : selSet) {
         Point &p = getPoint(sel);
         // Code for colouring pretty bins:
         for (int i = 0; i < 32; i++) {
@@ -1538,32 +1248,20 @@ bool PointMap::binDisplay(Communicator *) {
         }
     }
 
-    // override and reset:
-    m_displayed_attribute = -2;
-    setDisplayedAttribute(bindisplay_col);
-
     return true;
 }
 
-// Merge connections... very fiddly indeed... using a simple method for now...
-// ...and even that's too complicated... so I'll settle for a very, very simple
-// merge points (just a reference to another point --- yes, that simple!)
-
-// the first point should have been selected, the second is chosen now:
-
-bool PointMap::mergePoints(const Point2f &p) {
-    if (!m_selection_set.size()) {
-        return false;
-    }
+bool PointMap::mergePoints(const Point2f &p, QtRegion &firstPointsBounds,
+                           std::set<int> &firstPoints) {
 
     // note that in a multiple selection, the point p is adjusted by the selection
     // bounds
-    PixelRef bl = pixelate(m_sel_bounds.bottom_left);
-    PixelRef tr = pixelate(m_sel_bounds.top_right);
+    PixelRef bl = pixelate(firstPointsBounds.bottom_left);
+    PixelRef tr = pixelate(firstPointsBounds.top_right);
     //
     PixelRef offset = pixelate(p) - PixelRef(tr.x, bl.y);
     //
-    for (auto &sel : m_selection_set) {
+    for (auto &sel : firstPoints) {
         PixelRef a = sel;
         PixelRef b = ((PixelRef)sel) + offset;
         // check in limits:
@@ -1571,23 +1269,18 @@ bool PointMap::mergePoints(const Point2f &p) {
             mergePixels(a, b);
         }
     }
-    clearSel();
 
     return true;
 }
 
-bool PointMap::unmergePoints() {
-    if (!m_selection_set.size()) {
-        return false;
-    }
-    for (auto &sel : m_selection_set) {
+bool PointMap::unmergePoints(std::set<int> &firstPoints) {
+    for (auto &sel : firstPoints) {
         PixelRef a = sel;
         Point p = getPoint(a);
         if (p.getMergePixel() != NoPixel) {
             unmergePixel(a);
         }
     }
-    clearSel();
     return true;
 }
 
@@ -1652,7 +1345,7 @@ void PointMap::mergeFromShapeMap(const ShapeMap &shapemap) {
 bool PointMap::isPixelMerged(const PixelRef &a) { return !getPoint(a).m_merge.empty(); }
 
 // -2 for point not in visibility graph, -1 for point has no data
-double PointMap::getLocationValue(const Point2f &point) {
+double PointMap::getLocationValue(const Point2f &point, std::optional<size_t> columnIdx) {
     double val = -2;
 
     // "false" does not constrain to bounds
@@ -1664,10 +1357,10 @@ double PointMap::getLocationValue(const Point2f &point) {
 
     if (!getPoint(pix).filled()) {
         val = -2;
-    } else if (m_displayed_attribute == -1) {
+    } else if (!columnIdx.has_value()) {
         val = static_cast<float>(pix);
     } else {
-        val = m_attributes->getRow(AttributeKey(pix)).getValue(m_displayed_attribute);
+        val = m_attributes->getRow(AttributeKey(pix)).getValue(columnIdx.value());
     }
 
     return val;

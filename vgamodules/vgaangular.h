@@ -7,12 +7,34 @@
 #pragma once
 
 #include "salalib/ivga.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
+
+#include "genlib/stringutils.h"
 
 class VGAAngular : IVGA {
   private:
     double m_radius;
     bool m_gates_only;
+
+  public:
+    struct Column {
+        inline static const std::string                  //
+            ANGULAR_MEAN_DEPTH = "Angular Mean Depth",   //
+            ANGULAR_TOTAL_DEPTH = "Angular Total Depth", //
+            ANGULAR_NODE_COUNT = "Angular Node Count";   //
+    };
+    static std::string getColumnWithRadius(std::string column, double radius, QtRegion mapRegion) {
+        if (radius != -1.0) {
+            if (radius > 100.0) {
+                return column + " R" + dXstring::formatString(radius, "%.f");
+            } else if (mapRegion.width() < 1.0) {
+                return column + " R" + dXstring::formatString(radius, "%.4f");
+            } else {
+                return column + " R" + dXstring::formatString(radius, "%.2f");
+            }
+        }
+        return column;
+    }
 
   public:
     std::string getAnalysisName() const override { return "Angular Analysis"; }

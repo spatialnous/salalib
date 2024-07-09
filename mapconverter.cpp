@@ -16,9 +16,9 @@
 
 // convert line layers to an axial map
 
-std::unique_ptr<ShapeGraph>
-MapConverter::convertDrawingToAxial(Communicator *comm, const std::string &name,
-                                    const std::vector<SpacePixelFile> &drawingFiles) {
+std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToAxial(
+    Communicator *comm, const std::string &name,
+    const std::vector<std::pair<std::reference_wrapper<const ShapeMap>, int>> &drawingMaps) {
     if (comm) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 2);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
@@ -33,27 +33,20 @@ MapConverter::convertDrawingToAxial(Communicator *comm, const std::string &name,
 
     // add all visible layers to the set of polygon lines...
     int count = 0;
-    for (const auto &pixelGroup : drawingFiles) {
-        int j = 0;
-        for (const auto &pixel : pixelGroup.m_spacePixels) {
-            if (pixel.isShown()) {
-                if (region.atZero()) {
-                    region = pixel.getRegion();
-                } else {
-                    region = runion(region, pixel.getRegion());
-                }
-                std::vector<SimpleLine> newLines = pixel.getAllShapesAsLines();
-                for (const auto &line : newLines) {
-                    lines.insert(
-                        std::make_pair(count, std::make_pair(Line(line.start(), line.end()), j)));
-                    count++;
-                }
-                pixel.setShow(false);
-            }
-            if (j > 0) {
-                recordlayer = true;
-            }
-            j++;
+    for (const auto &mapLayer : drawingMaps) {
+        int j = mapLayer.second;
+        if (region.atZero()) {
+            region = mapLayer.first.get().getRegion();
+        } else {
+            region = runion(region, mapLayer.first.get().getRegion());
+        }
+        std::vector<SimpleLine> newLines = mapLayer.first.get().getAllShapesAsLines();
+        for (const auto &line : newLines) {
+            lines.insert(std::make_pair(count, std::make_pair(Line(line.start(), line.end()), j)));
+            count++;
+        }
+        if (j > 0) {
+            recordlayer = true;
         }
     }
     if (count == 0) {
@@ -209,40 +202,30 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
 
 // yet more conversions, this time polygons to shape elements
 
-std::unique_ptr<ShapeGraph>
-MapConverter::convertDrawingToConvex(Communicator *, const std::string &name,
-                                     const std::vector<SpacePixelFile> &drawingFiles) {
+std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToConvex(
+    Communicator *, const std::string &name,
+    const std::vector<std::pair<std::reference_wrapper<const ShapeMap>, int>> &drawingMaps) {
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::CONVEXMAP));
     int conn_col = usermap->getAttributeTable().insertOrResetLockedColumn("Connectivity");
 
     size_t count = 0;
 
-    for (const auto &pixelGroup : drawingFiles) {
-        for (const auto &pixel : pixelGroup.m_spacePixels) {
-            if (pixel.isShown()) {
-                auto refShapes = pixel.getAllShapes();
-                for (const auto &refShape : refShapes) {
-                    const SalaShape &shape = refShape.second;
-                    if (shape.isPolygon()) {
-                        int newShapeRef = usermap->makeShape(shape);
-                        usermap->getConnections().push_back(Connector());
-                        usermap->getAttributeTable()
-                            .getRow(AttributeKey(newShapeRef))
-                            .setValue(conn_col, 0);
-                        count++;
-                    }
-                }
+    for (const auto &pixel : drawingMaps) {
+        auto refShapes = pixel.first.get().getAllShapes();
+        for (const auto &refShape : refShapes) {
+            const SalaShape &shape = refShape.second;
+            if (shape.isPolygon()) {
+                int newShapeRef = usermap->makeShape(shape);
+                usermap->getConnections().push_back(Connector());
+                usermap->getAttributeTable()
+                    .getRow(AttributeKey(newShapeRef))
+                    .setValue(conn_col, 0);
+                count++;
             }
         }
     }
     if (count == 0) {
         throw depthmapX::RuntimeException("No polygons found in drawing");
-    }
-
-    for (const auto &pixelGroup : drawingFiles) {
-        for (const auto &pixel : pixelGroup.m_spacePixels) {
-            pixel.setShow(false);
-        }
     }
 
     return usermap;
@@ -295,9 +278,9 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToConvex(Communicator *,
 
 // create segment map directly from line layers
 
-std::unique_ptr<ShapeGraph>
-MapConverter::convertDrawingToSegment(Communicator *comm, const std::string &name,
-                                      const std::vector<SpacePixelFile> &drawingFiles) {
+std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToSegment(
+    Communicator *comm, const std::string &name,
+    const std::vector<std::pair<std::reference_wrapper<const ShapeMap>, int>> &drawingMaps) {
     if (comm) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 2);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
@@ -313,27 +296,20 @@ MapConverter::convertDrawingToSegment(Communicator *comm, const std::string &nam
 
     // add all visible layers to the set of polygon lines...
     int count = 0;
-    for (const auto &pixelGroup : drawingFiles) {
-        int j = 0;
-        for (const auto &pixel : pixelGroup.m_spacePixels) {
-            if (pixel.isShown()) {
-                if (region.atZero()) {
-                    region = pixel.getRegion();
-                } else {
-                    region = runion(region, pixel.getRegion());
-                }
-                std::vector<SimpleLine> newLines = pixel.getAllShapesAsLines();
-                for (const auto &line : newLines) {
-                    lines.insert(
-                        std::make_pair(count, std::make_pair(Line(line.start(), line.end()), j)));
-                    count++;
-                }
-                pixel.setShow(false);
-            }
-            if (j > 0) {
-                recordlayer = true;
-            }
-            j++;
+    for (const auto &mapLayer : drawingMaps) {
+        int j = mapLayer.second;
+        if (region.atZero()) {
+            region = mapLayer.first.get().getRegion();
+        } else {
+            region = runion(region, mapLayer.first.get().getRegion());
+        }
+        std::vector<SimpleLine> newLines = mapLayer.first.get().getAllShapesAsLines();
+        for (const auto &line : newLines) {
+            lines.insert(std::make_pair(count, std::make_pair(Line(line.start(), line.end()), j)));
+            count++;
+        }
+        if (j > 0) {
+            recordlayer = true;
         }
     }
     if (count == 0) {

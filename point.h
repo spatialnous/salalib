@@ -15,9 +15,6 @@
 class Point {
     friend class Bin;
     friend class PointMap;
-    friend class MetaGraph; // <- for file conversion routines
-    friend class PafAgent;
-    friend class PafWalker;
 
   public:
     enum {
@@ -25,7 +22,7 @@ class Point {
         FILLED = 0x0002,
         BLOCKED = 0x0004,
         CONTEXTFILLED = 0x0008, // PARTBLOCKED = 0x0008 deprecated
-        SELECTED = 0x0010,
+                                //        SELECTED = 0x0010,
         EDGE = 0x0020,
         MERGED = 0x0040, // PINNED = 0x0020 deprecated
         AGENTFILLED = 0x0080,
@@ -125,7 +122,7 @@ class Point {
     bool blocked() const { return (m_state & BLOCKED) == BLOCKED; }
     bool contextfilled() const { return (m_state & CONTEXTFILLED) == CONTEXTFILLED; }
     bool edge() const { return (m_state & EDGE) == EDGE; }
-    bool selected() const { return (m_state & SELECTED) == SELECTED; }
+    //    bool selected() const { return (m_state & SELECTED) == SELECTED; }
     //
     // Augmented Vis
     bool augmented() const { return (m_state & AUGMENTED) == AUGMENTED; }
@@ -173,7 +170,7 @@ class Point {
 
   public:
     std::istream &read(std::istream &stream);
-    std::ostream &write(std::ostream &stream);
+    std::ostream &write(std::ostream &stream) const;
     //
   protected:
     // for user processing, set their own data on the point:

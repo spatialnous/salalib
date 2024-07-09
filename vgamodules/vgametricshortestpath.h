@@ -8,7 +8,7 @@
 
 #include "salalib/ianalysis.h"
 #include "salalib/pixelref.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 class VGAMetricShortestPath : public IAnalysis {
   private:
@@ -29,6 +29,16 @@ class VGAMetricShortestPath : public IAnalysis {
     void extractMetric(Node n, depthmapX::ColumnMatrix<MetricPoint> &metricPoints,
                        std::set<MetricTriple> &pixels, PointMap *pointdata,
                        const MetricTriple &curs);
+
+  public:
+    struct Column {
+        inline static const std::string                                      //
+            LINK_METRIC_COST = "Link Metric Cost",                           //
+            METRIC_SHORTEST_PATH = "Metric Shortest Path",                   //
+            METRIC_SHORTEST_PATH_DISTANCE = "Metric Shortest Path Distance", //
+            METRIC_SHORTEST_PATH_LINKED = "Metric Shortest Path Linked",     //
+            METRIC_SHORTEST_PATH_ORDER = "Metric Shortest Path Order";       //
+    };
 
   public:
     std::string getAnalysisName() const override { return "Metric Shortest Path"; }

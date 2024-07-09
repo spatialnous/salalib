@@ -114,13 +114,6 @@ AttributeRow &AttributeRowImpl::setValue(size_t index, float value) {
     return *this;
 }
 
-AttributeRow &AttributeRowImpl::setSelection(bool selected) {
-    m_selected = selected;
-    return *this;
-}
-
-bool AttributeRowImpl::isSelected() const { return m_selected; }
-
 void AttributeRowImpl::addColumn() { m_data.push_back(-1); }
 
 void AttributeRowImpl::removeColumn(size_t index) {
@@ -284,12 +277,6 @@ void AttributeTable::renameColumn(const std::string &oldName, const std::string 
     m_columnMapping[newName] = colIndex;
 }
 
-void AttributeTable::deselectAllRows() {
-    for (auto &row : m_rows) {
-        row.second->setSelection(false);
-    }
-}
-
 void AttributeTable::setDisplayParamsForAllAttributes(const DisplayParams &params) {
     for (auto &col : m_columns) {
         col.setDisplayParams(params);
@@ -358,6 +345,16 @@ void AttributeTable::clear() {
 }
 
 size_t AttributeTable::getColumnIndex(const std::string &name) const {
+    auto iter = m_columnMapping.find(name);
+    if (iter == m_columnMapping.end()) {
+        std::stringstream message;
+        message << "Unknown column name " << name;
+        throw std::out_of_range(message.str());
+    }
+    return iter->second;
+}
+
+std::optional<size_t> AttributeTable::getColumnIndexOptional(const std::string &name) const {
     auto iter = m_columnMapping.find(name);
     if (iter == m_columnMapping.end()) {
         std::stringstream message;

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "pointdata.h"
+#include "pointmap.h"
 
 #include "genlib/exceptions.h"
 #include "genlib/p2dpoly.h"

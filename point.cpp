@@ -32,7 +32,7 @@ std::istream &Point::read(std::istream &stream) {
     return stream;
 }
 
-std::ostream &Point::write(std::ostream &stream) {
+std::ostream &Point::write(std::ostream &stream) const {
     stream.write((char *)&m_state, sizeof(m_state));
     // block is the same size as m_noderef used to be for ease of replacement:
     // note block is no longer used at all

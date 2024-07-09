@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "salalib/pixelref.h"
+#include "pixelref.h"
 
 #include <iostream>
 #include <set>

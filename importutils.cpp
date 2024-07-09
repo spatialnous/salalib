@@ -5,6 +5,8 @@
 #include "importutils.h"
 
 #include "genlib/stringutils.h"
+#include "salalib/parsers/ntfp.h"
+#include "salalib/parsers/tigerp.h"
 
 #include <sstream>
 
@@ -12,76 +14,73 @@ namespace depthmapX {
 
     const int DXFCIRCLERES = 36;
 
-    bool importFile(MetaGraph &mgraph, std::istream &stream, Communicator *communicator,
-                    std::string name, ImportType mapType, ImportFileType fileType) {
+    class ImportError : public BaseException {
+      public:
+        ImportError(std::string message) : BaseException(message) {}
+    };
 
-        // This function is still too fiddly but at least it shows the common
-        // interface for drawing and data maps and how different file types may be
-        // parsed to be imported into them
-
-        int state = MetaGraph::NONE;
-        int viewClass = MetaGraph::NONE;
-
-        switch (mapType) {
-        case DRAWINGMAP: {
-            state = MetaGraph::LINEDATA;
-            viewClass = MetaGraph::SHOWSHAPETOP;
-            break;
-        }
-        case DATAMAP: {
-            state = MetaGraph::DATAMAPS;
-            viewClass = MetaGraph::SHOWSHAPETOP;
-            break;
-        }
-        }
-
-        int oldstate = mgraph.getState();
-        mgraph.setState(oldstate & ~state);
-
-        // Currently the drawing shapemaps are understood as two-level trees (file ->
-        // layers) while the data shapemaps are flat. Therefore, for the moment, when
-        // we load dxfs as drawing shapemaps then we let the filename be the parent
-        // and the layers the children. For text files (csv, tsv) we create an
-        // artificial parent with the relevant name Drawing shapemaps also carry
-        // region data that needs to be initialised and their parents updated when
-        // they are created. Ideally datamaps and drawingmaps should be more similar.
-
-        if (mapType == DRAWINGMAP) {
-            mgraph.m_drawingFiles.emplace_back(name);
-        }
+    std::vector<ShapeMap> importFile(std::istream &stream, Communicator *communicator,
+                                     std::string name, ImportType mapType,
+                                     ImportFileType fileType) {
 
         bool parsed = false;
+        std::vector<ShapeMap> maps;
 
         switch (fileType) {
         case CSV: {
-            ShapeMap &shapeMap = mgraph.createNewShapeMap(mapType, name);
-            auto newMapIdx = mgraph.getMapRef(mgraph.getDataMaps(), shapeMap.getName());
+            auto &shapeMap = maps.emplace_back(name, mapType == depthmapX::ImportType::DATAMAP
+                                                         ? ShapeMap::DATAMAP
+                                                         : ShapeMap::DRAWINGMAP);
             parsed = importTxt(shapeMap, stream, ',');
 
-            if (!parsed) {
-                mgraph.deleteShapeMap(mapType, shapeMap);
-                break;
-            }
-            if (mapType == DRAWINGMAP) {
-                mgraph.updateParentRegions(shapeMap);
-            } else if (mapType == DATAMAP) {
-                mgraph.setDisplayedDataMapRef(newMapIdx.value());
-            }
             break;
         }
         case TSV: {
-            ShapeMap &shapeMap = mgraph.createNewShapeMap(mapType, name);
-            auto newMapIdx = mgraph.getMapRef(mgraph.getDataMaps(), shapeMap.getName());
+            auto &shapeMap = maps.emplace_back(name, mapType == depthmapX::ImportType::DATAMAP
+                                                         ? ShapeMap::DATAMAP
+                                                         : ShapeMap::DRAWINGMAP);
+
             parsed = importTxt(shapeMap, stream, '\t');
 
-            if (!parsed) {
-                mgraph.deleteShapeMap(mapType, shapeMap);
-                break;
+            break;
+        }
+        case CAT: {
+            // separate the stream and the communicator, allowing non-file streams read
+            return loadCat(communicator->getInFileStream(), communicator, mapType);
+        }
+        case RT1: {
+            // separate the stream and the communicator, allowing non-file streams read
+            return loadRT1(communicator->GetFileSet(), communicator, mapType);
+        }
+        case NTF: {
+
+            NtfMap map;
+
+            try {
+                map.open(communicator->GetFileSet(), communicator);
+            } catch (std::invalid_argument &) {
+                throw new ImportError("Invalid argument when parsing file");
+            } catch (std::out_of_range &) {
+                throw new ImportError("Out of range error when parsing file");
             }
-            if (mapType == DRAWINGMAP) {
-                mgraph.updateParentRegions(shapeMap);
-            } else if (mapType == DATAMAP) {
-                mgraph.setDisplayedDataMapRef(newMapIdx.value());
+
+            if (communicator->IsCancelled()) {
+                return maps;
+            }
+
+            for (auto layer : map.layers) {
+
+                auto &shapeMap =
+                    maps.emplace_back(layer.getName(), mapType == depthmapX::ImportType::DATAMAP
+                                                           ? ShapeMap::DATAMAP
+                                                           : ShapeMap::DRAWINGMAP);
+                shapeMap.init(layer.getLineCount(), map.getRegion());
+
+                for (const auto &geometry : layer.geometries) {
+                    for (const auto &line : geometry.lines) {
+                        shapeMap.makeLineShape(line);
+                    }
+                }
             }
             break;
         }
@@ -94,14 +93,12 @@ namespace depthmapX {
 
                 try {
                     stream >> dp;
-                } catch (Communicator::CancelledException) {
-                    return 0;
                 } catch (std::logic_error &) {
-                    return -1;
+                    throw new ImportError("Logic error when parsing file");
                 }
 
                 if (communicator->IsCancelled()) {
-                    return 0;
+                    return maps;
                 }
             } else {
                 dp.open(stream);
@@ -109,35 +106,187 @@ namespace depthmapX {
 
             for (auto &layer : dp.getLayers()) {
 
+                auto &shapeMap = maps.emplace_back(name, mapType == depthmapX::ImportType::DATAMAP
+                                                             ? ShapeMap::DATAMAP
+                                                             : ShapeMap::DRAWINGMAP);
+
                 const DxfLayer &dxfLayer = layer.second;
 
                 if (dxfLayer.empty()) {
                     continue;
                 }
 
-                ShapeMap &shapeMap = mgraph.createNewShapeMap(mapType, layer.first);
                 parsed = importDxfLayer(dxfLayer, shapeMap);
-
-                if (!parsed) {
-                    mgraph.deleteShapeMap(mapType, shapeMap);
-                    break;
-                }
-                if (mapType == DRAWINGMAP) {
-                    mgraph.updateParentRegions(shapeMap);
-                }
             }
             break;
         }
         }
 
         if (parsed) {
-            mgraph.setState(mgraph.getState() | state);
-            mgraph.setViewClass(viewClass);
-            return true;
+            return maps;
         } else {
-            mgraph.setState(oldstate);
-            return false;
+            return std::vector<ShapeMap>();
         }
+    }
+
+    std::vector<ShapeMap> loadCat(std::istream &stream, Communicator *communicator,
+                                  ImportType mapType) {
+        if (communicator) {
+            long size = communicator->GetInfileSize();
+            communicator->CommPostMessage(Communicator::NUM_RECORDS, static_cast<size_t>(size));
+        }
+
+        time_t atime = 0;
+
+        qtimer(atime, 0);
+
+        size_t size = 0;
+        size_t numlines = 0;
+        int parsing = 0;
+        bool first = true;
+
+        Point2f current_point, min_point, max_point;
+
+        while (!stream.eof()) {
+
+            std::string inputline;
+            stream >> inputline;
+            if (inputline.length() > 1 && inputline[0] != '#') {
+                if (!parsing) {
+                    if (dXstring::toLower(inputline) == "begin polygon") {
+                        parsing = 1;
+                    } else if (dXstring::toLower(inputline) == "begin polyline") {
+                        parsing = 2;
+                    }
+                } else if (dXstring::toLower(inputline).substr(0, 3) == "end") {
+                    parsing = 0;
+                } else {
+                    auto tokens = dXstring::split(inputline, ' ', true);
+                    current_point.x = stod(tokens[0]);
+                    current_point.y = stod(tokens[1]);
+                    numlines++;
+                    if (first) {
+                        min_point = current_point;
+                        max_point = current_point;
+                        first = false;
+                    } else {
+                        if (current_point.x < min_point.x) {
+                            min_point.x = current_point.x;
+                        }
+                        if (current_point.y < min_point.y) {
+                            min_point.y = current_point.y;
+                        }
+                        if (current_point.x > max_point.x) {
+                            max_point.x = current_point.x;
+                        }
+                        if (current_point.y > max_point.y) {
+                            max_point.y = current_point.y;
+                        }
+                    }
+                }
+            }
+        }
+
+        std::vector<ShapeMap> maps;
+
+        auto &shapeMap = maps.emplace_back("CATDATA", mapType == depthmapX::ImportType::DATAMAP
+                                                          ? ShapeMap::DATAMAP
+                                                          : ShapeMap::DRAWINGMAP);
+
+        shapeMap.init(numlines, QtRegion(min_point, max_point));
+
+        // in MSVC 6, ios::eof remains set and it needs to be cleared.
+        // in MSVC 8 it's even worse: it won't even seekg until eof flag has been
+        // cleared
+        stream.clear();
+        stream.seekg(0, std::ios::beg);
+
+        parsing = 0;
+        std::vector<Point2f> points;
+
+        while (!stream.eof()) {
+
+            std::string inputline;
+            stream >> inputline;
+
+            if (inputline.length() > 1 && inputline[0] != '#') {
+                if (!parsing) {
+                    if (dXstring::toLower(inputline) == "begin polygon") {
+                        parsing = 1;
+                    } else if (dXstring::toLower(inputline) == "begin polyline") {
+                        parsing = 2;
+                    }
+                } else if (dXstring::toLower(inputline).substr(0, 3) == "end") {
+                    if (points.size() > 2) {
+                        if (parsing == 1) { // polygon
+                            shapeMap.makePolyShape(points, false);
+                        } else { // polyline
+                            shapeMap.makePolyShape(points, true);
+                        }
+                    } else if (points.size() == 2) {
+                        shapeMap.makeLineShape(Line(points[0], points[1]));
+                    }
+                    points.clear();
+                    parsing = 0;
+                } else {
+                    auto tokens = dXstring::split(inputline, ' ', true);
+                    current_point.x = stod(tokens[0]);
+                    current_point.y = stod(tokens[1]);
+                    points.push_back(current_point);
+                }
+            }
+
+            size += inputline.length() + 1;
+
+            if (communicator) {
+                if (qtimer(atime, 500)) {
+                    if (communicator->IsCancelled()) {
+                        throw Communicator::CancelledException();
+                    }
+                    communicator->CommPostMessage(Communicator::CURRENT_RECORD, size);
+                }
+            }
+        }
+
+        return maps;
+    }
+
+    std::vector<ShapeMap> loadRT1(const std::vector<std::string> &fileset,
+                                  Communicator *communicator, ImportType mapType) {
+        TigerMap map;
+
+        try {
+            map.parse(fileset, communicator);
+        } catch (std::invalid_argument &) {
+            throw new ImportError("Invalid argument when parsing file");
+        } catch (std::out_of_range &) {
+            throw new ImportError("Out of range error when parsing file");
+        }
+
+        std::vector<ShapeMap> maps;
+
+        if (communicator->IsCancelled()) {
+            return maps;
+        }
+
+        // for each category
+        for (const auto &val : map.m_categories) {
+
+            auto &shapeMap = maps.emplace_back(val.first, mapType == depthmapX::ImportType::DATAMAP
+                                                              ? ShapeMap::DATAMAP
+                                                              : ShapeMap::DRAWINGMAP);
+            shapeMap.init(val.second.chains.size(), map.getRegion());
+
+            // for each chains in category:
+            for (size_t j = 0; j < val.second.chains.size(); j++) {
+                // for each node pair in each category
+                for (size_t k = 0; k < val.second.chains[j].lines.size(); k++) {
+                    shapeMap.makeLineShape(val.second.chains[j].lines[k]);
+                }
+            }
+        }
+
+        return maps;
     }
 
     bool importTxt(ShapeMap &shapeMap, std::istream &stream, char delimiter = '\t') {
@@ -222,6 +371,7 @@ namespace depthmapX {
 
             shapeMap.init(lines.size(), region);
             shapeMap.importLinesWithRefs(lines, table);
+
         } else if (x1col != -1 && y1col != -1 && x2col != -1 && y2col != -1) {
             std::vector<Line> lines = extractLines(table[columns[x1col]], table[columns[y1col]],
                                                    table[columns[x2col]], table[columns[y2col]]);
@@ -418,6 +568,7 @@ namespace depthmapX {
         shapeMap.importPoints(points, Table());
         shapeMap.importLines(lines, Table());
         shapeMap.importPolylines(polylines, Table());
+
         return true;
     }
 

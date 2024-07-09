@@ -12,16 +12,16 @@ AnalysisResult ExtractLinkData::run(Communicator *) {
 
     auto &attributes = m_map.getAttributeTable();
 
-    std::string angular_cost_col_name = "Link Angular Cost";
+    std::string angular_cost_col_name = Column::LINK_ANGULAR_COST;
     int angular_cost_col = attributes.insertOrResetColumn(angular_cost_col_name);
     result.addAttribute(angular_cost_col_name);
-    std::string metric_cost_col_name = "Link Metric Cost";
+    std::string metric_cost_col_name = Column::LINK_METRIC_COST;
     int metric_cost_col = attributes.insertOrResetColumn(metric_cost_col_name);
     result.addAttribute(metric_cost_col_name);
-    std::string link_to_col_name = "Link To";
+    std::string link_to_col_name = Column::LINK_TO;
     int link_to_col = attributes.insertOrResetColumn(link_to_col_name);
     result.addAttribute(link_to_col_name);
-    std::string visual_cost_col_name = "Link Visual Cost";
+    std::string visual_cost_col_name = Column::LINK_VISUAL_COST;
     int visual_cost_col = attributes.insertOrResetColumn(visual_cost_col_name);
     result.addAttribute(visual_cost_col_name);
 

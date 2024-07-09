@@ -76,10 +76,13 @@ class ShapeGraph : public ShapeMap {
     void initialiseAttributesSegment();
     void makeSegmentConnections(std::vector<Connector> &connectionset);
     void pushAxialValues(ShapeGraph &axialmap);
-    //
-    virtual bool read(std::istream &stream);
-    bool readold(std::istream &stream);
-    virtual bool write(std::ofstream &stream);
+
+    bool readShapeGraphData(std::istream &stream);
+    virtual std::tuple<bool, bool, bool, int> read(std::istream &stream);
+    bool writeShapeGraphData(std::ostream &stream) const;
+    virtual bool write(std::ostream &stream,
+                       std::tuple<bool, bool, int> displayData = std::make_tuple(true, false,
+                                                                                 -1)) const;
     void writeAxialConnectionsAsDotGraph(std::ostream &stream);
     void writeAxialConnectionsAsPairsCSV(std::ostream &stream);
     void writeSegmentConnectionsAsPairsCSV(std::ostream &stream);

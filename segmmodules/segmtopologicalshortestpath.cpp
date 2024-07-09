@@ -11,18 +11,14 @@
 AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
 
     AnalysisResult result;
-    auto &selected = m_map.getSelSet();
-    if (selected.size() != 2) {
-        return result;
-    }
 
     AttributeTable &attributes = m_map.getAttributeTable();
     size_t shapeCount = m_map.getShapeCount();
 
-    std::string colText = "Topological Shortest Path Depth";
+    std::string colText = Column::TOPOLOGICAL_SHORTEST_PATH_DEPTH;
     size_t depth_col = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
-    colText = "Topological Shortest Path Order";
+    colText = Column::TOPOLOGICAL_SHORTEST_PATH_ORDER;
     size_t path_col = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
 
@@ -47,15 +43,12 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
     std::vector<int> list[512]; // 512 bins!
     int open = 0;
 
-    int refFrom = *selected.begin();
-    int refTo = *selected.rbegin();
-
-    seen[refFrom] = 0;
+    seen[m_refFrom] = 0;
     open++;
-    double length = seglengths[refFrom];
-    audittrail[refFrom] = TopoMetSegmentRef(refFrom, Connector::SEG_CONN_ALL, length * 0.5, -1);
-    list[0].push_back(refFrom);
-    m_map.getAttributeRowFromShapeIndex(refFrom).setValue(depth_col, 0);
+    double length = seglengths[m_refFrom];
+    audittrail[m_refFrom] = TopoMetSegmentRef(m_refFrom, Connector::SEG_CONN_ALL, length * 0.5, -1);
+    list[0].push_back(m_refFrom);
+    m_map.getAttributeRowFromShapeIndex(m_refFrom).setValue(depth_col, 0);
 
     unsigned int segdepth = 0;
     int bin = 0;
@@ -123,7 +116,7 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
                     parents[connected_cursor] = here.ref;
                 }
             }
-            if (connected_cursor == refTo) {
+            if (connected_cursor == m_refTo) {
                 refFound = true;
                 break;
             }
@@ -133,7 +126,7 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
             break;
     }
 
-    auto refToParent = parents.find(refTo);
+    auto refToParent = parents.find(m_refTo);
     int counter = 0;
     while (refToParent != parents.end()) {
         AttributeRow &row = m_map.getAttributeRowFromShapeIndex(refToParent->first);
@@ -141,7 +134,7 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
         counter++;
         refToParent = parents.find(refToParent->second);
     }
-    m_map.getAttributeRowFromShapeIndex(refFrom).setValue(path_col, counter);
+    m_map.getAttributeRowFromShapeIndex(m_refFrom).setValue(path_col, counter);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         AttributeRow &row = iter->getRow();
@@ -151,9 +144,6 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
             row.setValue(path_col, counter - row.getValue(path_col));
         }
     }
-
-    m_map.overrideDisplayedAttribute(-2); // <- override if it's already showing
-    m_map.setDisplayedAttribute(static_cast<int>(depth_col));
 
     result.completed = true;
 

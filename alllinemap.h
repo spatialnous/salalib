@@ -8,11 +8,11 @@
 
 #include "axialpolygons.h"
 #include "shapegraph.h"
-#include "spacepixfile.h"
 
 class AllLineMap : public ShapeGraph {
   public:
-    void generate(Communicator *comm, std::vector<SpacePixelFile> &drawingLayers,
+    void generate(Communicator *comm,
+                  const std::vector<std::reference_wrapper<const ShapeMap> > &drawingLayers,
                   const Point2f &seed);
     void generate(Communicator *comm, std::vector<Line> &lines, QtRegion &region,
                   const Point2f &seed);

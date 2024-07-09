@@ -4,45 +4,21 @@
 
 #pragma once
 
+#include "attributemap.h"
 #include "attributetable.h"
+#include "attributetableview.h"
+#include "layermanagerimpl.h"
 #include "point.h"
-#include "spacepixfile.h"
+#include "shapemap.h"
+#include "sparksieve2.h"
 
 #include "genlib/comm.h"
 #include "genlib/exceptions.h"
+#include "genlib/simplematrix.h"
 
 #include <deque>
 #include <set>
 #include <vector>
-
-class MetaGraph;
-class PointMap;
-class PafAgent;
-class ShapeMap;
-
-class OldPoint1 {
-    friend class PointMap;
-
-  protected:
-    int m_noderef;
-    int m_state;
-};
-
-class OldPoint2 {
-    friend class PointMap;
-
-  protected:
-    int m_noderef;
-    int m_state;
-    int m_misc;
-};
-
-class Bin;
-class Isovist;
-
-struct PixelVec;
-
-class sparkSieve2;
 
 namespace depthmapX {
     enum PointMapExceptionType { NO_ISOVIST_ANALYSIS };
@@ -59,22 +35,14 @@ namespace depthmapX {
     };
 } // namespace depthmapX
 
-class PointMap : public PixelBase {
-    friend class PointMaps;
-    friend class MapInfoData; // <- for mapinfo export
-    // MetaGraph is a friend for two functions:
-    // convertAttributes: this really should not be at the metagraph level!  Fix!
-    // pushValuesToLayer: this swaps values from a PointMap to a DataLayer, and it needs to be
-    // changed in the future (e.g., when making DataLayers into ShapeMaps)
-    friend class MetaGraph;
+class PointMap : public AttributeMap {
 
-  public:
+  public: // members
     bool m_hasIsovistAnalysis = false;
 
-  protected:
+  protected: // members
     std::string m_name;
     const QtRegion *m_parentRegion;
-    const std::vector<SpacePixelFile> *m_drawingFiles;
     depthmapX::ColumnMatrix<Point> m_points; // will contain the graph reference when created
     int m_filled_point_count;
     double m_spacing;
@@ -87,26 +55,22 @@ class PointMap : public PixelBase {
     int m_undocounter;
     std::vector<PixelRefPair> m_merge_lines;
 
-  private:
-    std::unique_ptr<AttributeTable> m_attributes;
-    std::unique_ptr<AttributeTableHandle> m_attribHandle;
-    LayerManagerImpl m_layers;
-
-  public:
+  public: // ctors
     PointMap(const QtRegion &parentRegion, const std::string &name = std::string("VGA Map"));
     virtual ~PointMap() {}
     void copy(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
     const std::string &getName() const { return m_name; }
 
+    void resetBlockedLines() { m_blockedlines = false; }
+
     PointMap(PointMap &&other)
-        : m_parentRegion(std::move(other.m_parentRegion)), m_points(std::move(other.m_points)),
-          m_attributes(std::move(other.m_attributes)),
-          m_attribHandle(std::move(other.m_attribHandle)), m_layers(std::move(other.m_layers)) {
+        : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
+                       std::move(other.m_layers)),
+          m_parentRegion(std::move(other.m_parentRegion)), m_points(std::move(other.m_points)) {
         copy(other);
     }
     PointMap &operator=(PointMap &&other) {
         m_parentRegion = std::move(other.m_parentRegion);
-        m_drawingFiles = std::move(other.m_drawingFiles);
         m_points = std::move(other.m_points);
         m_attributes = std::move(other.m_attributes);
         m_attribHandle = std::move(other.m_attribHandle);
@@ -117,6 +81,7 @@ class PointMap : public PixelBase {
     PointMap(const PointMap &) = delete;
     PointMap &operator=(const PointMap &) = delete;
 
+  public: // methods
     void communicate(time_t &atime, Communicator *comm, size_t record);
     // constrain is constrain to existing rows / cols
     PixelRef pixelate(const Point2f &p, bool constrain = true, int scalefactor = 1) const;
@@ -132,7 +97,8 @@ class PointMap : public PixelBase {
         }
         return mergedPixelPairs;
     }
-    //
+    const std::vector<PixelRefPair> &getMergeLines() const { return m_merge_lines; }
+
     bool isProcessed() const { return m_processed; }
     void fillLine(const Line &li);
     bool blockLines(std::vector<Line> &lines);
@@ -143,7 +109,9 @@ class PointMap : public PixelBase {
     //
     bool makePoints(const Point2f &seed, int fill_type,
                     Communicator *comm = nullptr); // Point2f non-reference deliberate
-    bool clearPoints();                            // Clear *selected* points
+    bool clearAllPoints();                         // Clear *selected* points
+    bool clearPointsInRange(PixelRef bl, PixelRef tr,
+                            std::set<int> &selSet); // Clear *selected* points
     bool undoPoints();
     bool canUndo() const { return !m_processed && m_undocounter != 0; }
     void outputPoints(std::ostream &stream, char delim);
@@ -156,9 +124,9 @@ class PointMap : public PixelBase {
                 PixelRef curs);
     // bool makeGraph( Graph& graph, int optimization_level = 0, Communicator *comm = NULL);
     //
-    bool binDisplay(Communicator *);
-    bool mergePoints(const Point2f &p);
-    bool unmergePoints();
+    bool binDisplay(Communicator *, std::set<int> &selSet);
+    bool mergePoints(const Point2f &p, QtRegion &firstPointsBounds, std::set<int> &firstPoints);
+    bool unmergePoints(std::set<int> &firstPoints);
     bool unmergePixel(PixelRef a);
     bool mergePixels(PixelRef a, PixelRef b);
     void mergeFromShapeMap(const ShapeMap &shapemap);
@@ -182,9 +150,9 @@ class PointMap : public PixelBase {
     }
     // to be phased out
     bool blockedAdjacent(const PixelRef p) const;
-    //
+
     int getFilledPointCount() const { return m_filled_point_count; }
-    //
+
     void requireIsovistAnalysis() {
         if (!m_hasIsovistAnalysis) {
             throw depthmapX::PointMapException(
@@ -193,157 +161,35 @@ class PointMap : public PixelBase {
         }
     }
 
+    bool readMetadata(std::istream &stream);
+    bool readPointsAndAttributes(std::istream &stream);
+    std::tuple<bool, int> read(std::istream &stream);
+
+    bool writeMetadata(std::ostream &stream) const;
+    bool writePointsAndAttributes(std::ostream &stream) const;
+    bool write(std::ostream &stream, int displayedAttribute = -1) const;
+
   protected:
     int expand(const PixelRef p1, const PixelRef p2, PixelRefVector &list, int filltype);
     //
     // void walk( PixelRef& start, int steps, Graph& graph,
     //           int parity, int dominant_axis, const int grad_pair[] );
 
-    // Selection functionality
-  protected:
-    enum {
-        NO_SELECTION = 0,
-        SINGLE_SELECTION = 1,
-        COMPOUND_SELECTION = 2,
-        LAYER_SELECTION = 4,
-        OVERRIDE_SELECTION = 8
-    };
-    int m_selection;
-    bool m_pinned_selection;
-    std::set<int> m_selection_set; // n.b., m_selection_set stored as int for compatibility with
-                                   // other map layers
-    mutable PixelRef s_bl;
-    mutable PixelRef s_tr;
-
   public:
-    bool isSelected() const // does a selection exist
-    {
-        return m_selection != NO_SELECTION;
-    }
-    bool clearSel();                               // clear the current selection
-    bool setCurSel(QtRegion &r, bool add = false); // set current selection
-    bool setCurSel(const std::vector<int> &selset, bool add = false);
-    // Note: passed by ref, use with care in multi-threaded app
-    std::set<int> &getSelSet() { return m_selection_set; }
-    const std::set<int> &getSelSet() const { return m_selection_set; }
-    //
     PixelRefVector getLayerPixels(int layer);
 
-    // Attribute functionality
-  protected:
-    // which attribute is currently displayed:
-    mutable int m_displayed_attribute;
-
-  public:
-    size_t addAttribute(const std::string &name) { return m_attributes->insertOrResetColumn(name); }
-    void removeAttribute(size_t col) { m_attributes->removeColumn(col); }
-    // I don't want to do this, but every so often you will need to update this table
-    // use const version by preference
-    AttributeTable &getAttributeTable() { return *m_attributes.get(); }
-    const AttributeTable &getAttributeTable() const { return *m_attributes.get(); }
-    LayerManagerImpl &getLayers() { return m_layers; }
-    const LayerManagerImpl &getLayers() const { return m_layers; }
-    AttributeTableHandle &getAttributeTableHandle() { return *m_attribHandle.get(); }
-    const AttributeTableHandle &getAttributeTableHandle() const { return *m_attribHandle.get(); }
-
-  public:
-    double getDisplayMinValue() const {
-        return (m_displayed_attribute != -1)
-                   ? m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
-                         .getStats()
-                         .min
-                   : 0;
-    }
-
-    double getDisplayMaxValue() const {
-        return (m_displayed_attribute != -1)
-                   ? m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
-                         .getStats()
-                         .max
-                   : pixelate(m_region.top_right).x;
-    }
-
-    const DisplayParams &getDisplayParams() const {
-        return m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
-            .getDisplayParams();
-    }
-    // make a local copy of the display params for access speed:
-    void setDisplayParams(const DisplayParams &dp, bool apply_to_all = false) {
-        if (apply_to_all)
-            m_attributes->setDisplayParams(dp);
-        else
-            m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
-                .setDisplayParams(dp);
-    }
-    //
-  public:
-    void setDisplayedAttribute(int col);
-    // use set displayed attribute instead unless you are deliberately changing the column order:
-    void overrideDisplayedAttribute(int attribute) { m_displayed_attribute = attribute; }
-    // now, there is a slightly odd thing here: the displayed attribute can go out of step with the
-    // underlying attribute data if there is a delete of an attribute in idepthmap.h, so it just
-    // needs checking before returning!
-    int getDisplayedAttribute() const {
-        if (m_displayed_attribute == m_attribHandle->getDisplayColIndex())
-            return m_displayed_attribute;
-        if (m_attribHandle->getDisplayColIndex() != -2) {
-            m_displayed_attribute = m_attribHandle->getDisplayColIndex();
-        }
-        return m_displayed_attribute;
-    }
-
-    float getDisplayedSelectedAvg() {
-        return (m_attributes->getSelAvg(static_cast<size_t>(m_displayed_attribute)));
-    }
-
-    double getLocationValue(const Point2f &point);
+    double getLocationValue(const Point2f &point, std::optional<size_t> columnIdx);
     //
     // Screen functionality
   public:
     enum { VIEW_ATTRIBUTES, VIEW_MERGED, VIEW_LAYERS, VIEW_AGENTS };
 
-  protected:
-    int m_viewing_deprecated;
-    int m_draw_step;
-    mutable bool m_finished;
-    mutable PixelRef bl;
-    mutable PixelRef cur; // cursor for points
-    mutable PixelRef rc;  // cursor for grid lines
-    mutable PixelRef prc; // cursor for point lines
-    mutable PixelRef tr;
-    mutable int curmergeline;
-    mutable QtRegion m_sel_bounds;
-
-  public:
-    void setScreenPixel(double m_unit);
-    void makeViewportPoints(const QtRegion &viewport) const;
-    bool findNextPoint() const;
-    Point2f getNextPointLocation() const { return getPoint(cur).m_location; }
-    bool findNextRow() const;
-    Line getNextRow() const;
-    bool findNextPointRow() const;
-    Line getNextPointRow() const;
-    bool findNextCol() const;
-    Line getNextCol() const;
-    bool findNextPointCol() const;
-    Line getNextPointCol() const;
-    bool findNextMergeLine() const;
-    Line getNextMergeLine() const;
-    bool getPointSelected() const;
-    PafColor getPointColor(PixelRef pixelRef) const;
-    PafColor getCurrentPointColor() const;
-    int getSelCount() { return (int)m_selection_set.size(); }
-    const QtRegion &getSelBounds() const { return m_sel_bounds; }
     //
     double getSpacing() const { return m_spacing; }
-    //
-  public:
+
     // this is an odd helper function, value in range 0 to 1
     PixelRef pickPixel(double value) const;
 
-  public:
-    bool read(std::istream &stream);
-    bool write(std::ostream &stream);
     void addGridConnections(); // adds grid connections where graph does not include them
     void outputConnectionsAsCSV(std::ostream &myout, std::string delim = ",");
     void outputLinksAsCSV(std::ostream &myout, std::string delim = ",");

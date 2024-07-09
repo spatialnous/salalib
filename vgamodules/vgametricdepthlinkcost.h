@@ -8,7 +8,7 @@
 
 #include "salalib/ianalysis.h"
 #include "salalib/pixelref.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 class VGAMetricDepthLinkCost : public IAnalysis {
   private:
@@ -27,6 +27,13 @@ class VGAMetricDepthLinkCost : public IAnalysis {
     void extractMetric(Node n, depthmapX::ColumnMatrix<MetricPoint> &metricPoints,
                        std::set<MetricTriple> &pixels, PointMap *pointdata,
                        const MetricTriple &curs);
+
+  public:
+    struct Column {
+        inline static const std::string              //
+            LINK_METRIC_COST = "Link Metric Cost",   //
+            METRIC_STEP_DEPTH = "Metric Step Depth"; //
+    };
 
   public:
     std::string getAnalysisName() const override { return "Metric Depth"; }

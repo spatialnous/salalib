@@ -14,26 +14,23 @@
 #include <iomanip>
 #include <time.h>
 
-void AllLineMap::generate(Communicator *comm, std::vector<SpacePixelFile> &drawingLayers,
+void AllLineMap::generate(Communicator *comm,
+                          const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
                           const Point2f &seed) {
 
     std::vector<Line> lines;
     QtRegion region;
 
     // add all visible layers to the set of polygon lines...
-    for (const auto &pixelGroup : drawingLayers) {
-        for (const auto &pixel : pixelGroup.m_spacePixels) {
-            if (pixel.isShown()) {
-                if (region.atZero()) {
-                    region = pixel.getRegion();
-                } else {
-                    region = runion(region, pixel.getRegion());
-                }
-                std::vector<SimpleLine> newLines = pixel.getAllShapesAsLines();
-                for (const auto &line : newLines) {
-                    lines.push_back(Line(line.start(), line.end()));
-                }
-            }
+    for (auto map : drawingLayers) {
+        if (region.atZero()) {
+            region = map.get().getRegion();
+        } else {
+            region = runion(region, map.get().getRegion());
+        }
+        std::vector<SimpleLine> newLines = map.get().getAllShapesAsLines();
+        for (const auto &line : newLines) {
+            lines.push_back(Line(line.start(), line.end()));
         }
     }
     generate(comm, lines, region, seed);

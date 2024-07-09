@@ -8,8 +8,6 @@
 
 #include "segmhelpers.h"
 
-#include "genlib/stringutils.h"
-
 AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
@@ -20,8 +18,9 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
 
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS,
-                              (m_sel_only ? map.getSelSet().size() : map.getConnections().size()));
+        comm->CommPostMessage(
+            Communicator::NUM_RECORDS,
+            (m_selSet.has_value() ? m_selSet.value().size() : map.getConnections().size()));
     }
     size_t reccount = 0;
 
@@ -39,22 +38,17 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
         }
     }
 
-    std::string prefix, suffix;
     int maxbin = 512;
-    prefix = "Metric ";
 
-    if (m_radius != -1.0) {
-        suffix = dXstring::formatString(m_radius, " R%.f metric");
-    }
-    std::string choicecol = prefix + "Choice" + suffix;
-    std::string wchoicecol = prefix + "Choice [SLW]" + suffix;
-    std::string meandepthcol = prefix + "Mean Depth" + suffix;
-    std::string wmeandepthcol = prefix + std::string("Mean Depth [SLW]") + suffix;
-    std::string totaldcol = prefix + "Total Depth" + suffix;
-    std::string totalcol = prefix + "Total Nodes" + suffix;
-    std::string wtotalcol = prefix + "Total Length" + suffix;
-    //
-    if (!m_sel_only) {
+    std::string choicecol = getFormattedColumn(Column::METRIC_CHOICE, m_radius);
+    std::string wchoicecol = getFormattedColumn(Column::METRIC_CHOICE_SLW, m_radius);
+    std::string meandepthcol = getFormattedColumn(Column::METRIC_MEAN_DEPTH, m_radius);
+    std::string wmeandepthcol = getFormattedColumn(Column::METRIC_MEAN_DEPTH_SLW, m_radius);
+    std::string totaldcol = getFormattedColumn(Column::METRIC_TOTAL_DEPTH, m_radius);
+    std::string totalcol = getFormattedColumn(Column::METRIC_TOTAL_NODES, m_radius);
+    std::string wtotalcol = getFormattedColumn(Column::METRIC_TOTAL_LENGTH, m_radius);
+
+    if (!m_selSet.has_value()) {
         attributes.insertOrResetColumn(choicecol.c_str());
         result.addAttribute(choicecol);
         attributes.insertOrResetColumn(wchoicecol.c_str());
@@ -76,7 +70,9 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
     std::vector<TopoMetSegmentChoice> choicevals(map.getShapeCount());
     for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
         AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
-        if (m_sel_only && !row.isSelected()) {
+        auto &shapeRef = map.getShapeRefFromIndex(cursor);
+        if (m_selSet.has_value() &&
+            m_selSet.value().find(shapeRef->first) == m_selSet.value().end()) {
             continue;
         }
         for (size_t i = 0; i < map.getShapeCount(); i++) {
@@ -154,7 +150,7 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
                     // can go twice)
 
                     // Quick mod - TV
-                    if (!m_sel_only && connected_cursor > int(cursor) &&
+                    if (!m_selSet.has_value() && connected_cursor > int(cursor) &&
                         !seenalready) { // only one way paths, saves doing this twice
                         int subcur = connected_cursor;
                         while (subcur != -1) {
@@ -186,19 +182,13 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
         }
         reccount++;
     }
-    if (!m_sel_only) {
+    if (!m_selSet.has_value()) {
         // note, I've stopped sel only from calculating choice values:
         for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
             AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
             row.setValue(choicecol.c_str(), choicevals[cursor].choice);
             row.setValue(wchoicecol.c_str(), choicevals[cursor].wchoice);
         }
-    }
-
-    if (!m_sel_only) {
-        map.setDisplayedAttribute(attributes.getColumnIndex(choicecol.c_str()));
-    } else {
-        map.setDisplayedAttribute(attributes.getColumnIndex(meandepthcol.c_str()));
     }
 
     result.completed = true;

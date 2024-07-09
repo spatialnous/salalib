@@ -29,11 +29,9 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
     }
 
     int maxbin = 2;
-    std::string prefix = "Topological ";
-    std::string depthcol = prefix + "Step Depth";
 
-    attributes.insertOrResetColumn(depthcol.c_str());
-    result.addAttribute(depthcol);
+    auto sdColIdx = attributes.insertOrResetColumn(Column::TOPOLOGICAL_STEP_DEPTH);
+    result.addAttribute(Column::TOPOLOGICAL_STEP_DEPTH);
 
     std::vector<unsigned int> seen(map.getShapeCount());
     std::vector<TopoMetSegmentRef> audittrail(map.getShapeCount());
@@ -43,13 +41,13 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
     for (size_t i = 0; i < map.getShapeCount(); i++) {
         seen[i] = 0xffffffff;
     }
-    for (auto &cursor : map.getSelSet()) {
+    for (auto &cursor : m_originRefs) {
         seen[cursor] = 0;
         open++;
         double length = seglengths[cursor];
         audittrail[cursor] = TopoMetSegmentRef(cursor, Connector::SEG_CONN_ALL, length * 0.5, -1);
         list[0].push_back(cursor);
-        attributes.getRow(AttributeKey(cursor)).setValue(depthcol.c_str(), 0);
+        attributes.getRow(AttributeKey(cursor)).setValue(sdColIdx, 0);
     }
 
     unsigned int segdepth = 0;
@@ -102,21 +100,19 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
                 //
                 if (axialrefs[here.ref] == axialref) {
                     list[bin].push_back(connected_cursor);
-                    row.setValue(depthcol.c_str(), segdepth);
+                    row.setValue(sdColIdx, segdepth);
                 } else {
                     list[(bin + 1) % 2].push_back(connected_cursor);
                     seen[connected_cursor] =
                         segdepth + 1; // this is so if another node is connected directly to this
                                       // one but is found later it is still handled -- note it can
                                       // result in the connected cursor being added twice
-                    row.setValue(depthcol.c_str(), segdepth + 1);
+                    row.setValue(sdColIdx, segdepth + 1);
                 }
             }
             iter++;
         }
     }
-
-    map.setDisplayedAttribute(attributes.getColumnIndex(depthcol.c_str()));
 
     result.completed = true;
 

@@ -13,9 +13,8 @@ AnalysisResult VGAAngularDepth::run(Communicator *, PointMap &map, bool) {
     AttributeTable &attributes = map.getAttributeTable();
 
     // n.b., insert columns sets values to -1 if the column already exists
-    std::string colText = "Angular Step Depth";
-    auto path_angle_col = attributes.insertOrResetColumn(colText);
-    result.addAttribute(colText);
+    auto sdColIdx = attributes.insertOrResetColumn(Column::ANGULAR_STEP_DEPTH);
+    result.addAttribute(Column::ANGULAR_STEP_DEPTH);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         PixelRef pix = iter->getKey().value;
@@ -26,7 +25,7 @@ AnalysisResult VGAAngularDepth::run(Communicator *, PointMap &map, bool) {
 
     std::set<AngularTriple> search_list; // contains root point
 
-    for (auto &sel : map.getSelSet()) {
+    for (auto &sel : m_originRefs) {
         search_list.insert(AngularTriple(0.0f, sel, NoPixel));
         map.getPoint(sel).m_cumangle = 0.0f;
     }
@@ -43,14 +42,14 @@ AnalysisResult VGAAngularDepth::run(Communicator *, PointMap &map, bool) {
             p.getNode().extractAngular(search_list, &map, here);
             p.m_misc = ~0;
             AttributeRow &row = map.getAttributeTable().getRow(AttributeKey(here.pixel));
-            row.setValue(path_angle_col, float(p.m_cumangle));
+            row.setValue(sdColIdx, float(p.m_cumangle));
             if (!p.getMergePixel().empty()) {
                 Point &p2 = map.getPoint(p.getMergePixel());
                 if (p2.m_misc != ~0) {
                     p2.m_cumangle = p.m_cumangle;
                     AttributeRow &mergePixelRow =
                         map.getAttributeTable().getRow(AttributeKey(p.getMergePixel()));
-                    mergePixelRow.setValue(path_angle_col, float(p2.m_cumangle));
+                    mergePixelRow.setValue(sdColIdx, float(p2.m_cumangle));
                     p2.getNode().extractAngular(
                         search_list, &map, AngularTriple(here.angle, p.getMergePixel(), NoPixel));
                     p2.m_misc = ~0;
@@ -58,9 +57,6 @@ AnalysisResult VGAAngularDepth::run(Communicator *, PointMap &map, bool) {
             }
         }
     }
-
-    map.setDisplayedAttribute(-2);
-    map.setDisplayedAttribute(path_angle_col);
 
     result.completed = true;
 

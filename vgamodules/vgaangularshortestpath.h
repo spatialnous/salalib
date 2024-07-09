@@ -8,12 +8,21 @@
 
 #include "salalib/ianalysis.h"
 #include "salalib/pixelref.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 class VGAAngularShortestPath : public IAnalysis {
   private:
     PointMap &m_map;
     PixelRef m_pixelFrom, m_pixelTo;
+
+  public:
+    struct Column {
+        inline static const std::string                                    //
+            ANGULAR_SHORTEST_PATH = "Angular Shortest Path",               //
+            ANGULAR_SHORTEST_PATH_LINKED = "Angular Shortest Path Linked", //
+            ANGULAR_SHORTEST_PATH_ORDER = "Angular Shortest Path Order",   //
+            ANGULAR_SHORTEST_PATH_ZONE = "Angular Shortest Path Zone";     //
+    };
 
   public:
     std::string getAnalysisName() const override { return "Angular Shortest Path"; }

@@ -9,7 +9,17 @@
 #include "salalib/iaxial.h"
 
 class AxialStepDepth : IAxial {
+
+    std::set<int> &m_originRefs;
+
   public:
+    struct Column {
+        inline static const std::string //
+            STEP_DEPTH = "Step Depth";  //
+    };
+
+  public:
+    AxialStepDepth(std::set<int> &originRefs) : m_originRefs(originRefs) {}
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool simple_version) override;
 };

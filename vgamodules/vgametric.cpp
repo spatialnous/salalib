@@ -6,8 +6,6 @@
 
 #include "vgametric.h"
 
-#include "genlib/stringutils.h"
-
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes
 
@@ -20,29 +18,23 @@ AnalysisResult VGAMetric::run(Communicator *comm, PointMap &map, bool) {
 
     AnalysisResult result;
 
-    std::string radius_text;
-    if (m_radius != -1.0) {
-        if (m_radius > 100.0) {
-            radius_text = std::string(" R") + dXstring::formatString(m_radius, "%.f");
-        } else if (map.getRegion().width() < 1.0) {
-            radius_text = std::string(" R") + dXstring::formatString(m_radius, "%.4f");
-        } else {
-            radius_text = std::string(" R") + dXstring::formatString(m_radius, "%.2f");
-        }
-    }
     AttributeTable &attributes = map.getAttributeTable();
 
     // n.b. these must be entered in alphabetical order to preserve col indexing:
-    std::string mspa_col_text = std::string("Metric Mean Shortest-Path Angle") + radius_text;
+    std::string mspa_col_text =
+        getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE, m_radius, map.getRegion());
     int mspa_col = attributes.insertOrResetColumn(mspa_col_text.c_str());
     result.addAttribute(mspa_col_text);
-    std::string mspl_col_text = std::string("Metric Mean Shortest-Path Distance") + radius_text;
+    std::string mspl_col_text =
+        getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_DISTANCE, m_radius, map.getRegion());
     int mspl_col = attributes.insertOrResetColumn(mspl_col_text.c_str());
     result.addAttribute(mspl_col_text);
-    std::string dist_col_text = std::string("Metric Mean Straight-Line Distance") + radius_text;
+    std::string dist_col_text =
+        getColumnWithRadius(Column::METRIC_MEAN_STRAIGHT_LINE_DISTANCE, m_radius, map.getRegion());
     int dist_col = attributes.insertOrResetColumn(dist_col_text.c_str());
     result.addAttribute(dist_col_text);
-    std::string count_col_text = std::string("Metric Node Count") + radius_text;
+    std::string count_col_text =
+        getColumnWithRadius(Column::METRIC_NODE_COUNT, m_radius, map.getRegion());
     int count_col = attributes.insertOrResetColumn(count_col_text.c_str());
     result.addAttribute(count_col_text);
 
@@ -125,9 +117,6 @@ AnalysisResult VGAMetric::run(Communicator *comm, PointMap &map, bool) {
             }
         }
     }
-
-    map.overrideDisplayedAttribute(-2);
-    map.setDisplayedAttribute(mspl_col);
 
     result.completed = true;
 

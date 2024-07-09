@@ -4,7 +4,7 @@
 
 #include "mapinfodata.h"
 
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 #include "salalib/shapemap.h"
 
 #include "genlib/stringutils.h"
@@ -243,9 +243,9 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     // if bounds has not been filled in, fill it in
     if (m_bounds.empty()) {
         char bounds[256];
-        snprintf(bounds, 256, "Bounds (%10f, %10f) (%10f, %10f)", points.m_region.bottom_left.x,
-                 points.m_region.bottom_left.y, points.m_region.top_right.x,
-                 points.m_region.top_right.y);
+        snprintf(bounds, 256, "Bounds (%10f, %10f) (%10f, %10f)", points.getRegion().bottom_left.x,
+                 points.getRegion().bottom_left.y, points.getRegion().top_right.x,
+                 points.getRegion().top_right.y);
         m_bounds = bounds;
     }
 
@@ -253,7 +253,7 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     writeheader(miffile);
 
     // write the mif table
-    writetable(miffile, midfile, points.getAttributeTable(), points.m_layers);
+    writetable(miffile, midfile, points.getAttributeTable(), points.getLayers());
 
     miffile.precision(16);
 
@@ -285,14 +285,14 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     writeheader(miffile);
 
     // write the mid table
-    writetable(miffile, midfile, *map.m_attributes, map.m_layers);
+    writetable(miffile, midfile, map.getAttributeTable(), map.getLayers());
 
     miffile.precision(16);
     midfile.precision(16);
 
-    for (const auto &shape : map.m_shapes) {
+    for (const auto &shape : map.getAllShapes()) {
         // note, attributes must align for this:
-        if (isObjectVisible(map.m_layers,
+        if (isObjectVisible(map.getLayers(),
                             map.getAttributeTable().getRow(AttributeKey(shape.first)))) {
             const SalaShape &poly = shape.second;
             if (poly.isPoint()) {
@@ -540,7 +540,7 @@ std::istream &MapInfoData::read(std::istream &stream) {
     return stream;
 }
 
-std::ostream &MapInfoData::write(std::ostream &stream) {
+std::ostream &MapInfoData::write(std::ostream &stream) const {
     dXstring::writeString(stream, m_version);
     dXstring::writeString(stream, m_charset);
     stream.put(m_delimiter);

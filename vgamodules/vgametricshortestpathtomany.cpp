@@ -89,19 +89,19 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
     std::map<PixelRef, std::vector<int>> columns;
     for (PixelRef ref : m_pixelsTo) {
         columns[ref].push_back(
-            attributes.insertOrResetColumn("Metric Shortest Path " + std::to_string(ref)));
+            attributes.insertOrResetColumn(getFormattedColumn(Column::METRIC_SHORTEST_PATH, ref)));
     }
     for (PixelRef ref : m_pixelsTo) {
-        columns[ref].push_back(
-            attributes.insertOrResetColumn("Metric Shortest Path Distance " + std::to_string(ref)));
+        columns[ref].push_back(attributes.insertOrResetColumn(
+            getFormattedColumn(Column::METRIC_SHORTEST_PATH_DISTANCE, ref)));
     }
     for (PixelRef ref : m_pixelsTo) {
-        columns[ref].push_back(
-            attributes.insertOrResetColumn("Metric Shortest Path Linked " + std::to_string(ref)));
+        columns[ref].push_back(attributes.insertOrResetColumn(
+            getFormattedColumn(Column::METRIC_SHORTEST_PATH_LINKED, ref)));
     }
     for (PixelRef ref : m_pixelsTo) {
-        columns[ref].push_back(
-            attributes.insertOrResetColumn("Metric Shortest Path Order " + std::to_string(ref)));
+        columns[ref].push_back(attributes.insertOrResetColumn(
+            getFormattedColumn(Column::METRIC_SHORTEST_PATH_ORDER, ref)));
     }
 
     for (PixelRef pixelTo : m_pixelsTo) {
@@ -151,8 +151,6 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
         }
     }
     if (m_pixelsTo.size() > 0) {
-        m_map.overrideDisplayedAttribute(-2);
-        m_map.setDisplayedAttribute(columns[*m_pixelsTo.begin()][0]);
         result.completed = true;
     }
 

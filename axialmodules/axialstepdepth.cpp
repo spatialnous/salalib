@@ -14,16 +14,15 @@ AnalysisResult AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
 
     AnalysisResult result;
 
-    std::string stepdepth_col_text = std::string("Step Depth");
-    int stepdepth_col = attributes.insertOrResetColumn(stepdepth_col_text.c_str());
-    result.addAttribute(stepdepth_col_text);
+    int stepdepth_col = attributes.insertOrResetColumn(Column::STEP_DEPTH);
+    result.addAttribute(Column::STEP_DEPTH);
 
     bool *covered = new bool[map.getConnections().size()];
     for (size_t i = 0; i < map.getConnections().size(); i++) {
         covered[i] = false;
     }
     pflipper<std::vector<int>> foundlist;
-    for (auto &lineindex : map.getSelSet()) {
+    for (auto &lineindex : m_originRefs) {
         foundlist.a().push_back(lineindex);
         covered[lineindex] = true;
         map.getAttributeRowFromShapeIndex(lineindex).setValue(stepdepth_col, 0.0f);
@@ -46,9 +45,6 @@ AnalysisResult AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
         }
     }
     delete[] covered;
-
-    map.setDisplayedAttribute(-1); // <- override if it's already showing
-    map.setDisplayedAttribute(stepdepth_col);
 
     result.completed = true;
 

@@ -13,19 +13,19 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
     auto &attributes = m_map.getAttributeTable();
 
     // custom linking costs from the attribute table
-    std::string link_metric_cost_col_name = "Link Metric Cost";
+    std::string link_metric_cost_col_name = Column::LINK_METRIC_COST;
     int link_metric_cost_col = attributes.getOrInsertColumn(link_metric_cost_col_name);
     result.addAttribute(link_metric_cost_col_name);
-    std::string path_col_name = "Metric Shortest Path";
+    std::string path_col_name = Column::METRIC_SHORTEST_PATH;
     int path_col = attributes.insertOrResetColumn(path_col_name);
     result.addAttribute(path_col_name);
-    std::string dist_col_name = "Metric Shortest Path Distance";
+    std::string dist_col_name = Column::METRIC_SHORTEST_PATH_DISTANCE;
     int dist_col = attributes.insertOrResetColumn(dist_col_name);
     result.addAttribute(dist_col_name);
-    std::string linked_col_name = "Metric Shortest Path Linked";
+    std::string linked_col_name = Column::METRIC_SHORTEST_PATH_LINKED;
     int linked_col = attributes.insertOrResetColumn(linked_col_name);
     result.addAttribute(linked_col_name);
-    std::string order_col_name = "Metric Shortest Path Order";
+    std::string order_col_name = Column::METRIC_SHORTEST_PATH_ORDER;
     int order_col = attributes.insertOrResetColumn(order_col_name);
     result.addAttribute(order_col_name);
 
@@ -141,9 +141,6 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
             currParent = parents.find(currParent->second);
             counter++;
         }
-
-        m_map.overrideDisplayedAttribute(-2);
-        m_map.setDisplayedAttribute(path_col);
 
         result.completed = true;
 

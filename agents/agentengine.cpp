@@ -1,12 +1,11 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2019 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2019-2024 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "agentengine.h"
-
-#include "agenthelpers.h"
+#include "agentanalysis.h"
 
 // run one agent engine only
 
@@ -29,7 +28,7 @@ void AgentEngine::run(Communicator *comm, PointMap *pointmap) {
     }
 
     AttributeTable &table = pointmap->getAttributeTable();
-    auto displaycol = table.getOrInsertColumn(g_col_total_counts);
+    table.getOrInsertColumn(AgentAnalysis::Column::GATE_COUNTS);
 
     int output_mode = Agent::OUTPUT_COUNTS;
     if (m_gatelayer != std::nullopt) {
@@ -85,9 +84,6 @@ void AgentEngine::run(Communicator *comm, PointMap *pointmap) {
             }
         }
     }
-
-    pointmap->overrideDisplayedAttribute(-2);
-    pointmap->setDisplayedAttribute(displaycol);
 }
 
 void AgentEngine::insertTrailsInMap(ShapeMap &trailsMap) {

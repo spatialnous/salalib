@@ -30,7 +30,7 @@ bool Connector::read(std::istream &stream) {
     return true;
 }
 
-bool Connector::write(std::ofstream &stream) {
+bool Connector::write(std::ostream &stream) const {
     // n.b., must set displayed attribute as soon as loaded...
     dXreadwrite::writeCastVector<int>(stream, m_connections);
     stream.write((char *)&m_segment_axialref, sizeof(m_segment_axialref));

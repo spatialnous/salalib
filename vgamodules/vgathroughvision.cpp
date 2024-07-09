@@ -6,7 +6,7 @@
 
 #include "vgathroughvision.h"
 
-#include "salalib/agents/agenthelpers.h"
+#include "salalib/agents/agentanalysis.h"
 
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes
@@ -30,7 +30,10 @@ AnalysisResult VGAThroughVision::run(Communicator *comm, PointMap &map, bool) {
         }
     }
 
-    bool hasGateColumn = map.getAttributeTable().hasColumn(g_col_gate);
+    auto agentGateColIdx =
+        map.getAttributeTable().getColumnIndexOptional(AgentAnalysis::Column::INTERNAL_GATE);
+    auto agentGateCountColIdx =
+        map.getAttributeTable().getColumnIndexOptional(AgentAnalysis::Column::INTERNAL_GATE_COUNTS);
 
     int count = 0;
     for (size_t i = 0; i < map.getCols(); i++) {
@@ -48,14 +51,15 @@ AnalysisResult VGAThroughVision::run(Communicator *comm, PointMap &map, bool) {
                         map.getPoint(key).m_misc += 1;
 
                         // TODO: Undocumented functionality. Shows how many times a gate is passed?
-                        if (hasGateColumn) {
+                        if (agentGateColIdx.has_value() && agentGateCountColIdx.has_value()) {
                             auto iter = attributes.find(AttributeKey(key));
                             if (iter != attributes.end()) {
-                                int gate = static_cast<int>(iter->getRow().getValue(g_col_gate));
+                                int gate = static_cast<int>(
+                                    iter->getRow().getValue(agentGateColIdx.value()));
                                 if (gate != -1) {
                                     auto gateIter = depthmapX::findBinary(seengates, gate);
                                     if (gateIter == seengates.end()) {
-                                        iter->getRow().incrValue(g_col_gate_counts);
+                                        iter->getRow().incrValue(agentGateCountColIdx.has_value());
                                         seengates.insert(gateIter, int(gate));
                                     }
                                 }
@@ -78,18 +82,14 @@ AnalysisResult VGAThroughVision::run(Communicator *comm, PointMap &map, bool) {
         }
     }
 
-    std::string colText = "Through vision";
-    int col = attributes.getOrInsertColumn(colText);
-    result.addAttribute(colText);
+    int col = attributes.getOrInsertColumn(Column::THROUGH_VISION);
+    result.addAttribute(Column::THROUGH_VISION);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         PixelRef pix = iter->getKey().value;
         iter->getRow().setValue(col, static_cast<float>(map.getPoint(pix).m_misc));
         map.getPoint(pix).m_misc = 0;
     }
-
-    map.overrideDisplayedAttribute(-2);
-    map.setDisplayedAttribute(col);
 
     result.completed = true;
 

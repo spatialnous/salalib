@@ -9,14 +9,17 @@
 #include "mgraph_consts.h"
 #include "pafcolor.h"
 
+#include <set>
+
 namespace dXreimpl {
     inline void pushSelectionToLayer(AttributeTable &table, LayerManager &layerManager,
-                                     const std::string &layerName) {
+                                     const std::string &layerName, std::set<int> &selSet) {
         size_t layerIndex = layerManager.addLayer(layerName);
         LayerManager::KeyType layerKey = layerManager.getKey(layerIndex);
         for (auto &item : table) {
             auto &row = item.getRow();
-            if (isObjectVisible(layerManager, row) && row.isSelected()) {
+            if (isObjectVisible(layerManager, row) &&
+                selSet.find(item.getKey().value) != selSet.end()) {
                 addLayerToObject(item.getRow(), layerKey);
             }
         }
@@ -26,8 +29,9 @@ namespace dXreimpl {
 
     inline PafColor getDisplayColor(const AttributeKey &key, const AttributeRow &row,
                                     const AttributeTableView &tableView,
+                                    const std::set<int> &selSet,
                                     bool checkSelectionStatus = false) {
-        if (checkSelectionStatus && row.isSelected()) {
+        if (checkSelectionStatus && selSet.find(key.value) != selSet.end()) {
             return PafColor(SALA_SELECTED_COLOR);
         }
 

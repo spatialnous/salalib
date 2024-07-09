@@ -11,6 +11,8 @@
 #include <iterator>
 #include <map>
 #include <memory>
+#include <optional>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -34,8 +36,6 @@ class AttributeRow : public LayerAware {
     virtual AttributeRow &setValue(size_t index, float value) = 0;
     virtual AttributeRow &incrValue(size_t index, float value = 1.0f) = 0;
     virtual AttributeRow &incrValue(const std::string &colName, float value = 1.0f) = 0;
-    virtual AttributeRow &setSelection(bool selected) = 0;
-    virtual bool isSelected() const = 0;
 
     virtual ~AttributeRow() {}
 };
@@ -148,7 +148,7 @@ class KeyColumn : public AttributeColumnImpl {
 class AttributeRowImpl : public AttributeRow {
   public:
     AttributeRowImpl(const AttributeColumnManager &colManager)
-        : m_data(colManager.getNumColumns(), -1.0), m_colManager(colManager), m_selected(false) {
+        : m_data(colManager.getNumColumns(), -1.0), m_colManager(colManager) {
         m_layerKey = 1;
     }
 
@@ -161,8 +161,6 @@ class AttributeRowImpl : public AttributeRow {
     virtual AttributeRow &setValue(size_t index, float value);
     virtual AttributeRow &incrValue(const std::string &column, float value);
     virtual AttributeRow &incrValue(size_t index, float value);
-    virtual AttributeRow &setSelection(bool selected);
-    virtual bool isSelected() const;
 
     void addColumn();
     void removeColumn(size_t index);
@@ -173,7 +171,6 @@ class AttributeRowImpl : public AttributeRow {
   private:
     std::vector<float> m_data;
     const AttributeColumnManager &m_colManager;
-    bool m_selected;
 
     void checkIndex(size_t index) const;
 };
@@ -249,18 +246,17 @@ class AttributeTable : public AttributeColumnManager {
     void removeColumn(size_t colIndex);
     void renameColumn(const std::string &oldName, const std::string &newName);
     size_t getNumRows() const { return m_rows.size(); }
-    void deselectAllRows();
     const DisplayParams &getDisplayParams() const { return m_displayParams; }
     void setDisplayParams(const DisplayParams &params) { m_displayParams = params; }
     void setDisplayParamsForAllAttributes(const DisplayParams &params);
     void read(std::istream &stream, LayerManager &layerManager);
     void write(std::ostream &stream, const LayerManager &layerManager);
     void clear();
-    float getSelAvg(size_t columnIndex) {
+    float getSelAvg(size_t columnIndex, std::set<int> &selSet) {
         float selTotal = 0;
         int selNum = 0;
         for (auto &pair : m_rows) {
-            if (pair.second->isSelected()) {
+            if (selSet.find(pair.first.value) != selSet.end()) {
                 selTotal += pair.second->getValue(columnIndex);
                 selNum++;
             }
@@ -274,6 +270,7 @@ class AttributeTable : public AttributeColumnManager {
     // interface AttributeColumnManager
   public:
     virtual size_t getColumnIndex(const std::string &name) const;
+    virtual std::optional<size_t> getColumnIndexOptional(const std::string &name) const;
     virtual const AttributeColumn &getColumn(size_t index) const;
     virtual const std::string &getColumnName(size_t index) const;
     virtual size_t getNumColumns() const;
@@ -286,7 +283,10 @@ class AttributeTable : public AttributeColumnManager {
   private:
     typedef std::map<AttributeKey, std::unique_ptr<AttributeRowImpl>> StorageType;
     StorageType m_rows;
-    std::map<std::string, size_t> m_columnMapping;
+
+    // Requires a transparent comparator to allow comparing with string_view
+    // see https://stackoverflow.com/a/35525806
+    std::map<std::string, size_t, std::less<>> m_columnMapping;
     std::vector<AttributeColumnImpl> m_columns;
     KeyColumn m_keyColumn;
     DisplayParams m_displayParams;

@@ -15,19 +15,17 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simpl
 
     AnalysisResult result;
 
-    std::string colText = "";
     std::optional<size_t> cluster_col = std::nullopt, control_col = std::nullopt,
                           controllability_col = std::nullopt;
     if (!simple_version) {
-        colText = "Visual Clustering Coefficient";
-        cluster_col = map.getAttributeTable().insertOrResetColumn(colText);
-        result.addAttribute(colText);
-        colText = "Visual Control";
-        control_col = map.getAttributeTable().insertOrResetColumn(colText);
-        result.addAttribute(colText);
-        colText = "Visual Controllability";
-        controllability_col = map.getAttributeTable().insertOrResetColumn(colText);
-        result.addAttribute(colText);
+        cluster_col =
+            map.getAttributeTable().insertOrResetColumn(Column::VISUAL_CLUSTERING_COEFFICIENT);
+        result.addAttribute(Column::VISUAL_CLUSTERING_COEFFICIENT);
+        control_col = map.getAttributeTable().insertOrResetColumn(Column::VISUAL_CONTROL);
+        result.addAttribute(Column::VISUAL_CONTROL);
+        controllability_col =
+            map.getAttributeTable().insertOrResetColumn(Column::VISUAL_CONTROLLABILITY);
+        result.addAttribute(Column::VISUAL_CONTROLLABILITY);
     }
 
     size_t count = 0;
@@ -106,11 +104,6 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm, PointMap &map, bool simpl
             }
         }
     }
-
-#ifndef _COMPILE_dX_SIMPLE_VERSION
-    if (!simple_version)
-        map.setDisplayedAttribute(cluster_col.value());
-#endif
 
     result.completed = true;
 

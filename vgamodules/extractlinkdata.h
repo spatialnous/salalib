@@ -7,11 +7,20 @@
 #pragma once
 
 #include "salalib/ianalysis.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 class ExtractLinkData : public IAnalysis {
   private:
     PointMap &m_map;
+
+  public:
+    struct Column {
+        inline static const std::string              //
+            LINK_ANGULAR_COST = "Link Angular Cost", //
+            LINK_METRIC_COST = "Link Metric Cost",   //
+            LINK_TO = "Link To",                     //
+            LINK_VISUAL_COST = "Link Visual Cost";   //
+    };
 
   public:
     std::string getAnalysisName() const override { return "Extract Link Data"; }

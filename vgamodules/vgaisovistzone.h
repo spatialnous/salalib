@@ -6,7 +6,8 @@
 
 #include "salalib/ianalysis.h"
 #include "salalib/pixelref.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
+#include <iomanip>
 
 class VGAIsovistZone : public IAnalysis {
   private:
@@ -23,7 +24,32 @@ class VGAIsovistZone : public IAnalysis {
     void extractMetric(Node n, std::set<MetricTriple> &pixels, PointMap &map,
                        const MetricTriple &curs);
     void setColumnFormulaAndUpdate(PointMap &pointmap, int columnIndex, std::string formula,
-                                   bool selectionOnly);
+                                   std::optional<const std::set<int>> selectionSet);
+
+  public:
+    struct Column {
+        inline static const std::string                                            //
+            ISOVIST_ZONE_DISTANCE = "Isovist Zone Distance",                       //
+            ISOVIST_ZONE_INV_SQ_DISTANCE = "Isovist Zone Inverse Square Distance"; //
+    };
+
+    static std::string getFormattedColumn(const std::string &column,
+                                          std::optional<std::string> originPointSetName,
+                                          float restrictDistance) {
+        std::string colName = column;
+
+        if (originPointSetName.has_value()) {
+            colName += " [" + originPointSetName.value() + "]";
+        }
+
+        if (restrictDistance > 0) {
+            std::stringstream restrictionText;
+            restrictionText << std::fixed << std::setprecision(2) << " (" << restrictDistance << ")"
+                            << std::flush;
+            colName += restrictionText.str();
+        }
+        return colName;
+    }
 
   public:
     std::string getAnalysisName() const override { return "Path Zone"; }

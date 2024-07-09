@@ -9,7 +9,7 @@
 #include "agentprogram.h"
 
 #include "salalib/pixelref.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 #include "genlib/p2dpoly.h"
 #include "genlib/pflipper.h"

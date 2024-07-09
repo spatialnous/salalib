@@ -13,11 +13,11 @@ AnalysisResult VGAMetricDepthLinkCost::run(Communicator *) {
     AttributeTable &attributes = m_map.getAttributeTable();
 
     // custom linking costs from the attribute table
-    std::string link_metric_cost_col_name = "Link Metric Cost";
+    std::string link_metric_cost_col_name = Column::LINK_METRIC_COST;
     int link_metric_cost_col = attributes.getOrInsertColumn(link_metric_cost_col_name);
     result.addAttribute(link_metric_cost_col_name);
 
-    std::string path_length_col_name = "Metric Step Depth";
+    std::string path_length_col_name = Column::METRIC_STEP_DEPTH;
     int path_length_col = attributes.insertOrResetColumn(path_length_col_name);
     result.addAttribute(path_length_col_name);
 
@@ -68,8 +68,6 @@ AnalysisResult VGAMetricDepthLinkCost::run(Communicator *) {
         MetricPoint &pnt = getMetricPoint(metricPoints, pix);
         row.getRow().setValue(path_length_col, float(pnt.m_dist));
     }
-    m_map.setDisplayedAttribute(-2);
-    m_map.setDisplayedAttribute(path_length_col);
 
     result.completed = true;
 

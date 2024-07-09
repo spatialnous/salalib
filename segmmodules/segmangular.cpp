@@ -6,8 +6,6 @@
 
 #include "segmangular.h"
 
-#include "salalib/options.h"
-
 AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
     AnalysisResult result;
 
@@ -42,25 +40,24 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
     std::vector<size_t> depth_col, count_col, total_col;
     // first enter table values
     for (auto radius : radii) {
-        std::string radius_text = makeRadiusText(Options::RADIUS_ANGULAR, radius);
-        std::string depth_col_text = std::string("Angular Mean Depth") + radius_text;
+        std::string depth_col_text = getFormattedColumn(Column::ANGULAR_MEAN_DEPTH, radius);
         attributes.insertOrResetColumn(depth_col_text.c_str());
         result.addAttribute(depth_col_text);
-        std::string count_col_text = std::string("Angular Node Count") + radius_text;
+        std::string count_col_text = getFormattedColumn(Column::ANGULAR_NODE_COUNT, radius);
         attributes.insertOrResetColumn(count_col_text.c_str());
         result.addAttribute(count_col_text);
-        std::string total_col_text = std::string("Angular Total Depth") + radius_text;
+        std::string total_col_text = getFormattedColumn(Column::ANGULAR_TOTAL_DEPTH, radius);
         attributes.insertOrResetColumn(total_col_text.c_str());
         result.addAttribute(total_col_text);
     }
 
     for (auto radius : radii) {
-        std::string radius_text = makeRadiusText(Options::RADIUS_ANGULAR, radius);
-        std::string depth_col_text = std::string("Angular Mean Depth") + radius_text;
+        std::string radius_text = makeRadiusText(RadiusType::ANGULAR, radius);
+        std::string depth_col_text = getFormattedColumn(Column::ANGULAR_MEAN_DEPTH, radius);
         depth_col.push_back(attributes.getColumnIndex(depth_col_text.c_str()));
-        std::string count_col_text = std::string("Angular Node Count") + radius_text;
+        std::string count_col_text = getFormattedColumn(Column::ANGULAR_NODE_COUNT, radius);
         count_col.push_back(attributes.getColumnIndex(count_col_text.c_str()));
-        std::string total_col_text = std::string("Angular Total Depth") + radius_text;
+        std::string total_col_text = getFormattedColumn(Column::ANGULAR_TOTAL_DEPTH, radius);
         total_col.push_back(attributes.getColumnIndex(total_col_text.c_str()));
     }
 
@@ -162,9 +159,6 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         }
         i++;
     }
-
-    map.setDisplayedAttribute(-2); // <- override if it's already showing
-    map.setDisplayedAttribute(depth_col.back());
 
     result.completed = true;
 

@@ -7,9 +7,16 @@
 #pragma once
 
 #include "salalib/ivga.h"
-#include "salalib/pointdata.h"
+#include "salalib/pointmap.h"
 
 class VGAThroughVision : IVGA {
+  public:
+    struct Column {
+        inline static const std::string        //
+            THROUGH_VISION = "Through vision", //
+            INTERNAL_GATE = "__Internal_Gate"; //
+    };
+
   public:
     std::string getAnalysisName() const override { return "Through Vision Analysis"; }
     AnalysisResult run(Communicator *comm, PointMap &map, bool) override;

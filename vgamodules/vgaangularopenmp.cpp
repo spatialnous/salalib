@@ -127,40 +127,29 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
             cumangles(filled[size_t(i)].y, filled[size_t(i)].x);
     }
 
-    std::string radius_text;
-    if (int(m_radius) != -1) {
-        if (m_map.getRegion().width() > 100.0) {
-            radius_text = std::string(" R") + dXstring::formatString(m_radius, "%.f");
-        } else if (m_map.getRegion().width() < 1.0) {
-            radius_text = std::string(" R") + dXstring::formatString(m_radius, "%.4f");
-        } else {
-            radius_text = std::string(" R") + dXstring::formatString(m_radius, "%.2f");
-        }
-    }
-
     AnalysisResult result;
 
     // n.b. these must be entered in alphabetical order to preserve col indexing:
-    std::string mean_depth_col_text = std::string("Angular Mean Depth") + radius_text;
+    std::string mean_depth_col_text =
+        getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH, m_radius, m_map.getRegion());
     int mean_depth_col = attributes.getOrInsertColumn(mean_depth_col_text.c_str());
     result.addAttribute(mean_depth_col_text);
-    std::string total_detph_col_text = std::string("Angular Total Depth") + radius_text;
+    std::string total_detph_col_text =
+        getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH, m_radius, m_map.getRegion());
     int total_depth_col = attributes.getOrInsertColumn(total_detph_col_text.c_str());
     result.addAttribute(total_detph_col_text);
-    std::string count_col_text = std::string("Angular Node Count") + radius_text;
+    std::string count_col_text =
+        getColumnWithRadius(Column::ANGULAR_NODE_COUNT, m_radius, m_map.getRegion());
     int count_col = attributes.getOrInsertColumn(count_col_text.c_str());
     result.addAttribute(count_col_text);
 
     auto dataIter = col_data.begin();
     for (auto row : rows) {
-        row->setValue(total_depth_col, dataIter->mean_depth);
+        row->setValue(mean_depth_col, dataIter->mean_depth);
         row->setValue(total_depth_col, dataIter->total_depth);
         row->setValue(count_col, dataIter->count);
         dataIter++;
     }
-
-    m_map.overrideDisplayedAttribute(-2);
-    m_map.setDisplayedAttribute(mean_depth_col);
 
     result.completed = true;
 

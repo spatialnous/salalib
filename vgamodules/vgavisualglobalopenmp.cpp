@@ -184,22 +184,17 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
     int entropy_col, rel_entropy_col, integ_dv_col, integ_pv_col, integ_tk_col, depth_col,
         count_col;
 
-    std::string radius_text;
-    if (m_radius != -1) {
-        radius_text = std::string(" R") + dXstring::formatString(int(m_radius), "%d");
-    }
-
     AnalysisResult result;
 
     // n.b. these must be entered in alphabetical order to preserve col indexing:
     // dX simple version test // TV
-    std::string entropy_col_text = std::string("Visual Entropy") + radius_text;
-    std::string integ_dv_col_text = std::string("Visual Integration [HH]") + radius_text;
-    std::string integ_pv_col_text = std::string("Visual Integration [P-value]") + radius_text;
-    std::string integ_tk_col_text = std::string("Visual Integration [Tekl]") + radius_text;
-    std::string depth_col_text = std::string("Visual Mean Depth") + radius_text;
-    std::string count_col_text = std::string("Visual Node Count") + radius_text;
-    std::string rel_entropy_col_text = std::string("Visual Relativised Entropy") + radius_text;
+    std::string entropy_col_text = getColumnWithRadius(Column::VISUAL_ENTROPY, m_radius);
+    std::string integ_dv_col_text = getColumnWithRadius(Column::VISUAL_INTEGRATION_HH, m_radius);
+    std::string integ_pv_col_text = getColumnWithRadius(Column::VISUAL_INTEGRATION_PV, m_radius);
+    std::string integ_tk_col_text = getColumnWithRadius(Column::VISUAL_INTEGRATION_TK, m_radius);
+    std::string depth_col_text = getColumnWithRadius(Column::VISUAL_MEAN_DEPTH, m_radius);
+    std::string count_col_text = getColumnWithRadius(Column::VISUAL_NODE_COUNT, m_radius);
+    std::string rel_entropy_col_text = getColumnWithRadius(Column::VISUAL_REL_ENTROPY, m_radius);
 
     attributes.insertOrResetColumn(integ_dv_col_text.c_str());
     attributes.insertOrResetColumn(entropy_col_text.c_str());
@@ -236,8 +231,6 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
         row->setValue(rel_entropy_col, dataIter->rel_entropy);
         dataIter++;
     }
-
-    m_map.setDisplayedAttribute(integ_dv_col);
 
     result.completed = true;
 

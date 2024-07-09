@@ -9,7 +9,17 @@
 #include "salalib/isegment.h"
 
 class SegmentTopologicalPD : ISegment {
+
+    std::set<int> &m_originRefs;
+
   public:
+    struct Column {
+        inline static const std::string                        //
+            TOPOLOGICAL_STEP_DEPTH = "Topological Step Depth"; //
+    };
+
+  public:
+    SegmentTopologicalPD(std::set<int> &originRefs) : m_originRefs(originRefs) {}
     std::string getAnalysisName() const override { return "Topological Analysis"; }
     AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
 };

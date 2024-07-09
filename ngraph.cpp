@@ -4,7 +4,7 @@
 
 #include "ngraph.h"
 
-#include "pointdata.h"
+#include "pointmap.h"
 
 #include "genlib/containerutils.h"
 #include "genlib/readwritehelpers.h"

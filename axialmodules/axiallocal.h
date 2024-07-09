@@ -9,6 +9,12 @@
 #include "salalib/iaxial.h"
 
 class AxialLocal : IAxial {
+  public:
+    struct Column {
+        inline static const std::string          //
+            CONTROL = "Control",                 //
+            CONTROLLABILITY = "Controllability"; //
+    };
 
   public:
     std::string getAnalysisName() const override { return "Angular Local Analysis"; }

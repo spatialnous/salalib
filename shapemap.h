@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "attributemap.h"
 #include "attributetable.h"
 #include "attributetablehelpers.h"
 #include "attributetableview.h"
@@ -13,6 +14,9 @@
 #include "importtypedefs.h"
 #include "layermanagerimpl.h"
 #include "parsers/mapinfodata.h"
+#include "salaevent.h"
+#include "salashape.h"
+#include "shaperef.h"
 #include "spacepix.h"
 
 #include "genlib/containerutils.h"
@@ -24,192 +28,7 @@
 #include <string>
 #include <vector>
 
-// each pixel has various lists of information:
-
-struct ShapeRef {
-    enum { SHAPE_REF_NULL = 0xFFFFFFFF };
-    enum { SHAPE_L = 0x01, SHAPE_B = 0x02, SHAPE_R = 0x04, SHAPE_T = 0x08 };
-    enum { SHAPE_EDGE = 0x0f, SHAPE_INTERNAL_EDGE = 0x10, SHAPE_CENTRE = 0x20, SHAPE_OPEN = 0x40 };
-    unsigned char m_tags;
-    unsigned int m_shape_ref;
-    std::vector<short> m_polyrefs;
-    ShapeRef(unsigned int sref = SHAPE_REF_NULL, unsigned char tags = 0x00) {
-        m_shape_ref = sref;
-        m_tags = tags;
-    }
-    friend bool operator==(const ShapeRef &a, const ShapeRef &b);
-    friend bool operator!=(const ShapeRef &a, const ShapeRef &b);
-    friend bool operator<(const ShapeRef &a, const ShapeRef &b);
-    friend bool operator>(const ShapeRef &a, const ShapeRef &b);
-};
-inline bool operator==(const ShapeRef &a, const ShapeRef &b) {
-    return a.m_shape_ref == b.m_shape_ref;
-}
-inline bool operator!=(const ShapeRef &a, const ShapeRef &b) {
-    return a.m_shape_ref != b.m_shape_ref;
-}
-inline bool operator<(const ShapeRef &a, const ShapeRef &b) {
-    return a.m_shape_ref < b.m_shape_ref;
-}
-inline bool operator>(const ShapeRef &a, const ShapeRef &b) {
-    return a.m_shape_ref > b.m_shape_ref;
-}
-
-struct ShapeRefHash {
-  public:
-    size_t operator()(const ShapeRef &shapeRef) const { return shapeRef.m_shape_ref; }
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-// this is a helper for cutting polygons to fit a viewport / cropping frame
-struct SalaEdgeU : public EdgeU {
-    int index;
-    bool entry; // or exit
-    SalaEdgeU() : EdgeU() {
-        index = -1;
-        entry = false;
-    }
-    SalaEdgeU(int i, bool e, const EdgeU &eu) : EdgeU(eu) {
-        index = i;
-        entry = e;
-    }
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-class PointMap;
-
-class SalaShape {
-  public:
-    std::vector<Point2f> m_points;
-    enum {
-        SHAPE_POINT = 0x01,
-        SHAPE_LINE = 0x02,
-        SHAPE_POLY = 0x04,
-        SHAPE_CIRCLE = 0x08,
-        SHAPE_TYPE = 0x0f,
-        SHAPE_CLOSED = 0x40,
-        SHAPE_CCW = 0x80
-    };
-    friend class ShapeMap;
-
-  protected:
-    unsigned char m_type;
-    Point2f m_centroid; // centre of mass, but also used as for point if object is a point
-    Line m_region;      // bounding box, but also used as a line if object is a line, hence type
-    double m_area;
-    double m_perimeter;
-    // these are all temporary data which are recalculated on reload
-    mutable bool m_selected;
-    mutable float m_color;
-    mutable int m_draworder;
-
-  public:
-    SalaShape(unsigned char type = 0) {
-        m_type = type;
-        m_draworder = -1;
-        m_selected = false;
-        m_area = 0.0;
-        m_perimeter = 0.0;
-    }
-    SalaShape(const Point2f &point) {
-        m_type = SHAPE_POINT;
-        m_draworder = -1;
-        m_selected = false;
-        m_region = Line(point, point);
-        m_centroid = point;
-        m_area = 0.0;
-        m_perimeter = 0.0;
-    }
-    SalaShape(const Line &line) {
-        m_type = SHAPE_LINE;
-        m_draworder = -1;
-        m_selected = false;
-        m_region = line;
-        m_centroid = m_region.getCentre();
-        m_area = 0.0;
-        m_perimeter = m_region.length();
-    }
-    bool operator==(const SalaShape &other) const {
-        return                                     //
-            m_type == other.getType() &&           //
-            m_centroid == other.getCentroid() &&   //
-            m_draworder == other.getDrawOrder() && //
-            m_region == other.getLine() &&         //
-            m_area == other.getArea() &&           //
-            m_perimeter == other.getPerimeter();
-    }
-    unsigned char getType() const { return m_type; }
-    int getDrawOrder() const { return m_draworder; }
-
-    bool isOpen() const { return (m_type & SHAPE_CLOSED) == 0; }
-    bool isClosed() const { return (m_type & SHAPE_CLOSED) == SHAPE_CLOSED; }
-    bool isPoint() const { return (m_type == SHAPE_POINT); }
-    bool isLine() const { return (m_type == SHAPE_LINE); }
-    bool isPolyLine() const { return (m_type & (SHAPE_POLY | SHAPE_CLOSED)) == SHAPE_POLY; }
-    bool isPolygon() const {
-        return (m_type & (SHAPE_POLY | SHAPE_CLOSED)) == (SHAPE_POLY | SHAPE_CLOSED);
-    }
-    bool isCCW() const { return (m_type & SHAPE_CCW) == SHAPE_CCW; }
-    //
-    const Point2f &getPoint() const { return m_centroid; }
-    const Line &getLine() const { return m_region; }
-    const QtRegion &getBoundingBox() const { return m_region; }
-    //
-    double getArea() const { return m_area; }
-    double getPerimeter() const { return m_perimeter; }
-    // duplicate function, but easier to understand naming convention
-    double getLength() const { return m_perimeter; }
-    //
-    void setCentroidAreaPerim();
-    void setCentroid(const Point2f &p);
-    // duplicate function, but easier to understand naming convention
-    const Point2f &getCentroid() const { return m_centroid; }
-    //
-    double getAngDev() const;
-    //
-    std::vector<SalaEdgeU> getClippingSet(QtRegion &clipframe) const;
-    //
-    bool read(std::istream &stream);
-    bool write(std::ofstream &stream) const;
-
-    std::vector<Line> getAsLines() const {
-        std::vector<Line> lines;
-        if (isLine()) {
-            lines.push_back(getLine());
-        } else if (isPolyLine() || isPolygon()) {
-            for (size_t j = 0; j < m_points.size() - 1; j++) {
-                lines.push_back(Line(m_points[j], m_points[j + 1]));
-            }
-            if (isClosed()) {
-                lines.push_back(Line(m_points[m_points.size() - 1], m_points[0]));
-            }
-        }
-        return lines;
-    }
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-struct SalaEvent {
-    enum { SALA_NULL_EVENT, SALA_CREATED, SALA_DELETED, SALA_MOVED };
-    int m_action;
-    int m_shape_ref;
-    SalaShape m_geometry;
-    SalaEvent(int action = SALA_NULL_EVENT, int shape_ref = -1) {
-        m_action = action;
-        m_shape_ref = shape_ref;
-    }
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// Quick mod - TV
-class MapInfoData;
-
-class ShapeMap : public PixelBase {
-    friend class AxialMaps;
-    friend class MapInfoData;
+class ShapeMap : public AttributeMap {
 
   public:
     // now shapemaps cover a multitude of different types, record here:
@@ -242,7 +61,6 @@ class ShapeMap : public PixelBase {
     bool m_hasgraph;
     // counters
     int m_obj_ref;
-    mutable bool m_newshape; // if a new shape has been added
     //
     // quick grab for shapes
     depthmapX::ColumnMatrix<std::vector<ShapeRef>> m_pixel_shapes; // i rows of j columns
@@ -251,10 +69,6 @@ class ShapeMap : public PixelBase {
     //
     std::vector<SalaEvent> m_undobuffer;
     //
-    std::unique_ptr<AttributeTable> m_attributes;
-    std::unique_ptr<AttributeTableHandle> m_attribHandle;
-    LayerManagerImpl m_layers;
-    //
     // for graph functionality
     // Note: this list is stored PACKED for optimal performance on graph analysis
     // ALWAYS check it is in the same order as the shape list and attribute table
@@ -262,14 +76,9 @@ class ShapeMap : public PixelBase {
     //
     // for geometric operations
     double m_tolerance;
-    // for screen drawing
-    mutable std::vector<size_t> m_display_shapes;
-    mutable int m_current;
-    mutable bool m_invalidate;
-    //
-  private:
+
+  public:
     void moveData(ShapeMap &other) {
-        m_show = other.isShown();
         m_shapes = std::move(other.m_shapes);
         m_hasgraph = other.m_hasgraph;
         m_connectors = std::move(other.m_connectors);
@@ -277,8 +86,6 @@ class ShapeMap : public PixelBase {
         m_unlinks = std::move(other.m_unlinks);
         m_mapinfodata = std::move(other.m_mapinfodata);
         m_hasMapInfoData = other.m_hasMapInfoData;
-        m_displayed_attribute = other.m_displayed_attribute;
-        m_display_shapes = std::move(other.m_display_shapes);
         m_rows = other.m_rows;
         m_cols = other.m_cols;
         m_region = std::move(other.m_region);
@@ -294,9 +101,9 @@ class ShapeMap : public PixelBase {
     void copy(const ShapeMap &shapemap, int copyflags = 0, bool copyMapType = false);
 
     ShapeMap(ShapeMap &&other)
-        : m_name(std::move(other.m_name)), m_pixel_shapes(std::move(other.m_pixel_shapes)),
-          m_attributes(std::move(other.m_attributes)),
-          m_attribHandle(std::move(other.m_attribHandle)), m_layers(std::move(other.m_layers)) {
+        : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
+                       std::move(other.m_layers)),
+          m_name(std::move(other.m_name)), m_pixel_shapes(std::move(other.m_pixel_shapes)) {
         moveData(other);
     }
     ShapeMap &operator=(ShapeMap &&other) {
@@ -368,20 +175,21 @@ class ShapeMap : public PixelBase {
     int makePolyShape(const std::vector<Point2f> &points, bool open, bool tempshape = false,
                       const std::map<int, float> &extraAttributes = std::map<int, float>());
 
+    bool hasGraph() const { return m_hasgraph; }
+
   public:
     // or make a shape from a shape
     int makeShape(const SalaShape &shape, int override_shape_ref = -1,
                   const std::map<int, float> &extraAttributes = std::map<int, float>());
     // convert points to polygons
-    bool convertPointsToPolys(double poly_radius, bool selected_only);
+    bool convertPointsToPolys(double poly_radius,
+                              std::optional<std::reference_wrapper<const std::set<int>>> selSet);
     // convert a selected pixels to a layer object (note, uses selection attribute on pixel, you
     // must select to make this work):
-    int makeShapeFromPointSet(const PointMap &pointmap);
+    int makeShapeFromPointSet(const PointMap &pointmap, const std::set<int> &selSet);
     //
     // move a shape (currently only a line shape) -- in the future should use SalaShape
     bool moveShape(int shaperef, const Line &line, bool undoing = false);
-    // delete selected shapes
-    bool removeSelected();
     // delete a shape
     void removeShape(int shaperef, bool undoing = false);
     //
@@ -438,9 +246,6 @@ class ShapeMap : public PixelBase {
     bool isPeshMap() const { return m_map_type == PESHMAP; }
     int getMapType() const { return m_map_type; }
     // Attribute functionality
-  protected:
-    // which attribute is currently displayed:
-    mutable int m_displayed_attribute;
 
   public:
     const std::string &getName() const { return m_name; }
@@ -459,100 +264,37 @@ class ShapeMap : public PixelBase {
     // layer functionality
     bool isLayerVisible(size_t layerid) const { return m_layers.isLayerVisible(layerid); }
     void setLayerVisible(size_t layerid, bool show) { m_layers.setLayerVisible(layerid, show); }
-    bool selectionToLayer(const std::string &name = std::string("Unnamed"));
 
   public:
-    double getDisplayMinValue() const {
-        return (m_displayed_attribute != -1)
-                   ? m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
-                         .getStats()
-                         .min
-                   : 0;
-    }
-    double getDisplayMaxValue() const {
-        return (m_displayed_attribute != -1)
-                   ? m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
-                         .getStats()
-                         .max
-                   : (m_shapes.size() > 0 ? m_shapes.rbegin()->first : 0);
+    double getDisplayMinValue(size_t attributeIdx) const {
+        return m_attributes->getColumn(attributeIdx).getStats().min;
     }
 
-    const DisplayParams &getDisplayParams() const {
-        return m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
-            .getDisplayParams();
+    double getDisplayMaxValue(size_t attributeIdx) const {
+        return m_attributes->getColumn(attributeIdx).getStats().max;
     }
+
+    double getDefaultMaxValue() const { return m_shapes.size() > 0 ? m_shapes.rbegin()->first : 0; }
+
+    const DisplayParams &getDisplayParams(size_t attributeIdx) const {
+        return m_attributes->getColumn(attributeIdx).getDisplayParams();
+    }
+
     // make a local copy of the display params for access speed:
-    void setDisplayParams(const DisplayParams &dp, bool apply_to_all = false) {
+    void setDisplayParams(const DisplayParams &dp, size_t attributeIdx, bool apply_to_all = false) {
         if (apply_to_all)
             m_attributes->setDisplayParams(dp);
         else
-            m_attributes->getColumn(static_cast<size_t>(m_displayed_attribute))
-                .setDisplayParams(dp);
+            m_attributes->getColumn(attributeIdx).setDisplayParams(dp);
     }
-    //
-    mutable bool m_show_lines;
-    mutable bool m_show_fill;
-    mutable bool m_show_centroids;
-    void getPolygonDisplay(bool &show_lines, bool &show_fill, bool &show_centroids) {
-        show_lines = m_show_lines;
-        show_fill = m_show_fill;
-        show_centroids = m_show_centroids;
-    }
-    void setPolygonDisplay(bool show_lines, bool show_fill, bool show_centroids) {
-        m_show_lines = show_lines;
-        m_show_fill = show_fill;
-        m_show_centroids = show_centroids;
-    }
-    //
+
   public:
-    void setDisplayedAttribute(int col);
-    void setDisplayedAttribute(size_t col) { setDisplayedAttribute(static_cast<int>(col)); }
-    // use set displayed attribute instead unless you are deliberately changing the column order:
-    void overrideDisplayedAttribute(int attribute) { m_displayed_attribute = attribute; }
-    // now, there is a slightly odd thing here: the displayed attribute can go out of step with the
-    // underlying attribute data if there is a delete of an attribute in idepthmap.h, so it just
-    // needs checking before returning!
-    int getDisplayedAttribute() const {
-        if (m_displayed_attribute == m_attribHandle->getDisplayColIndex())
-            return m_displayed_attribute;
-        if (m_attribHandle->getDisplayColIndex() != -2) {
-            m_displayed_attribute = m_attribHandle->getDisplayColIndex();
-        }
-        return m_displayed_attribute;
-    }
-    //
-    void invalidateDisplayedAttribute() { m_invalidate = true; }
-    //
-    double getDisplayedAverage() {
-        return m_attributes->getColumn(static_cast<unsigned int>(m_displayed_attribute))
-                   .getStats()
-                   .total /
+    double getDisplayedAverage(size_t attributeIdx) {
+        return m_attributes->getColumn(attributeIdx).getStats().total /
                static_cast<double>(m_attributes->getNumRows());
     }
-    //
-  protected:
-    mutable bool m_show; // used when shape map is a drawing layer
-    bool m_editable;
-    std::set<int> m_selection_set; // note: uses keys
-  public:
-    // Selection
-    bool hasSelectedElements() const { return !m_selection_set.empty(); }
+
     const std::map<int, SalaShape> getShapesInRegion(const QtRegion &r) const;
-    bool setCurSel(QtRegion &r, bool add = false);
-    bool setCurSel(const std::vector<int> &selset, bool add = false);
-    bool setCurSelDirect(const std::vector<int> &selset, bool add = false);
-    float getDisplayedSelectedAvg();
-    bool clearSel();
-    std::set<int> &getSelSet() { return m_selection_set; }
-    const std::set<int> &getSelSet() const { return m_selection_set; }
-    size_t getSelCount() { return m_selection_set.size(); }
-    QtRegion getSelBounds();
-    // To showing
-    bool isShown() const { return m_show; }
-    void setShow(bool on = true) const { m_show = on; }
-    // To all editing
-    bool isEditable() const { return m_editable; }
-    void setEditable(bool on = true) { m_editable = on; }
 
   protected:
     bool m_hasMapInfoData = false;
@@ -566,21 +308,9 @@ class ShapeMap : public PixelBase {
 
   public:
     // Screen
-    void makeViewportShapes(const QtRegion &viewport) const;
-    bool findNextShape(bool &nextlayer) const;
-    const SalaShape &getNextShape() const;
-    const PafColor getShapeColor() const {
-        AttributeKey key(static_cast<int>(m_display_shapes[static_cast<size_t>(m_current)]));
-        const AttributeRow &row = m_attributes->getRow(key);
-        return dXreimpl::getDisplayColor(key, row, *m_attribHandle.get(), true);
-        ;
-    }
-    bool getShapeSelected() const {
-        return depthmapX::getMapAtIndex(m_shapes, m_display_shapes[static_cast<size_t>(m_current)])
-            ->second.m_selected;
-    }
+    std::vector<size_t> makeViewportShapes(const QtRegion &viewport) const;
     //
-    double getLocationValue(const Point2f &point) const;
+    double getLocationValue(const Point2f &point, std::optional<size_t> attributeIdx) const;
 
     // Quick mod - TV
 #if !defined(_MSC_VER)
@@ -601,8 +331,16 @@ class ShapeMap : public PixelBase {
     //
   public:
     // file
-    bool read(std::istream &stream);
-    bool write(std::ofstream &stream);
+    bool readNameType(std::istream &stream);
+    bool readPart2(std::istream &stream);
+    bool readPart3(std::istream &stream);
+    std::tuple<bool, bool, bool, int> read(std::istream &stream);
+
+    bool writeNameType(std::ostream &stream) const;
+    bool writePart2(std::ostream &stream) const;
+    bool writePart3(std::ostream &stream) const;
+    bool write(std::ostream &stream,
+               std::tuple<bool, bool, int> displayData = std::make_tuple(true, false, -1)) const;
     //
     bool output(std::ofstream &stream, char delimiter = '\t');
     //
@@ -610,19 +348,17 @@ class ShapeMap : public PixelBase {
   protected:
     std::vector<OrderedSizeTPair> m_links;
     std::vector<OrderedSizeTPair> m_unlinks;
-    mutable int m_curlinkline;
-    mutable int m_curunlinkpoint;
 
   public:
     bool clearLinks();
-    bool linkShapes(const Point2f &p);
-    bool linkShapesFromRefs(int ref1, int ref2, bool refresh = true);
-    bool linkShapes(size_t index1, size_t index2, bool refresh = true);
+    bool linkShapes(const Point2f &p, PixelRef p2);
+    bool linkShapesFromRefs(int ref1, int ref2);
+    bool linkShapes(size_t index1, size_t index2);
     bool linkShapes(size_t id1, int dir1, size_t id2, int dir2, float weight);
-    bool unlinkShapes(const Point2f &p);
-    bool unlinkShapesFromRefs(int index1, int index2, bool refresh = true);
-    bool unlinkShapes(size_t index1, size_t index2, bool refresh = true);
-    bool unlinkShapesByKey(int key1, int key2, bool refresh = true);
+    bool unlinkShapes(const Point2f &p, PixelRef p2);
+    bool unlinkShapesFromRefs(int index1, int index2);
+    bool unlinkShapes(size_t index1, size_t index2);
+    bool unlinkShapesByKey(int key1, int key2);
     bool unlinkShapeSet(std::istream &idset, int refcol);
 
   public:
@@ -631,19 +367,17 @@ class ShapeMap : public PixelBase {
     Line getNextLinkLine() const;
     std::vector<SimpleLine> getAllLinkLines();
 
-    const std::vector<OrderedSizeTPair> &getLinks() { return m_links; }
-    const std::vector<OrderedSizeTPair> &getUnlinks() { return m_unlinks; }
-    // specific to axial line graphs
-    bool findNextUnlinkPoint() const;
-    Point2f getNextUnlinkPoint() const;
+    const std::vector<OrderedSizeTPair> &getLinks() const { return m_links; }
+    const std::vector<OrderedSizeTPair> &getUnlinks() const { return m_unlinks; }
     std::vector<Point2f> getAllUnlinkPoints();
     void outputUnlinkPoints(std::ofstream &stream, char delim);
 
   public:
     std::vector<SimpleLine> getAllShapesAsLines() const;
-    std::vector<std::pair<SimpleLine, PafColor>> getAllLinesWithColour();
-    std::vector<std::pair<std::vector<Point2f>, PafColor>> getAllPolygonsWithColour();
-    std::vector<std::pair<Point2f, PafColor>> getAllPointsWithColour();
+    std::vector<std::pair<SimpleLine, PafColor>> getAllLinesWithColour(const std::set<int> &selSet);
+    std::vector<std::pair<std::vector<Point2f>, PafColor>>
+    getAllPolygonsWithColour(const std::set<int> &selSet);
+    std::vector<std::pair<Point2f, PafColor>> getAllPointsWithColour(const std::set<int> &selSet);
     bool importLines(const std::vector<Line> &lines, const depthmapX::Table &data);
     bool importLinesWithRefs(const std::map<int, Line> &lines, const depthmapX::Table &data);
     bool importPoints(const std::vector<Point2f> &points, const depthmapX::Table &data);

@@ -138,9 +138,9 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
 
     AnalysisResult result;
 
-    std::string cluster_col_name = "Visual Clustering Coefficient";
-    std::string control_col_name = "Visual Control";
-    std::string controllability_col_name = "Visual Controllability";
+    std::string cluster_col_name = Column::VISUAL_CLUSTERING_COEFFICIENT;
+    std::string control_col_name = Column::VISUAL_CONTROL;
+    std::string controllability_col_name = Column::VISUAL_CONTROLLABILITY;
     int cluster_col = attributes.insertOrResetColumn(cluster_col_name);
     result.addAttribute(cluster_col_name);
     int control_col = attributes.insertOrResetColumn(control_col_name);
@@ -155,7 +155,6 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
         row->setValue(controllability_col, dataIter->controllability);
         dataIter++;
     }
-    m_map.setDisplayedAttribute(cluster_col);
 
     result.completed = true;
 

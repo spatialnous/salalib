@@ -11,9 +11,6 @@
 #include "salalib/pushvalues.h"
 
 AnalysisResult AgentAnalysis::run(Communicator *comm) {
-    if (comm) {
-        m_pointMap.clearAllPoints();
-    }
     AttributeTable &table = m_pointMap.getAttributeTable();
 
     if (m_agentFOV == 32) {

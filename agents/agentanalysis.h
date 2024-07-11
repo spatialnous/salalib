@@ -11,6 +11,7 @@
 #include "salalib/agents/agent.h"
 #include "salalib/ianalysis.h"
 #include "salalib/pointmap.h"
+#include <bitset>
 
 class AgentAnalysis : public IAnalysis {
 
@@ -40,7 +41,8 @@ class AgentAnalysis : public IAnalysis {
             const PointMap &map = agents[agent].getPointMap();
             PixelRef pix;
             do {
-                pix = map.pickPixel(prandom(static_cast<int>(*m_randomReleaseLocationsSeed)));
+                pix =
+                    map.pickPixel(prandom(static_cast<int>(m_randomReleaseLocationsSeed.value())));
             } while (!map.getPoint(pix).filled());
             agents[agent].onInit(pix, trail_num);
         }
@@ -144,7 +146,7 @@ class AgentAnalysis : public IAnalysis {
   public:
     AgentAnalysis(PointMap &pointMap, size_t systemTimesteps, double releaseRate,
                   size_t agentLifetime, unsigned short agentFOV, size_t agentStepsToDecision,
-                  int agentAlgorithm, int randomReleaseLocationsSeed,
+                  int agentAlgorithm, std::optional<size_t> randomReleaseLocationsSeed,
                   const std::vector<Point2f> &specificReleasePoints,
                   const std::optional<std::reference_wrapper<ShapeMap>> &gateLayer,
                   std::optional<std::pair<size_t, std::reference_wrapper<ShapeMap>>> recordTrails)

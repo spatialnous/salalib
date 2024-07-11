@@ -22,9 +22,9 @@ class Point {
         FILLED = 0x0002,
         BLOCKED = 0x0004,
         CONTEXTFILLED = 0x0008, // PARTBLOCKED = 0x0008 deprecated
-                                //        SELECTED = 0x0010,
-        EDGE = 0x0020,
-        MERGED = 0x0040, // PINNED = 0x0020 deprecated
+                                // SELECTED = 0x0010,
+        EDGE = 0x0020,          // PINNED = 0x0020 deprecated
+        MERGED = 0x0040,
         AGENTFILLED = 0x0080,
         AGENTFADE = 0x0100,
         AGENTA = 0x0200,

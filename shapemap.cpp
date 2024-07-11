@@ -2184,12 +2184,12 @@ std::tuple<bool, bool, bool, int> ShapeMap::read(std::istream &stream) {
 
     bool read = readNameType(stream);
 
+    bool show = true; // <- by default show
     // turn off selection / editable etc
     bool editable = false;
-    bool show = true; // <- by default show
 
-    stream.read((char *)&editable, sizeof(editable));
     stream.read((char *)&show, sizeof(show));
+    stream.read((char *)&editable, sizeof(editable));
 
     read = read && readPart2(stream);
 

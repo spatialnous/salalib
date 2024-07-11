@@ -78,6 +78,7 @@ namespace IsovistUtils {
                             const QtRegion &bounds, ShapeMap &map, const Point2f &p,
                             double startangle, double endangle) {
         BSPNodeTree bspNodeTree;
+        bspNodeTree.makeNewRoot(false);
         BSPTree::make(comm, 0, lines, bspNodeTree.getRoot());
         createIsovistInMap(comm, bspNodeTree, bounds, map, p, startangle, endangle);
     }

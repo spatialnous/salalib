@@ -12,9 +12,6 @@
 #include <sstream>
 #include <tuple>
 
-// From: Alasdair Turner (2004) - Depthmap 4: a researcher's handbook (p. 6):
-// [..] CAT, which stands for Chiron and Alasdair Transfer Format [..]
-
 // void MetaGraph::updateParentRegions(ShapeMap &shapeMap) {
 //     if (m_drawingFiles.back().m_region.atZero()) {
 //         m_drawingFiles.back().m_region = shapeMap.getRegion();

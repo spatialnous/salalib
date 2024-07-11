@@ -11,5 +11,9 @@
 #include <ostream>
 
 namespace exportUtils {
+
+    // From: Alasdair Turner (2004) - Depthmap 4: a researcher's handbook (p. 6):
+    // [..] CAT, which stands for Chiron and Alasdair Transfer Format [..]
     void writeMapShapesAsCat(ShapeMap &map, std::ostream &stream);
+
 } // namespace exportUtils

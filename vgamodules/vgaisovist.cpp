@@ -156,13 +156,8 @@ std::set<std::string> VGAIsovist::setData(Isovist &isovist, AttributeRow &row,
 BSPNode VGAIsovist::makeBSPtree(Communicator *communicator,
                                 const std::vector<SalaShape> &boundaryShapes) {
     std::vector<Line> partitionlines;
-    int k = -1;
     for (const auto &shape : boundaryShapes) {
-        k++;
         std::vector<Line> newLines = shape.getAsLines();
-        // I'm not sure what the tagging was meant for any more,
-        // tagging at the moment tags the *polygon* it was original attached to
-        // must check it is not a zero length line:
         for (const Line &line : newLines) {
             if (line.length() > 0.0) {
                 partitionlines.push_back(line);

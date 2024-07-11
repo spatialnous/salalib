@@ -598,16 +598,11 @@ template int MetaGraphReadWrite::write<PointMap, ShapeMap, std::unique_ptr<Shape
     const std::vector<std::unique_ptr<ShapeGraph>> &shapeGraphs,
     const std::optional<size_t> allLineMapIdx,
     // display data
-    const int state = 0, const int viewClass = 0, const bool showGrid = true,
-    const bool showText = true,
-    const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap =
-        std::vector<std::vector<ShapeMapDisplayData>>(),
-    const unsigned int displayedPointMap = 0,
-    const std::vector<int> perPointMap = std::vector<int>(),
-    const unsigned int displayedDataMap = 0,
-    const std::vector<ShapeMapDisplayData> perDataMap = std::vector<ShapeMapDisplayData>(),
-    const unsigned int displayedShapeGraph = 0,
-    const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
+    const int state, const int viewClass, const bool showGrid, const bool showText,
+    const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
+    const unsigned int displayedPointMap, const std::vector<int> perPointMap,
+    const unsigned int displayedDataMap, const std::vector<ShapeMapDisplayData> perDataMap,
+    const unsigned int displayedShapeGraph, const std::vector<ShapeMapDisplayData> perShapeGraph);
 
 template int
 MetaGraphReadWrite::write<std::reference_wrapper<PointMap>, std::reference_wrapper<ShapeMap>,
@@ -623,16 +618,11 @@ MetaGraphReadWrite::write<std::reference_wrapper<PointMap>, std::reference_wrapp
     const std::vector<std::reference_wrapper<std::unique_ptr<ShapeGraph>>> &shapeGraphs,
     const std::optional<size_t> allLineMapIdx,
     // display data
-    const int state = 0, const int viewClass = 0, const bool showGrid = true,
-    const bool showText = true,
-    const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap =
-        std::vector<std::vector<ShapeMapDisplayData>>(),
-    const unsigned int displayedPointMap = 0,
-    const std::vector<int> perPointMap = std::vector<int>(),
-    const unsigned int displayedDataMap = 0,
-    const std::vector<ShapeMapDisplayData> perDataMap = std::vector<ShapeMapDisplayData>(),
-    const unsigned int displayedShapeGraph = 0,
-    const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
+    const int state, const int viewClass, const bool showGrid, const bool showText,
+    const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
+    const unsigned int displayedPointMap, const std::vector<int> perPointMap,
+    const unsigned int displayedDataMap, const std::vector<ShapeMapDisplayData> perDataMap,
+    const unsigned int displayedShapeGraph, const std::vector<ShapeMapDisplayData> perShapeGraph);
 
 std::string MetaGraphReadWrite::getReadMessage(ReadStatus readStatus) {
     switch (readStatus) {

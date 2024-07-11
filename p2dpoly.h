@@ -514,17 +514,6 @@ inline Point2f intersection_point(const Line &a, const Line &b, double tolerance
     return a.point_on_line(a.intersection_point(b, axis, tolerance), axis);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
-
-struct TaggedLine {
-    Line line;
-    int tag;
-    TaggedLine(const Line &l = Line(), int t = -1) {
-        line = l;
-        tag = t;
-    }
-};
-
 // plain 2-point line without regions
 struct SimpleLine {
   public:

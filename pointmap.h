@@ -87,6 +87,8 @@ class PointMap : public AttributeMap {
     PixelRef pixelate(const Point2f &p, bool constrain = true, int scalefactor = 1) const;
     Point2f depixelate(const PixelRef &p, double scalefactor = 1.0) const; // Inlined below
     QtRegion regionate(const PixelRef &p, double border) const;            // Inlined below
+    void addPointsInRegionToSet(const QtRegion &r, std::set<PixelRef> &selSet);
+    std::set<PixelRef> getPointsInRegion(const QtRegion &r) const;
     bool setGrid(double spacing, const Point2f &offset = Point2f());
     std::vector<std::pair<PixelRef, PixelRef>> getMergedPixelPairs() {
         // unnecessary converter until the m_merge_lines variable is

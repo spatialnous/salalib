@@ -69,6 +69,7 @@ set(salalib_HDRS
     attributemap.h
     exportutils.h
     bspnodetree.h
+    isovistutils.h
 )
 
 set(salalib_SRCS

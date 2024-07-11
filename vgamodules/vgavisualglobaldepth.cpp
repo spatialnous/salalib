@@ -25,7 +25,6 @@ AnalysisResult VGAVisualGlobalDepth::run(Communicator *, PointMap &map, bool) {
     std::vector<PixelRefVector> search_tree;
     search_tree.push_back(PixelRefVector());
     for (auto &sel : m_originRefs) {
-        // need to convert from ints (m_selection_set) to pixelrefs for this op:
         search_tree.back().push_back(sel);
     }
 

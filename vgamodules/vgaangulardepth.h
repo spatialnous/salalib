@@ -11,7 +11,7 @@
 
 class VGAAngularDepth : IVGA {
 
-    std::set<int> &m_originRefs;
+    const std::set<PixelRef> &m_originRefs;
 
   public:
     struct Column {
@@ -20,7 +20,7 @@ class VGAAngularDepth : IVGA {
     };
 
   public:
-    VGAAngularDepth(std::set<int> &originRefs) : m_originRefs(originRefs) {}
+    VGAAngularDepth(std::set<PixelRef> &originRefs) : m_originRefs(originRefs) {}
     std::string getAnalysisName() const override { return "Angular Depth"; }
     AnalysisResult run(Communicator *comm, PointMap &map, bool) override;
 };

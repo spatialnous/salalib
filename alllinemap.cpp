@@ -28,7 +28,7 @@ void AllLineMap::generate(Communicator *comm,
         } else {
             region = runion(region, map.get().getRegion());
         }
-        std::vector<SimpleLine> newLines = map.get().getAllShapesAsLines();
+        std::vector<SimpleLine> newLines = map.get().getAllShapesAsSimpleLines();
         for (const auto &line : newLines) {
             lines.push_back(Line(line.start(), line.end()));
         }

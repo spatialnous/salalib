@@ -19,16 +19,6 @@ namespace {
     // old depthmapX display information, left here to allow reading
     // metagraph files
     enum {
-        OK,
-        WARN_BUGGY_VERSION,
-        WARN_CONVERTED,
-        NOT_A_GRAPH,
-        DAMAGED_FILE,
-        DISK_ERROR,
-        NEWER_VERSION,
-        DEPRECATED_VERSION
-    };
-    enum {
         NONE = 0x0000,
         POINTMAPS = 0x0002,
         LINEDATA = 0x0004,
@@ -95,20 +85,6 @@ void MetaGraphReadWrite::readHeader(std::istream &stream) {
     }
 }
 
-int MetaGraphReadWrite::readVersion(std::istream &stream) {
-    int version;
-    stream.read((char *)&version, sizeof(version));
-    if (version > METAGRAPH_VERSION) {
-        return NEWER_VERSION;
-    }
-    if (version < METAGRAPH_VERSION) {
-        throw MetaGraphReadError(
-            "This file is too old, please use an older version of depthmapX to "
-            "convert it");
-    }
-    return version;
-}
-
 QtRegion MetaGraphReadWrite::readRegion(std::istream &stream) {
     QtRegion region;
     stream.read((char *)&region, sizeof(region));
@@ -140,7 +116,15 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
 
     MetaGraphData mgd;
 
-    mgd.version = MetaGraphReadWrite::readVersion(stream);
+    stream.read((char *)&mgd.version, sizeof(mgd.version));
+    if (mgd.version > METAGRAPH_VERSION) {
+        mgd.readStatus = ReadStatus::NEWER_VERSION;
+        return mgd;
+    }
+    if (mgd.version < METAGRAPH_VERSION) {
+        mgd.readStatus = ReadStatus::DEPRECATED_VERSION;
+        return mgd;
+    }
 
     // have to use temporary state here as redraw attempt may come too early:
     int tempState = 0;
@@ -161,16 +145,15 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
     if (type == 'd') {
         // contains deprecated datalayers. depthmapX should be able to
         // convert them into shapemaps
-
-        throw MetaGraphReadError(
-            "This file is too old, please use an older version of depthmapX to "
-            "convert it");
+        mgd.readStatus = ReadStatus::DEPRECATED_VERSION;
+        return mgd;
     }
     if (type == 'x') {
         mgd.metaGraph.fileProperties.read(stream);
         if (stream.eof()) {
             // erk... this shouldn't happen
-            throw MetaGraphReadError("This file is damaged");
+            mgd.readStatus = ReadStatus::DAMAGED_FILE;
+            return mgd;
         } else if (!stream.eof()) {
             stream.read(&type, 1);
         }
@@ -188,7 +171,8 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
 
         if (stream.eof()) {
             // erk... this shouldn't happen
-            throw MetaGraphReadError("This file is damaged");
+            mgd.readStatus = ReadStatus::DAMAGED_FILE;
+            return mgd;
         } else if (!stream.eof()) {
             stream.read(&type, 1);
         }
@@ -206,7 +190,8 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
         }
         if (!stream.eof() && !stream.good()) {
             // erk... this shouldn't happen
-            throw MetaGraphReadError("This file is damaged");
+            mgd.readStatus = ReadStatus::DAMAGED_FILE;
+            return mgd;
         }
     }
     if (type == 'p') {
@@ -249,6 +234,7 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
     }
     mgd.displayData.state = tempState;
 
+    mgd.readStatus = ReadStatus::OK;
     return mgd;
 }
 
@@ -647,3 +633,26 @@ MetaGraphReadWrite::write<std::reference_wrapper<PointMap>, std::reference_wrapp
     const std::vector<ShapeMapDisplayData> perDataMap = std::vector<ShapeMapDisplayData>(),
     const unsigned int displayedShapeGraph = 0,
     const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
+
+std::string MetaGraphReadWrite::getReadMessage(ReadStatus readStatus) {
+    switch (readStatus) {
+    case ReadStatus::OK:
+        return "OK";
+    case ReadStatus::WARN_BUGGY_VERSION:
+        return "File version is buggy";
+    case ReadStatus::WARN_CONVERTED:
+        return "File was converted from an older version";
+    case ReadStatus::NOT_A_GRAPH:
+        return "Not a MetaGraph file";
+    case ReadStatus::DAMAGED_FILE:
+        return "Damaged file";
+    case ReadStatus::DISK_ERROR:
+        return "Disk error";
+    case ReadStatus::NEWER_VERSION:
+        return "MetaGraph file too new";
+    case ReadStatus::DEPRECATED_VERSION:
+        return "MetaGraph file too old";
+    case ReadStatus::NOT_READ_YET:
+        return "Reading interrupted";
+    }
+}

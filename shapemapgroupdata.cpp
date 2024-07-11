@@ -11,10 +11,10 @@
 #include "genlib/stringutils.h"
 
 bool ShapeMapGroupData::readInName(std::istream &stream) {
-    m_name = dXstring::readString(stream);
-    stream.read((char *)&m_region, sizeof(m_region));
-    if (m_name.empty()) {
-        m_name = "<unknown>";
+    name = dXstring::readString(stream);
+    stream.read((char *)&region, sizeof(region));
+    if (name.empty()) {
+        name = "<unknown>";
     }
     return true;
 }
@@ -34,7 +34,7 @@ ShapeMapGroupData::readSpacePixels(std::istream &stream) {
 }
 
 bool ShapeMapGroupData::writeOutName(std::ostream &stream) const {
-    dXstring::writeString(stream, m_name);
-    stream.write((char *)&m_region, sizeof(m_region));
+    dXstring::writeString(stream, name);
+    stream.write((char *)&region, sizeof(region));
     return true;
 }

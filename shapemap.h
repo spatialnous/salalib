@@ -373,8 +373,10 @@ class ShapeMap : public AttributeMap {
     void outputUnlinkPoints(std::ofstream &stream, char delim);
 
   public:
-    std::vector<SimpleLine> getAllShapesAsLines() const;
-    std::vector<std::pair<SimpleLine, PafColor>> getAllLinesWithColour(const std::set<int> &selSet);
+    std::vector<Line> getAllShapesAsLines() const;
+    std::vector<SimpleLine> getAllShapesAsSimpleLines() const;
+    std::vector<std::pair<SimpleLine, PafColor>>
+    getAllSimpleLinesWithColour(const std::set<int> &selSet);
     std::vector<std::pair<std::vector<Point2f>, PafColor>>
     getAllPolygonsWithColour(const std::set<int> &selSet);
     std::vector<std::pair<Point2f, PafColor>> getAllPointsWithColour(const std::set<int> &selSet);

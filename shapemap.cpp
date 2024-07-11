@@ -2912,7 +2912,16 @@ int findwinner(double *bins, int bincount, int &difficult, int &impossible) {
 #include <windows.h>
 #endif
 
-std::vector<SimpleLine> ShapeMap::getAllShapesAsLines() const {
+std::vector<Line> ShapeMap::getAllShapesAsLines() const {
+    std::vector<Line> lines;
+    auto newLines = getAllShapesAsSimpleLines();
+    for (const auto &line : newLines) {
+        lines.emplace_back(line.start(), line.end());
+    }
+    return lines;
+}
+
+std::vector<SimpleLine> ShapeMap::getAllShapesAsSimpleLines() const {
     std::vector<SimpleLine> lines;
     const std::map<int, SalaShape> &allShapes = getAllShapes();
     for (const auto &refShape : allShapes) {
@@ -2932,7 +2941,7 @@ std::vector<SimpleLine> ShapeMap::getAllShapesAsLines() const {
 }
 
 std::vector<std::pair<SimpleLine, PafColor>>
-ShapeMap::getAllLinesWithColour(const std::set<int> &selSet) {
+ShapeMap::getAllSimpleLinesWithColour(const std::set<int> &selSet) {
     std::vector<std::pair<SimpleLine, PafColor>> colouredLines;
     std::map<int, SalaShape> &allShapes = getAllShapes();
     for (auto &refShape : allShapes) {

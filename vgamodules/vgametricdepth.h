@@ -11,7 +11,7 @@
 
 class VGAMetricDepth : IVGA {
 
-    std::set<int> &m_originRefs;
+    const std::set<PixelRef> &m_originRefs;
 
   public:
     struct Column {
@@ -22,7 +22,7 @@ class VGAMetricDepth : IVGA {
     };
 
   public:
-    VGAMetricDepth(std::set<int> &originRefs) : m_originRefs(originRefs) {}
+    VGAMetricDepth(std::set<PixelRef> &originRefs) : m_originRefs(originRefs) {}
     std::string getAnalysisName() const override { return "Metric Depth"; }
     AnalysisResult run(Communicator *, PointMap &map, bool) override;
 };

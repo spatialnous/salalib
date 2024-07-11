@@ -12,18 +12,27 @@
 
 #include <string>
 
-class ShapeMapGroupData {
-    std::string m_name; // <- file name
-    QtRegion m_region;
+struct ShapeMapGroupData {
+    std::string name; // <- file name
+    QtRegion region;
 
-  public:
-    ShapeMapGroupData(const std::string &name = std::string()) : m_name(name){};
-    void setName(const std::string &name) { m_name = name; }
-    const std::string &getName() const { return m_name; }
+    ShapeMapGroupData(const std::string &name = std::string()) { this->name = name; };
 
     bool readInName(std::istream &stream);
     bool writeOutName(std::ostream &stream) const;
 
     static std::tuple<std::vector<ShapeMap>, std::vector<std::tuple<bool, bool, int>>>
     readSpacePixels(std::istream &stream);
+
+    static std::vector<std::pair<std::reference_wrapper<const ShapeMap>, int>> getAsRefMaps(
+        const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> &drawingFiles) {
+        std::vector<std::pair<std::reference_wrapper<const ShapeMap>, int>> maps;
+        for (auto &mapGroup : drawingFiles) {
+            int j = 0;
+            for (const auto &map : mapGroup.second) {
+                maps.push_back(std::make_pair(std::ref(map), j));
+            }
+        }
+        return maps;
+    }
 };

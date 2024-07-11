@@ -18,6 +18,20 @@
 
 namespace MetaGraphReadWrite {
 
+    enum class ReadStatus {
+        OK,
+        WARN_BUGGY_VERSION,
+        WARN_CONVERTED,
+        NOT_A_GRAPH,
+        DAMAGED_FILE,
+        DISK_ERROR,
+        NEWER_VERSION,
+        DEPRECATED_VERSION,
+        NOT_READ_YET
+    };
+
+    std::string getReadMessage(ReadStatus readStatus);
+
     class MetaGraphReadError : public depthmapX::BaseException {
       public:
         MetaGraphReadError(std::string message) : BaseException(message) {}
@@ -27,6 +41,7 @@ namespace MetaGraphReadWrite {
     typedef std::tuple<bool, bool, int> ShapeMapDisplayData;
 
     struct MetaGraphData {
+        ReadStatus readStatus = ReadStatus::NOT_READ_YET;
         int version;
         MetaGraph metaGraph;
         std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> drawingFiles;
@@ -51,7 +66,6 @@ namespace MetaGraphReadWrite {
     };
 
     void readHeader(std::istream &stream);
-    int readVersion(std::istream &stream);
     QtRegion readRegion(std::istream &stream);
 
     std::tuple<std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>>,

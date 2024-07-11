@@ -153,6 +153,7 @@ class Point {
     //   { return m_block | (m_block >> 16); }
     // int fillBlocked() const
     //   { return m_block & 0x06600660; }
+    int getState() const { return m_state; }
     int getState() { return m_state; }
     int getMisc() // used as: undocounter, in graph construction, and an agent reference, as well as
                   // for making axial maps

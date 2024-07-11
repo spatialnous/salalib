@@ -40,7 +40,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToAxial(
         } else {
             region = runion(region, mapLayer.first.get().getRegion());
         }
-        std::vector<SimpleLine> newLines = mapLayer.first.get().getAllShapesAsLines();
+        std::vector<SimpleLine> newLines = mapLayer.first.get().getAllShapesAsSimpleLines();
         for (const auto &line : newLines) {
             lines.insert(std::make_pair(count, std::make_pair(Line(line.start(), line.end()), j)));
             count++;
@@ -303,7 +303,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToSegment(
         } else {
             region = runion(region, mapLayer.first.get().getRegion());
         }
-        std::vector<SimpleLine> newLines = mapLayer.first.get().getAllShapesAsLines();
+        std::vector<SimpleLine> newLines = mapLayer.first.get().getAllShapesAsSimpleLines();
         for (const auto &line : newLines) {
             lines.insert(std::make_pair(count, std::make_pair(Line(line.start(), line.end()), j)));
             count++;

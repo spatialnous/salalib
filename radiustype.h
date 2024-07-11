@@ -7,7 +7,7 @@
 #pragma once
 
 enum class RadiusType {
-    TOPOLOGICAL, // = 0
+    TOPOLOGICAL, // = 0 AKA STEPS
     METRIC,      // = 1
     ANGULAR,     // = 2
     NONE         // = -1

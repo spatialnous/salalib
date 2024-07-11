@@ -254,6 +254,30 @@ PixelRef PointMap::pixelate(const Point2f &p, bool constrain, int scalefactor) c
     return ref;
 }
 
+void PointMap::addPointsInRegionToSet(const QtRegion &r, std::set<PixelRef> &selSet) {
+    auto newSet = getPointsInRegion(r);
+    selSet.insert(newSet.begin(), newSet.end());
+}
+
+std::set<PixelRef> PointMap::getPointsInRegion(const QtRegion &r) const {
+    std::set<PixelRef> selSet;
+    auto s_bl = pixelate(r.bottom_left, true);
+    auto s_tr = pixelate(r.top_right, true);
+
+    int mask = 0;
+    mask |= Point::FILLED;
+
+    for (auto i = s_bl.x; i <= s_tr.x; i++) {
+        for (auto j = s_bl.y; j <= s_tr.y; j++) {
+            PixelRef ref(i, j);
+            if (getPoint(ref).getState() & mask) {
+                selSet.insert(ref);
+            }
+        }
+    }
+    return selSet;
+}
+
 void PointMap::fillLine(const Line &li) {
     PixelRefVector pixels = pixelateLine(li, 1);
     for (size_t j = 0; j < pixels.size(); j++) {

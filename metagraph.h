@@ -24,8 +24,6 @@ struct MetaGraph {
     FileProperties fileProperties;
     int version = -1;
 
-  private:
-  public:
     MetaGraph(std::string name = "") {
         this->name = name;
         this->version = -1; // <- if unsaved, file version is -1

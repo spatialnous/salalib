@@ -9,17 +9,19 @@
 #include "agentprogram.h"
 
 #include "salalib/agents/agent.h"
-#include "salalib/ivga.h"
+#include "salalib/ianalysis.h"
 #include "salalib/pointmap.h"
 
-class AgentAnalysis : IVGA {
+class AgentAnalysis : public IAnalysis {
+
+    PointMap &m_pointMap;
 
     AgentProgram agentProgram;
 
     size_t m_systemTimesteps;
     double m_releaseRate = 0.1;
-    size_t m_agentLifetime = 1000;
-    unsigned short m_agentFOV = 32;
+    size_t m_agentLifetime = 5000;
+    unsigned short m_agentFOV = 15;
     size_t m_agentStepsToDecision = 3;
     int m_agentAlgorithm = AgentProgram::SEL_STANDARD;
     std::optional<size_t> m_randomReleaseLocationsSeed = 0;
@@ -140,17 +142,21 @@ class AgentAnalysis : IVGA {
     };
 
   public:
-    AgentAnalysis(size_t systemTimesteps, double releaseRate, size_t agentLifetime,
-                  unsigned short agentFOV, size_t agentStepsToDecision, int agentAlgorithm,
-                  int randomReleaseLocationsSeed, const std::vector<Point2f> &specificReleasePoints,
+    AgentAnalysis(PointMap &pointMap, size_t systemTimesteps, double releaseRate,
+                  size_t agentLifetime, unsigned short agentFOV, size_t agentStepsToDecision,
+                  int agentAlgorithm, int randomReleaseLocationsSeed,
+                  const std::vector<Point2f> &specificReleasePoints,
                   const std::optional<std::reference_wrapper<ShapeMap>> &gateLayer,
                   std::optional<std::pair<size_t, std::reference_wrapper<ShapeMap>>> recordTrails)
-        : m_systemTimesteps(systemTimesteps), m_releaseRate(releaseRate),
+        : m_pointMap(pointMap), m_systemTimesteps(systemTimesteps), m_releaseRate(releaseRate),
           m_agentLifetime(agentLifetime), m_agentFOV(agentFOV),
           m_agentStepsToDecision(agentStepsToDecision), m_agentAlgorithm(agentAlgorithm),
           m_randomReleaseLocationsSeed(randomReleaseLocationsSeed),
           m_specificReleasePoints(specificReleasePoints), m_gateLayer(gateLayer),
           m_recordTrails(recordTrails) {}
     std::string getAnalysisName() const override { return "Agent Analysis"; }
-    AnalysisResult run(Communicator *comm, PointMap &map, bool = false) override;
+    AnalysisResult run(Communicator *comm) override;
+
+  public: // utility functions
+    bool setTooRecordTrails() { return m_recordTrails.has_value(); }
 };

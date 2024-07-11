@@ -10,11 +10,11 @@
 
 #include "salalib/pushvalues.h"
 
-AnalysisResult AgentAnalysis::run(Communicator *comm, PointMap &map, bool) {
+AnalysisResult AgentAnalysis::run(Communicator *comm) {
     if (comm) {
-        map.clearAllPoints();
+        m_pointMap.clearAllPoints();
     }
-    AttributeTable &table = map.getAttributeTable();
+    AttributeTable &table = m_pointMap.getAttributeTable();
 
     if (m_agentFOV == 32) {
         agentProgram.m_vbin = -1;
@@ -29,6 +29,7 @@ AnalysisResult AgentAnalysis::run(Communicator *comm, PointMap &map, bool) {
 
     // if the m_release_locations is not set the locations are
     // set later by picking random pixels
+    auto &map = m_pointMap;
     if (!m_randomReleaseLocationsSeed.has_value()) {
         releaseLocations.clear();
         for_each(m_specificReleasePoints.begin(), m_specificReleasePoints.end(),
@@ -44,13 +45,13 @@ AnalysisResult AgentAnalysis::run(Communicator *comm, PointMap &map, bool) {
         table.insertOrResetColumn(AgentAnalysis::Column::INTERNAL_GATE);
         // Transferring refs here, so we need to get the column name of the "Ref" column
         const std::string &colIn = m_gateLayer->get().getAttributeTable().getColumnName(-1);
-        PushValues::shapeToPoint(m_gateLayer->get(), colIn, map,
+        PushValues::shapeToPoint(m_gateLayer->get(), colIn, m_pointMap,
                                  AgentAnalysis::Column::INTERNAL_GATE, PushValues::Func::TOT);
 
         table.insertOrResetColumn(Column::INTERNAL_GATE_COUNTS);
     }
 
-    runAgentEngine(agents, releaseLocations, comm, &map);
+    runAgentEngine(agents, releaseLocations, comm, &m_pointMap);
 
     if (m_recordTrails.has_value()) {
         std::string mapName = "Agent Trails";
@@ -62,7 +63,7 @@ AnalysisResult AgentAnalysis::run(Communicator *comm, PointMap &map, bool) {
         auto colcounts = table.getColumnIndex(Column::INTERNAL_GATE_COUNTS);
         AttributeTable &tableout = m_gateLayer->get().getAttributeTable();
         tableout.insertOrResetColumn(Column::AGENT_COUNTS);
-        PushValues::pointToShape(map, Column::INTERNAL_GATE_COUNTS, *m_gateLayer,
+        PushValues::pointToShape(m_pointMap, Column::INTERNAL_GATE_COUNTS, *m_gateLayer,
                                  Column::AGENT_COUNTS, PushValues::Func::TOT);
 
         // and delete the temporary columns:

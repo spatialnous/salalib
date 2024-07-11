@@ -655,4 +655,5 @@ std::string MetaGraphReadWrite::getReadMessage(ReadStatus readStatus) {
     case ReadStatus::NOT_READ_YET:
         return "Reading interrupted";
     }
+    return "<Unknown state>";
 }

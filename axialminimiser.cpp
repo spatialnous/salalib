@@ -17,9 +17,9 @@ static int compareValueTriplet(const void *p1, const void *p2) {
                                                                        : 0));
 }
 
-AxialMinimiser::AxialMinimiser(const AllLineMap &alllinemap, int no_of_axsegcuts,
+AxialMinimiser::AxialMinimiser(const ShapeGraph &alllinemap, int no_of_axsegcuts,
                                int no_of_radialsegs) {
-    m_alllinemap = (AllLineMap *)&alllinemap;
+    m_alllinemap = (ShapeGraph *)&alllinemap;
 
     m_vps = new ValueTriplet[no_of_axsegcuts];
     m_removed = new bool[no_of_axsegcuts];

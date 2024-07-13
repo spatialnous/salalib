@@ -78,15 +78,20 @@ class ShapeGraph : public ShapeMap {
     void pushAxialValues(ShapeGraph &axialmap);
 
     bool readShapeGraphData(std::istream &stream);
-    virtual std::tuple<bool, bool, bool, int> read(std::istream &stream);
+    virtual std::tuple<bool, bool, bool, int> read(std::istream &stream) override;
     bool writeShapeGraphData(std::ostream &stream) const;
-    virtual bool write(std::ostream &stream,
-                       std::tuple<bool, bool, int> displayData = std::make_tuple(true, false,
-                                                                                 -1)) const;
+    virtual bool write(std::ostream &stream, const std::tuple<bool, bool, int> &displayData =
+                                                 std::make_tuple(true, false, -1)) const override;
     void writeAxialConnectionsAsDotGraph(std::ostream &stream);
     void writeAxialConnectionsAsPairsCSV(std::ostream &stream);
     void writeSegmentConnectionsAsPairsCSV(std::ostream &stream);
     void writeLinksUnlinksAsPairsCSV(std::ostream &stream, char delimiter = ',');
     void unlinkAtPoint(const Point2f &unlinkPoint);
     void unlinkFromShapeMap(const ShapeMap &shapemap);
+    void setKeyVertexCount(int keyvertexcount) { m_keyvertexcount = keyvertexcount; }
+    auto getKeyVertexCount() { return m_keyvertexcount; }
+    auto &getKeyVertices() { return m_keyvertices; }
+    auto getShapesAtPixel(PixelRef ref) {
+        return m_pixel_shapes(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x));
+    }
 };

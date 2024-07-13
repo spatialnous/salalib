@@ -57,10 +57,10 @@ class ShapeMap : public AttributeMap {
 
   protected:
     std::string m_name;
-    int m_map_type;
-    bool m_hasgraph;
+    int m_map_type = EMPTYMAP;
+    bool m_hasgraph = false;
     // counters
-    int m_obj_ref;
+    int m_obj_ref = -1;
     //
     // quick grab for shapes
     depthmapX::ColumnMatrix<std::vector<ShapeRef>> m_pixel_shapes; // i rows of j columns
@@ -334,13 +334,14 @@ class ShapeMap : public AttributeMap {
     bool readNameType(std::istream &stream);
     bool readPart2(std::istream &stream);
     bool readPart3(std::istream &stream);
-    std::tuple<bool, bool, bool, int> read(std::istream &stream);
+    virtual std::tuple<bool, bool, bool, int> read(std::istream &stream);
 
     bool writeNameType(std::ostream &stream) const;
     bool writePart2(std::ostream &stream) const;
     bool writePart3(std::ostream &stream) const;
-    bool write(std::ostream &stream,
-               std::tuple<bool, bool, int> displayData = std::make_tuple(true, false, -1)) const;
+    virtual bool write(std::ostream &stream,
+                       const std::tuple<bool, bool, int> &displayData = std::make_tuple(true, false,
+                                                                                        -1)) const;
     //
     bool output(std::ofstream &stream, char delimiter = '\t');
     //

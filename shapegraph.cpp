@@ -193,9 +193,8 @@ bool ShapeGraph::writeShapeGraphData(std::ostream &stream) const {
     return true;
 }
 
-bool ShapeGraph::write(std::ostream &stream, std::tuple<bool, bool, int> displayData) const {
+bool ShapeGraph::write(std::ostream &stream, const std::tuple<bool, bool, int> &displayData) const {
     bool written = writeShapeGraphData(stream);
-
     // now simply run base class write:
     written = written & ShapeMap::write(stream, displayData);
 

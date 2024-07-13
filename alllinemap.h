@@ -9,22 +9,28 @@
 #include "axialpolygons.h"
 #include "shapegraph.h"
 
-class AllLineMap : public ShapeGraph {
-  public:
-    void generate(Communicator *comm,
-                  const std::vector<std::reference_wrapper<const ShapeMap> > &drawingLayers,
+namespace AllLine {
+    struct MapData {
+        size_t index;
+        AxialPolygons polygons;
+        std::vector<PolyConnector> polyConnections;
+        std::vector<RadialLine> radialLines;
+    };
+    MapData generate(Communicator *comm, ShapeGraph &map,
+                     const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
+                     const Point2f &seed);
+    void generate(Communicator *comm, ShapeGraph &map, MapData mapData,
+                  const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
                   const Point2f &seed);
-    void generate(Communicator *comm, std::vector<Line> &lines, QtRegion &region,
-                  const Point2f &seed);
-    AllLineMap(const std::string &name = "All-Line Map") : ShapeGraph(name, ShapeMap::ALLLINEMAP) {}
-    AxialPolygons m_polygons;
-    std::vector<PolyConnector> m_poly_connections;
-    std::vector<RadialLine> m_radial_lines;
-    void setKeyVertexCount(int keyvertexcount) { m_keyvertexcount = keyvertexcount; }
-    std::tuple<std::unique_ptr<ShapeGraph>, std::unique_ptr<ShapeGraph>>
-    extractFewestLineMaps(Communicator *comm);
-    void makeDivisions(const std::vector<PolyConnector> &polyconnections,
+    MapData generate(Communicator *comm, ShapeGraph &map, std::vector<Line> &lines,
+                     QtRegion &region, const Point2f &seed);
+    void generate(Communicator *comm, ShapeGraph &map, MapData mapData, std::vector<Line> &lines,
+                  QtRegion &region, const Point2f &seed);
+    ShapeGraph createAllLineMap(const std::string &name = "All-Line Map");
+    std::tuple<ShapeGraph, ShapeGraph> extractFewestLineMaps(Communicator *comm, ShapeGraph &map,
+                                                             MapData mapData);
+    void makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &polyconnections,
                        const std::vector<RadialLine> &radiallines,
                        std::map<RadialKey, std::set<int>> &radialdivisions,
                        std::map<int, std::set<int>> &axialdividers, Communicator *comm);
-};
+}; // namespace AllLine

@@ -14,9 +14,18 @@
 #include <iomanip>
 #include <time.h>
 
-void AllLineMap::generate(Communicator *comm,
-                          const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
-                          const Point2f &seed) {
+AllLine::MapData
+AllLine::generate(Communicator *comm, ShapeGraph &map,
+                  const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
+                  const Point2f &seed) {
+    MapData mapData;
+    generate(comm, map, mapData, drawingLayers, seed);
+    return mapData;
+}
+
+void AllLine::generate(Communicator *comm, ShapeGraph &map, MapData mapData,
+                       const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
+                       const Point2f &seed) {
 
     std::vector<Line> lines;
     QtRegion region;
@@ -33,31 +42,38 @@ void AllLineMap::generate(Communicator *comm,
             lines.push_back(Line(line.start(), line.end()));
         }
     }
-    generate(comm, lines, region, seed);
+    generate(comm, map, mapData, lines, region, seed);
 }
 
-void AllLineMap::generate(Communicator *comm, std::vector<Line> &lines, QtRegion &region,
-                          const Point2f &seed) {
+AllLine::MapData AllLine::generate(Communicator *comm, ShapeGraph &map, std::vector<Line> &lines,
+                                   QtRegion &region, const Point2f &seed) {
+    MapData mapData;
+    generate(comm, map, mapData, lines, region, seed);
+    return mapData;
+}
+
+void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData mapData,
+                       std::vector<Line> &lines, QtRegion &region, const Point2f &seed) {
     if (comm) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 3);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
     }
     // this has a nasty habit of crashing if reused...
     // reset everything at the top level, including any existing all-line map:
-    m_polygons.clear();
-    m_poly_connections.clear();
-    m_radial_lines.clear();
+    mapData.polygons.clear();
+    mapData.polyConnections.clear();
+    mapData.radialLines.clear();
 
     // starting off... finding a polygon...
     // for ease, I'm just going to make a construction line set from all the
     // visible lines...
 
     region.grow(1.30);
-    m_polygons.init(lines, region);
-    m_polygons.m_handled_list.clear();
+    mapData.polygons.init(lines, region);
+    mapData.polygons.m_handled_list.clear();
 
     // find a corner visible from the seed:
-    AxialVertexKey seedvertex = m_polygons.seedVertex(seed);
+    AxialVertexKey seedvertex = mapData.polygons.seedVertex(seed);
 
     if (seedvertex == NoVertex) {
         // oops... can't find a visible vertex
@@ -70,10 +86,10 @@ void AllLineMap::generate(Communicator *comm, std::vector<Line> &lines, QtRegion
     std::vector<Line> axiallines;
     KeyVertices preaxialdata;
     // also poly_connections used in fewest line axial map construction:
-    m_poly_connections.clear();
-    m_radial_lines.clear();
+    mapData.polyConnections.clear();
+    mapData.radialLines.clear();
 
-    AxialVertex vertex = m_polygons.makeVertex(seedvertex, seed);
+    AxialVertex vertex = mapData.polygons.makeVertex(seedvertex, seed);
     if (!vertex.m_initialised) {
         // oops... can't init for some reason
         throw depthmapX::RuntimeException("Failed to initialise axial vertices");
@@ -84,14 +100,15 @@ void AllLineMap::generate(Communicator *comm, std::vector<Line> &lines, QtRegion
     if (comm) {
         qtimer(atime, 0);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 2);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_polygons.m_vertex_possibles.size());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              mapData.polygons.m_vertex_possibles.size());
     }
 
     std::set<AxialVertex> openvertices;
     openvertices.insert(vertex);
     while (!openvertices.empty()) {
-        m_polygons.makeAxialLines(openvertices, axiallines, preaxialdata, m_poly_connections,
-                                  m_radial_lines);
+        mapData.polygons.makeAxialLines(openvertices, axiallines, preaxialdata,
+                                        mapData.polyConnections, mapData.radialLines);
         count++;
         //
         if (comm) {
@@ -125,23 +142,23 @@ void AllLineMap::generate(Communicator *comm, std::vector<Line> &lines, QtRegion
     }
 
     region.grow(0.99); // <- this paired with crop code below to prevent error
-    init(axiallines.size(),
-         m_polygons.getRegion()); // used to be double density here
-    initialiseAttributesAxial();
+    map.init(axiallines.size(),
+             mapData.polygons.getRegion()); // used to be double density here
+    map.initialiseAttributesAxial();
     for (size_t k = 0; k < axiallines.size(); k++) {
         axiallines[k].crop(region); // <- should be cropped anyway, but causing an error
-        makeLineShape(axiallines[k]);
+        map.makeLineShape(axiallines[k]);
     }
 
     // n.b. make connections also initialises attributes
     // -> don't know what this was for: alllinemap.sortBins(m_poly_connections);
-    makeConnections(preaxialdata);
+    map.makeConnections(preaxialdata);
 
-    setKeyVertexCount(m_polygons.m_vertex_possibles.size());
+    map.setKeyVertexCount(mapData.polygons.m_vertex_possibles.size());
 }
 
-std::tuple<std::unique_ptr<ShapeGraph>, std::unique_ptr<ShapeGraph>>
-AllLineMap::extractFewestLineMaps(Communicator *comm) {
+std::tuple<ShapeGraph, ShapeGraph>
+AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData mapData) {
 
     if (comm) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 2);
@@ -153,20 +170,21 @@ AllLineMap::extractFewestLineMaps(Communicator *comm) {
     // make one rld for each radial line...
     std::map<RadialKey, std::set<int>> radialdivisions;
     size_t i;
-    for (auto &radial_line : m_radial_lines) {
+    for (auto &radial_line : mapData.radialLines) {
         radialdivisions.insert(std::make_pair((RadialKey)radial_line, std::set<int>()));
     }
 
     // also, a list of radial lines cut by each axial line
     std::map<int, std::set<int>> ax_radial_cuts;
     std::map<int, std::set<int>> ax_seg_cuts;
-    for (const auto &shape : getAllShapes()) {
+    for (const auto &shape : map.getAllShapes()) {
         ax_radial_cuts.insert(std::make_pair(shape.first, std::set<int>()));
         ax_seg_cuts.insert(std::make_pair(shape.first, std::set<int>()));
     }
 
     // make divisions -- this is the slow part and the comm updates
-    makeDivisions(m_poly_connections, m_radial_lines, radialdivisions, ax_radial_cuts, comm);
+    makeDivisions(map, mapData.polyConnections, mapData.radialLines, radialdivisions,
+                  ax_radial_cuts, comm);
 
     // the slow part is over, we're into the final straight... reset the current
     // record flag:
@@ -178,12 +196,12 @@ AllLineMap::extractFewestLineMaps(Communicator *comm) {
     // a little further setting up is still required...
     std::map<RadialKey, RadialSegment> radialsegs;
 
-    auto iter = m_radial_lines.begin();
-    if (iter != m_radial_lines.end()) {
+    auto iter = mapData.radialLines.begin();
+    if (iter != mapData.radialLines.end()) {
         // now make radial segments from the radial lines... (note, start at 1)
-        auto prevIter = m_radial_lines.begin();
+        auto prevIter = mapData.radialLines.begin();
         ++iter;
-        for (; iter != m_radial_lines.end();) {
+        for (; iter != mapData.radialLines.end();) {
             if (iter->vertex == prevIter->vertex && iter->ang != prevIter->ang) {
                 radialsegs.insert(std::make_pair((RadialKey)(*iter), (RadialSegment)(*prevIter)));
             }
@@ -197,15 +215,15 @@ AllLineMap::extractFewestLineMaps(Communicator *comm) {
     // structure
     auto axIter = ax_radial_cuts.begin();
     auto axSeg = ax_seg_cuts.begin();
-    for (i = 0; i < getAllShapes().size(); i++) {
+    for (i = 0; i < map.getAllShapes().size(); i++) {
         auto axRadCutIter = axIter->second.begin();
         if (axRadCutIter != axIter->second.end()) {
             auto axRadCutIterPrev = axIter->second.begin();
             ++axRadCutIter;
             for (size_t j = 1; j < axIter->second.size(); ++j) {
                 // note similarity to loop above
-                RadialKey &rk_end = m_radial_lines[size_t(*axRadCutIter)];
-                RadialKey &rk_start = m_radial_lines[size_t(*axRadCutIterPrev)];
+                RadialKey &rk_end = mapData.radialLines[size_t(*axRadCutIter)];
+                RadialKey &rk_start = mapData.radialLines[size_t(*axRadCutIterPrev)];
                 if (rk_start.vertex == rk_end.vertex) {
                     auto radialSegIter = radialsegs.find(rk_end);
                     if (radialSegIter != radialsegs.end() &&
@@ -224,15 +242,16 @@ AllLineMap::extractFewestLineMaps(Communicator *comm) {
 
     // and a little more setting up: key vertex relationships
     std::vector<std::vector<int>> keyvertexconns;
-    std::vector<int> keyvertexcounts(static_cast<size_t>(m_keyvertexcount), 0);
+    std::vector<int> keyvertexcounts(static_cast<size_t>(map.getKeyVertexCount()), 0);
     // this sets up a two step relationship: looks for the key vertices for all
     // lines connected to you
-    for (size_t y = 0; y < m_connectors.size(); y++) {
+    auto connectors = map.getConnections();
+    for (size_t y = 0; y < connectors.size(); y++) {
         keyvertexconns.push_back(std::vector<int>());
         auto &conn = keyvertexconns.back();
-        Connector &axa = m_connectors[y];
+        Connector &axa = connectors[y];
         for (size_t z = 0; z < axa.m_connections.size(); z++) {
-            std::set<int> &axb = m_keyvertices[axa.m_connections[z]];
+            std::set<int> &axb = map.getKeyVertices()[axa.m_connections[z]];
             for (int axbi : axb) {
                 auto res = std::lower_bound(conn.begin(), conn.end(), axbi);
                 if (res == conn.end() || axbi < *res) {
@@ -246,63 +265,61 @@ AllLineMap::extractFewestLineMaps(Communicator *comm) {
     // ok, after this fairly tedious set up, we are ready to go...
     // note axradialcuts aren't required anymore...
 
-    AxialMinimiser minimiser(*this, ax_seg_cuts.size(), radialsegs.size());
+    AxialMinimiser minimiser(map, ax_seg_cuts.size(), radialsegs.size());
 
     std::vector<Line> lines_s, lines_m;
 
-    minimiser.removeSubsets(ax_seg_cuts, radialsegs, radialdivisions, m_radial_lines,
+    minimiser.removeSubsets(ax_seg_cuts, radialsegs, radialdivisions, mapData.radialLines,
                             keyvertexconns, keyvertexcounts);
 
     // make new lines here (assumes line map has only lines)
     int k = -1;
-    for (auto &shape : m_shapes) {
+    for (auto &shape : map.getAllShapes()) {
         k++;
         if (!minimiser.removed(k)) {
             lines_s.push_back(shape.second.getLine());
         }
     }
 
-    minimiser.fewestLongest(ax_seg_cuts, radialsegs, radialdivisions, m_radial_lines,
+    minimiser.fewestLongest(ax_seg_cuts, radialsegs, radialdivisions, mapData.radialLines,
                             keyvertexconns, keyvertexcounts);
 
     // make new lines here (assumes line map has only lines
-    for (int k = 0; k < int(getAllShapes().size()); k++) {
+    for (int k = 0; k < int(map.getAllShapes().size()); k++) {
         if (!minimiser.removed(k)) {
-            lines_m.push_back(depthmapX::getMapAtIndex(getAllShapes(), k)->second.getLine());
+            lines_m.push_back(depthmapX::getMapAtIndex(map.getAllShapes(), k)->second.getLine());
         }
     }
 
-    std::unique_ptr<ShapeGraph> fewestlinemap_subsets(
-        new ShapeGraph("Fewest-Line Map (Subsets)", ShapeMap::AXIALMAP));
-    fewestlinemap_subsets->clearAll();
-    fewestlinemap_subsets->init(int(lines_s.size()), m_polygons.getRegion());
+    ShapeGraph fewestlinemap_subsets("Fewest-Line Map (Subsets)", ShapeMap::AXIALMAP);
+    fewestlinemap_subsets.clearAll();
+    fewestlinemap_subsets.init(int(lines_s.size()), mapData.polygons.getRegion());
 
-    fewestlinemap_subsets->initialiseAttributesAxial();
+    fewestlinemap_subsets.initialiseAttributesAxial();
     for (size_t k = 0; k < lines_s.size(); k++) {
-        fewestlinemap_subsets->makeLineShape(lines_s[k]);
+        fewestlinemap_subsets.makeLineShape(lines_s[k]);
     }
-    fewestlinemap_subsets->makeConnections();
+    fewestlinemap_subsets.makeConnections();
 
-    std::unique_ptr<ShapeGraph> fewestlinemap_minimal(
-        new ShapeGraph("Fewest-Line Map (Minimal)", ShapeMap::AXIALMAP));
-    fewestlinemap_minimal->clearAll();
-    fewestlinemap_minimal->init(
+    ShapeGraph fewestlinemap_minimal("Fewest-Line Map (Minimal)", ShapeMap::AXIALMAP);
+    fewestlinemap_minimal.clearAll();
+    fewestlinemap_minimal.init(
         int(lines_m.size()),
-        m_polygons.getRegion()); // used to have a '2' for double pixel density
+        mapData.polygons.getRegion()); // used to have a '2' for double pixel density
 
-    fewestlinemap_minimal->initialiseAttributesAxial();
+    fewestlinemap_minimal.initialiseAttributesAxial();
     for (size_t k = 0; k < lines_m.size(); k++) {
-        fewestlinemap_minimal->makeLineShape(lines_m[k]);
+        fewestlinemap_minimal.makeLineShape(lines_m[k]);
     }
-    fewestlinemap_minimal->makeConnections();
+    fewestlinemap_minimal.makeConnections();
 
     return std::make_tuple(std::move(fewestlinemap_subsets), std::move(fewestlinemap_minimal));
 }
 
-void AllLineMap::makeDivisions(const std::vector<PolyConnector> &polyconnections,
-                               const std::vector<RadialLine> &radiallines,
-                               std::map<RadialKey, std::set<int>> &radialdivisions,
-                               std::map<int, std::set<int>> &axialdividers, Communicator *comm) {
+void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &polyconnections,
+                            const std::vector<RadialLine> &radiallines,
+                            std::map<RadialKey, std::set<int>> &radialdivisions,
+                            std::map<int, std::set<int>> &axialdividers, Communicator *comm) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
@@ -310,21 +327,21 @@ void AllLineMap::makeDivisions(const std::vector<PolyConnector> &polyconnections
     }
 
     for (size_t i = 0; i < polyconnections.size(); i++) {
-        PixelRefVector pixels = pixelateLine(polyconnections[i].line);
+        PixelRefVector pixels = map.pixelateLine(polyconnections[i].line);
         std::vector<size_t> testedshapes;
         auto connIter = radialdivisions.find(polyconnections[i].key);
         size_t connindex = std::distance(radialdivisions.begin(), connIter);
         double tolerance = sqrt(TOLERANCE_A); // * polyconnections[i].line.length();
         for (size_t j = 0; j < pixels.size(); j++) {
             PixelRef pix = pixels[j];
-            auto &shapes = m_pixel_shapes(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
+            const auto &shapes = map.getShapesAtPixel(pix);
             for (const ShapeRef &shape : shapes) {
                 auto iter = depthmapX::findBinary(testedshapes, shape.m_shape_ref);
                 if (iter != testedshapes.end()) {
                     continue;
                 }
                 testedshapes.insert(iter, int(shape.m_shape_ref));
-                const Line &line = m_shapes.find(shape.m_shape_ref)->second.getLine();
+                const Line &line = map.getAllShapes().find(shape.m_shape_ref)->second.getLine();
                 //
                 if (intersect_region(line, polyconnections[i].line, tolerance * line.length())) {
                     switch (intersect_line_distinguish(line, polyconnections[i].line,
@@ -369,4 +386,8 @@ void AllLineMap::makeDivisions(const std::vector<PolyConnector> &polyconnections
             }
         }
     }
+}
+
+ShapeGraph AllLine::createAllLineMap(const std::string &name) {
+    return ShapeGraph(name, ShapeMap::ALLLINEMAP);
 }

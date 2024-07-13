@@ -2251,10 +2251,10 @@ bool ShapeMap::writePart2(std::ostream &stream) const {
 bool ShapeMap::writePart3(std::ostream &stream) const {
 
     // write connections data
-    auto count = m_connectors.size();
+    int count = static_cast<int>(m_connectors.size());
     stream.write((char *)&count, sizeof(count));
 
-    for (size_t i = 0; i < count; i++) {
+    for (size_t i = 0; i < m_connectors.size(); i++) {
         m_connectors[i].write(stream);
     }
 
@@ -2271,7 +2271,8 @@ bool ShapeMap::writePart3(std::ostream &stream) const {
     return true;
 }
 
-bool ShapeMap::write(std::ostream &stream, std::tuple<bool, bool, int> displayData) const {
+bool ShapeMap::write(std::ostream &stream, const std::tuple<bool, bool, int> &displayData) const {
+
     bool written = writeNameType(stream);
 
     auto [editable, show, displayedAttribute] = displayData;

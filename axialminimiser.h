@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include "alllinemap.h"
+#include "salalib/axialpolygons.h"
+#include "salalib/shapegraph.h"
 
 struct ValueTriplet {
     int value1;
@@ -15,7 +16,7 @@ struct ValueTriplet {
 
 class AxialMinimiser {
   protected:
-    AllLineMap *m_alllinemap;
+    ShapeGraph *m_alllinemap;
     //
     ValueTriplet *m_vps;
     bool *m_removed;
@@ -26,7 +27,7 @@ class AxialMinimiser {
     std::vector<Connector>
         m_axialconns; // <- uses a copy of axial lines as it will remove connections
   public:
-    AxialMinimiser(const AllLineMap &alllinemap, int no_of_axsegcuts, int no_of_radialsegs);
+    AxialMinimiser(const ShapeGraph &alllinemap, int no_of_axsegcuts, int no_of_radialsegs);
     ~AxialMinimiser();
     void removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                        std::map<RadialKey, RadialSegment> &radialsegs,

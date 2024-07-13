@@ -60,12 +60,12 @@ namespace MetaGraphReadWrite {
             int state = 0, viewClass = 0;
             bool showGrid = false, showText = false;
             std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap;
-            unsigned int displayedPointMap = -1;
+            std::optional<unsigned int> displayedPointMap = std::nullopt;
             bool displayedPointMapProcessed = false; // P.K: never written but read. Old files?
             std::vector<int> perPointMap;
-            unsigned int displayedDataMap = -1;
+            std::optional<unsigned int> displayedDataMap = std::nullopt;
             std::vector<ShapeMapDisplayData> perDataMap;
-            unsigned int displayedShapeGraph = -1;
+            std::optional<unsigned int> displayedShapeGraph = std::nullopt;
             std::vector<ShapeMapDisplayData> perShapeGraph;
         } displayData;
     };
@@ -85,7 +85,7 @@ namespace MetaGraphReadWrite {
     bool writeShapeGraphs(std::ofstream &stream, const std::vector<ShapeGraphOrRef> &shapeGraphs,
                           const std::optional<AllLine::MapData> allLineMapData,
                           const std::vector<std::tuple<bool, bool, int>> perShapeGraph,
-                          const unsigned int displayedShapeGraph);
+                          const std::optional<unsigned int> displayedMap);
 
     std::tuple<std::vector<ShapeMap>, std::vector<std::tuple<bool, bool, int>>, unsigned int>
     readDataMaps(std::istream &stream);
@@ -94,7 +94,7 @@ namespace MetaGraphReadWrite {
     bool writeDataMaps(
         std::ofstream &stream, const std::vector<ShapeMapOrRef> &dataMaps,
         const std::vector<ShapeMapDisplayData> displayData = std::vector<ShapeMapDisplayData>(),
-        const unsigned int displayedMap = 0);
+        const std::optional<unsigned int> displayedMap = 0);
 
     std::tuple<std::vector<PointMap>, std::vector<int>, unsigned int>
     readPointMaps(std::istream &stream, QtRegion defaultRegion);
@@ -102,7 +102,7 @@ namespace MetaGraphReadWrite {
     template <typename PointMapOrRef>
     bool writePointMaps(std::ofstream &stream, const std::vector<PointMapOrRef> &pointMaps,
                         const std::vector<int> displayData = std::vector<int>(),
-                        const unsigned int displayedMap = 0);
+                        const std::optional<unsigned int> displayedMap = 0);
 
     template <typename ShapeMapOrRef>
     bool writeSpacePixels(std::ostream &stream, const std::vector<ShapeMapOrRef> &spacePixels,
@@ -128,11 +128,11 @@ namespace MetaGraphReadWrite {
         const bool showText = true,
         const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap =
             std::vector<std::vector<ShapeMapDisplayData>>(),
-        const unsigned int displayedPointMap = 0,
+        const std::optional<unsigned int> displayedPointMap = std::nullopt,
         const std::vector<int> perPointMap = std::vector<int>(),
-        const unsigned int displayedDataMap = 0,
+        const std::optional<unsigned int> displayedDataMap = std::nullopt,
         const std::vector<ShapeMapDisplayData> perDataMap = std::vector<ShapeMapDisplayData>(),
-        const unsigned int displayedShapeGraph = 0,
+        const std::optional<unsigned int> displayedShapeGraph = std::nullopt,
         const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
 }; // namespace MetaGraphReadWrite
 

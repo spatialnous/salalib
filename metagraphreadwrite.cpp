@@ -286,8 +286,9 @@ template <typename PointMapOrRef>
 bool MetaGraphReadWrite::writePointMaps(std::ofstream &stream,
                                         const std::vector<PointMapOrRef> &pointMaps,
                                         const std::vector<int> displayData,
-                                        const unsigned int displayedMap) {
-    unsigned int displayed_pointmap = displayedMap;
+                                        const std::optional<unsigned int> displayedMap) {
+    unsigned int displayed_pointmap =
+        displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
     stream.write((char *)&displayed_pointmap, sizeof(displayed_pointmap));
     auto count = pointMaps.size();
     stream.write((char *)&count, sizeof(static_cast<int>(count)));
@@ -327,10 +328,12 @@ template <typename ShapeMapOrRef>
 bool MetaGraphReadWrite::writeDataMaps(std::ofstream &stream,
                                        const std::vector<ShapeMapOrRef> &dataMaps,
                                        const std::vector<ShapeMapDisplayData> displayData,
-                                       const unsigned int displayedMap) {
+                                       const std::optional<unsigned int> displayedMap) {
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
-    stream.write((char *)&displayedMap, sizeof(displayedMap));
+    unsigned int displayedDataMap =
+        displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
+    stream.write((char *)&displayedDataMap, sizeof(displayedDataMap));
     // write maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
@@ -431,9 +434,11 @@ bool MetaGraphReadWrite::writeShapeGraphs(
     std::ofstream &stream, const std::vector<ShapeGraphOrRef> &shapeGraphs,
     const std::optional<AllLine::MapData> allLineMapData,
     const std::vector<std::tuple<bool, bool, int>> displayData,
-    const unsigned int displayedShapeGraph) {
+    const std::optional<unsigned int> displayedMap) {
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
+    unsigned int displayedShapeGraph =
+        displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
     stream.write((char *)&displayedShapeGraph, sizeof(displayedShapeGraph));
     // write maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
@@ -474,9 +479,11 @@ int MetaGraphReadWrite::write(
     // display data
     const int state, const int viewClass, const bool showGrid, const bool showText,
     const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
-    const unsigned int displayedPointMap, const std::vector<int> perPointMap,
-    const unsigned int displayedDataMap, const std::vector<ShapeMapDisplayData> perDataMap,
-    const unsigned int displayedShapeGraph, const std::vector<ShapeMapDisplayData> perShapeGraph) {
+    const std::optional<unsigned int> displayedPointMap, const std::vector<int> perPointMap,
+    const std::optional<unsigned int> displayedDataMap,
+    const std::vector<ShapeMapDisplayData> perDataMap,
+    const std::optional<unsigned int> displayedShapeGraph,
+    const std::vector<ShapeMapDisplayData> perShapeGraph) {
 
     enum {
         OK,
@@ -573,9 +580,11 @@ template int MetaGraphReadWrite::write<PointMap, ShapeMap, ShapeGraph>(
     // display data
     const int state, const int viewClass, const bool showGrid, const bool showText,
     const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
-    const unsigned int displayedPointMap, const std::vector<int> perPointMap,
-    const unsigned int displayedDataMap, const std::vector<ShapeMapDisplayData> perDataMap,
-    const unsigned int displayedShapeGraph, const std::vector<ShapeMapDisplayData> perShapeGraph);
+    const std::optional<unsigned int> displayedPointMap, const std::vector<int> perPointMap,
+    const std::optional<unsigned int> displayedDataMap,
+    const std::vector<ShapeMapDisplayData> perDataMap,
+    const std::optional<unsigned int> displayedShapeGraph,
+    const std::vector<ShapeMapDisplayData> perShapeGraph);
 
 template int
 MetaGraphReadWrite::write<std::reference_wrapper<PointMap>, std::reference_wrapper<ShapeMap>,
@@ -593,9 +602,11 @@ MetaGraphReadWrite::write<std::reference_wrapper<PointMap>, std::reference_wrapp
     // display data
     const int state, const int viewClass, const bool showGrid, const bool showText,
     const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
-    const unsigned int displayedPointMap, const std::vector<int> perPointMap,
-    const unsigned int displayedDataMap, const std::vector<ShapeMapDisplayData> perDataMap,
-    const unsigned int displayedShapeGraph, const std::vector<ShapeMapDisplayData> perShapeGraph);
+    const std::optional<unsigned int> displayedPointMap, const std::vector<int> perPointMap,
+    const std::optional<unsigned int> displayedDataMap,
+    const std::vector<ShapeMapDisplayData> perDataMap,
+    const std::optional<unsigned int> displayedShapeGraph,
+    const std::vector<ShapeMapDisplayData> perShapeGraph);
 
 std::string MetaGraphReadWrite::getReadMessage(ReadStatus readStatus) {
     switch (readStatus) {

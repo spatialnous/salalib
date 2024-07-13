@@ -11,12 +11,12 @@
 #include "genlib/bsptree.h"
 
 class BSPNodeTree {
-    BSPNode *m_root;
-    bool m_built;
+    BSPNode *m_root = nullptr;
+    bool m_built = false;
 
   public:
     BSPNodeTree() {
-        m_root = NULL;
+        m_root = nullptr;
         m_built = false;
     };
     void resetBSPtree() { m_built = false; }

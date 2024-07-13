@@ -62,12 +62,13 @@ namespace IsovistUtils {
         return newColumns;
     }
 
-    void createIsovistInMap(Communicator *comm, BSPNodeTree &bspNodeTree, const QtRegion &bounds,
-                            ShapeMap &map, const Point2f &p, double startangle, double endangle) {
+    void createIsovistInMap(BSPNodeTree &bspNodeTree, const QtRegion &bounds, ShapeMap &map,
+                            const Point2f &p, double startangle, double endangle) {
 
         Isovist iso;
         iso.makeit(bspNodeTree.getRoot(), p, bounds, startangle, endangle);
-        int polyref = map.makePolyShape(iso.getPolygon(), comm);
+        int polyref = map.makePolyShape(iso.getPolygon(), false);
+        map.getAllShapes()[polyref].setCentroid(p);
 
         AttributeTable &table = map.getAttributeTable();
         AttributeRow &row = table.getRow(AttributeKey(polyref));
@@ -78,8 +79,9 @@ namespace IsovistUtils {
                             const QtRegion &bounds, ShapeMap &map, const Point2f &p,
                             double startangle, double endangle) {
         BSPNodeTree bspNodeTree;
+        bspNodeTree.makeNewRoot(false);
         BSPTree::make(comm, 0, lines, bspNodeTree.getRoot());
-        createIsovistInMap(comm, bspNodeTree, bounds, map, p, startangle, endangle);
+        createIsovistInMap(bspNodeTree, bounds, map, p, startangle, endangle);
     }
 
 } // namespace IsovistUtils

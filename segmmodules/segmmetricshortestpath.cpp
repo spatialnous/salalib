@@ -15,7 +15,7 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
     AttributeTable &attributes = m_map.getAttributeTable();
     size_t shapeCount = m_map.getShapeCount();
 
-    std::string colText = Column::METRIC_SHORTEST_PATH_DEPTH;
+    std::string colText = Column::METRIC_SHORTEST_PATH_DISTANCE;
     size_t dist_col = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
     colText = Column::METRIC_SHORTEST_PATH_ORDER;

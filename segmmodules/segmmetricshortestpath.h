@@ -16,9 +16,9 @@ class SegmentMetricShortestPath : public IAnalysis {
 
   public:
     struct Column {
-        inline static const std::string                                //
-            METRIC_SHORTEST_PATH_DEPTH = "Metric Shortest Path Depth", //
-            METRIC_SHORTEST_PATH_ORDER = "Metric Shortest Path Order"; //
+        inline static const std::string                                      //
+            METRIC_SHORTEST_PATH_DISTANCE = "Metric Shortest Path Distance", //
+            METRIC_SHORTEST_PATH_ORDER = "Metric Shortest Path Order";       //
     };
 
   public:

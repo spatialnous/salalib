@@ -18,8 +18,8 @@ struct ShapeMapGroupData {
 
     ShapeMapGroupData(const std::string &name = std::string()) { this->name = name; };
 
-    bool readInName(std::istream &stream);
-    bool writeOutName(std::ostream &stream) const;
+    bool readInNameAndRegion(std::istream &stream);
+    bool writeOutNameAndRegion(std::ostream &stream) const;
 
     static std::tuple<std::vector<ShapeMap>, std::vector<std::tuple<bool, bool, int>>>
     readSpacePixels(std::istream &stream);

@@ -100,7 +100,7 @@ MetaGraphReadWrite::readDrawingFiles(std::istream &stream) {
     std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> drawingFiles(count);
     std::vector<std::vector<std::tuple<bool, bool, int>>> displayData(count);
     for (int i = 0; i < count; i++) {
-        drawingFiles[i].first.readInName(stream);
+        drawingFiles[i].first.readInNameAndRegion(stream);
 
         std::tie(drawingFiles[i].second, displayData[i]) =
             ShapeMapGroupData::readSpacePixels(stream);
@@ -540,7 +540,7 @@ int MetaGraphReadWrite::write(
         stream.write((char *)&count, sizeof(count));
         auto it = perDrawingMap.begin();
         for (auto &spacePixel : drawingFiles) {
-            spacePixel.first.writeOutName(stream);
+            spacePixel.first.writeOutNameAndRegion(stream);
             writeSpacePixels(stream, spacePixel.second, *it);
             it++;
         }

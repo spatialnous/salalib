@@ -71,8 +71,7 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
     for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
         AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
         if (!m_selSet.has_value()) {
-            if (m_selSet.value().find(map.getShapeRefFromIndex(cursor)->first) ==
-                m_selSet.value().end())
+            if (m_selSet->find(map.getShapeRefFromIndex(cursor)->first) == m_selSet->end())
                 continue;
         }
         for (size_t i = 0; i < map.getShapeCount(); i++) {

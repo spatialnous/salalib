@@ -357,9 +357,7 @@ size_t AttributeTable::getColumnIndex(const std::string &name) const {
 std::optional<size_t> AttributeTable::getColumnIndexOptional(const std::string &name) const {
     auto iter = m_columnMapping.find(name);
     if (iter == m_columnMapping.end()) {
-        std::stringstream message;
-        message << "Unknown column name " << name;
-        throw std::out_of_range(message.str());
+        return std::nullopt;
     }
     return iter->second;
 }

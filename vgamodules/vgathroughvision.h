@@ -13,8 +13,7 @@ class VGAThroughVision : IVGA {
   public:
     struct Column {
         inline static const std::string        //
-            THROUGH_VISION = "Through vision", //
-            INTERNAL_GATE = "__Internal_Gate"; //
+            THROUGH_VISION = "Through vision"; //
     };
 
   public:

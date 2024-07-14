@@ -96,7 +96,6 @@ std::tuple<std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>>,
 MetaGraphReadWrite::readDrawingFiles(std::istream &stream) {
     int count;
     stream.read((char *)&count, sizeof(count));
-    //    std::vector<std::pair<ShapeMapGroupData, ShapeMap>> ada;
 
     std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> drawingFiles(count);
     std::vector<std::vector<std::tuple<bool, bool, int>>> displayData(count);

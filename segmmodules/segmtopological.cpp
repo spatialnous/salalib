@@ -70,7 +70,7 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
     std::vector<TopoMetSegmentChoice> choicevals(map.getShapeCount());
     for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
         AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
-        if (!m_selSet.has_value()) {
+        if (m_selSet.has_value()) {
             if (m_selSet->find(map.getShapeRefFromIndex(cursor)->first) == m_selSet->end())
                 continue;
         }

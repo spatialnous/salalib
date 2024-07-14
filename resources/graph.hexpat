@@ -6,7 +6,7 @@
 
 #include "std/mem.pat"
 
-#pragma pattern_limit 2042072
+#pragma pattern_limit 2942072
 #pragma array_limit 65536
 
 struct FBLString {
@@ -50,7 +50,7 @@ struct SalaObject {
     Point2f centroid;
 };
 struct AttributeLayer {
-    u64 key;
+    s64 key;
     FBLString name;
 };
 struct DisplayParameters {
@@ -81,11 +81,11 @@ struct AttributeRow {
     FloatVector att_rowValues;
 };
 struct AttributeTable {
-    u64 att_availableLayers;
-    u64 att_visibleLayers;
-    u32 att_layerCount;
+    s64 att_availableLayers;
+    s64 att_visibleLayers;
+    s32 att_layerCount;
     AttributeLayer layers[att_layerCount];
-    u32 att_colCount;
+    s32 att_colCount;
     AttributeColumn columns[att_colCount];
     u32 att_rowCount;
     AttributeRow rows[att_rowCount];
@@ -227,7 +227,7 @@ struct PixelVecWithContext {
     ShiftLength shiftLength;
 };
 struct NodeBinMultiPixVec {
-    s16 num_vec;
+    u16 num_vec;
     PixelVec pixVec;
     PixelVecWithContext pixVecC[num_vec - 1];
 };
@@ -244,9 +244,13 @@ struct Bin {
         }
     }
 };
+struct PixelRefVec {
+    u32 npixrefs;
+    PixelRef refs[npixrefs];
+};
 struct Node {
     Bin bins[32];
-    PixelRef occ_bins[32];
+    PixelRefVec occ_bins[32];
 };
 struct SalaPoint {
     u32 state;
@@ -263,11 +267,11 @@ struct SalaPoint {
 struct PointMap {
     FBLString name;
     double spacing;
-    u32 rows;
-    u32 columns;
-    u32 pointCount;
+    s32 rows;
+    s32 columns;
+    u32 filledPointCount;
     Point2f bottom_left;
-    u32 displayed_attribute;
+    s32 displayed_attribute;
     AttributeTable attributes;
     SalaPoint points[rows * columns];
     bool processed;
@@ -318,8 +322,12 @@ struct header {
 
 struct File {
     header hdr;
-    MapSelector m;
-    MapSelector p;
+    char lineDataMarker;
+    LineData ld;
+    char pointMapMarker;
+    PointMaps pointMaps;
+    //MapSelector m;
+    //MapSelector p;
     //MapSelector m[while(!std::mem::eof())];
 };
 

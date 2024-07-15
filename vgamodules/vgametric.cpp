@@ -20,23 +20,27 @@ AnalysisResult VGAMetric::run(Communicator *comm, PointMap &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    // n.b. these must be entered in alphabetical order to preserve col indexing:
     std::string mspa_col_text =
         getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE, m_radius, map.getRegion());
-    int mspa_col = attributes.insertOrResetColumn(mspa_col_text.c_str());
+    attributes.insertOrResetColumn(mspa_col_text.c_str());
     result.addAttribute(mspa_col_text);
     std::string mspl_col_text =
         getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_DISTANCE, m_radius, map.getRegion());
-    int mspl_col = attributes.insertOrResetColumn(mspl_col_text.c_str());
+    attributes.insertOrResetColumn(mspl_col_text.c_str());
     result.addAttribute(mspl_col_text);
     std::string dist_col_text =
         getColumnWithRadius(Column::METRIC_MEAN_STRAIGHT_LINE_DISTANCE, m_radius, map.getRegion());
-    int dist_col = attributes.insertOrResetColumn(dist_col_text.c_str());
+    attributes.insertOrResetColumn(dist_col_text.c_str());
     result.addAttribute(dist_col_text);
     std::string count_col_text =
         getColumnWithRadius(Column::METRIC_NODE_COUNT, m_radius, map.getRegion());
-    int count_col = attributes.insertOrResetColumn(count_col_text.c_str());
+    attributes.insertOrResetColumn(count_col_text.c_str());
     result.addAttribute(count_col_text);
+
+    int mspa_col = attributes.getColumnIndex(mspa_col_text.c_str());
+    int mspl_col = attributes.getColumnIndex(mspl_col_text.c_str());
+    int dist_col = attributes.getColumnIndex(dist_col_text.c_str());
+    int count_col = attributes.getColumnIndex(count_col_text.c_str());
 
     int count = 0;
 

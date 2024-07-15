@@ -17,10 +17,9 @@ AnalysisResult VGAAngular::run(Communicator *comm, PointMap &map, bool) {
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    // n.b. these must be entered in alphabetical order to preserve col indexing:
     std::string mean_depth_col_text =
         getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH, m_radius, map.getRegion());
-    int mean_depth_col = attributes.getOrInsertColumn(mean_depth_col_text.c_str());
+    attributes.getOrInsertColumn(mean_depth_col_text.c_str());
     result.addAttribute(mean_depth_col_text);
     std::string total_detph_col_text =
         getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH, m_radius, map.getRegion());
@@ -28,12 +27,16 @@ AnalysisResult VGAAngular::run(Communicator *comm, PointMap &map, bool) {
     result.addAttribute(total_detph_col_text);
     std::string count_col_text =
         getColumnWithRadius(Column::ANGULAR_NODE_COUNT, m_radius, map.getRegion());
-    int count_col = attributes.getOrInsertColumn(count_col_text.c_str());
+    attributes.getOrInsertColumn(count_col_text.c_str());
     result.addAttribute(count_col_text);
 
     // TODO: Binary compatibility. Remove in re-examination
-    int total_depth_col = attributes.getOrInsertColumn(total_detph_col_text.c_str());
+    attributes.getOrInsertColumn(total_detph_col_text.c_str());
     result.addAttribute(total_detph_col_text);
+
+    int mean_depth_col = attributes.getColumnIndex(mean_depth_col_text.c_str());
+    int count_col = attributes.getColumnIndex(count_col_text.c_str());
+    int total_depth_col = attributes.getColumnIndex(total_detph_col_text.c_str());
 
     int count = 0;
 

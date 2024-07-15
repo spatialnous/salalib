@@ -41,7 +41,6 @@ set(salalib_HDRS
     ivga.h
     metagraph.h
     metagraphreadwrite.h
-    metagraphreadwrite_impl.h
     point.h
     sparksieve2.h
     attributetableindex.h

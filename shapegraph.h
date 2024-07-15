@@ -71,6 +71,10 @@ class ShapeGraph : public ShapeMap {
     ShapeGraph(ShapeGraph &&) = default;
     ShapeGraph &operator=(ShapeGraph &&) = default;
 
+  public:
+    bool outputMifPolygons(std::ostream &miffile, std::ostream &midfile) const;
+    void outputNet(std::ostream &netfile) const;
+
     void initialiseAttributesAxial();
     void makeConnections(const KeyVertices &keyvertices = KeyVertices());
     bool stepdepth(Communicator *comm = NULL);

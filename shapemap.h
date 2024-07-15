@@ -245,6 +245,7 @@ class ShapeMap : public AttributeMap {
     bool isAxialMap() const { return m_map_type == ALLLINEMAP || m_map_type == AXIALMAP; }
     bool isPeshMap() const { return m_map_type == PESHMAP; }
     int getMapType() const { return m_map_type; }
+    void setMapType(int newMapType) { m_map_type = newMapType; }
     // Attribute functionality
 
   public:

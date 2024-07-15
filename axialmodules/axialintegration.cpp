@@ -13,66 +13,142 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
                                                               bool simple_version) {
     std::vector<std::string> newColumns;
     for (int radius : radii) {
+        if (!m_forceLegacyColumnOrder) {
+            // Columns that are always created
+            newColumns.push_back(getFormattedColumn( //
+                Column::MEAN_DEPTH, radius));
+            newColumns.push_back(getFormattedColumn( //
+                Column::NODE_COUNT, radius));
+            newColumns.push_back(getFormattedColumn( //
+                Column::INTEGRATION, radius, std::nullopt, Normalisation::HH));
 
-        // Columns that are always created
-        newColumns.push_back(getFormattedColumn( //
-            Column::MEAN_DEPTH, radius));
-        newColumns.push_back(getFormattedColumn( //
-            Column::NODE_COUNT, radius));
-        newColumns.push_back(getFormattedColumn( //
-            Column::INTEGRATION, radius, std::nullopt, Normalisation::HH));
-
-        if (m_weighted_measure_col != -1) {
-            newColumns.push_back(getFormattedColumn( //
-                Column::MEAN_DEPTH, radius, weightingColName));
-            newColumns.push_back(getFormattedColumn( //
-                Column::TOTAL, radius, weightingColName));
-        }
-
-        if (!simple_version) {
-            // columns only when simple-version is not selected
-            newColumns.push_back(getFormattedColumn( //
-                Column::ENTROPY, radius));
-            newColumns.push_back(getFormattedColumn( //
-                Column::INTEGRATION, radius, std::nullopt, Normalisation::PV));
-            newColumns.push_back(getFormattedColumn( //
-                Column::INTEGRATION, radius, std::nullopt, Normalisation::TK));
-            newColumns.push_back(getFormattedColumn( //
-                Column::INTENSITY, radius));
-            newColumns.push_back(getFormattedColumn( //
-                Column::HARMONIC_MEAN_DEPTH, radius));
-            newColumns.push_back(getFormattedColumn( //
-                Column::RELATIVISED_ENTROPY, radius));
-        }
-
-        if (m_choice) {
-            // Columns that are only created when choice is selected
-            newColumns.push_back(getFormattedColumn( //
-                Column::CHOICE, radius));
-            newColumns.push_back(getFormattedColumn( //
-                Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
             if (m_weighted_measure_col != -1) {
                 newColumns.push_back(getFormattedColumn( //
-                    Column::CHOICE, radius, weightingColName));
+                    Column::MEAN_DEPTH, radius, weightingColName));
                 newColumns.push_back(getFormattedColumn( //
-                    Column::CHOICE, radius, weightingColName, Normalisation::NORM));
+                    Column::TOTAL, radius, weightingColName));
             }
-        }
-
-        if (m_fulloutput) {
-            newColumns.push_back(getFormattedColumn( //
-                Column::RA, radius));
 
             if (!simple_version) {
+                // columns only when simple-version is not selected
                 newColumns.push_back(getFormattedColumn( //
-                    Column::RA, radius, std::nullopt, Normalisation::PENN));
-
+                    Column::ENTROPY, radius));
                 newColumns.push_back(getFormattedColumn( //
-                    Column::RRA, radius));
+                    Column::INTEGRATION, radius, std::nullopt, Normalisation::PV));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::INTEGRATION, radius, std::nullopt, Normalisation::TK));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::INTENSITY, radius));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::HARMONIC_MEAN_DEPTH, radius));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::RELATIVISED_ENTROPY, radius));
             }
 
+            if (m_choice) {
+                // Columns that are only created when choice is selected
+                newColumns.push_back(getFormattedColumn( //
+                    Column::CHOICE, radius));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
+                if (m_weighted_measure_col != -1) {
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::CHOICE, radius, weightingColName));
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::CHOICE, radius, weightingColName, Normalisation::NORM));
+                }
+            }
+
+            if (m_fulloutput) {
+                newColumns.push_back(getFormattedColumn( //
+                    Column::RA, radius));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::TOTAL_DEPTH, radius));
+
+                if (!simple_version) {
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::RA, radius, std::nullopt, Normalisation::PENN));
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::RRA, radius));
+                }
+            }
+        } else {
+            // This is the legacy order of columns, required for binary
+            // compatibility with older versions of sala.
+
+            if (m_choice) {
+                // Columns that are only created when choice is selected
+                newColumns.push_back(getFormattedColumn( //
+                    Column::CHOICE, radius));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
+                if (m_weighted_measure_col != -1) {
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::CHOICE, radius, weightingColName));
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::CHOICE, radius, weightingColName, Normalisation::NORM));
+                }
+            }
+
+            if (!simple_version) {
+                // columns only when simple-version is not selected
+                auto formattedCol = getFormattedColumn( //
+                    Column::ENTROPY, radius);
+                auto fomCol = formattedCol.c_str();
+                newColumns.push_back(fomCol);
+            }
+
+            // Columns that are always created
             newColumns.push_back(getFormattedColumn( //
-                Column::TOTAL_DEPTH, radius));
+                Column::INTEGRATION, radius, std::nullopt, Normalisation::HH));
+
+            if (!simple_version) {
+                // columns only when simple-version is not selected
+                newColumns.push_back(getFormattedColumn( //
+                    Column::INTEGRATION, radius, std::nullopt, Normalisation::PV));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::INTEGRATION, radius, std::nullopt, Normalisation::TK));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::INTENSITY, radius));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::HARMONIC_MEAN_DEPTH, radius));
+            }
+
+            // Columns that are always created
+            newColumns.push_back(getFormattedColumn( //
+                Column::MEAN_DEPTH, radius));
+            newColumns.push_back(getFormattedColumn( //
+                Column::NODE_COUNT, radius));
+
+            if (!simple_version) {
+                // columns only when simple-version is not selected
+                newColumns.push_back(getFormattedColumn( //
+                    Column::RELATIVISED_ENTROPY, radius));
+            }
+
+            if (m_weighted_measure_col != -1) {
+                newColumns.push_back(getFormattedColumn( //
+                    Column::MEAN_DEPTH, radius, weightingColName));
+                newColumns.push_back(getFormattedColumn( //
+                    Column::TOTAL, radius, weightingColName));
+            }
+
+            if (m_fulloutput) {
+                if (!simple_version) {
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::RA, radius, std::nullopt, Normalisation::PENN));
+                }
+                newColumns.push_back(getFormattedColumn( //
+                    Column::RA, radius));
+
+                if (!simple_version) {
+                    newColumns.push_back(getFormattedColumn( //
+                        Column::RRA, radius));
+                }
+
+                newColumns.push_back(getFormattedColumn( //
+                    Column::TOTAL_DEPTH, radius));
+            }
         }
     }
     return newColumns;
@@ -141,19 +217,19 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
 
         if (m_choice) {
             choice_col.push_back(getFormattedColumnIdx( //
-                attributes, Column::CHOICE, radius, std::nullopt, std::nullopt));
+                attributes, Column::CHOICE, radius));
             n_choice_col.push_back(getFormattedColumnIdx( //
                 attributes, Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
             if (m_weighted_measure_col != -1) {
                 w_choice_col.push_back(getFormattedColumnIdx( //
-                    attributes, Column::CHOICE, radius, weighting_col_text, std::nullopt));
+                    attributes, Column::CHOICE, radius, weighting_col_text));
                 nw_choice_col.push_back(getFormattedColumnIdx( //
                     attributes, Column::CHOICE, radius, weighting_col_text, Normalisation::NORM));
             }
         }
         if (!simple_version) {
             entropy_col.push_back(getFormattedColumnIdx( //
-                attributes, Column::ENTROPY, radius, std::nullopt, std::nullopt));
+                attributes, Column::ENTROPY, radius));
         }
 
         integ_dv_col.push_back(getFormattedColumnIdx( //
@@ -165,19 +241,19 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
             integ_tk_col.push_back(getFormattedColumnIdx( //
                 attributes, Column::INTEGRATION, radius, std::nullopt, Normalisation::TK));
             intensity_col.push_back(getFormattedColumnIdx( //
-                attributes, Column::INTENSITY, radius, std::nullopt, std::nullopt));
+                attributes, Column::INTENSITY, radius));
             harmonic_col.push_back(getFormattedColumnIdx( //
-                attributes, Column::HARMONIC_MEAN_DEPTH, radius, std::nullopt, std::nullopt));
+                attributes, Column::HARMONIC_MEAN_DEPTH, radius));
         }
 
         depth_col.push_back(getFormattedColumnIdx( //
-            attributes, Column::MEAN_DEPTH, radius, std::nullopt, std::nullopt));
+            attributes, Column::MEAN_DEPTH, radius));
         count_col.push_back(getFormattedColumnIdx( //
-            attributes, Column::NODE_COUNT, radius, std::nullopt, std::nullopt));
+            attributes, Column::NODE_COUNT, radius));
 
         if (!simple_version) {
             rel_entropy_col.push_back(getFormattedColumnIdx( //
-                attributes, Column::RELATIVISED_ENTROPY, radius, std::nullopt, std::nullopt));
+                attributes, Column::RELATIVISED_ENTROPY, radius));
         }
 
         if (m_weighted_measure_col != -1) {

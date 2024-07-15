@@ -15,6 +15,7 @@ class AxialIntegration : IAxial {
     int m_weighted_measure_col;
     bool m_choice;
     bool m_fulloutput;
+    bool m_forceLegacyColumnOrder = false;
 
   public:
     struct Normalisation {
@@ -42,12 +43,16 @@ class AxialIntegration : IAxial {
             TOTAL_DEPTH = "Total Depth";                 //
     };
     static std::string
-    getFormattedColumn(std::string column, double radius,
+    getFormattedColumn(std::string column, int radius,
                        std::optional<std::string> weightingColName = std::nullopt,
                        std::optional<std::string> normalisation = std::nullopt) {
         std::string colName = column;
         bool spaceAdded = false;
-        if (weightingColName.has_value()) {
+        if (column == Column::TOTAL) {
+            // The TOTAL column seems to be special i.e. not really a weighting
+            colName += " " + weightingColName.value();
+            spaceAdded = true;
+        } else if (weightingColName.has_value()) {
             colName += " [" + weightingColName.value() + " Wgt]";
             spaceAdded = true;
         }
@@ -62,8 +67,7 @@ class AxialIntegration : IAxial {
         }
         return colName;
     }
-    static size_t getFormattedColumnIdx(AttributeTable &attributes, std::string column,
-                                        double radius,
+    static size_t getFormattedColumnIdx(AttributeTable &attributes, std::string column, int radius,
                                         std::optional<std::string> weightingColName = std::nullopt,
                                         std::optional<std::string> normalisation = std::nullopt) {
         return attributes.getColumnIndex(
@@ -77,7 +81,9 @@ class AxialIntegration : IAxial {
 
   public:
     std::string getAnalysisName() const override { return "Angular Analysis"; }
-
+    void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
+        m_forceLegacyColumnOrder = forceLegacyColumnOrder;
+    }
     AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
     AxialIntegration(std::set<double> radius_set, int weighted_measure_col, bool choice,
                      bool fulloutput)

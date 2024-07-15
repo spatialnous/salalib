@@ -106,9 +106,9 @@ namespace depthmapX {
 
             for (auto &layer : dp.getLayers()) {
 
-                auto &shapeMap = maps.emplace_back(name, mapType == depthmapX::ImportType::DATAMAP
-                                                             ? ShapeMap::DATAMAP
-                                                             : ShapeMap::DRAWINGMAP);
+                auto &shapeMap = maps.emplace_back(
+                    layer.first, mapType == depthmapX::ImportType::DATAMAP ? ShapeMap::DATAMAP
+                                                                           : ShapeMap::DRAWINGMAP);
 
                 const DxfLayer &dxfLayer = layer.second;
 

@@ -19,16 +19,16 @@ namespace AllLine {
     MapData generate(Communicator *comm, ShapeGraph &map,
                      const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
                      const Point2f &seed);
-    void generate(Communicator *comm, ShapeGraph &map, MapData mapData,
+    void generate(Communicator *comm, ShapeGraph &map, MapData &mapData,
                   const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
                   const Point2f &seed);
     MapData generate(Communicator *comm, ShapeGraph &map, std::vector<Line> &lines,
                      QtRegion &region, const Point2f &seed);
-    void generate(Communicator *comm, ShapeGraph &map, MapData mapData, std::vector<Line> &lines,
+    void generate(Communicator *comm, ShapeGraph &map, MapData &mapData, std::vector<Line> &lines,
                   QtRegion &region, const Point2f &seed);
     ShapeGraph createAllLineMap(const std::string &name = "All-Line Map");
     std::tuple<ShapeGraph, ShapeGraph> extractFewestLineMaps(Communicator *comm, ShapeGraph &map,
-                                                             MapData mapData);
+                                                             MapData &mapData);
     void makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &polyconnections,
                        const std::vector<RadialLine> &radiallines,
                        std::map<RadialKey, std::set<int>> &radialdivisions,

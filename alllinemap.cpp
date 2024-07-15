@@ -23,7 +23,7 @@ AllLine::generate(Communicator *comm, ShapeGraph &map,
     return mapData;
 }
 
-void AllLine::generate(Communicator *comm, ShapeGraph &map, MapData mapData,
+void AllLine::generate(Communicator *comm, ShapeGraph &map, MapData &mapData,
                        const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
                        const Point2f &seed) {
 
@@ -52,7 +52,7 @@ AllLine::MapData AllLine::generate(Communicator *comm, ShapeGraph &map, std::vec
     return mapData;
 }
 
-void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData mapData,
+void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &mapData,
                        std::vector<Line> &lines, QtRegion &region, const Point2f &seed) {
     if (comm) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 3);
@@ -158,7 +158,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData map
 }
 
 std::tuple<ShapeGraph, ShapeGraph>
-AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData mapData) {
+AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &mapData) {
 
     if (comm) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 2);

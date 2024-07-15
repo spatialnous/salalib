@@ -324,9 +324,11 @@ struct File {
     header hdr;
     char lineDataMarker;
     LineData ld;
-    char pointMapMarker;
-    PointMaps pointMaps;
-    //MapSelector m;
+    //char pointMapMarker;
+    //if (pointMapMarker == MapType::PointMaps) {
+    //    PointMaps pointMaps;
+    //}
+    MapSelector m;
     //MapSelector p;
     //MapSelector m[while(!std::mem::eof())];
 };

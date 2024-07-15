@@ -65,6 +65,7 @@ void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattribu
 
     if (copypoints || copyattributes) {
         m_points = sourcemap.m_points;
+        m_hasIsovistAnalysis = sourcemap.m_hasIsovistAnalysis;
     }
     if (copyattributes) {
 

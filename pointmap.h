@@ -75,6 +75,7 @@ class PointMap : public AttributeMap {
         : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
                        std::move(other.m_layers)),
           m_parentRegion(std::move(other.m_parentRegion)), m_points(std::move(other.m_points)) {
+        m_hasIsovistAnalysis = other.m_hasIsovistAnalysis;
         copy(other);
     }
     PointMap &operator=(PointMap &&other) {
@@ -83,6 +84,7 @@ class PointMap : public AttributeMap {
         m_attributes = std::move(other.m_attributes);
         m_attribHandle = std::move(other.m_attribHandle);
         m_layers = std::move(other.m_layers);
+        m_hasIsovistAnalysis = other.m_hasIsovistAnalysis;
         copy(other);
         return *this;
     }

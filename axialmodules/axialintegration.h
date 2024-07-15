@@ -48,7 +48,7 @@ class AxialIntegration : IAxial {
                        std::optional<std::string> normalisation = std::nullopt) {
         std::string colName = column;
         bool spaceAdded = false;
-        if (column == Column::TOTAL) {
+        if (weightingColName.has_value() && column == Column::TOTAL) {
             // The TOTAL column seems to be special i.e. not really a weighting
             colName += " " + weightingColName.value();
             spaceAdded = true;
@@ -75,18 +75,18 @@ class AxialIntegration : IAxial {
     }
 
   private:
-    std::vector<int> getFormattedRadii(std::set<double> radiusSet);
+    static std::vector<int> getFormattedRadii(std::set<double> radiusSet);
     std::vector<std::string> getRequiredColumns(std::vector<int> radii,
                                                 std::string weightingColName, bool simple_version);
 
   public:
+    AxialIntegration(std::set<double> radius_set, int weighted_measure_col, bool choice,
+                     bool fulloutput)
+        : m_radius_set(radius_set), m_weighted_measure_col(weighted_measure_col), m_choice(choice),
+          m_fulloutput(fulloutput) {}
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
         m_forceLegacyColumnOrder = forceLegacyColumnOrder;
     }
     AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
-    AxialIntegration(std::set<double> radius_set, int weighted_measure_col, bool choice,
-                     bool fulloutput)
-        : m_radius_set(radius_set), m_weighted_measure_col(weighted_measure_col), m_choice(choice),
-          m_fulloutput(fulloutput) {}
 };

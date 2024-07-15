@@ -206,7 +206,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToConvex(
     Communicator *, const std::string &name,
     const std::vector<std::pair<std::reference_wrapper<const ShapeMap>, int>> &drawingMaps) {
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::CONVEXMAP));
-    int conn_col = usermap->getAttributeTable().insertOrResetLockedColumn("Connectivity");
+    int conn_col =
+        usermap->getAttributeTable().insertOrResetLockedColumn(ShapeGraph::Column::CONNECTIVITY);
 
     size_t count = 0;
 
@@ -235,7 +236,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToConvex(Communicator *,
                                                               const std::string &name,
                                                               ShapeMap &shapemap, bool copydata) {
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::CONVEXMAP));
-    int conn_col = usermap->getAttributeTable().insertOrResetLockedColumn("Connectivity");
+    int conn_col =
+        usermap->getAttributeTable().insertOrResetLockedColumn(ShapeGraph::Column::CONNECTIVITY);
 
     std::vector<int> lookup;
     auto refShapes = shapemap.getAllShapes();

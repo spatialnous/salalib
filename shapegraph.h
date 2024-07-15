@@ -55,10 +55,15 @@ class ShapeGraph : public ShapeMap {
     KeyVertices m_keyvertices; // but still need to return keyvertices here
     int m_keyvertexcount;
 
-  protected:
-  public:
-    bool outputMifPolygons(std::ostream &miffile, std::ostream &midfile) const;
-    void outputNet(std::ostream &netfile) const;
+  public: // known columns
+    struct Column {
+        inline static const std::string                    //
+            CONNECTIVITY = "Connectivity",                 //
+            LINE_LENGTH = "Line Length",                   //
+            AXIAL_LINE_REF = "Axial Line Ref",             //
+            SEGMENT_LENGTH = "Segment Length",             //
+            ANGULAR_CONNECTIVITY = "Angular Connectivity"; //
+    };
 
   public:
     ShapeGraph(const std::string &name = "<axial map>", int type = ShapeMap::AXIALMAP);

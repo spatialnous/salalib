@@ -394,8 +394,7 @@ MetaGraphReadWrite::readShapeGraphs(std::istream &stream) {
 
     std::optional<AllLine::MapData> allLineMapData = std::nullopt;
     for (size_t i = 0; i < shapeGraphs.size(); i++) {
-        auto &name = shapeGraphs[i].getName();
-        if (name == "All-Line Map" || name == "All Line Map") {
+        if (shapeGraphs[i].getMapType() == ShapeMap::ALLLINEMAP) {
 
             allLineMapData.emplace();
 

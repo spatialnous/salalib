@@ -32,8 +32,8 @@ ShapeGraph::ShapeGraph(const std::string &name, int type) : ShapeMap(name, type)
 void ShapeGraph::initialiseAttributesAxial() {
     m_attributes->clear();
     // note, expects these to be numbered 0, 1...
-    m_attributes->insertOrResetLockedColumn("Connectivity");
-    m_attributes->insertOrResetLockedColumn("Line Length");
+    m_attributes->insertOrResetLockedColumn(ShapeGraph::Column::CONNECTIVITY);
+    m_attributes->insertOrResetLockedColumn(ShapeGraph::Column::LINE_LENGTH);
 }
 
 void ShapeGraph::makeConnections(const KeyVertices &keyvertices) {
@@ -43,8 +43,8 @@ void ShapeGraph::makeConnections(const KeyVertices &keyvertices) {
     m_keyvertices.clear();
 
     // note, expects these to be numbered 0, 1...
-    auto conn_col = m_attributes->getColumnIndex("Connectivity");
-    auto leng_col = m_attributes->getColumnIndex("Line Length");
+    auto conn_col = m_attributes->getColumnIndex(ShapeGraph::Column::CONNECTIVITY);
+    auto leng_col = m_attributes->getColumnIndex(ShapeGraph::Column::LINE_LENGTH);
 
     size_t i = 0;
     for (const auto &shape : m_shapes) {
@@ -679,8 +679,8 @@ void ShapeGraph::initialiseAttributesSegment() {
     m_attributes->clear();
 
     // note, expects these in alphabetical order to preserve numbering:
-    m_attributes->insertOrResetLockedColumn("Axial Line Ref");
-    m_attributes->insertOrResetLockedColumn("Segment Length");
+    m_attributes->insertOrResetLockedColumn(Column::AXIAL_LINE_REF);
+    m_attributes->insertOrResetLockedColumn(Column::SEGMENT_LENGTH);
 }
 
 // now segments and connections are listed separately...
@@ -690,11 +690,11 @@ void ShapeGraph::makeSegmentConnections(std::vector<Connector> &connectionset) {
     m_connectors.clear();
 
     // note, expects these in alphabetical order to preserve numbering:
-    auto w_conn_col = m_attributes->getOrInsertColumn("Angular Connectivity");
-    auto uw_conn_col = m_attributes->getOrInsertLockedColumn("Connectivity");
+    auto w_conn_col = m_attributes->getOrInsertColumn(Column::ANGULAR_CONNECTIVITY);
+    auto uw_conn_col = m_attributes->getOrInsertLockedColumn(Column::CONNECTIVITY);
 
-    auto ref_col = m_attributes->getColumnIndex("Axial Line Ref");
-    auto leng_col = m_attributes->getColumnIndex("Segment Length");
+    auto ref_col = m_attributes->getColumnIndex(Column::AXIAL_LINE_REF);
+    auto leng_col = m_attributes->getColumnIndex(Column::SEGMENT_LENGTH);
 
     int i = -1;
     for (const auto &shape : m_shapes) {
@@ -729,7 +729,7 @@ void ShapeGraph::makeSegmentConnections(std::vector<Connector> &connectionset) {
 // the segment map is 'this', the axial map is passed:
 
 void ShapeGraph::pushAxialValues(ShapeGraph &axialmap) {
-    if (!m_attributes->hasColumn("Axial Line Ref")) {
+    if (!m_attributes->hasColumn(Column::AXIAL_LINE_REF)) {
         // this should never happen
         // AT: I am converting this to throw an error
         throw depthmapX::RuntimeException("Axial line ref does not exist");
@@ -741,7 +741,7 @@ void ShapeGraph::pushAxialValues(ShapeGraph &axialmap) {
         colindices.push_back(m_attributes->getOrInsertColumn(colname));
     }
     for (auto iter = m_attributes->begin(); iter != m_attributes->end(); iter++) {
-        int axialref = (int)iter->getRow().getValue("Axial Line Ref");
+        int axialref = (int)iter->getRow().getValue(Column::AXIAL_LINE_REF);
         // P.K: The original code here got the index of the row, but the column
         // "Axial Line Ref" should actually contain keys, not indices
         AttributeRow &row = axialmap.m_attributes->getRow(AttributeKey(axialref));

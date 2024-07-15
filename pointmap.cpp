@@ -954,9 +954,9 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
 
     // attributes table set up
     // n.b. these must be entered in alphabetical order to preserve col indexing:
-    m_attributes->insertOrResetLockedColumn("Connectivity");
-    m_attributes->insertOrResetColumn("Point First Moment");
-    m_attributes->insertOrResetColumn("Point Second Moment");
+    m_attributes->insertOrResetLockedColumn(PointMap::Column::CONNECTIVITY);
+    m_attributes->insertOrResetColumn(PointMap::Column::POINT_FIRST_MOMENT);
+    m_attributes->insertOrResetColumn(PointMap::Column::POINT_SECOND_MOMENT);
 
     // pre-label --- allows faster node access later on
     auto count = tagState(true);
@@ -1178,9 +1178,9 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
         pt.m_node->make(curs, bins_b, far_bin_dists,
                         pt.m_processflag); // note: make clears bins!
         AttributeRow &row = m_attributes->getRow(AttributeKey(curs));
-        row.setValue("Connectivity", float(neighbourhood_size));
-        row.setValue("Point First Moment", float(total_dist));
-        row.setValue("Point Second Moment", float(total_dist_sqr));
+        row.setValue(PointMap::Column::CONNECTIVITY, float(neighbourhood_size));
+        row.setValue(PointMap::Column::POINT_FIRST_MOMENT, float(total_dist));
+        row.setValue(PointMap::Column::POINT_SECOND_MOMENT, float(total_dist_sqr));
     } else {
         // Clear bins by hand if not using them to make
         for (int i = 0; i < 32; i++) {

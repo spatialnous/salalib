@@ -55,6 +55,14 @@ class PointMap : public AttributeMap {
     int m_undocounter;
     std::vector<PixelRefPair> m_merge_lines;
 
+  public: // known columns
+    struct Column {
+        inline static const std::string                  //
+            CONNECTIVITY = "Connectivity",               //
+            POINT_FIRST_MOMENT = "Point First Moment",   //
+            POINT_SECOND_MOMENT = "Point Second Moment"; //
+    };
+
   public: // ctors
     PointMap(const QtRegion &parentRegion, const std::string &name = std::string("VGA Map"));
     virtual ~PointMap() {}

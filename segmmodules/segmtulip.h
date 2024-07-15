@@ -19,6 +19,7 @@ class SegmentTulip : ISegment {
     RadiusType m_radius_type;
     bool m_choice;
     bool m_interactive;
+    bool m_forceLegacyColumnOrder = false;
 
   public:
     struct Column {
@@ -31,9 +32,9 @@ class SegmentTulip : ISegment {
     };
     static std::string
     getFormattedColumn(std::string column, int tulip_bins, RadiusType radiusType, double radius,
+                       std::optional<std::string> routeWeightColName = std::nullopt,
                        std::optional<std::string> weightCol1Name = std::nullopt,
-                       std::optional<std::string> weightCol2Name = std::nullopt,
-                       std::optional<std::string> routeWeightColName = std::nullopt) {
+                       std::optional<std::string> weightCol2Name = std::nullopt) {
         std::string colName = "T" + dXstring::formatString(tulip_bins, "%d") + " " + column;
         bool spaceAdded = false;
         if (routeWeightColName.has_value() && weightCol1Name.has_value()) {
@@ -46,7 +47,11 @@ class SegmentTulip : ISegment {
             colName += "[Route weight by " + routeWeightColName.value() + " Wgt]";
             spaceAdded = true;
         }
-        if (weightCol1Name.has_value() && !weightCol2Name.has_value()) {
+        if (weightCol1Name.has_value() && column == Column::TOTAL) {
+            if (!spaceAdded)
+                colName += " ";
+            colName += weightCol1Name.value();
+        } else if (weightCol1Name.has_value() && !weightCol2Name.has_value()) {
             if (!spaceAdded)
                 colName += " ";
             colName += "[" + weightCol1Name.value() + " Wgt]";
@@ -88,6 +93,9 @@ class SegmentTulip : ISegment {
           m_weighted_measure_col(weighted_measure_col),
           m_weighted_measure_col2(weighted_measure_col2), m_routeweight_col(routeweight_col),
           m_radius_type(radius_type), m_choice(choice), m_interactive(interactive) {}
+    void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
+        m_forceLegacyColumnOrder = forceLegacyColumnOrder;
+    }
     std::string getAnalysisName() const override { return "Tulip Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool) override;
 };

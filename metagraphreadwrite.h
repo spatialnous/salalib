@@ -70,7 +70,6 @@ namespace MetaGraphReadWrite {
         } displayData;
     };
 
-    void readHeader(std::istream &stream);
     QtRegion readRegion(std::istream &stream);
 
     std::tuple<std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>>,

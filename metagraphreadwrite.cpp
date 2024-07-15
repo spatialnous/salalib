@@ -77,14 +77,6 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromFile(const std::st
     return result;
 }
 
-void MetaGraphReadWrite::readHeader(std::istream &stream) {
-    char header[3];
-    stream.read(header, 3);
-    if (stream.fail() || header[0] != 'g' || header[1] != 'r' || header[2] != 'f') {
-        throw MetaGraphReadError("Could not read file, not a MetaGraph?");
-    }
-}
-
 QtRegion MetaGraphReadWrite::readRegion(std::istream &stream) {
     QtRegion region;
     stream.read((char *)&region, sizeof(region));
@@ -111,9 +103,14 @@ MetaGraphReadWrite::readDrawingFiles(std::istream &stream) {
 
 MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istream &stream) {
 
-    readHeader(stream);
-
     MetaGraphData mgd;
+
+    char header[3];
+    stream.read(header, 3);
+    if (stream.fail() || header[0] != 'g' || header[1] != 'r' || header[2] != 'f') {
+        mgd.readStatus = ReadStatus::NOT_A_GRAPH;
+        return mgd;
+    }
 
     stream.read((char *)&mgd.version, sizeof(mgd.version));
     if (mgd.version > METAGRAPH_VERSION) {

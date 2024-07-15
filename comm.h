@@ -99,7 +99,7 @@ class Communicator {
     }
     std::string GetMBInfileName() {
         std::string ret;
-        if (m_fileset.size()) {
+        if (!m_fileset.empty()) {
             ret = "File set";
         } else {
             ret = std::string(m_infilename.c_str());

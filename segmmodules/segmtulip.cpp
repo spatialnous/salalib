@@ -11,17 +11,17 @@
 std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
                                                           std::vector<double> radii) {
     std::vector<std::string> newColumns;
-    std::string weighting_col_text2;
+    std::optional<std::string> weighting_col_text2 = std::nullopt;
     if (m_weighted_measure_col2 != -1) {
         weighting_col_text2 = map.getAttributeTable().getColumnName(m_weighted_measure_col2);
     }
 
-    std::string routeweight_col_text;
+    std::optional<std::string> routeweight_col_text = std::nullopt;
     if (m_routeweight_col != -1) {
         routeweight_col_text = map.getAttributeTable().getColumnName(m_routeweight_col);
     }
 
-    std::string weighting_col_text;
+    std::optional<std::string> weighting_col_text = std::nullopt;
     if (m_weighted_measure_col != -1) {
         weighting_col_text = map.getAttributeTable().getColumnName(m_weighted_measure_col);
     }

@@ -21,9 +21,10 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
     size_t path_col = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
 
-    // The original code set tulip_bins to 1024, divided by two and added one
-    // in order to duplicate previous code (using a semicircle of tulip bins)
-    size_t tulip_bins = 513;
+    size_t tulip_bins = m_tulipBins;
+
+    tulip_bins /= 2; // <- actually use semicircle of tulip bins
+    tulip_bins += 1;
 
     std::vector<bool> covered(m_map.getConnections().size());
     for (size_t i = 0; i < m_map.getConnections().size(); i++) {

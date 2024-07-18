@@ -27,11 +27,11 @@ namespace depthmapX {
             m_columns = columns;
         }
 
-        BaseMatrix<T>(const BaseMatrix<T> &other) : BaseMatrix<T>(other.m_rows, other.m_columns) {
+        BaseMatrix(const BaseMatrix<T> &other) : BaseMatrix<T>(other.m_rows, other.m_columns) {
             std::copy(other.begin(), other.end(), m_data);
         }
 
-        BaseMatrix<T>(BaseMatrix<T> &&other)
+        BaseMatrix(BaseMatrix<T> &&other)
             : m_data(other.m_data), m_rows(other.m_rows), m_columns(other.m_columns) {
             other.m_data = nullptr;
             other.m_rows = 0;
@@ -39,7 +39,7 @@ namespace depthmapX {
         }
 
       public:
-        virtual ~BaseMatrix<T>() { delete[] m_data; }
+        virtual ~BaseMatrix() { delete[] m_data; }
 
         /**
          * @brief Fill all values of the matrix with a default value

@@ -17,6 +17,12 @@ struct AnalysisResult {
         }
     }
     std::vector<std::string> &getAttributes() { return newAttributes; };
+    void append(const AnalysisResult &other) {
+      completed &= other.completed;
+      newAttributes.insert(newAttributes.end(),
+                           other.newAttributes.begin(),
+                           other.newAttributes.end());
+    }
 
   private:
     std::vector<std::string> newAttributes = std::vector<std::string>();

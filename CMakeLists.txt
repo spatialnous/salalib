@@ -38,6 +38,9 @@ set(genlib_SRCS
 # of this particular project to IDEs that open it
 add_compile_definitions(GENLIB_LIBRARY)
 
+# Allows enabling M_PI for MSVC
+add_compile_definitions(_USE_MATH_DEFINES)
+
 add_library(${genlib} STATIC ${genlib_HDRS} ${genlib_SRCS})
 
 target_compile_options(${genlib} PRIVATE ${COMPILE_WARNINGS})

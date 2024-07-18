@@ -5,8 +5,8 @@
 
 #include "isovist.h"
 
+#include <cmath>
 #include <float.h>
-#include <math.h>
 #include <time.h>
 
 ///////////////////////////////////////////////////////////////////////

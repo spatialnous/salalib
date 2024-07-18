@@ -75,7 +75,6 @@ set(salalib_SRCS
     shapegraph.cpp
     connector.cpp
     isovist.cpp
-    metagraph.cpp
     metagraphreadwrite.cpp
     ngraph.cpp
     pointmap.cpp

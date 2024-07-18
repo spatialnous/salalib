@@ -4,8 +4,8 @@
 
 #include "pafcolor.h" // <- sala actually includes vertex.h for us
 
+#include <cmath>
 #include <float.h> // _finite support
-#include <math.h>
 
 static unsigned int g_nicecolor[] = {
     0x003333DD, // 0 blue

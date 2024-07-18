@@ -16,8 +16,8 @@
 #include "genlib/readwritehelpers.h"
 #include "genlib/stringutils.h"
 
+#include <cmath>
 #include <float.h>
-#include <math.h>
 #include <numeric>
 #include <stdexcept>
 #include <time.h>

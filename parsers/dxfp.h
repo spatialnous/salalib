@@ -13,8 +13,8 @@
 // The parser reads in vertices, lines and polylines, and stores them in the
 // defined layers.  It also reads in any line types defined.
 
+#include <cmath>
 #include <map>
-#include <math.h>
 #include <vector>
 
 class DxfToken;

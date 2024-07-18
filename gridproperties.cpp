@@ -4,7 +4,7 @@
 
 #include "gridproperties.h"
 
-#include <math.h>
+#include <cmath>
 
 GridProperties::GridProperties(double maxDimension) {
     int maxexponent = (int)floor(log10(maxDimension)) - 1;

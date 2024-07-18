@@ -12,8 +12,8 @@
 #include "genlib/containerutils.h"
 #include "genlib/readwritehelpers.h"
 
+#include <cmath>
 #include <float.h>
-#include <math.h>
 #include <time.h>
 
 #ifndef _WIN32

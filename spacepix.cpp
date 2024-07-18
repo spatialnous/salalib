@@ -12,9 +12,9 @@
 #include "genlib/readwritehelpers.h"
 #include "genlib/stringutils.h"
 
+#include <cmath>
 #include <float.h>
 #include <fstream>
-#include <math.h>
 #include <set>
 
 #ifndef _WIN32

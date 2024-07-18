@@ -8,7 +8,6 @@
 #include "genlib/readwritehelpers.h"
 
 #include <fstream>
-#include <math.h>
 #include <time.h>
 
 bool Connector::read(std::istream &stream) {

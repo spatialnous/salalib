@@ -17,7 +17,7 @@
 #include "genlib/pflipper.h"
 #include "genlib/stringutils.h"
 
-#include <math.h>
+#include <cmath>
 #include <numeric>
 #include <unordered_set>
 

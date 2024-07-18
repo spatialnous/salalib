@@ -10,7 +10,7 @@
 
 #include "sparksieve2.h"
 
-#include <math.h>
+#include <cmath>
 
 sparkSieve2::sparkSieve2(const Point2f &centre, double maxdist) {
     m_centre = centre;

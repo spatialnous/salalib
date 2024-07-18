@@ -7,7 +7,6 @@
 #include "pafmath.h"
 
 #include <inttypes.h>
-#include <math.h>
 
 uint64_t g_rand[11] = {1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
 

@@ -10,10 +10,6 @@
 
 #include <cmath>
 
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795
-#endif
-
 inline double sqr(double a) { return (a * a); }
 
 inline int sgn(double a) { return (a < 0) ? -1 : 1; }

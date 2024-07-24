@@ -157,7 +157,7 @@ inline double dot(const Point2f &p1, const Point2f &p2) { return (p1.x * p2.x + 
 inline double det(const Point2f &p1, const Point2f &p2) { return (p1.x * p2.y - p1.y * p2.x); }
 
 inline double dist(const Point2f &p1, const Point2f &p2) {
-    return sqrt(sqr(p1.x - p2.x) + sqr(p1.y - p2.y));
+    return sqrt(pafmath::sqr(p1.x - p2.x) + pafmath::sqr(p1.y - p2.y));
 }
 
 inline double angle(const Point2f &p1, const Point2f &p2, const Point2f &p3) {
@@ -167,7 +167,7 @@ inline double angle(const Point2f &p1, const Point2f &p2, const Point2f &p3) {
     b.normalise();
     // ensure in range (f.p. error can throw out)
     double d = std::min<double>(std::max<double>(dot(a, b), -1.0), 1.0);
-    return (sgn(det(a, b)) == 1) ? acos(d) : 2.0 * M_PI - acos(d);
+    return (pafmath::sgn(det(a, b)) == 1) ? acos(d) : 2.0 * M_PI - acos(d);
 }
 
 inline bool approxeq(const Point2f &p1, const Point2f &p2, double tolerance) {
@@ -182,7 +182,7 @@ inline bool Point2f::insegment(const Point2f &key, const Point2f &p2, const Poin
     double ap = det(va, vp);
     double bp = det(vb, vp);
     if ((dot(va, vp) > 0 && dot(vb, vp) > 0) &&
-        (sgn(ap) != sgn(bp) || fabs(ap) < tolerance || fabs(bp) < tolerance)) {
+        (pafmath::sgn(ap) != pafmath::sgn(bp) || fabs(ap) < tolerance || fabs(bp) < tolerance)) {
         return true;
     }
     return false;
@@ -190,8 +190,9 @@ inline bool Point2f::insegment(const Point2f &key, const Point2f &p2, const Poin
 
 inline bool Point2f::intriangle(const Point2f &p1, const Point2f &p2, const Point2f &p3) {
     // touching counts
-    int test = sgn(det(p2 - p1, *this - p1));
-    if (test == sgn(det(p3 - p2, *this - p2)) && test == sgn(det(p1 - p3, *this - p3))) {
+    int test = pafmath::sgn(det(p2 - p1, *this - p1));
+    if (test == pafmath::sgn(det(p3 - p2, *this - p2)) &&
+        test == pafmath::sgn(det(p1 - p3, *this - p3))) {
         return true;
     }
     return false;

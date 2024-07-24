@@ -8,16 +8,19 @@
 
 #include <inttypes.h>
 
-uint64_t g_rand[11] = {1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+namespace {
+    uint64_t g_rand[11] = {1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
 
-// 25-Jul-2007: changed the g_mult and g_const used for random number generation
-// for some reason, there appeared to be a pattern to the numbers
+    // 25-Jul-2007: changed the g_mult and g_const used for random number generation
+    // for some reason, there appeared to be a pattern to the numbers
 
-// Quick mod - TV
-const uint64_t g_mult = /*(0xF9561B2E << 32) + */ 0x71A7FA85;
-const uint64_t g_const = /*(0x9BB3920E << 32) + */ 0xF5E958B9;
+    // Quick mod - TV
+    const uint64_t g_mult = /*(0xF9561B2E << 32) + */ 0x71A7FA85;
+    const uint64_t g_const = /*(0x9BB3920E << 32) + */ 0xF5E958B9;
 
-void pafsrand(unsigned int seed, int set) // = 0
+} // namespace
+
+void pafmath::pafsrand(unsigned int seed, int set) // = 0
 {
     g_rand[set] = seed;
 }
@@ -33,16 +36,16 @@ void pafsrand(unsigned int seed, int set) // = 0
 
 // 25-Jul-2007: moved up to take top 32 bits
 
-unsigned int pafrand(int set) // = 0
+unsigned int pafmath::pafrand(int set) // = 0
 {
     g_rand[set] = g_mult * g_rand[set] + g_const;
 
-    return (unsigned int)((g_rand[set] >> 32) & PAF_RAND_MAX);
+    return (unsigned int)((g_rand[set] >> 32) & pafmath::PAF_RAND_MAX);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-double poisson(int x, double lambda) {
+double pafmath::poisson(int x, double lambda) {
     double f = exp(-lambda);
     for (int i = 1; i <= x; i++) {
         f *= lambda / double(i);
@@ -50,7 +53,7 @@ double poisson(int x, double lambda) {
     return f;
 }
 
-double cumpoisson(int x, double lambda) {
+double pafmath::cumpoisson(int x, double lambda) {
     double f = exp(-lambda);
     double c = f;
     for (int i = 1; i <= x; i++) {
@@ -60,7 +63,7 @@ double cumpoisson(int x, double lambda) {
     return c;
 }
 
-int invcumpoisson(double p, double lambda) {
+int pafmath::invcumpoisson(double p, double lambda) {
     if (p <= 0) {
         return 0;
     }

@@ -42,9 +42,9 @@ Point2f gps2os(const Point2f &pt) {
     // GRS80 ellipsoid
     double a = 6378137.0000;
     double b = 6356752.3141;
-    double e_sq = (sqr(a) - sqr(b)) / sqr(a);
+    double e_sq = (pafmath::sqr(a) - pafmath::sqr(b)) / pafmath::sqr(a);
 
-    double nu = a / sqrt(1.0 - e_sq * sqr(sin(phi)));
+    double nu = a / sqrt(1.0 - e_sq * pafmath::sqr(sin(phi)));
 
     double x = nu * cos(phi) * cos(lambda);
     double y = nu * cos(phi) * sin(lambda);
@@ -66,20 +66,20 @@ Point2f gps2os(const Point2f &pt) {
     y = +125.157 + r_z * x + (1.0 + 2.04894e-5) * y - r_x * z;
     z = -542.060 - r_y * x + r_x * y + (1.0 + 2.04894e-5) * z;
 
-    double p = sqrt(sqr(x) + sqr(y));
+    double p = sqrt(pafmath::sqr(x) + pafmath::sqr(y));
 
     // now place it back in long lat on the OSGB36 ellipsoid:
 
     // Airy 1830 (OSGB36) ellipsoid
     a = 6377563.396;
     b = 6356256.910;
-    e_sq = (sqr(a) - sqr(b)) / sqr(a);
+    e_sq = (pafmath::sqr(a) - pafmath::sqr(b)) / pafmath::sqr(a);
 
     lambda = atan(y / x);
     phi = atan(z / (p * (1.0 - e_sq)));
     double lastphi = phi;
 
-    nu = a / sqrt(1.0 - e_sq * sqr(sin(phi)));
+    nu = a / sqrt(1.0 - e_sq * pafmath::sqr(sin(phi)));
     do {
         phi = atan((z + e_sq * nu * sin(phi)) / p);
     } while (fabs(lastphi - phi) > 1e-6);
@@ -97,10 +97,10 @@ Point2f gps2os(const Point2f &pt) {
     // phi_0 latitude of true origin             49.0 radians:
     double phi_0 = 0.85521133347722149269260847655942;
 
-    nu = a * F_0 * pow((1 - e_sq * sqr(sin(phi))), -0.5);
+    nu = a * F_0 * pow((1 - e_sq * pafmath::sqr(sin(phi))), -0.5);
 
     double n = (a - b) / (a + b);
-    double rho = a * F_0 * (1.0 - e_sq) * pow((1 - e_sq * sqr(sin(phi))), -1.5);
+    double rho = a * F_0 * (1.0 - e_sq) * pow((1 - e_sq * pafmath::sqr(sin(phi))), -1.5);
     double eta_sq = nu / rho - 1;
 
     double n_sq = pow(n, 2);
@@ -114,15 +114,16 @@ Point2f gps2os(const Point2f &pt) {
     double I = M + N_0;
     double II = 0.5 * nu * sin(phi) * cos(phi);
     double tanphi = tan(phi);
-    double III = nu * sin(phi) * pow(cos(phi), 3.0) * (5.0 - sqr(tanphi) + 9.0 * eta_sq) / 24.0;
-    double IIIA =
-        nu * sin(phi) * pow(cos(phi), 5.0) * (61.0 - 58.0 * sqr(tanphi) + pow(tanphi, 4.0)) / 720.0;
+    double III =
+        nu * sin(phi) * pow(cos(phi), 3.0) * (5.0 - pafmath::sqr(tanphi) + 9.0 * eta_sq) / 24.0;
+    double IIIA = nu * sin(phi) * pow(cos(phi), 5.0) *
+                  (61.0 - 58.0 * pafmath::sqr(tanphi) + pow(tanphi, 4.0)) / 720.0;
     double IV = nu * cos(phi);
-    double V = nu * pow(cos(phi), 3.0) * (nu / rho - sqr(tanphi)) / 6.0;
-    double VI =
-        nu * pow(cos(phi), 5.0) *
-        (5.0 - 18.0 * sqr(tanphi) + pow(tanphi, 4) + 14.0 * eta_sq - 58.0 * sqr(tanphi) * eta_sq) /
-        120.0;
+    double V = nu * pow(cos(phi), 3.0) * (nu / rho - pafmath::sqr(tanphi)) / 6.0;
+    double VI = nu * pow(cos(phi), 5.0) *
+                (5.0 - 18.0 * pafmath::sqr(tanphi) + pow(tanphi, 4) + 14.0 * eta_sq -
+                 58.0 * pafmath::sqr(tanphi) * eta_sq) /
+                120.0;
 
     double E = E_0 + IV * (lambda - lambda_0) + V * pow((lambda - lambda_0), 3) +
                VI * pow((lambda - lambda_0), 5);

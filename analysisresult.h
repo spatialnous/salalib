@@ -16,14 +16,23 @@ struct AnalysisResult {
             newAttributes.push_back(attribute);
         }
     }
-    std::vector<std::string> &getAttributes() { return newAttributes; };
-    void append(const AnalysisResult &other) {
-      completed &= other.completed;
-      newAttributes.insert(newAttributes.end(),
-                           other.newAttributes.begin(),
-                           other.newAttributes.end());
-    }
+    const std::vector<std::string> &getAttributes() const { return newAttributes; };
 
-  private:
+  protected:
     std::vector<std::string> newAttributes = std::vector<std::string>();
+};
+
+struct AppendableAnalysisResult : public AnalysisResult {
+    bool firstRun = true;
+    void append(const AnalysisResult &other) {
+        if (firstRun) {
+            completed = other.completed;
+            firstRun = false;
+        } else {
+            completed &= other.completed;
+        }
+        newAttributes.insert(newAttributes.end(),
+                             other.getAttributes().begin(),
+                             other.getAttributes().end());
+    }
 };

@@ -13,13 +13,14 @@
 void AgentAnalysis::init(std::vector<Agent> &agents, std::vector<PixelRef> &releaseLocations,
                          size_t agent, int trail_num) {
     if (releaseLocations.size()) {
-        auto which = pafrand() % releaseLocations.size();
+        auto which = pafmath::pafrand() % releaseLocations.size();
         agents[agent].onInit(releaseLocations[which], trail_num);
     } else {
         const PointMap &map = agents[agent].getPointMap();
         PixelRef pix;
         do {
-            pix = map.pickPixel(prandom(static_cast<int>(m_randomReleaseLocationsSeed.value())));
+            pix = map.pickPixel(
+                pafmath::prandom(static_cast<int>(m_randomReleaseLocationsSeed.value())));
         } while (!map.getPoint(pix).filled());
         agents[agent].onInit(pix, trail_num);
     }
@@ -81,7 +82,7 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
         m_recordTrails->limit.has_value() ? static_cast<int>(*m_recordTrails->limit) : -1;
 
     for (size_t i = 0; i < m_systemTimesteps; i++) {
-        auto q = static_cast<size_t>(invcumpoisson(prandomr(), m_releaseRate));
+        auto q = static_cast<size_t>(pafmath::invcumpoisson(pafmath::prandomr(), m_releaseRate));
         auto length = agents.size();
         size_t k;
         for (k = 0; k < q; k++) {

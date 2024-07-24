@@ -60,7 +60,7 @@ void Agent::onMove() {
         m_step = 0;
         onTarget();
         m_vector = onLook(false);
-    } else if (prandomr() < (1.0 / m_program->m_steps) &&
+    } else if (pafmath::prandomr() < (1.0 / m_program->m_steps) &&
                !m_target_lock) { // note, on average, will change 1 in steps
         m_step = 0;
         m_vector = onLook(false);
@@ -152,7 +152,7 @@ bool Agent::diagonalStep() {
     int nextnode2 = m_pointmap->pixelate(nextloc2, false);
 
     bool good = false;
-    if (pafrand() % 2 == 0) {
+    if (pafmath::pafrand() % 2 == 0) {
         if (goodStep(nextnode1)) {
             m_node = nextnode1;
             m_loc = nextloc1;
@@ -257,7 +257,7 @@ Point2f Agent::onStandardLook(bool wholeisovist) {
             return Point2f(0, 0);
         }
     } else {
-        int chosen = pafrand() % choices;
+        int chosen = pafmath::pafrand() % choices;
         Node &node = m_pointmap->getPoint(m_node).getNode();
         for (; chosen >= node.bincount(directionbin % 32); directionbin++) {
             chosen -= node.bincount(directionbin % 32);
@@ -322,7 +322,7 @@ Point2f Agent::onWeightedLook(bool wholeisovist) {
     if (weightmap.size() == 0) {
         return onWeightedLook(true);
     } else {
-        double chosen = prandomr() * weight;
+        double chosen = pafmath::prandomr() * weight;
         for (size_t i = 0; i < weightmap.size(); i++) {
             if (chosen < weightmap[i].weight) {
                 tarpixelate = weightmap[i].node;
@@ -376,7 +376,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
                 return Point2f(0, 0);
             }
         } else {
-            size_t chosen = pafrand() % choices;
+            size_t chosen = pafmath::pafrand() % choices;
             for (; chosen >= node.m_occlusion_bins[directionbin % 32].size(); directionbin++) {
                 chosen -= node.m_occlusion_bins[directionbin % 32].size();
             }
@@ -443,7 +443,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
                 return Point2f(0, 0);
             }
         } else {
-            double chosen = prandomr() * weight;
+            double chosen = pafmath::prandomr() * weight;
             for (size_t i = 0; i < weightmap.size(); i++) {
                 if (chosen < weightmap[i].weight) {
                     tarpixelate = weightmap[i].node;
@@ -504,7 +504,7 @@ Point2f Agent::onLoSLook(bool wholeisovist, int look_type) {
             return Point2f(0, 0);
         }
     } else {
-        double chosen = prandomr() * weight;
+        double chosen = pafmath::prandomr() * weight;
         for (size_t i = 0; i < weightmap.size(); i++) {
             if (chosen < weightmap[i].weight) {
                 targetbin = weightmap[i].node;
@@ -554,7 +554,7 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int look_type) {
             return Point2f(0, 0);
         }
     } else {
-        double chosen = prandomr() * weight;
+        double chosen = pafmath::prandomr() * weight;
         for (size_t i = 0; i < weightmap.size(); i++) {
             if (chosen < weightmap[i].weight) {
                 targetbin = weightmap[i].node;
@@ -649,11 +649,12 @@ int Agent::onGibsonianRule(int rule) {
         break;
     }
     int dir = 0;
-    if (option == 0x01 && m_program->m_rule_probability[0] > prandomr()) {
+    if (option == 0x01 && m_program->m_rule_probability[0] > pafmath::prandomr()) {
         dir = -1;
-    } else if (option == 0x10 && m_program->m_rule_probability[0] > prandomr()) {
+    } else if (option == 0x10 && m_program->m_rule_probability[0] > pafmath::prandomr()) {
         dir = +1;
-    } else if (option == 0x11 && m_program->m_rule_probability[0] > prandomr() * prandomr()) {
+    } else if (option == 0x11 &&
+               m_program->m_rule_probability[0] > pafmath::prandomr() * pafmath::prandomr()) {
         // note, use random * random event as there are two ways to do this
         dir = (rand() % 2) ? -1 : +1;
     }
@@ -688,12 +689,13 @@ Point2f Agent::onGibsonianLook2(bool wholeisovist) {
     if ((m_curr_los[2] - m_last_los[2]) / m_curr_los[2] > m_program->m_feeler_threshold) {
         dir |= 0x10;
     }
-    if (dir == 0x01 && m_program->m_feeler_probability > prandomr()) {
+    if (dir == 0x01 && m_program->m_feeler_probability > pafmath::prandomr()) {
         maxbin = -m_program->m_vbin;
-    } else if (dir == 0x10 && m_program->m_feeler_probability > prandomr()) {
+    } else if (dir == 0x10 && m_program->m_feeler_probability > pafmath::prandomr()) {
         maxbin = m_program->m_vbin;
-    } else if (dir == 0x11 && m_program->m_feeler_probability > prandomr() * prandomr()) {
-        maxbin = (pafrand() % 2) ? m_program->m_vbin : -m_program->m_vbin;
+    } else if (dir == 0x11 &&
+               m_program->m_feeler_probability > pafmath::prandomr() * pafmath::prandomr()) {
+        maxbin = (pafmath::pafrand() % 2) ? m_program->m_vbin : -m_program->m_vbin;
     }
     // third action: detect heading for dead-end
     if (maxbin == 0 && (m_curr_los[0] / m_pointmap->getSpacing() < m_program->m_ahead_threshold)) {

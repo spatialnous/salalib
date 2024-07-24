@@ -144,9 +144,9 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm, PointMap &map, bool simp
                         double ra = 2.0 * (mean_depth - 1.0) / double(total_nodes - 2);
                         // d-value / p-values from Depthmap 4 manual, note: node_count includes this
                         // one
-                        double rra_d = ra / dvalue(total_nodes);
-                        double rra_p = ra / pvalue(total_nodes);
-                        double integ_tk = teklinteg(total_nodes, total_depth);
+                        double rra_d = ra / pafmath::dvalue(total_nodes);
+                        double rra_p = ra / pafmath::pvalue(total_nodes);
+                        double integ_tk = pafmath::teklinteg(total_nodes, total_depth);
                         row.setValue(integ_dv_col.value(), float(1.0 / rra_d));
                         if (!simple_version) {
                             row.setValue(integ_pv_col.value(), float(1.0 / rra_p));

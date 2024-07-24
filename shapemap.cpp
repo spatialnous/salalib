@@ -471,26 +471,26 @@ bool ShapeMap::convertPointsToPolys(
                     poly_p.x = p.x + poly_radius;
                     poly_p.y = p.y;
                 } else if (k == 1) {
-                    poly_p.x = p.x + poly_radius * M_ROOT_1_2;
-                    poly_p.y = p.y + poly_radius * M_ROOT_1_2;
+                    poly_p.x = p.x + poly_radius * pafmath_M_ROOT_1_2;
+                    poly_p.y = p.y + poly_radius * pafmath_M_ROOT_1_2;
                 } else if (k == 2) {
                     poly_p.x = p.x;
                     poly_p.y = p.y + poly_radius;
                 } else if (k == 3) {
-                    poly_p.x = p.x - poly_radius * M_ROOT_1_2;
-                    poly_p.y = p.y + poly_radius * M_ROOT_1_2;
+                    poly_p.x = p.x - poly_radius * pafmath_M_ROOT_1_2;
+                    poly_p.y = p.y + poly_radius * pafmath_M_ROOT_1_2;
                 } else if (k == 4) {
                     poly_p.x = p.x - poly_radius;
                     poly_p.y = p.y;
                 } else if (k == 5) {
-                    poly_p.x = p.x - poly_radius * M_ROOT_1_2;
-                    poly_p.y = p.y - poly_radius * M_ROOT_1_2;
+                    poly_p.x = p.x - poly_radius * pafmath_M_ROOT_1_2;
+                    poly_p.y = p.y - poly_radius * pafmath_M_ROOT_1_2;
                 } else if (k == 6) {
                     poly_p.x = p.x;
                     poly_p.y = p.y - poly_radius;
                 } else if (k == 7) {
-                    poly_p.x = p.x + poly_radius * M_ROOT_1_2;
-                    poly_p.y = p.y - poly_radius * M_ROOT_1_2;
+                    poly_p.x = p.x + poly_radius * pafmath_M_ROOT_1_2;
+                    poly_p.y = p.y - poly_radius * pafmath_M_ROOT_1_2;
                 }
                 region.encompass(poly_p);
                 shape.second.m_points.push_back(poly_p);

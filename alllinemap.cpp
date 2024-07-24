@@ -165,7 +165,7 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
     }
 
-    pafsrand((unsigned int)time(NULL));
+    pafmath::pafsrand((unsigned int)time(NULL));
 
     // make one rld for each radial line...
     std::map<RadialKey, std::set<int>> radialdivisions;

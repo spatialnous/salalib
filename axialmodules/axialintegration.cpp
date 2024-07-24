@@ -328,7 +328,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 if (!m_choice) {
                     index = foundlist.a().back().first;
                 } else {
-                    pos = pafrand() % foundlist.a().size();
+                    pos = pafmath::pafrand() % foundlist.a().size();
                     index = foundlist.a().at(pos).first;
                     previous = foundlist.a().at(pos).second;
                     audittrail[index][0].previous.ref =
@@ -403,9 +403,9 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 if (node_count > 2 && mean_depth > 1.0) {
                     double ra = 2.0 * (mean_depth - 1.0) / double(node_count - 2);
                     // d-value / p-value from Depthmap 4 manual, note: node_count includes this one
-                    double rra_d = ra / dvalue(node_count);
-                    double rra_p = ra / dvalue(node_count);
-                    double integ_tk = teklinteg(node_count, total_depth);
+                    double rra_d = ra / pafmath::dvalue(node_count);
+                    double rra_p = ra / pafmath::dvalue(node_count);
+                    double integ_tk = pafmath::teklinteg(node_count, total_depth);
                     row.setValue(integ_dv_col[r], float(1.0 / rra_d));
 
                     if (!simple_version) {
@@ -428,7 +428,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                         if (!simple_version) {
                             // alan's palm-tree normalisation: palmtree
                             double dmin = node_count - 1;
-                            double dmax = palmtree(node_count, depth - 1);
+                            double dmax = pafmath::palmtree(node_count, depth - 1);
                             if (dmax != dmin) {
                                 row.setValue(penn_norm_col[r],
                                              float((dmax - total_depth) / (dmax - dmin)));

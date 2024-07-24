@@ -1396,12 +1396,12 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     data = log10(evaluate(pointer, p_obj).toDouble());
                     break;
                 case SalaObj::S_LN:
-                    data = ln(evaluate(pointer, p_obj).toDouble());
+                    data = pafmath_ln(evaluate(pointer, p_obj).toDouble());
                     break;
                 case SalaObj::S_RAND:
                     data = evaluate(pointer, p_obj);
                     data.ensureNone();
-                    data = SalaObj(prandom());
+                    data = SalaObj(pafmath::prandom());
                     break;
                 case SalaObj::S_SIN:
                     data = sin(evaluate(pointer, p_obj).toDouble());

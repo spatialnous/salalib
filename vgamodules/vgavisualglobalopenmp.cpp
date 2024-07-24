@@ -127,9 +127,9 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
             if (total_nodes > 2 && mean_depth > 1.0) {
                 double ra = 2.0 * (mean_depth - 1.0) / double(total_nodes - 2);
                 // d-value / p-values from Depthmap 4 manual, note: node_count includes this one
-                double rra_d = ra / dvalue(total_nodes);
-                double rra_p = ra / pvalue(total_nodes);
-                double integ_tk = teklinteg(total_nodes, total_depth);
+                double rra_d = ra / pafmath::dvalue(total_nodes);
+                double rra_p = ra / pafmath::pvalue(total_nodes);
+                double integ_tk = pafmath::teklinteg(total_nodes, total_depth);
                 dp.integ_dv = float(1.0 / rra_d);
                 dp.integ_pv = float(1.0 / rra_p);
 

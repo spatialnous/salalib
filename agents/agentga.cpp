@@ -13,7 +13,7 @@ int thisrun = 0;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 static int rankselect(int popsize) {
-    int num = int(prandom() * popsize * (popsize + 1) * 0.5);
+    int num = int(pafmath::prandom() * popsize * (popsize + 1) * 0.5);
     for (int i = 0; i < popsize; i++) {
         if (num < (popsize - i)) {
             return i;

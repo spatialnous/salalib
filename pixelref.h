@@ -108,7 +108,7 @@ inline PixelRef operator/(const PixelRef a, const int factor) {
 }
 
 inline double dist(const PixelRef a, const PixelRef b) {
-    return sqrt(sqr(a.x - b.x) + sqr(a.y - b.y));
+    return sqrt(pafmath::sqr(a.x - b.x) + pafmath::sqr(a.y - b.y));
 }
 
 inline double angle(const PixelRef a, const PixelRef b, const PixelRef c) {
@@ -117,7 +117,8 @@ inline double angle(const PixelRef a, const PixelRef b, const PixelRef c) {
     } else {
         // n.b. 1e-12 required for floating point error
         return acos(double((a.x - b.x) * (b.x - c.x) + (a.y - b.y) * (b.y - c.y)) /
-                    (sqrt(sqr(a.x - b.x) + sqr(a.y - b.y)) * sqrt(sqr(b.x - c.x) + sqr(b.y - c.y)) +
+                    (sqrt(pafmath::sqr(a.x - b.x) + pafmath::sqr(a.y - b.y)) *
+                         sqrt(pafmath::sqr(b.x - c.x) + pafmath::sqr(b.y - c.y)) +
                      1e-12));
     }
 }

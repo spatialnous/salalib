@@ -21,13 +21,13 @@ AgentProgram::AgentProgram() {
 
 void AgentProgram::mutate() {
     // do mutate rule order occassionally:
-    if (pafrand() % 20 == 0) {
+    if (pafmath::pafrand() % 20 == 0) {
         // rule order relies on putting rules into slots:
         for (int i = 0; i < 4; i++) {
             m_rule_order[i] = -1;
         }
         for (int j = 0; j < 4; j++) {
-            int choice = pafrand() % (4 - j);
+            int choice = pafmath::pafrand() % (4 - j);
             for (int k = 0; k < choice + 1; k++) {
                 if (m_rule_order[k] != -1) {
                     choice++;
@@ -38,11 +38,11 @@ void AgentProgram::mutate() {
     }
     // mutate the rule threshold / probabilities
     for (int i = 0; i < 4; i++) {
-        if (pafrand() % 20 == 0) { // 5% mutation rate
-            m_rule_threshold[i] = float(prandom() * 100.0);
+        if (pafmath::pafrand() % 20 == 0) { // 5% mutation rate
+            m_rule_threshold[i] = float(pafmath::prandom() * 100.0);
         }
-        if (pafrand() % 20 == 0) { // 5% mutation rate
-            m_rule_probability[i] = float(prandom());
+        if (pafmath::pafrand() % 20 == 0) { // 5% mutation rate
+            m_rule_probability[i] = float(pafmath::prandom());
         }
     }
 }
@@ -51,7 +51,7 @@ AgentProgram crossover(const AgentProgram &prog_a, const AgentProgram &prog_b) {
     AgentProgram child;
 
     // either one rule priority order or the other (don't try to mix!)
-    if (pafrand() % 2) {
+    if (pafmath::pafrand() % 2) {
         for (int i = 0; i < 4; i++) {
             child.m_rule_order[i] = prog_a.m_rule_order[i];
         }
@@ -62,12 +62,12 @@ AgentProgram crossover(const AgentProgram &prog_a, const AgentProgram &prog_b) {
     }
     // for each rule, either one rule threshold / probability or the other:
     for (int i = 0; i < 4; i++) {
-        if (pafrand() % 2) {
+        if (pafmath::pafrand() % 2) {
             child.m_rule_threshold[i] = prog_a.m_rule_threshold[i];
         } else {
             child.m_rule_threshold[i] = prog_b.m_rule_threshold[i];
         }
-        if (pafrand() % 2) {
+        if (pafmath::pafrand() % 2) {
             child.m_rule_probability[i] = prog_a.m_rule_probability[i];
         } else {
             child.m_rule_probability[i] = prog_b.m_rule_probability[i];

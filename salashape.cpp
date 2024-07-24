@@ -52,7 +52,7 @@ void SalaShape::setCentroidAreaPerim() {
         m_perimeter += side.length();
     }
     m_type &= ~SHAPE_CCW;
-    if (sgn(m_area) == 1) {
+    if (pafmath::sgn(m_area) == 1) {
         m_type |= SHAPE_CCW;
     }
     m_centroid.scale(2.0 / m_area); // note, *not* fabs(m_area) as it is then

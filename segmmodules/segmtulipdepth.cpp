@@ -52,7 +52,7 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
             // it is slightly slower to delete from an arbitrary place in the bin,
             // but it is necessary to use random paths to even out the number of times through equal
             // paths
-            int curr = pafrand() % binIter->size();
+            int curr = pafmath::pafrand() % binIter->size();
             auto currIter = binIter->begin() + curr;
             lineindex = *currIter;
             binIter->erase(currIter);

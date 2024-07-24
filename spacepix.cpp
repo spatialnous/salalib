@@ -657,7 +657,7 @@ void SpacePixel::cutLine(Line &l, short dir) {
                                         Point2f p = trueend - truestart;
                                         double oa = det(p, a);
                                         double ob = det(p, b);
-                                        if (sgn(oa) != sgn(ob) ||
+                                        if (pafmath::sgn(oa) != pafmath::sgn(ob) ||
                                             fabs(oa) < tolerance * linetest.line.length() ||
                                             fabs(ob) < tolerance * linetest.line.length()) {
                                             // crossed

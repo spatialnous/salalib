@@ -13,17 +13,22 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
     auto &attributes = m_map.getAttributeTable();
 
     std::string path_col_name = Column::ANGULAR_SHORTEST_PATH;
-    int path_col = attributes.insertOrResetColumn(path_col_name);
+    attributes.insertOrResetColumn(path_col_name);
     result.addAttribute(path_col_name);
     std::string linked_col_name = Column::ANGULAR_SHORTEST_PATH_LINKED;
-    int linked_col = attributes.insertOrResetColumn(linked_col_name);
+    attributes.insertOrResetColumn(linked_col_name);
     result.addAttribute(linked_col_name);
     std::string order_col_name = Column::ANGULAR_SHORTEST_PATH_ORDER;
-    int order_col = attributes.insertOrResetColumn(order_col_name);
+    attributes.insertOrResetColumn(order_col_name);
     result.addAttribute(order_col_name);
     std::string zone_col_name = Column::ANGULAR_SHORTEST_PATH_ZONE;
-    int zone_col = attributes.insertOrResetColumn(zone_col_name);
+    attributes.insertOrResetColumn(zone_col_name);
     result.addAttribute(zone_col_name);
+
+    int path_col = attributes.getColumnIndex(path_col_name);
+    int linked_col = attributes.getColumnIndex(linked_col_name);
+    int order_col = attributes.getColumnIndex(order_col_name);
+    int zone_col = attributes.getColumnIndex(zone_col_name);
 
     for (auto &row : attributes) {
         PixelRef pix = PixelRef(row.getKey().value);

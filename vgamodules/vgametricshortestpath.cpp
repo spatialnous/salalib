@@ -14,20 +14,26 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
 
     // custom linking costs from the attribute table
     std::string link_metric_cost_col_name = Column::LINK_METRIC_COST;
-    int link_metric_cost_col = attributes.getOrInsertColumn(link_metric_cost_col_name);
+    attributes.getOrInsertColumn(link_metric_cost_col_name);
     result.addAttribute(link_metric_cost_col_name);
     std::string path_col_name = Column::METRIC_SHORTEST_PATH;
-    int path_col = attributes.insertOrResetColumn(path_col_name);
+    attributes.insertOrResetColumn(path_col_name);
     result.addAttribute(path_col_name);
     std::string dist_col_name = Column::METRIC_SHORTEST_PATH_DISTANCE;
-    int dist_col = attributes.insertOrResetColumn(dist_col_name);
+    attributes.insertOrResetColumn(dist_col_name);
     result.addAttribute(dist_col_name);
     std::string linked_col_name = Column::METRIC_SHORTEST_PATH_LINKED;
-    int linked_col = attributes.insertOrResetColumn(linked_col_name);
+    attributes.insertOrResetColumn(linked_col_name);
     result.addAttribute(linked_col_name);
     std::string order_col_name = Column::METRIC_SHORTEST_PATH_ORDER;
-    int order_col = attributes.insertOrResetColumn(order_col_name);
+    attributes.insertOrResetColumn(order_col_name);
     result.addAttribute(order_col_name);
+
+    int link_metric_cost_col = attributes.getColumnIndex(link_metric_cost_col_name);
+    int path_col = attributes.getColumnIndex(path_col_name);
+    int dist_col = attributes.getColumnIndex(dist_col_name);
+    int linked_col = attributes.getColumnIndex(linked_col_name);
+    int order_col = attributes.getColumnIndex(order_col_name);
 
     depthmapX::ColumnMatrix<MetricPoint> metricPoints(m_map.getRows(), m_map.getCols());
 

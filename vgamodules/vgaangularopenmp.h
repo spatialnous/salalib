@@ -17,6 +17,7 @@ class VGAAngularOpenMP : public IAnalysis {
     PointMap &m_map;
     double m_radius;
     bool m_gates_only;
+    std::optional<int> m_limitToThreads;
 
     struct DataPoint {
         float total_depth, mean_depth, count;
@@ -47,8 +48,10 @@ class VGAAngularOpenMP : public IAnalysis {
     }
 
   public:
-    VGAAngularOpenMP(PointMap &map, double radius, bool gates_only)
-        : m_map(map), m_radius(radius), m_gates_only(gates_only) {}
+    VGAAngularOpenMP(PointMap &map, double radius, bool gates_only,
+                     std::optional<int> limitToThreads = std::nullopt)
+        : m_map(map), m_radius(radius), m_gates_only(gates_only), m_limitToThreads(limitToThreads) {
+    }
     std::string getAnalysisName() const override { return "Angular Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *comm) override;
 };

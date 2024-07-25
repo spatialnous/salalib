@@ -198,16 +198,16 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
     std::string count_col_text = getColumnWithRadius(Column::VISUAL_NODE_COUNT, m_radius);
     std::string rel_entropy_col_text = getColumnWithRadius(Column::VISUAL_REL_ENTROPY, m_radius);
 
-    attributes.insertOrResetColumn(integ_dv_col_text.c_str());
     attributes.insertOrResetColumn(entropy_col_text.c_str());
+    attributes.insertOrResetColumn(integ_dv_col_text.c_str());
     attributes.insertOrResetColumn(integ_pv_col_text.c_str());
     attributes.insertOrResetColumn(integ_tk_col_text.c_str());
     attributes.insertOrResetColumn(depth_col_text.c_str());
     attributes.insertOrResetColumn(count_col_text.c_str());
     attributes.insertOrResetColumn(rel_entropy_col_text.c_str());
 
-    result.addAttribute(integ_dv_col_text);
     result.addAttribute(entropy_col_text);
+    result.addAttribute(integ_dv_col_text);
     result.addAttribute(integ_pv_col_text);
     result.addAttribute(integ_tk_col_text);
     result.addAttribute(depth_col_text);

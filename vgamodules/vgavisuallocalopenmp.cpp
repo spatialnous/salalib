@@ -14,6 +14,10 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
 
 #if !defined(_OPENMP)
     std::cerr << "OpenMP NOT available, only running on a single core" << std::endl;
+#else
+    if (m_limitToThreads.has_value()) {
+        omp_set_num_threads(m_limitToThreads.value());
+    }
 #endif
 
     time_t atime = 0;
@@ -57,6 +61,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
     for (i = 0; i < N; ++i) {
         refToFilled.insert(std::make_pair(filled[size_t(i)], i));
     }
+
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif

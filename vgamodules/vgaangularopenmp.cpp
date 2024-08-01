@@ -110,8 +110,15 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         dp.total_depth = total_angle;
         dp.count = float(total_nodes);
 
+#if defined(_OPENMP)
+#pragma omp atomic
+#endif
         count++; // <- increment count
 
+#if defined(_OPENMP)
+        // only executed by the main thread if requested
+        if(!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
+#endif
         if (comm) {
             if (qtimer(atime, 500)) {
                 if (comm->IsCancelled()) {

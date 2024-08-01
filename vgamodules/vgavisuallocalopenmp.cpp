@@ -125,18 +125,22 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
             }
         }
 
+
 #if defined(_OPENMP)
-#pragma omp critical(count)
+#pragma omp atomic
 #endif
-        {
-            count++; // <- increment count
-            if (comm) {
-                if (qtimer(atime, 500)) {
-                    if (comm->IsCancelled()) {
-                        throw Communicator::CancelledException();
-                    }
-                    comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
+        count++; // <- increment count
+
+#if defined(_OPENMP)
+        // only executed by the main thread if requested
+        if(!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
+#endif
+        if (comm) {
+            if (qtimer(atime, 500)) {
+                if (comm->IsCancelled()) {
+                    throw Communicator::CancelledException();
                 }
+                comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
             }
         }
     }

@@ -54,6 +54,9 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
     for (i = 0; i < N; i++) {
         if (m_gates_only) {
+#if defined(_OPENMP)
+#pragma omp critical
+#endif
             count++;
             continue;
         }
@@ -123,8 +126,15 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
         dp.dist = float(double(euclid_depth) / double(total_nodes));
         dp.count = float(total_nodes);
 
+#if defined(_OPENMP)
+#pragma omp atomic
+#endif
         count++; // <- increment count
 
+#if defined(_OPENMP)
+// only executed by the main thread if requested
+if(!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
+#endif
         if (comm) {
             if (qtimer(atime, 500)) {
                 if (comm->IsCancelled()) {

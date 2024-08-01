@@ -165,7 +165,16 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
             dp.entropy = -1.0f;
             dp.rel_entropy = -1.0f;
         }
+
+#if defined(_OPENMP)
+#pragma omp atomic
+#endif
         count++; // <- increment count
+
+#if defined(_OPENMP)
+        // only executed by the main thread if requested
+        if(!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
+#endif
 
         if (comm) {
             if (qtimer(atime, 500)) {

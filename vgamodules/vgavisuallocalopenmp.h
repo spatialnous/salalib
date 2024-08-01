@@ -14,6 +14,8 @@ class VGAVisualLocalOpenMP : public IAnalysis {
   private:
     PointMap &m_map;
     std::optional<int> m_limitToThreads;
+    bool m_forceCommUpdatesMasterThread = false;
+
     struct DataPoint {
         float cluster, control, controllability;
     };
@@ -29,8 +31,11 @@ class VGAVisualLocalOpenMP : public IAnalysis {
     };
 
   public:
-    VGAVisualLocalOpenMP(PointMap &map, std::optional<int> limitToThreads = std::nullopt)
-        : m_map(map), m_limitToThreads(limitToThreads) {}
+    VGAVisualLocalOpenMP(PointMap &map,
+                         std::optional<int> limitToThreads = std::nullopt,
+                         bool forceCommUpdatesMasterThread = false)
+        : m_map(map), m_limitToThreads(limitToThreads),
+          m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
     std::string getAnalysisName() const override { return "Local Visibility Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *comm) override;
 };

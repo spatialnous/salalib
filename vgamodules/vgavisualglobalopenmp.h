@@ -19,6 +19,7 @@ class VGAVisualGlobalOpenMP : public IAnalysis {
     double m_radius;
     bool m_gatesOnly;
     std::optional<int> m_limitToThreads;
+    bool m_forceCommUpdatesMasterThread = false;
 
     struct DataPoint {
         float count, depth, integ_dv, integ_pv;
@@ -47,8 +48,11 @@ class VGAVisualGlobalOpenMP : public IAnalysis {
 
   public:
     VGAVisualGlobalOpenMP(PointMap &map, double radius, bool gatesOnly,
-                          std::optional<int> limitToThreads = std::nullopt)
-        : m_map(map), m_radius(radius), m_gatesOnly(gatesOnly), m_limitToThreads(limitToThreads) {}
+                          std::optional<int> limitToThreads = std::nullopt,
+                          bool forceCommUpdatesMasterThread = false)
+        : m_map(map), m_radius(radius), m_gatesOnly(gatesOnly),
+          m_limitToThreads(limitToThreads),
+          m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
     std::string getAnalysisName() const override { return "Global Visibility Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *) override;
 };

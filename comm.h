@@ -53,7 +53,7 @@ class Communicator {
     enum { NUM_STEPS, CURRENT_STEP, NUM_RECORDS, CURRENT_RECORD };
 
   protected:
-    bool m_cancelled;
+    mutable bool m_cancelled;
     bool m_delete_flag;
     // nb. converted to Win32 UTF-16 Unicode path (AT 31.01.11) Linux, MacOS use UTF-8 (AT 29.04.11)
     std::string m_infilename;
@@ -121,7 +121,13 @@ class Communicator {
     //
     bool IsCancelled() const { return m_cancelled; }
     void Cancel() { m_cancelled = true; }
-    //
+
+    // const version is for cases where we need to Cancel from a const
+    // context, for example from within an implemented CommPostMessage,
+    // i.e. in cases where an external handler does not explicitly
+    // cancel, but instead also sets a "cancelled" variable
+    void Cancel() const { m_cancelled = true; }
+
     std::ifstream &getInFileStream() { return *m_infile; }
     std::ifstream &GetInfile2() { return *m_infile2; }
     //

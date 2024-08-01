@@ -158,7 +158,7 @@ AnalysisResult AgentAnalysis::run(Communicator *comm) {
 
         table.insertOrResetColumn(Column::INTERNAL_GATE_COUNTS);
     }
-
+    AnalysisResult analysisResult;
     runAgentEngine(agents, releaseLocations, comm, &m_pointMap);
 
     if (m_recordTrails.has_value()) {
@@ -179,5 +179,7 @@ AnalysisResult AgentAnalysis::run(Communicator *comm) {
         auto colgates = table.getColumnIndex(AgentAnalysis::Column::INTERNAL_GATE);
         table.removeColumn(colgates);
     }
-    return AnalysisResult();
+    analysisResult.completed = true;
+    analysisResult.addAttribute(Column::GATE_COUNTS);
+    return analysisResult;
 }

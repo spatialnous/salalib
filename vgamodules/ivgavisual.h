@@ -107,7 +107,7 @@ class IVGAVisual : public IVGATraversing {
                 auto &p = ad3.m_point;
                 if (p.filled() && ad3.m_visitedFromBin != ~0) {
 
-                    totalDepth += level;
+                    totalDepth += static_cast<int>(level);
                     totalNodes += 1;
                     distribution.back() += 1;
                     if ((int)radius == -1 || (level < static_cast<size_t>(radius) &&

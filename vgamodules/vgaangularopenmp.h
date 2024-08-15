@@ -10,9 +10,7 @@
 #include "ivgaangular.h"
 #include "salalib/pointmap.h"
 
-#include "genlib/simplematrix.h"
-
-class VGAAngularOpenMP : protected IVGAAngular {
+class VGAAngularOpenMP : public IVGAAngular {
 
   private:
     double m_radius;

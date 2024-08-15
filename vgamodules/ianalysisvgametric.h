@@ -6,7 +6,7 @@
 
 #include "salalib/ianalysis.h"
 
-class IAnalysisVGAMetric : IAnalysis {
+class IAnalysisVGAMetric : public IAnalysis {
   protected:
     struct AnalysisData {
         const Point &m_point;

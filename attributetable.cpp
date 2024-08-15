@@ -43,6 +43,15 @@ void AttributeColumnImpl::updateStats(float val, float oldVal) const {
     }
 }
 
+void AttributeColumnImpl::setStats(const AttributeColumnStats &stats) const {
+    m_stats.max = stats.max;
+    m_stats.min = stats.min;
+    m_stats.total = stats.total;
+    m_stats.visibleTotal = stats.visibleTotal;
+    m_stats.visibleMax = stats.visibleMax;
+    m_stats.visibleMin = stats.visibleMin;
+}
+
 void AttributeColumnImpl::setName(const std::string &name) { m_name = name; }
 
 size_t AttributeColumnImpl::read(std::istream &stream) {
@@ -182,6 +191,14 @@ const AttributeRow *AttributeTable::getRowPtr(const AttributeKey &key) const {
         return 0;
     }
     return iter->second.get();
+}
+
+size_t AttributeTable::getRowIdx(const AttributeKey &key) const {
+    auto iter = m_rows.find(key);
+    if (iter == m_rows.end()) {
+        throw std::out_of_range("Invalid row key");
+    }
+    return static_cast<size_t>(std::distance(m_rows.begin(), iter));
 }
 
 AttributeRow &AttributeTable::addRow(const AttributeKey &key) {

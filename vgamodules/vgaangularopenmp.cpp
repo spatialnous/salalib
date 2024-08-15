@@ -13,11 +13,14 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
 #if !defined(_OPENMP)
     std::cerr << "OpenMP NOT available, only running on a single core" << std::endl;
+    m_forceCommUpdatesMasterThread = false;
 #else
     if (m_limitToThreads.has_value()) {
         omp_set_num_threads(m_limitToThreads.value());
     }
 #endif
+
+    auto &attributes = m_map.getAttributeTable();
 
     time_t atime = 0;
 
@@ -26,89 +29,63 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
     }
 
-    AttributeTable &attributes = m_map.getAttributeTable();
+    std::vector<AnalysisData> globalAnalysisData;
+    globalAnalysisData.reserve(m_map.getAttributeTable().getNumRows());
 
-    std::vector<PixelRef> filled;
-    std::vector<AttributeRow *> rows;
-
-    for (size_t i = 0; i < m_map.getCols(); i++) {
-        for (size_t j = 0; j < m_map.getRows(); j++) {
-            PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
-            if (m_map.getPoint(curs).filled()) {
-                filled.push_back(curs);
-                rows.push_back(attributes.getRowPtr(AttributeKey(curs)));
-            }
-        }
+    size_t rowCounter = 0;
+    for (auto &attRow : attributes) {
+        auto &point = m_map.getPoint(attRow.getKey().value);
+        globalAnalysisData.push_back(AnalysisData(point, attRow.getKey().value, rowCounter, 0,
+                                                  attRow.getKey().value, -1.0f, 0.0f));
+        rowCounter++;
     }
+
+    const auto refs = getRefVector(globalAnalysisData);
+    const auto graph = getGraph(globalAnalysisData, refs, false);
 
     int count = 0;
 
-    std::vector<DataPoint> col_data(filled.size());
+    std::vector<DataPoint> col_data(attributes.getNumRows());
 
-    int i, N = int(filled.size());
+    int i, N = int(attributes.getNumRows());
+
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif
     for (i = 0; i < N; i++) {
         if (m_gates_only) {
+#if defined(_OPENMP)
+#pragma omp critical
+#endif
             count++;
             continue;
         }
 
         DataPoint &dp = col_data[i];
 
-        depthmapX::RowMatrix<int> miscs(m_map.getRows(), m_map.getCols());
-        depthmapX::RowMatrix<float> cumangles(m_map.getRows(), m_map.getCols());
+        std::vector<AnalysisData> analysisData;
+        analysisData.reserve(m_map.getAttributeTable().getNumRows());
 
-        miscs.initialiseValues(0);
-        cumangles.initialiseValues(-1.0f);
-
-        float total_angle = 0.0f;
-        int total_nodes = 0;
-
-        // note that m_misc is used in a different manner to analyseGraph / PointDepth
-        // here it marks the node as used in calculation only
-
-        std::set<AngularTriple> search_list;
-        search_list.insert(AngularTriple(0.0f, filled[size_t(i)], NoPixel));
-        cumangles(filled[size_t(i)].y, filled[size_t(i)].x) = 0.0f;
-
-        while (search_list.size()) {
-            std::set<AngularTriple>::iterator it = search_list.begin();
-            AngularTriple here = *it;
-            search_list.erase(it);
-            if (int(m_radius) != -1 && double(here.angle) > m_radius) {
-                break;
-            }
-            Point &p = m_map.getPoint(here.pixel);
-            int &p1misc = miscs(here.pixel.y, here.pixel.x);
-            float &p1cumangle = cumangles(here.pixel.y, here.pixel.x);
-            // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
-            if (p.filled() && p1misc != ~0) {
-                extractAngular(p.getNode(), search_list, &m_map, here, miscs, cumangles);
-                p1misc = ~0;
-                if (!p.getMergePixel().empty()) {
-                    Point &p2 = m_map.getPoint(p.getMergePixel());
-                    int &p2misc = miscs(p.getMergePixel().y, p.getMergePixel().x);
-                    float &p2cumangle = cumangles(p.getMergePixel().y, p.getMergePixel().x);
-                    if (p2misc != ~0) {
-                        p2cumangle = p1cumangle;
-                        extractAngular(p2.getNode(), search_list, &m_map,
-                                       AngularTriple(here.angle, p.getMergePixel(), NoPixel), miscs,
-                                       cumangles);
-                        p2misc = ~0;
-                    }
-                }
-                total_angle += p1cumangle;
-                total_nodes += 1;
-            }
+        size_t rowCounter = 0;
+        for (auto &attRow : attributes) {
+            auto &point = m_map.getPoint(attRow.getKey().value);
+            analysisData.push_back(AnalysisData(point, attRow.getKey().value, rowCounter, 0,
+                                                attRow.getKey().value, 0.0f, -1.0f));
+            rowCounter++;
         }
 
-        if (total_nodes > 0) {
-            dp.mean_depth = float(double(total_angle) / double(total_nodes));
+        float totalAngle = 0.0f;
+        int totalNodes = 0;
+
+        auto &ad0 = analysisData.at(i);
+
+        std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
+
+        if (totalNodes > 0) {
+            dp.mean_depth = float(double(totalAngle) / double(totalNodes));
         }
-        dp.total_depth = total_angle;
-        dp.count = float(total_nodes);
+        dp.total_depth = totalAngle;
+        dp.count = float(totalNodes);
 
 #if defined(_OPENMP)
 #pragma omp atomic
@@ -117,79 +94,48 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
 #if defined(_OPENMP)
         // only executed by the main thread if requested
-        if(!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
+        if (!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
 #endif
-        if (comm) {
-            if (qtimer(atime, 500)) {
-                if (comm->IsCancelled()) {
-                    throw Communicator::CancelledException();
+            if (comm) {
+                if (qtimer(atime, 500)) {
+                    if (comm->IsCancelled()) {
+                        throw Communicator::CancelledException();
+                    }
+                    comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
                 }
-                comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
             }
-        }
 
-        // kept to achieve parity in binary comparison with old versions
-        // TODO: Remove at next version of .graph file
-        m_map.getPoint(filled[size_t(i)]).m_misc = miscs(filled[size_t(i)].y, filled[size_t(i)].x);
-        m_map.getPoint(filled[size_t(i)]).m_cumangle =
-            cumangles(filled[size_t(i)].y, filled[size_t(i)].x);
+        if (m_legacyWriteMiscs) {
+            // kept to achieve parity in binary comparison with old versions
+            ad0.m_point.m_dummy_misc = ad0.m_visitedFromBin;
+            ad0.m_point.m_dummy_cumangle = ad0.m_cumAngle;
+        }
     }
 
-    AnalysisResult result;
-
     // n.b. these must be entered in alphabetical order to preserve col indexing:
-    std::string mean_depth_col_text =
-        getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH, m_radius, m_map.getRegion());
-    int mean_depth_col = attributes.getOrInsertColumn(mean_depth_col_text.c_str());
-    result.addAttribute(mean_depth_col_text);
-    std::string total_detph_col_text =
-        getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH, m_radius, m_map.getRegion());
-    int total_depth_col = attributes.getOrInsertColumn(total_detph_col_text.c_str());
-    result.addAttribute(total_detph_col_text);
-    std::string count_col_text =
-        getColumnWithRadius(Column::ANGULAR_NODE_COUNT, m_radius, m_map.getRegion());
-    int count_col = attributes.getOrInsertColumn(count_col_text.c_str());
-    result.addAttribute(count_col_text);
+    std::string mean_depth_col_text = getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH,    //
+                                                          m_radius, m_map.getRegion());  //
+    std::string total_detph_col_text = getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH,  //
+                                                           m_radius, m_map.getRegion()); //
+    std::string count_col_text = getColumnWithRadius(Column::ANGULAR_NODE_COUNT,         //
+                                                     m_radius, m_map.getRegion());       //
+
+    AnalysisResult result({mean_depth_col_text, total_detph_col_text, count_col_text},
+                          attributes.getNumRows());
+
+    int mean_depth_col = result.getColumnIndex(mean_depth_col_text.c_str());
+    int total_depth_col = result.getColumnIndex(total_detph_col_text.c_str());
+    int count_col = result.getColumnIndex(count_col_text.c_str());
 
     auto dataIter = col_data.begin();
-    for (auto row : rows) {
-        row->setValue(mean_depth_col, dataIter->mean_depth);
-        row->setValue(total_depth_col, dataIter->total_depth);
-        row->setValue(count_col, dataIter->count);
+    for (size_t i = 0; i < attributes.getNumRows(); i++) {
+        result.setValue(i, mean_depth_col, dataIter->mean_depth);
+        result.setValue(i, total_depth_col, dataIter->total_depth);
+        result.setValue(i, count_col, dataIter->count);
         dataIter++;
     }
 
     result.completed = true;
 
     return result;
-}
-
-void VGAAngularOpenMP::extractAngular(Node &node, std::set<AngularTriple> &pixels,
-                                      PointMap *pointdata, const AngularTriple &curs,
-                                      depthmapX::RowMatrix<int> &miscs,
-                                      depthmapX::RowMatrix<float> &cumangles) {
-    if (curs.angle == 0.0f || pointdata->getPoint(curs.pixel).blocked() ||
-        pointdata->blockedAdjacent(curs.pixel)) {
-        for (int i = 0; i < 32; i++) {
-            Bin &bin = node.bin(i);
-            for (auto pixVec : bin.m_pixel_vecs) {
-                for (PixelRef pix = pixVec.start();
-                     pix.col(bin.m_dir) <= pixVec.end().col(bin.m_dir);) {
-                    if (miscs(pix.y, pix.x) == 0) {
-                        // n.b. dmap v4.06r now sets angle in range 0 to 4 (1 = 90 degrees)
-                        float ang =
-                            (curs.lastpixel == NoPixel)
-                                ? 0.0f
-                                : (float)(angle(pix, curs.pixel, curs.lastpixel) / (M_PI * 0.5));
-                        float &cumangle = cumangles(pix.y, pix.x);
-                        if (cumangle == -1.0 || curs.angle + ang < cumangle) {
-                            cumangle = cumangles(curs.pixel.y, curs.pixel.x) + ang;
-                            pixels.insert(AngularTriple(cumangle, pix, curs.pixel));
-                        }
-                    }
-                    pix.move(bin.m_dir);
-                }
-            }
-        }
-    }
 }

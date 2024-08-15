@@ -14,6 +14,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
 #if !defined(_OPENMP)
     std::cerr << "OpenMP NOT available, only running on a single core" << std::endl;
+    m_forceCommUpdatesMasterThread = false;
 #else
     if (m_limitToThreads.has_value()) {
         omp_set_num_threads(m_limitToThreads.value());
@@ -173,23 +174,25 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
 #if defined(_OPENMP)
         // only executed by the main thread if requested
-        if(!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
+        if (!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
 #endif
 
-        if (comm) {
-            if (qtimer(atime, 500)) {
-                if (comm->IsCancelled()) {
-                    throw Communicator::CancelledException();
+            if (comm) {
+                if (qtimer(atime, 500)) {
+                    if (comm->IsCancelled()) {
+                        throw Communicator::CancelledException();
+                    }
+                    comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
                 }
-                comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
             }
-        }
 
-        // kept to achieve parity in binary comparison with old versions
-        // TODO: Remove at next version of .graph file
-        //        size_t filledIdx = size_t(filled[i].y * m_map.getCols() + filled[i].x);
-        m_map.getPoint(filled[i]).m_misc = miscs(filled[i].y, filled[i].x);
-        m_map.getPoint(filled[i]).m_extent = extents(filled[i].y, filled[i].x);
+        if (m_legacyWriteMiscs) {
+            // kept to achieve parity in binary comparison with old versions
+            // TODO: Remove at next version of .graph file
+            //        size_t filledIdx = size_t(filled[i].y * m_map.getCols() + filled[i].x);
+            m_map.getPoint(filled[i]).m_dummy_misc = miscs(filled[i].y, filled[i].x);
+            m_map.getPoint(filled[i]).m_dummy_extent = extents(filled[i].y, filled[i].x);
+        }
     }
 
     int entropy_col, rel_entropy_col, integ_dv_col, integ_pv_col, integ_tk_col, depth_col,

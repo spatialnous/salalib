@@ -6,13 +6,11 @@
 
 #pragma once
 
-#include "salalib/ivga.h"
+#include "ivgavisual.h"
 #include "salalib/pixelref.h"
 #include "salalib/pointmap.h"
 
-#include "genlib/simplematrix.h"
-
-class VGAVisualGlobalDepth : IVGA {
+class VGAVisualGlobalDepth : public IVGAVisual {
 
     const std::set<PixelRef> &m_originRefs;
 
@@ -23,9 +21,8 @@ class VGAVisualGlobalDepth : IVGA {
     };
 
   public:
-    VGAVisualGlobalDepth(std::set<PixelRef> &originRefs) : m_originRefs(originRefs) {}
+    VGAVisualGlobalDepth(const PointMap &map, std::set<PixelRef> &originRefs)
+        : IVGAVisual(map), m_originRefs(originRefs) {}
     std::string getAnalysisName() const override { return "Global Visibility Depth"; }
-    AnalysisResult run(Communicator *comm, PointMap &map, bool simple_version) override;
-    void extractUnseen(Node &node, PixelRefVector &pixels, depthmapX::RowMatrix<int> &miscs,
-                       depthmapX::RowMatrix<PixelRef> &extents);
+    AnalysisResult run(Communicator *comm) override;
 };

@@ -6,14 +6,16 @@
 
 #pragma once
 
+#include "ivga.h"
+
 #include "salalib/isovist.h"
-#include "salalib/ivga.h"
 #include "salalib/pointmap.h"
 
 #include "genlib/bsptree.h"
 
-class VGAIsovist : IVGA {
+class VGAIsovist : public IVGA {
     const std::vector<SalaShape> &m_boundaryShapes;
+    bool m_simpleVersion = false;
 
   public:
     struct Column {
@@ -29,15 +31,18 @@ class VGAIsovist : IVGA {
     };
 
   public:
-    VGAIsovist(const std::vector<SalaShape> &boundaryShapes) : m_boundaryShapes(boundaryShapes) {}
+    VGAIsovist(const PointMap &map, const std::vector<SalaShape> &boundaryShapes)
+        : IVGA(map), m_boundaryShapes(boundaryShapes) {}
     std::string getAnalysisName() const override { return "Isovist Analysis"; }
-    AnalysisResult run(Communicator *comm, PointMap &map, bool simple_version) override;
+    AnalysisResult run(Communicator *comm) override;
 
   private:
-    std::vector<std::pair<std::string, int>> createAttributes(AttributeTable &table,
-                                                              bool simple_version);
-    std::set<std::string> setData(Isovist &isovist, AttributeRow &row,
-                                  std::vector<std::pair<std::string, int>> cols,
-                                  bool simple_version);
-    BSPNode makeBSPtree(Communicator *communicator, const std::vector<SalaShape> &boundaryShapes);
+    std::vector<std::string> createAttributes(bool simple_version) const;
+    std::set<std::string> setData(Isovist &isovist, size_t &index, AnalysisResult &result,
+                                  bool simple_version) const;
+    BSPNode makeBSPtree(Communicator *communicator,
+                        const std::vector<SalaShape> &boundaryShapes) const;
+
+  public:
+    void setSimpleVersion(bool simpleVersion) { m_simpleVersion = simpleVersion; }
 };

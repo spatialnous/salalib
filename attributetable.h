@@ -80,6 +80,7 @@ class AttributeColumn {
     // stats are mutable - we need to be able to update them all the time,
     // even when not allowed to modify the column settings
     virtual void updateStats(float val, float oldVal = 0.0f) const = 0;
+    virtual void setStats(const AttributeColumnStats &stats) const = 0;
 
     virtual ~AttributeColumn() {}
 };
@@ -106,18 +107,21 @@ class AttributeColumnImpl : public AttributeColumn, AttributeColumnStats {
         : m_name(name), m_locked(false), m_hidden(false), m_formula(formula) {}
 
     AttributeColumnImpl() : m_locked(false), m_hidden(false) {}
-    virtual const std::string &getName() const;
-    virtual bool isLocked() const;
-    virtual void setLock(bool lock);
-    virtual bool isHidden() const;
-    virtual void setHidden(bool hidden);
-    virtual const std::string &getFormula() const;
-    virtual void setFormula(std::string newFormula);
-    virtual const AttributeColumnStats &getStats() const;
-    virtual void setDisplayParams(const DisplayParams &params) { m_displayParams = params; }
-    virtual const DisplayParams &getDisplayParams() const { return m_displayParams; }
+    virtual const std::string &getName() const override;
+    virtual bool isLocked() const override;
+    virtual void setLock(bool lock) override;
+    virtual bool isHidden() const override;
+    virtual void setHidden(bool hidden) override;
+    virtual const std::string &getFormula() const override;
+    virtual void setFormula(std::string newFormula) override;
+    virtual const AttributeColumnStats &getStats() const override;
+    virtual void setDisplayParams(const DisplayParams &params) override {
+        m_displayParams = params;
+    }
+    virtual const DisplayParams &getDisplayParams() const override { return m_displayParams; }
 
-    virtual void updateStats(float val, float oldVal = 0.0f) const;
+    virtual void updateStats(float val, float oldVal = 0.0f) const override;
+    virtual void setStats(const AttributeColumnStats &stats) const override;
 
   public:
     // stats are mutable - we need to be able to update them all the time,
@@ -232,6 +236,7 @@ class AttributeTable : public AttributeColumnManager {
     /// \return const pointer to row, null if key not found
     ///
     const AttributeRow *getRowPtr(const AttributeKey &key) const;
+    size_t getRowIdx(const AttributeKey &key) const;
     AttributeRow &addRow(const AttributeKey &key);
     AttributeColumn &getColumn(size_t index);
     size_t insertOrResetColumn(const std::string &columnName,
@@ -335,6 +340,8 @@ class AttributeTable : public AttributeColumnManager {
 
         void forward() const { ++m_iter; }
 
+        auto forward(int n) const { return std::next(m_iter, n); }
+
         void back() const { --m_iter; }
 
         template <typename other_type>
@@ -360,6 +367,11 @@ class AttributeTable : public AttributeColumnManager {
         template <typename other_type>
         const_iterator_impl &operator=(const const_iterator_impl<other_type> &other) {
             m_item = other.m_item;
+            return *this;
+        }
+
+        const_iterator_impl &advance(int n) {
+            m_item.forward(n);
             return *this;
         }
 
@@ -431,6 +443,8 @@ class AttributeTable : public AttributeColumnManager {
     const_iterator end() const { return const_iterator(m_rows.end()); }
 
     iterator end() { return iterator(m_rows.end()); }
+
+    const_iterator find(AttributeKey key) const { return const_iterator(m_rows.find(key)); }
 
     iterator find(AttributeKey key) { return iterator(m_rows.find(key)); }
 

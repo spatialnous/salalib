@@ -14,6 +14,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 
 #if !defined(_OPENMP)
     std::cerr << "OpenMP NOT available, only running on a single core" << std::endl;
+    m_forceCommUpdatesMasterThread = false;
 #else
     if (m_limitToThreads.has_value()) {
         omp_set_num_threads(m_limitToThreads.value());
@@ -127,7 +128,6 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
             }
         }
 
-
 #if defined(_OPENMP)
 #pragma omp atomic
 #endif
@@ -135,7 +135,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 
 #if defined(_OPENMP)
         // only executed by the main thread if requested
-        if(!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
+        if (!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
 #endif
             if (comm) {
                 if (qtimer(atime, 500)) {

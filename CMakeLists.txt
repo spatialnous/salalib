@@ -38,7 +38,6 @@ set(salalib_HDRS
     attributetablehelpers.h
     displayparams.h
     iaxial.h
-    ivga.h
     metagraph.h
     metagraphreadwrite.h
     point.h

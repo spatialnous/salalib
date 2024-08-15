@@ -38,7 +38,20 @@ namespace depthmapX {
 class PointMap : public AttributeMap {
 
   public: // members
-    bool m_hasIsovistAnalysis = false;
+    bool hasIsovistAnalysis() {
+        for (size_t j = 0; j < m_cols; j++) {
+            for (size_t k = 0; k < m_rows; k++) {
+                // check if occdistance of any pixel's bin is set, meaning that
+                // the isovist analysis was done
+                for (int b = 0; b < 32; b++) {
+                    if (m_points(k, j).m_node && m_points(k, j).m_node->occdistance(b) > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
   protected: // members
     std::string m_name;
@@ -75,7 +88,6 @@ class PointMap : public AttributeMap {
         : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
                        std::move(other.m_layers)),
           m_parentRegion(std::move(other.m_parentRegion)), m_points(std::move(other.m_points)) {
-        m_hasIsovistAnalysis = other.m_hasIsovistAnalysis;
         copy(other);
     }
     PointMap &operator=(PointMap &&other) {
@@ -84,7 +96,6 @@ class PointMap : public AttributeMap {
         m_attributes = std::move(other.m_attributes);
         m_attribHandle = std::move(other.m_attribHandle);
         m_layers = std::move(other.m_layers);
-        m_hasIsovistAnalysis = other.m_hasIsovistAnalysis;
         copy(other);
         return *this;
     }
@@ -157,6 +168,7 @@ class PointMap : public AttributeMap {
         return m_points(static_cast<size_t>(p.y), static_cast<size_t>(p.x));
     }
     depthmapX::BaseMatrix<Point> &getPoints() { return m_points; }
+    const depthmapX::BaseMatrix<Point> &getPoints() const { return m_points; }
     const int &pointState(const PixelRef &p) const {
         return m_points(static_cast<size_t>(p.y), static_cast<size_t>(p.x)).m_state;
     }
@@ -166,7 +178,7 @@ class PointMap : public AttributeMap {
     int getFilledPointCount() const { return m_filled_point_count; }
 
     void requireIsovistAnalysis() {
-        if (!m_hasIsovistAnalysis) {
+        if (!hasIsovistAnalysis()) {
             throw depthmapX::PointMapException(
                 depthmapX::PointMapExceptionType::NO_ISOVIST_ANALYSIS,
                 "Current pointmap does not contain isovist analysis");
@@ -222,70 +234,6 @@ inline QtRegion PointMap::regionate(const PixelRef &p, double border) const {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-
-// A helper class for metric integration
-
-// to allow a dist / PixelRef pair for easy sorting
-// (have to do comparison operation on both dist and PixelRef as
-// otherwise would have a duplicate key for pqmap / pqvector)
-
-struct MetricTriple {
-    float dist;
-    PixelRef pixel;
-    PixelRef lastpixel;
-    MetricTriple(float d = 0.0f, PixelRef p = NoPixel, PixelRef lp = NoPixel) {
-        dist = d;
-        pixel = p;
-        lastpixel = lp;
-    }
-    friend bool operator==(const MetricTriple &mp1, const MetricTriple &mp2);
-    friend bool operator<(const MetricTriple &mp1, const MetricTriple &mp2);
-    friend bool operator>(const MetricTriple &mp1, const MetricTriple &mp2);
-    friend bool operator!=(const MetricTriple &mp1, const MetricTriple &mp2);
-};
-
-inline bool operator==(const MetricTriple &mp1, const MetricTriple &mp2) {
-    return (mp1.dist == mp2.dist && mp1.pixel == mp2.pixel);
-}
-inline bool operator<(const MetricTriple &mp1, const MetricTriple &mp2) {
-    return (mp1.dist < mp2.dist) || (mp1.dist == mp2.dist && mp1.pixel < mp2.pixel);
-}
-inline bool operator>(const MetricTriple &mp1, const MetricTriple &mp2) {
-    return (mp1.dist > mp2.dist) || (mp1.dist == mp2.dist && mp1.pixel > mp2.pixel);
-}
-inline bool operator!=(const MetricTriple &mp1, const MetricTriple &mp2) {
-    return (mp1.dist != mp2.dist) || (mp1.pixel != mp2.pixel);
-}
-
-// Note: angular triple simply based on metric triple
-
-struct AngularTriple {
-    float angle;
-    PixelRef pixel;
-    PixelRef lastpixel;
-    AngularTriple(float a = 0.0f, PixelRef p = NoPixel, PixelRef lp = NoPixel) {
-        angle = a;
-        pixel = p;
-        lastpixel = lp;
-    }
-    friend bool operator==(const AngularTriple &mp1, const AngularTriple &mp2);
-    friend bool operator<(const AngularTriple &mp1, const AngularTriple &mp2);
-    friend bool operator>(const AngularTriple &mp1, const AngularTriple &mp2);
-    friend bool operator!=(const AngularTriple &mp1, const AngularTriple &mp2);
-};
-
-inline bool operator==(const AngularTriple &mp1, const AngularTriple &mp2) {
-    return (mp1.angle == mp2.angle && mp1.pixel == mp2.pixel);
-}
-inline bool operator<(const AngularTriple &mp1, const AngularTriple &mp2) {
-    return (mp1.angle < mp2.angle) || (mp1.angle == mp2.angle && mp1.pixel < mp2.pixel);
-}
-inline bool operator>(const AngularTriple &mp1, const AngularTriple &mp2) {
-    return (mp1.angle > mp2.angle) || (mp1.angle == mp2.angle && mp1.pixel > mp2.pixel);
-}
-inline bool operator!=(const AngularTriple &mp1, const AngularTriple &mp2) {
-    return (mp1.angle != mp2.angle) || (mp1.pixel != mp2.pixel);
-}
 
 // true grads are also similar to generated grads...
 // this scruffy helper function converts a true grad to a bin:

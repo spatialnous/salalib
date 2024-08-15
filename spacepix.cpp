@@ -227,7 +227,7 @@ PixelRefVector PixelBase::pixelateLineTouching(Line l, double tolerance) const {
 
 // this version for a quick set of pixels
 
-PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) {
+PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) const {
     PixelRefVector list;
 
     double dx = q.x - p.x;

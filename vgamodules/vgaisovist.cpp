@@ -8,10 +8,7 @@
 
 #include "salalib/isovist.h"
 
-AnalysisResult VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_version) {
-    map.m_hasIsovistAnalysis = false;
-
-    AnalysisResult result;
+AnalysisResult VGAIsovist::run(Communicator *comm) {
 
     // note, BSP tree plays with comm counting...
     if (comm) {
@@ -20,36 +17,31 @@ AnalysisResult VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_ve
     }
     BSPNode bspRoot = makeBSPtree(comm, m_boundaryShapes);
 
-    AttributeTable &attributes = map.getAttributeTable();
-
     if (comm)
         comm->CommPostMessage(Communicator::CURRENT_STEP, 2);
 
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
     }
-    int count = 0;
-    auto cols = createAttributes(attributes, simple_version);
-    for (const auto &col : cols) {
-        result.addAttribute(col.first);
-    }
+    size_t count = 0;
 
-    for (size_t i = 0; i < map.getCols(); i++) {
-        for (size_t j = 0; j < map.getRows(); j++) {
+    AnalysisResult result(createAttributes(m_simpleVersion), m_map.getFilledPointCount());
+
+    for (size_t i = 0; i < m_map.getCols(); i++) {
+        for (size_t j = 0; j < m_map.getRows(); j++) {
             PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
-            if (map.getPoint(curs).filled()) {
-                count++;
-                if (map.getPoint(curs).contextfilled() && !curs.iseven()) {
+            if (m_map.getPoint(curs).filled()) {
+                if (m_map.getPoint(curs).contextfilled() && !curs.iseven()) {
+                    count++;
                     continue;
                 }
                 Isovist isovist;
-                isovist.makeit(&bspRoot, map.depixelate(curs), map.getRegion(), 0, 0);
+                isovist.makeit(&bspRoot, m_map.depixelate(curs), m_map.getRegion(), 0, 0);
 
-                AttributeRow &row = attributes.getRow(AttributeKey(curs));
-                setData(isovist, row, cols, simple_version);
-                Node &node = map.getPoint(curs).getNode();
+                setData(isovist, count, result, m_simpleVersion);
+                Node &node = m_map.getPoint(curs).getNode();
                 std::vector<PixelRef> *occ = node.m_occlusion_bins;
                 for (size_t k = 0; k < 32; k++) {
                     occ[k].clear();
@@ -57,104 +49,88 @@ AnalysisResult VGAIsovist::run(Communicator *comm, PointMap &map, bool simple_ve
                 }
                 for (size_t k = 0; k < isovist.getOcclusionPoints().size(); k++) {
                     const PointDist &pointdist = isovist.getOcclusionPoints().at(k);
-                    int bin = whichbin(pointdist.m_point - map.depixelate(curs));
+                    int bin = whichbin(pointdist.m_point - m_map.depixelate(curs));
                     // only occlusion bins with a certain distance recorded (arbitrary scale note!)
                     if (pointdist.m_dist > 1.5) {
-                        PixelRef pix = map.pixelate(pointdist.m_point);
+                        PixelRef pix = m_map.pixelate(pointdist.m_point);
                         if (pix != curs) {
                             occ[bin].push_back(pix);
                         }
                     }
                     node.bin(bin).setOccDistance(static_cast<float>(pointdist.m_dist));
                 }
-            }
-            if (comm) {
-                if (qtimer(atime, 500)) {
-                    if (comm->IsCancelled()) {
-                        throw Communicator::CancelledException();
+                count++;
+                if (comm) {
+                    if (qtimer(atime, 500)) {
+                        if (comm->IsCancelled()) {
+                            throw Communicator::CancelledException();
+                        }
+                        comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
                     }
-                    comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
                 }
             }
         }
     }
-    map.m_hasIsovistAnalysis = true;
 
     result.completed = true;
 
     return result;
 }
 
-std::vector<std::pair<std::string, int>> VGAIsovist::createAttributes(AttributeTable &table,
-                                                                      bool simple_version) {
-    std::vector<std::pair<std::string, int>> cols;
+std::vector<std::string> VGAIsovist::createAttributes(bool simple_version) const {
+    std::vector<std::string> cols;
 
-    int col = table.getOrInsertColumn(Column::ISOVIST_AREA);
-    cols.emplace_back(Column::ISOVIST_AREA, col);
+    cols.push_back(Column::ISOVIST_AREA);
 
     if (!simple_version) {
-        col = table.getOrInsertColumn(Column::ISOVIST_COMPACTNESS);
-        cols.emplace_back(Column::ISOVIST_COMPACTNESS, col);
-
-        col = table.getOrInsertColumn(Column::ISOVIST_DRIFT_ANGLE);
-        cols.emplace_back(Column::ISOVIST_DRIFT_ANGLE, col);
-
-        col = table.getOrInsertColumn(Column::ISOVIST_DRIFT_MAGNITUDE);
-        cols.emplace_back(Column::ISOVIST_DRIFT_MAGNITUDE, col);
-
-        col = table.getOrInsertColumn(Column::ISOVIST_MIN_RADIAL);
-        cols.emplace_back(Column::ISOVIST_MIN_RADIAL, col);
-
-        col = table.getOrInsertColumn(Column::ISOVIST_MAX_RADIAL);
-        cols.emplace_back(Column::ISOVIST_MAX_RADIAL, col);
-
-        col = table.getOrInsertColumn(Column::ISOVIST_OCCLUSIVITY);
-        cols.emplace_back(Column::ISOVIST_OCCLUSIVITY, col);
-
-        col = table.getOrInsertColumn(Column::ISOVIST_PERIMETER);
-        cols.emplace_back(Column::ISOVIST_PERIMETER, col);
+        cols.push_back(Column::ISOVIST_COMPACTNESS);
+        cols.push_back(Column::ISOVIST_DRIFT_ANGLE);
+        cols.push_back(Column::ISOVIST_DRIFT_MAGNITUDE);
+        cols.push_back(Column::ISOVIST_MIN_RADIAL);
+        cols.push_back(Column::ISOVIST_MAX_RADIAL);
+        cols.push_back(Column::ISOVIST_OCCLUSIVITY);
+        cols.push_back(Column::ISOVIST_PERIMETER);
     }
     return cols;
 }
 
-std::set<std::string> VGAIsovist::setData(Isovist &isovist, AttributeRow &row,
-                                          std::vector<std::pair<std::string, int>> cols,
-                                          bool simple_version) {
+std::set<std::string> VGAIsovist::setData(Isovist &isovist, size_t &index, AnalysisResult &result,
+                                          bool simple_version) const {
     std::set<std::string> newColumns;
     auto [centroid, area] = isovist.getCentroidArea();
     auto [driftmag, driftang] = isovist.getDriftData();
     double perimeter = isovist.getPerimeter();
 
-    auto colIt = cols.begin();
-    row.setValue(colIt->second, float(area));
+    size_t currCol = 0;
+    result.setValue(index, currCol, area);
 
     if (!simple_version) {
-        ++colIt;
-        row.setValue(colIt->second, float(4.0 * M_PI * area / (perimeter * perimeter)));
+        ++currCol;
+        result.setValue(index, currCol, 4.0 * M_PI * area / (perimeter * perimeter));
 
-        ++colIt;
-        row.setValue(colIt->second, float(180.0 * driftang / M_PI));
+        ++currCol;
+        result.setValue(index, currCol, 180.0 * driftang / M_PI);
 
-        ++colIt;
-        row.setValue(colIt->second, float(driftmag));
+        ++currCol;
+        result.setValue(index, currCol, driftmag);
 
-        ++colIt;
-        row.setValue(colIt->second, float(isovist.getMinRadial()));
+        ++currCol;
+        result.setValue(index, currCol, isovist.getMinRadial());
 
-        ++colIt;
-        row.setValue(colIt->second, float(isovist.getMaxRadial()));
+        ++currCol;
+        result.setValue(index, currCol, isovist.getMaxRadial());
 
-        ++colIt;
-        row.setValue(colIt->second, float(isovist.getOccludedPerimeter()));
+        ++currCol;
+        result.setValue(index, currCol, isovist.getOccludedPerimeter());
 
-        ++colIt;
-        row.setValue(colIt->second, float(perimeter));
+        ++currCol;
+        result.setValue(index, currCol, perimeter);
     }
     return newColumns;
 }
 
 BSPNode VGAIsovist::makeBSPtree(Communicator *communicator,
-                                const std::vector<SalaShape> &boundaryShapes) {
+                                const std::vector<SalaShape> &boundaryShapes) const {
     std::vector<Line> partitionlines;
     for (const auto &shape : boundaryShapes) {
         std::vector<Line> newLines = shape.getAsLines();

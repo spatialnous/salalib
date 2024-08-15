@@ -6,13 +6,12 @@
 
 #pragma once
 
-#include "salalib/ianalysis.h"
+#include "ivgaangular.h"
 #include "salalib/pixelref.h"
 #include "salalib/pointmap.h"
 
-class VGAAngularShortestPath : public IAnalysis {
+class VGAAngularShortestPath : public IVGAAngular {
   private:
-    PointMap &m_map;
     PixelRef m_pixelFrom, m_pixelTo;
 
   public:
@@ -28,5 +27,5 @@ class VGAAngularShortestPath : public IAnalysis {
     std::string getAnalysisName() const override { return "Angular Shortest Path"; }
     AnalysisResult run(Communicator *comm) override;
     VGAAngularShortestPath(PointMap &map, PixelRef pixelFrom, PixelRef pixelTo)
-        : m_map(map), m_pixelFrom(pixelFrom), m_pixelTo(pixelTo) {}
+        : IVGAAngular(map), m_pixelFrom(pixelFrom), m_pixelTo(pixelTo) {}
 };

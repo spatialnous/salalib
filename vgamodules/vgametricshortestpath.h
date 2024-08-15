@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "salalib/ianalysis.h"
+#include "ianalysisvgametric.h"
 #include "salalib/pixelref.h"
 #include "salalib/pointmap.h"
 
-class VGAMetricShortestPath : public IAnalysis {
+class VGAMetricShortestPath : public IAnalysisVGAMetric {
   private:
     PointMap &m_map;
     std::set<PixelRef> m_pixelsFrom;

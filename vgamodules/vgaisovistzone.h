@@ -10,6 +10,29 @@
 #include <iomanip>
 
 class VGAIsovistZone : public IAnalysis {
+    struct MetricTriple {
+        float dist;
+        PixelRef pixel;
+        PixelRef lastpixel;
+        MetricTriple(float d = 0.0f, PixelRef p = NoPixel, PixelRef lp = NoPixel) {
+            dist = d;
+            pixel = p;
+            lastpixel = lp;
+        }
+        inline bool operator==(const MetricTriple &mp2) const {
+            return (dist == mp2.dist && pixel == mp2.pixel);
+        }
+        inline bool operator<(const MetricTriple &mp2) const {
+            return (dist < mp2.dist) || (dist == mp2.dist && pixel < mp2.pixel);
+        }
+        inline bool operator>(const MetricTriple &mp2) const {
+            return (dist > mp2.dist) || (dist == mp2.dist && pixel > mp2.pixel);
+        }
+        inline bool operator!=(const MetricTriple &mp2) const {
+            return (dist != mp2.dist) || (pixel != mp2.pixel);
+        }
+    };
+
   private:
     PointMap &m_map;
     std::map<std::string, std::set<PixelRef>> m_originPointSets;
@@ -52,9 +75,9 @@ class VGAIsovistZone : public IAnalysis {
     }
 
   public:
-    std::string getAnalysisName() const override { return "Path Zone"; }
-    AnalysisResult run(Communicator *) override;
     VGAIsovistZone(PointMap &map, std::map<std::string, std::set<PixelRef>> originPointSets,
                    float restrictDistance = -1)
         : m_map(map), m_originPointSets(originPointSets), m_restrictDistance(restrictDistance) {}
+    std::string getAnalysisName() const override { return "Path Zone"; }
+    AnalysisResult run(Communicator *) override;
 };

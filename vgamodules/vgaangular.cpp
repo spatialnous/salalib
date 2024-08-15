@@ -6,112 +6,67 @@
 
 #include "vgaangular.h"
 
-AnalysisResult VGAAngular::run(Communicator *comm, PointMap &map, bool) {
+AnalysisResult VGAAngular::run(Communicator *comm) {
+    auto &attributes = m_map.getAttributeTable();
+
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
     }
 
-    AnalysisResult result;
+    std::string mean_depth_col_text = getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH,    //
+                                                          m_radius, m_map.getRegion());  //
+    std::string total_detph_col_text = getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH,  //
+                                                           m_radius, m_map.getRegion()); //
+    std::string count_col_text = getColumnWithRadius(Column::ANGULAR_NODE_COUNT,         //
+                                                     m_radius, m_map.getRegion());       //
 
-    AttributeTable &attributes = map.getAttributeTable();
+    AnalysisResult result({mean_depth_col_text, total_detph_col_text, count_col_text},
+                          attributes.getNumRows());
 
-    std::string mean_depth_col_text =
-        getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH, m_radius, map.getRegion());
-    attributes.getOrInsertColumn(mean_depth_col_text.c_str());
-    result.addAttribute(mean_depth_col_text);
-    std::string total_detph_col_text =
-        getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH, m_radius, map.getRegion());
-    attributes.getOrInsertColumn(total_detph_col_text.c_str());
-    result.addAttribute(total_detph_col_text);
-    std::string count_col_text =
-        getColumnWithRadius(Column::ANGULAR_NODE_COUNT, m_radius, map.getRegion());
-    attributes.getOrInsertColumn(count_col_text.c_str());
-    result.addAttribute(count_col_text);
+    int mean_depth_col = result.getColumnIndex(mean_depth_col_text);
+    int count_col = result.getColumnIndex(count_col_text);
+    int total_depth_col = result.getColumnIndex(total_detph_col_text);
 
-    // TODO: Binary compatibility. Remove in re-examination
-    attributes.getOrInsertColumn(total_detph_col_text.c_str());
-    result.addAttribute(total_detph_col_text);
-
-    int mean_depth_col = attributes.getColumnIndex(mean_depth_col_text.c_str());
-    int count_col = attributes.getColumnIndex(count_col_text.c_str());
-    int total_depth_col = attributes.getColumnIndex(total_detph_col_text.c_str());
+    std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
+    const auto refs = getRefVector(analysisData);
+    const auto graph = getGraph(analysisData, refs, false);
 
     int count = 0;
 
-    for (size_t i = 0; i < map.getCols(); i++) {
-        for (size_t j = 0; j < map.getRows(); j++) {
-            PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
+    for (auto &ad0 : analysisData) {
 
-            if (map.getPoint(curs).filled()) {
+        if (m_gates_only) {
+            count++;
+            continue;
+        }
+        for (auto &ad1 : analysisData) {
+            ad1.m_visitedFromBin = 0;
+            ad1.m_dist = 0.0f;
+            ad1.m_cumAngle = -1.0f;
+        }
 
-                if (m_gates_only) {
-                    count++;
-                    continue;
+        float totalAngle = 0.0f;
+        int totalNodes = 0;
+
+        std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
+
+        if (totalNodes > 0) {
+            result.setValue(ad0.m_attributeDataRow, mean_depth_col,
+                            float(double(totalAngle) / double(totalNodes)));
+        }
+        result.setValue(ad0.m_attributeDataRow, total_depth_col, totalAngle);
+        result.setValue(ad0.m_attributeDataRow, count_col, float(totalNodes));
+
+        count++; // <- increment count
+
+        if (comm) {
+            if (qtimer(atime, 500)) {
+                if (comm->IsCancelled()) {
+                    throw Communicator::CancelledException();
                 }
-
-                // TODO: Break out miscs/dist/cumangle into local variables and remove from Point
-                // class
-                for (auto &point : map.getPoints()) {
-                    point.m_misc = 0;
-                    point.m_dist = 0.0f;
-                    point.m_cumangle = -1.0f;
-                }
-
-                float total_angle = 0.0f;
-                int total_nodes = 0;
-
-                // note that m_misc is used in a different manner to analyseGraph / PointDepth
-                // here it marks the node as used in calculation only
-
-                std::set<AngularTriple> search_list;
-                search_list.insert(AngularTriple(0.0f, curs, NoPixel));
-                map.getPoint(curs).m_cumangle = 0.0f;
-                while (search_list.size()) {
-                    std::set<AngularTriple>::iterator it = search_list.begin();
-                    AngularTriple here = *it;
-                    search_list.erase(it);
-                    if (m_radius != -1.0 && here.angle > m_radius) {
-                        break;
-                    }
-                    Point &p = map.getPoint(here.pixel);
-                    // nb, the filled check is necessary as diagonals seem to be stored with 'gaps'
-                    // left in
-                    if (p.filled() && p.m_misc != ~0) {
-                        p.getNode().extractAngular(search_list, &map, here);
-                        p.m_misc = ~0;
-                        if (!p.getMergePixel().empty()) {
-                            Point &p2 = map.getPoint(p.getMergePixel());
-                            if (p2.m_misc != ~0) {
-                                p2.m_cumangle = p.m_cumangle;
-                                p2.getNode().extractAngular(
-                                    search_list, &map,
-                                    AngularTriple(here.angle, p.getMergePixel(), NoPixel));
-                                p2.m_misc = ~0;
-                            }
-                        }
-                        total_angle += p.m_cumangle;
-                        total_nodes += 1;
-                    }
-                }
-
-                AttributeRow &row = map.getAttributeTable().getRow(AttributeKey(curs));
-                if (total_nodes > 0) {
-                    row.setValue(mean_depth_col, float(double(total_angle) / double(total_nodes)));
-                }
-                row.setValue(total_depth_col, total_angle);
-                row.setValue(count_col, float(total_nodes));
-
-                count++; // <- increment count
-            }
-            if (comm) {
-                if (qtimer(atime, 500)) {
-                    if (comm->IsCancelled()) {
-                        throw Communicator::CancelledException();
-                    }
-                    comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
-                }
+                comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
             }
         }
     }

@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "salalib/ivga.h"
+#include "ivgaangular.h"
 #include "salalib/pointmap.h"
 
-class VGAAngularDepth : IVGA {
+class VGAAngularDepth : public IVGAAngular {
 
     const std::set<PixelRef> &m_originRefs;
 
@@ -20,7 +20,8 @@ class VGAAngularDepth : IVGA {
     };
 
   public:
-    VGAAngularDepth(std::set<PixelRef> &originRefs) : m_originRefs(originRefs) {}
+    VGAAngularDepth(const PointMap &map, std::set<PixelRef> &originRefs)
+        : IVGAAngular(map), m_originRefs(originRefs) {}
     std::string getAnalysisName() const override { return "Angular Depth"; }
-    AnalysisResult run(Communicator *comm, PointMap &map, bool) override;
+    AnalysisResult run(Communicator *comm) override;
 };

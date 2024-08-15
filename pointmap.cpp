@@ -65,7 +65,6 @@ void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattribu
 
     if (copypoints || copyattributes) {
         m_points = sourcemap.m_points;
-        m_hasIsovistAnalysis = sourcemap.m_hasIsovistAnalysis;
     }
     if (copyattributes) {
 
@@ -211,18 +210,18 @@ bool PointMap::undoPoints() {
         return false;
     }
     for (auto &p : m_points) {
-        if (p.m_misc == m_undocounter) {
+        if (p.m_undoCounter == m_undocounter) {
             if (p.m_state & Point::FILLED) {
                 p.m_state &= ~Point::FILLED;
                 p.m_state |= Point::EMPTY;
-                p.m_misc = 0; // probably shouldn't set to 0 (can't undo)  Eventually
-                              // will implement 'redo' counter as well
+                p.m_undoCounter = 0; // probably shouldn't set to 0 (can't undo)  Eventually
+                                     // will implement 'redo' counter as well
                 m_filled_point_count--;
             } else if (p.m_state & Point::EMPTY) {
                 p.m_state |= Point::FILLED;
                 p.m_state &= ~Point::EMPTY;
-                p.m_misc = 0; // probably shouldn't set to 0 (can't undo)  Eventually
-                              // will implement 'redo' counter as well
+                p.m_undoCounter = 0; // probably shouldn't set to 0 (can't undo)  Eventually
+                                     // will implement 'redo' counter as well
                 m_filled_point_count++;
             }
         }
@@ -787,17 +786,6 @@ bool PointMap::readPointsAndAttributes(std::istream &stream) {
     for (size_t j = 0; j < m_cols; j++) {
         for (size_t k = 0; k < m_rows; k++) {
             m_points(k, j).read(stream);
-
-            // check if occdistance of any pixel's bin is set, meaning that
-            // the isovist analysis was done
-            if (!m_hasIsovistAnalysis) {
-                for (int b = 0; b < 32; b++) {
-                    if (m_points(k, j).m_node && m_points(k, j).m_node->occdistance(b) > 0) {
-                        m_hasIsovistAnalysis = true;
-                        break;
-                    }
-                }
-            }
         }
 
         for (size_t k = 0; k < m_rows; k++) {
@@ -902,10 +890,10 @@ size_t PointMap::tagState(bool settag) {
             Point &pt = getPoint(curs);
             if (pt.filled()) {
                 if (settag) {
-                    pt.m_misc = static_cast<int>(count);
+                    //                    pt.m_misc = static_cast<int>(count);
                     pt.m_processflag = 0x00FF; // process all quadrants
                 } else {
-                    pt.m_misc = 0;
+                    //                    pt.m_misc = 0;
                     pt.m_processflag = 0x0000; // reset process flag
                 }
                 count++;
@@ -978,9 +966,10 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
 
             PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
 
-            if (getPoint(curs).getState() & Point::FILLED) {
+            auto &point = getPoint(curs);
+            if (point.getState() & Point::FILLED) {
 
-                getPoint(curs).m_node = std::unique_ptr<Node>(new Node());
+                point.m_node = std::unique_ptr<Node>(new Node());
                 m_attributes->addRow(AttributeKey(curs));
 
                 sparkPixel2(curs, 1,

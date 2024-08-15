@@ -5,7 +5,15 @@
 
 target_sources(salalib
     PRIVATE
-       vgaisovist.cpp 
+       ivga.h
+       ivgatraversing.h
+       ivgaangular.h
+       ivgametric.h
+       ivgavisual.h
+       ianalysisvgaangular.h
+       ianalysisvgametric.h
+       ianalysisvgavisual.h
+       vgaisovist.cpp
        vgaangular.cpp
        vgametric.cpp
        vgathroughvision.cpp

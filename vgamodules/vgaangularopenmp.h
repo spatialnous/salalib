@@ -7,26 +7,26 @@
 #pragma once
 
 #include "genlib/stringutils.h"
-#include "salalib/ianalysis.h"
+#include "ivgaangular.h"
 #include "salalib/pointmap.h"
 
 #include "genlib/simplematrix.h"
 
-class VGAAngularOpenMP : public IAnalysis {
+class VGAAngularOpenMP : protected IVGAAngular {
+
   private:
-    PointMap &m_map;
     double m_radius;
     bool m_gates_only;
     std::optional<int> m_limitToThreads;
     bool m_forceCommUpdatesMasterThread = false;
 
+    // To maintain binary compatibility with older .graph versions
+    // write the last "misc" values back to the points
+    bool m_legacyWriteMiscs = false;
+
     struct DataPoint {
         float total_depth, mean_depth, count;
     };
-
-    void extractAngular(Node &node, std::set<AngularTriple> &pixels, PointMap *pointdata,
-                        const AngularTriple &curs, depthmapX::RowMatrix<int> &miscs,
-                        depthmapX::RowMatrix<float> &cumangles);
 
   public:
     struct Column {
@@ -49,13 +49,15 @@ class VGAAngularOpenMP : public IAnalysis {
     }
 
   public:
-    VGAAngularOpenMP(PointMap &map, double radius, bool gates_only,
+    VGAAngularOpenMP(const PointMap &map, double radius, bool gates_only,
                      std::optional<int> limitToThreads = std::nullopt,
                      bool forceCommUpdatesMasterThread = false)
-        : m_map(map), m_radius(radius), m_gates_only(gates_only),
+        : IVGAAngular(map), m_radius(radius), m_gates_only(gates_only),
           m_limitToThreads(limitToThreads),
-          m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread)  {
-    }
+          m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
     std::string getAnalysisName() const override { return "Angular Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *comm) override;
+
+  public:
+    void setLegacyWriteMiscs(bool legacyWriteMiscs) { m_legacyWriteMiscs = legacyWriteMiscs; }
 };

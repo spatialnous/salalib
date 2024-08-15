@@ -11,84 +11,90 @@
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes
 
-AnalysisResult VGAThroughVision::run(Communicator *comm, PointMap &map, bool) {
+AnalysisResult VGAThroughVision::run(Communicator *comm) {
+    auto &attributes = m_map.getAttributeTable();
+
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
     }
 
-    AnalysisResult result;
+    std::vector<AnalysisData> analysisData;
+    analysisData.reserve(attributes.getNumRows());
 
-    AttributeTable &attributes = map.getAttributeTable();
-
-    // current version (not sure of differences!)
-    for (size_t i = 0; i < map.getCols(); i++) {
-        for (size_t j = 0; j < map.getRows(); j++) {
-            PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
-            map.getPoint(curs).m_misc = 0;
-        }
+    size_t rowCounter = 0;
+    for (auto &attRow : attributes) {
+        auto &point = m_map.getPoint(attRow.getKey().value);
+        analysisData.push_back(AnalysisData(point, attRow.getKey().value, rowCounter, 0));
+        rowCounter++;
     }
 
     auto agentGateColIdx =
-        map.getAttributeTable().getColumnIndexOptional(AgentAnalysis::Column::INTERNAL_GATE);
-    auto agentGateCountColIdx =
-        map.getAttributeTable().getColumnIndexOptional(AgentAnalysis::Column::INTERNAL_GATE_COUNTS);
+        m_map.getAttributeTable().getColumnIndexOptional(AgentAnalysis::Column::INTERNAL_GATE);
+    auto agentGateCountColIdx = m_map.getAttributeTable().getColumnIndexOptional(
+        AgentAnalysis::Column::INTERNAL_GATE_COUNTS);
+
+    std::vector<std::string> cols = {Column::THROUGH_VISION};
+    if (agentGateColIdx.has_value() && agentGateCountColIdx.has_value()) {
+        cols.push_back(AgentAnalysis::Column::INTERNAL_GATE_COUNTS);
+    }
+    AnalysisResult result(std::move(cols), attributes.getNumRows());
+
+    const auto refs = getRefVector(analysisData);
 
     int count = 0;
-    for (size_t i = 0; i < map.getCols(); i++) {
-        for (size_t j = 0; j < map.getRows(); j++) {
-            std::vector<int> seengates;
-            PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
-            Point &p = map.getPoint(curs);
-            if (map.getPoint(curs).filled()) {
-                p.getNode().first();
-                while (!p.getNode().is_tail()) {
-                    PixelRef x = p.getNode().cursor();
-                    PixelRefVector pixels = map.quickPixelateLine(x, curs);
-                    for (size_t k = 1; k < pixels.size() - 1; k++) {
-                        PixelRef key = pixels[k];
-                        map.getPoint(key).m_misc += 1;
+    for (auto &ad : analysisData) {
+        std::vector<int> seengates;
+        auto &p = ad.m_point;
+        p.getNode().first();
+        while (!p.getNode().is_tail()) {
+            PixelRef x = p.getNode().cursor();
+            PixelRefVector pixels = m_map.quickPixelateLine(x, ad.m_ref);
+            for (size_t k = 1; k < pixels.size() - 1; k++) {
+                PixelRef key = pixels[k];
+                if (!m_map.getPoint(key).filled())
+                    continue;
+                analysisData.at(getRefIdx(refs, key)).m_misc += 1;
 
-                        // TODO: Undocumented functionality. Shows how many times a gate is passed?
-                        if (agentGateColIdx.has_value() && agentGateCountColIdx.has_value()) {
-                            auto iter = attributes.find(AttributeKey(key));
-                            if (iter != attributes.end()) {
-                                int gate = static_cast<int>(
-                                    iter->getRow().getValue(agentGateColIdx.value()));
-                                if (gate != -1) {
-                                    auto gateIter = depthmapX::findBinary(seengates, gate);
-                                    if (gateIter == seengates.end()) {
-                                        iter->getRow().incrValue(agentGateCountColIdx.has_value());
-                                        seengates.insert(gateIter, int(gate));
-                                    }
-                                }
+                // TODO: Undocumented functionality. Shows how many times a gate is passed?
+                if (agentGateColIdx.has_value() && agentGateCountColIdx.has_value()) {
+                    auto iter = attributes.find(AttributeKey(key));
+                    if (iter != m_map.getAttributeTable().end()) {
+                        int gate =
+                            static_cast<int>(iter->getRow().getValue(agentGateColIdx.value()));
+                        if (gate != -1) {
+                            auto gateIter = depthmapX::findBinary(seengates, gate);
+                            if (gateIter == seengates.end()) {
+                                result.incrValue(ad.m_attributeDataRow,
+                                                 agentGateCountColIdx.value());
+                                seengates.insert(gateIter, int(gate));
                             }
                         }
                     }
-                    p.getNode().next();
                 }
-                // only increment count for actual filled points
-                count++;
             }
-            if (comm) {
-                if (qtimer(atime, 500)) {
-                    if (comm->IsCancelled()) {
-                        throw Communicator::CancelledException();
-                    }
-                    comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
+            p.getNode().next();
+        }
+        // only increment count for actual filled points
+        count++;
+
+        if (comm) {
+            if (qtimer(atime, 500)) {
+                if (comm->IsCancelled()) {
+                    throw Communicator::CancelledException();
                 }
+                comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
             }
         }
     }
 
-    int col = attributes.getOrInsertColumn(Column::THROUGH_VISION);
-    result.addAttribute(Column::THROUGH_VISION);
+    int col = result.getColumnIndex(Column::THROUGH_VISION);
 
-    for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
-        PixelRef pix = iter->getKey().value;
-        iter->getRow().setValue(col, static_cast<float>(map.getPoint(pix).m_misc));
-        map.getPoint(pix).m_misc = 0;
+    for (auto &ad : analysisData) {
+        auto &p = ad.m_point;
+        result.setValue(ad.m_attributeDataRow, col, static_cast<float>(ad.m_misc));
+        p.m_dummy_misc = 0;
     }
 
     result.completed = true;

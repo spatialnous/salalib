@@ -352,8 +352,8 @@ struct File {
     header hdr;
     LineDataOption ld;
     PointMapsOption pm;
-    ShapeGraphsOption sg;
-    DataMapsOption dm;
+//    ShapeGraphsOption sg;
+//    DataMapsOption dm;
 };
 
 File f @0x00;

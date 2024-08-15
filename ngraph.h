@@ -11,11 +11,6 @@
 #include <iostream>
 #include <set>
 
-class PointMap;
-struct MetricPair;
-struct MetricTriple;
-struct AngularTriple;
-
 struct PixelVec {
     PixelRef m_start;
     PixelRef m_end;
@@ -52,12 +47,7 @@ class Bin {
     }
     //
     void make(const PixelRefVector &pixels, char m_dir);
-    void extractUnseen(PixelRefVector &pixels, PointMap *pointdata, int binmark);
-    void extractMetric(std::set<MetricTriple> &pixels, PointMap *pointdata,
-                       const MetricTriple &curs);
-    void extractAngular(std::set<AngularTriple> &pixels, PointMap *pointdata,
-                        const AngularTriple &curs);
-    //
+
     int count() const { return m_node_count; }
     float distance() const { return m_distance; }
     float occdistance() const { return m_occ_distance; }
@@ -96,11 +86,7 @@ class Node {
   public:
     // Note: this function clears the bins as it goes
     void make(const PixelRef pix, PixelRefVector *bins, float *bin_far_dists, int q_octants);
-    void extractUnseen(PixelRefVector &pixels, PointMap *pointdata);
-    void extractMetric(std::set<MetricTriple> &pixels, PointMap *pointdata,
-                       const MetricTriple &curs);
-    void extractAngular(std::set<AngularTriple> &pixels, PointMap *pointdata,
-                        const AngularTriple &curs);
+
     bool concaveConnected();
     bool fullyConnected();
     //

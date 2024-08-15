@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include "salalib/ivga.h"
+#include "ivgaangular.h"
 #include "salalib/pointmap.h"
 
 #include "genlib/stringutils.h"
 
-class VGAAngular : IVGA {
+class VGAAngular : public IVGAAngular {
   private:
     double m_radius;
     bool m_gates_only;
@@ -37,7 +37,8 @@ class VGAAngular : IVGA {
     }
 
   public:
+    VGAAngular(const PointMap &map, double radius, bool gates_only)
+        : IVGAAngular(map), m_radius(radius), m_gates_only(gates_only) {}
     std::string getAnalysisName() const override { return "Angular Analysis"; }
-    AnalysisResult run(Communicator *, PointMap &map, bool) override;
-    VGAAngular(double radius, bool gates_only) : m_radius(radius), m_gates_only(gates_only) {}
+    AnalysisResult run(Communicator *comm) override;
 };

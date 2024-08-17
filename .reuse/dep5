@@ -3,6 +3,6 @@ Upstream-Name: salalib
 Upstream-Contact: Petros Koutsolampros <commits@pklampros.io>
 Source: https://github.com/spatialnous/salalib
 
-Files: .gitignore README.md .clang-format resources/graph.grammar
+Files: .gitignore README.md .clang-format .clang-tidy resources/graph.grammar
 Copyright: Petros Koutsolampros <commits@pklampros.io>
 License: GPL-3.0-or-later

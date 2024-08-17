@@ -579,25 +579,24 @@ Point2f Agent::onGibsonianLook(bool wholeisovist) {
     //
     calcLoS(binfromvec(m_vector), true);
     // now, choose action according to type of agent:
-    int rule_choice = -1;
+    int ruleChoice = -1;
     int dir = 0;
     for (int k = 0; k < 4; k++) {
         dir = onGibsonianRule(m_program->m_rule_order[k]);
         if (dir != 0) {
-            rule_choice = m_program->m_rule_order[k];
+            ruleChoice = m_program->m_rule_order[k];
             break;
         }
     }
 
     float angle = 0.0;
 
-    if (rule_choice != -1) {
-        angle =
-            (float)anglefrombin2((binfromvec(m_vector) + (2 * rule_choice + 1) * dir + 32) % 32);
+    if (ruleChoice != -1) {
+        angle = (float)anglefrombin2((binfromvec(m_vector) + (2 * ruleChoice + 1) * dir + 32) % 32);
     }
 
     // if no rule selection made, carry on in current direction
-    return (rule_choice == -1) ? m_vector : Point2f(cosf(angle), sinf(angle));
+    return (ruleChoice == -1) ? m_vector : Point2f(cosf(angle), sinf(angle));
 }
 
 int Agent::onGibsonianRule(int rule) {

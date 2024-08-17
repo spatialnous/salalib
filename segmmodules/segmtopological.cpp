@@ -113,12 +113,12 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
             total += 1;
             //
             Connector &axline = map.getConnections().at(here.ref);
-            int connected_cursor = -2;
+            int connectedCursor = -2;
 
             auto iter = axline.m_back_segconns.begin();
             bool backsegs = true;
 
-            while (connected_cursor != -1) {
+            while (connectedCursor != -1) {
                 if (backsegs && iter == axline.m_back_segconns.end()) {
                     iter = axline.m_forward_segconns.begin();
                     backsegs = false;
@@ -127,25 +127,25 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
                     break;
                 }
 
-                connected_cursor = iter->first.ref;
+                connectedCursor = iter->first.ref;
 
-                if (seen[connected_cursor] > segdepth &&
-                    static_cast<size_t>(connected_cursor) != cursor) {
-                    bool seenalready = (seen[connected_cursor] == 0xffffffff) ? false : true;
-                    float length = seglengths[connected_cursor];
-                    int axialref = axialrefs[connected_cursor];
-                    audittrail[connected_cursor] =
-                        TopoMetSegmentRef(connected_cursor, here.dir, here.dist + length, here.ref);
-                    seen[connected_cursor] = segdepth;
+                if (seen[connectedCursor] > segdepth &&
+                    static_cast<size_t>(connectedCursor) != cursor) {
+                    bool seenalready = (seen[connectedCursor] == 0xffffffff) ? false : true;
+                    float length = seglengths[connectedCursor];
+                    int axialref = axialrefs[connectedCursor];
+                    audittrail[connectedCursor] =
+                        TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
+                    seen[connectedCursor] = segdepth;
                     if (m_radius == -1 || here.dist + length < m_radius) {
                         // puts in a suitable bin ahead of us...
                         open++;
                         //
                         if (axialrefs[here.ref] == axialref) {
-                            list[bin].push_back(connected_cursor);
+                            list[bin].push_back(connectedCursor);
                         } else {
-                            list[(bin + 1) % 2].push_back(connected_cursor);
-                            seen[connected_cursor] =
+                            list[(bin + 1) % 2].push_back(connectedCursor);
+                            seen[connectedCursor] =
                                 segdepth +
                                 1; // this is so if another node is connected directly to this one
                                    // but is found later it is still handled -- note it can result
@@ -158,9 +158,9 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
                     // can go twice)
 
                     // Quick mod - TV
-                    if (!m_selSet.has_value() && connected_cursor > int(cursor) &&
+                    if (!m_selSet.has_value() && connectedCursor > int(cursor) &&
                         !seenalready) { // only one way paths, saves doing this twice
-                        int subcur = connected_cursor;
+                        int subcur = connectedCursor;
                         while (subcur != -1) {
                             // in this method of choice, start and end lines are included
                             choicevals[subcur].choice += 1;

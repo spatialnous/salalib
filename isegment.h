@@ -24,29 +24,29 @@ class ISegment {
     // Axial map helper: convert a radius for angular analysis
 
     static std::string makeFloatRadiusText(double radius) {
-        std::string radius_text;
+        std::string radiusText;
         if (radius > 100.0) {
-            radius_text = dXstring::formatString(radius, "%.f");
+            radiusText = dXstring::formatString(radius, "%.f");
         } else if (radius < 0.1) {
-            radius_text = dXstring::formatString(radius, "%.4f");
+            radiusText = dXstring::formatString(radius, "%.4f");
         } else {
-            radius_text = dXstring::formatString(radius, "%.2f");
+            radiusText = dXstring::formatString(radius, "%.2f");
         }
-        return radius_text;
+        return radiusText;
     }
 
     static std::string makeRadiusText(RadiusType radius_type, double radius) {
-        std::string radius_text;
+        std::string radiusText;
         if (radius != -1) {
             if (radius_type == RadiusType::TOPOLOGICAL) {
-                radius_text =
+                radiusText =
                     std::string(" R") + dXstring::formatString(int(radius), "%d") + " step";
             } else if (radius_type == RadiusType::METRIC) {
-                radius_text = std::string(" R") + makeFloatRadiusText(radius) + " metric";
+                radiusText = std::string(" R") + makeFloatRadiusText(radius) + " metric";
             } else { // radius angular
-                radius_text = std::string(" R") + makeFloatRadiusText(radius);
+                radiusText = std::string(" R") + makeFloatRadiusText(radius);
             }
         }
-        return radius_text;
+        return radiusText;
     }
 };

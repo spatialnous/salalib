@@ -87,11 +87,11 @@ PushValues::getColumnIndices(const AttributeTable &sourceAttr, std::string colIn
 void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, PointMap &destMap,
                               std::string colOut, Func pushFunc,
                               std::optional<std::string> countCol) {
-    auto &table_in = sourceMap.getAttributeTable();
-    auto &table_out = destMap.getAttributeTable();
+    auto &tableIn = sourceMap.getAttributeTable();
+    auto &tableOut = destMap.getAttributeTable();
 
     auto [colInIdx, colOutIdx, countColIdx] =
-        getColumnIndices(table_in, colIn, table_out, colOut, countCol);
+        getColumnIndices(tableIn, colIn, tableOut, colOut, countCol);
 
     // pushing from a shapemap (data/axial/segment/convex) requires a
     // combination of finding points (VGA) in polygons (convex and data maps
@@ -109,7 +109,7 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
     // prepare a temporary value table to store counts and values
     std::map<AttributeKey, ValueCountRow> valCounts;
 
-    for (auto &row : table_out) {
+    for (auto &row : tableOut) {
         valCounts.insert(std::make_pair(row.getKey(),
                                         ValueCountRow(row.getRow()))); // count set to zero for all
     }
@@ -117,7 +117,7 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
     // first collect the lines by pixelating them using the vga map
     auto &shapeMap = sourceMap.getAllShapes();
     for (auto &shape : shapeMap) {
-        float thisval = table_in.getRow(AttributeKey(shape.first)).getValue(colInIdx);
+        float thisval = tableIn.getRow(AttributeKey(shape.first)).getValue(colInIdx);
         if (shape.second.isLine()) {
             PixelRefVector linePixels = destMap.pixelateLine(shape.second.getLine());
             for (const PixelRef &pix : linePixels) {
@@ -150,7 +150,7 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
 
     // then collect the polygons and push to vga map
     for (auto &valCount : valCounts) {
-        int key_out = valCount.first.value;
+        int keyOut = valCount.first.value;
         double &val = valCount.second.m_value;
         int &count = valCount.second.m_count;
         AttributeRow &row = valCount.second.m_row;
@@ -158,11 +158,11 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
         if (!isObjectVisible(destMap.getLayers(), row)) {
             continue;
         }
-        gatelist = sourceMap.pointInPolyList(destMap.getPoint(key_out).getLocation());
+        gatelist = sourceMap.pointInPolyList(destMap.getPoint(keyOut).getLocation());
         for (auto gate : gatelist) {
-            auto &row_in = sourceMap.getAttributeRowFromShapeIndex(gate);
-            if (isObjectVisible(sourceMap.getLayers(), row_in)) {
-                double thisval = row_in.getValue(colInIdx);
+            auto &rowIn = sourceMap.getAttributeRowFromShapeIndex(gate);
+            if (isObjectVisible(sourceMap.getLayers(), rowIn)) {
+                double thisval = rowIn.getValue(colInIdx);
                 pushValue(val, count, thisval, pushFunc);
             }
         }
@@ -180,39 +180,39 @@ void PushValues::shapeToAxial(ShapeMap &sourceMap, std::optional<std::string> co
                               ShapeGraph &destMap, std::string colOut, Func pushFunc,
                               std::optional<std::string> countCol) {
 
-    auto &table_in = sourceMap.getAttributeTable();
-    auto &table_out = destMap.getAttributeTable();
+    auto &tableIn = sourceMap.getAttributeTable();
+    auto &tableOut = destMap.getAttributeTable();
 
     auto [colInIdx, colOutIdx, countColIdx] =
-        getColumnIndices(table_in, colIn, table_out, colOut, countCol);
+        getColumnIndices(tableIn, colIn, tableOut, colOut, countCol);
 
-    for (auto iter_out = table_out.begin(); iter_out != table_out.end(); iter_out++) {
-        int key_out = iter_out->getKey().value;
+    for (auto iterOut = tableOut.begin(); iterOut != tableOut.end(); iterOut++) {
+        int keyOut = iterOut->getKey().value;
         std::vector<size_t> gatelist;
-        if (!isObjectVisible(destMap.getLayers(), iter_out->getRow())) {
+        if (!isObjectVisible(destMap.getLayers(), iterOut->getRow())) {
             continue;
         }
         auto shapeMap = destMap.getAllShapes();
-        gatelist = sourceMap.shapeInPolyList(shapeMap[key_out]);
+        gatelist = sourceMap.shapeInPolyList(shapeMap[keyOut]);
 
         double val = -1.0;
         int count = 0;
         for (auto gate : gatelist) {
-            auto &row_in = sourceMap.getAttributeRowFromShapeIndex(gate);
+            auto &rowIn = sourceMap.getAttributeRowFromShapeIndex(gate);
 
-            if (isObjectVisible(sourceMap.getLayers(), row_in)) {
+            if (isObjectVisible(sourceMap.getLayers(), rowIn)) {
                 double thisval = static_cast<double>(gate);
                 if (colInIdx.has_value())
-                    thisval = row_in.getValue(colInIdx.value());
+                    thisval = rowIn.getValue(colInIdx.value());
                 pushValue(val, count, thisval, pushFunc);
             }
         }
         if (pushFunc == Func::AVG && val != -1.0) {
             val /= double(count);
         }
-        iter_out->getRow().setValue(colOutIdx, float(val));
+        iterOut->getRow().setValue(colOutIdx, float(val));
         if (countColIdx.has_value()) {
-            iter_out->getRow().setValue(countColIdx.value(), float(count));
+            iterOut->getRow().setValue(countColIdx.value(), float(count));
         }
     }
 }
@@ -220,40 +220,40 @@ void PushValues::shapeToAxial(ShapeMap &sourceMap, std::optional<std::string> co
 void PushValues::shapeToShape(ShapeMap &sourceMap, std::optional<std::string> colIn,
                               ShapeMap &destMap, std::string colOut, Func pushFunc,
                               std::optional<std::string> countCol) {
-    auto &table_in = sourceMap.getAttributeTable();
-    auto &table_out = destMap.getAttributeTable();
+    auto &tableIn = sourceMap.getAttributeTable();
+    auto &tableOut = destMap.getAttributeTable();
 
     auto [colInIdx, colOutIdx, countColIdx] =
-        getColumnIndices(table_in, colIn, table_out, colOut, countCol);
+        getColumnIndices(tableIn, colIn, tableOut, colOut, countCol);
 
-    for (auto iter_out = table_out.begin(); iter_out != table_out.end(); iter_out++) {
-        int key_out = iter_out->getKey().value;
+    for (auto iterOut = tableOut.begin(); iterOut != tableOut.end(); iterOut++) {
+        int keyOut = iterOut->getKey().value;
         std::vector<size_t> gatelist;
 
-        if (!isObjectVisible(destMap.getLayers(), iter_out->getRow())) {
+        if (!isObjectVisible(destMap.getLayers(), iterOut->getRow())) {
             continue;
         }
         auto dataMap = destMap.getAllShapes();
-        gatelist = sourceMap.shapeInPolyList(dataMap[key_out]);
+        gatelist = sourceMap.shapeInPolyList(dataMap[keyOut]);
 
         double val = -1.0;
         int count = 0;
         for (auto gate : gatelist) {
-            auto &row_in = sourceMap.getAttributeRowFromShapeIndex(gate);
+            auto &rowIn = sourceMap.getAttributeRowFromShapeIndex(gate);
 
-            if (isObjectVisible(sourceMap.getLayers(), row_in)) {
+            if (isObjectVisible(sourceMap.getLayers(), rowIn)) {
                 double thisval = static_cast<double>(gate);
                 if (colInIdx.has_value())
-                    thisval = row_in.getValue(colInIdx.value());
+                    thisval = rowIn.getValue(colInIdx.value());
                 pushValue(val, count, thisval, pushFunc);
             }
         }
         if (pushFunc == Func::AVG && val != -1.0) {
             val /= double(count);
         }
-        iter_out->getRow().setValue(colOutIdx, float(val));
+        iterOut->getRow().setValue(colOutIdx, float(val));
         if (countColIdx.has_value()) {
-            iter_out->getRow().setValue(countColIdx.value(), float(count));
+            iterOut->getRow().setValue(countColIdx.value(), float(count));
         }
     }
 }
@@ -262,34 +262,34 @@ void PushValues::pointToShape(const PointMap &sourceMap, std::optional<std::stri
                               ShapeMap &destMap, std::string colOut, Func pushFunc,
                               std::optional<std::string> countCol) {
 
-    auto &table_in = sourceMap.getAttributeTable();
-    auto &table_out = destMap.getAttributeTable();
+    auto &tableIn = sourceMap.getAttributeTable();
+    auto &tableOut = destMap.getAttributeTable();
 
     auto [colInIdx, colOutIdx, countColIdx] =
-        getColumnIndices(table_in, colIn, table_out, colOut, countCol);
+        getColumnIndices(tableIn, colIn, tableOut, colOut, countCol);
 
     // prepare a temporary value table to store counts and values
-    std::vector<double> vals(table_out.getNumRows());
-    std::vector<int> counts(table_out.getNumRows());
+    std::vector<double> vals(tableOut.getNumRows());
+    std::vector<int> counts(tableOut.getNumRows());
 
-    for (size_t i = 0; i < table_out.getNumRows(); i++) {
+    for (size_t i = 0; i < tableOut.getNumRows(); i++) {
         counts[i] = 0; // count set to zero for all
         vals[i] = -1;
     }
 
-    for (auto iter_in = table_in.begin(); iter_in != table_in.end(); iter_in++) {
-        int pix_in = iter_in->getKey().value;
-        if (!isObjectVisible(sourceMap.getLayers(), iter_in->getRow())) {
+    for (auto iterIn = tableIn.begin(); iterIn != tableIn.end(); iterIn++) {
+        int pixIn = iterIn->getKey().value;
+        if (!isObjectVisible(sourceMap.getLayers(), iterIn->getRow())) {
             continue;
         }
         std::vector<size_t> gatelist;
-        gatelist = destMap.pointInPolyList(sourceMap.getPoint(pix_in).getLocation());
-        double thisval = iter_in->getKey().value;
+        gatelist = destMap.pointInPolyList(sourceMap.getPoint(pixIn).getLocation());
+        double thisval = iterIn->getKey().value;
         if (colInIdx.has_value())
-            thisval = iter_in->getRow().getValue(colInIdx.value());
+            thisval = iterIn->getRow().getValue(colInIdx.value());
         for (auto gate : gatelist) {
-            AttributeRow &row_out = destMap.getAttributeRowFromShapeIndex(gate);
-            if (isObjectVisible(destMap.getLayers(), row_out)) {
+            AttributeRow &rowOut = destMap.getAttributeRowFromShapeIndex(gate);
+            if (isObjectVisible(destMap.getLayers(), rowOut)) {
                 double &val = vals[gate];
                 int &count = counts[gate];
                 pushValue(val, count, thisval, pushFunc);
@@ -297,7 +297,7 @@ void PushValues::pointToShape(const PointMap &sourceMap, std::optional<std::stri
         }
     }
     size_t i = 0;
-    for (auto iter = table_out.begin(); iter != table_out.end(); iter++) {
+    for (auto iter = tableOut.begin(); iter != tableOut.end(); iter++) {
 
         if (!isObjectVisible(destMap.getLayers(), iter->getRow())) {
             i++;
@@ -318,37 +318,37 @@ void PushValues::pointToAxial(const PointMap &sourceMap, std::optional<std::stri
                               ShapeGraph &destMap, std::string colOut, Func pushFunc,
                               std::optional<std::string> countCol) {
 
-    auto &table_in = sourceMap.getAttributeTable();
-    auto &table_out = destMap.getAttributeTable();
+    auto &tableIn = sourceMap.getAttributeTable();
+    auto &tableOut = destMap.getAttributeTable();
 
     auto [colInIdx, colOutIdx, countColIdx] =
-        getColumnIndices(table_in, colIn, table_out, colOut, countCol);
+        getColumnIndices(tableIn, colIn, tableOut, colOut, countCol);
 
     // prepare a temporary value table to store counts and values
-    std::vector<double> vals(table_out.getNumRows());
-    std::vector<int> counts(table_out.getNumRows());
+    std::vector<double> vals(tableOut.getNumRows());
+    std::vector<int> counts(tableOut.getNumRows());
 
-    for (size_t i = 0; i < table_out.getNumRows(); i++) {
+    for (size_t i = 0; i < tableOut.getNumRows(); i++) {
         counts[i] = 0; // count set to zero for all
         vals[i] = -1;
     }
 
-    for (auto iter_in = table_in.begin(); iter_in != table_in.end(); iter_in++) {
-        int pix_in = iter_in->getKey().value;
-        if (!isObjectVisible(sourceMap.getLayers(), iter_in->getRow())) {
+    for (auto iterIn = tableIn.begin(); iterIn != tableIn.end(); iterIn++) {
+        int pixIn = iterIn->getKey().value;
+        if (!isObjectVisible(sourceMap.getLayers(), iterIn->getRow())) {
             continue;
         }
         std::vector<size_t> gatelist;
         // note, "axial" could be convex map, and hence this would be a valid
         // operation
-        gatelist = destMap.pointInPolyList(sourceMap.getPoint(pix_in).getLocation());
-        double thisval = iter_in->getKey().value;
+        gatelist = destMap.pointInPolyList(sourceMap.getPoint(pixIn).getLocation());
+        double thisval = iterIn->getKey().value;
         if (colInIdx.has_value())
-            thisval = iter_in->getRow().getValue(colInIdx.value());
+            thisval = iterIn->getRow().getValue(colInIdx.value());
         for (auto gate : gatelist) {
-            int key_out = destMap.getShapeRefFromIndex(gate)->first;
-            AttributeRow &row_out = table_out.getRow(AttributeKey(key_out));
-            if (isObjectVisible(destMap.getLayers(), row_out)) {
+            int keyOut = destMap.getShapeRefFromIndex(gate)->first;
+            AttributeRow &rowOut = tableOut.getRow(AttributeKey(keyOut));
+            if (isObjectVisible(destMap.getLayers(), rowOut)) {
                 double &val = vals[gate];
                 int &count = counts[gate];
                 pushValue(val, count, thisval, pushFunc);
@@ -356,7 +356,7 @@ void PushValues::pointToAxial(const PointMap &sourceMap, std::optional<std::stri
         }
     }
     size_t i = 0;
-    for (auto iter = table_out.begin(); iter != table_out.end(); iter++) {
+    for (auto iter = tableOut.begin(); iter != tableOut.end(); iter++) {
 
         if (!isObjectVisible(destMap.getLayers(), iter->getRow())) {
             i++;
@@ -377,37 +377,37 @@ void PushValues::axialToShape(const ShapeGraph &sourceMap, std::optional<std::st
                               ShapeMap &destMap, std::string colOut, Func pushFunc,
                               std::optional<std::string> countCol) {
 
-    auto &table_in = sourceMap.getAttributeTable();
-    auto &table_out = destMap.getAttributeTable();
+    auto &tableIn = sourceMap.getAttributeTable();
+    auto &tableOut = destMap.getAttributeTable();
 
     auto [colInIdx, colOutIdx, countColIdx] =
-        getColumnIndices(table_in, colIn, table_out, colOut, countCol);
+        getColumnIndices(tableIn, colIn, tableOut, colOut, countCol);
 
     // prepare a temporary value table to store counts and values
-    std::vector<double> vals(table_out.getNumRows());
-    std::vector<int> counts(table_out.getNumRows());
+    std::vector<double> vals(tableOut.getNumRows());
+    std::vector<int> counts(tableOut.getNumRows());
 
-    for (size_t i = 0; i < table_out.getNumRows(); i++) {
+    for (size_t i = 0; i < tableOut.getNumRows(); i++) {
         counts[i] = 0; // count set to zero for all
         vals[i] = -1;
     }
     // note, in the spirit of mapping fewer objects in the gate list, it is
     // *usually* best to perform axial -> gate map in this direction
-    for (auto iter_in = table_in.begin(); iter_in != table_in.end(); iter_in++) {
-        int key_in = iter_in->getKey().value;
-        if (!isObjectVisible(sourceMap.getLayers(), iter_in->getRow())) {
+    for (auto iterIn = tableIn.begin(); iterIn != tableIn.end(); iterIn++) {
+        int keyIn = iterIn->getKey().value;
+        if (!isObjectVisible(sourceMap.getLayers(), iterIn->getRow())) {
             continue;
         }
         std::vector<size_t> gatelist;
         auto dataMap = sourceMap.getAllShapes();
-        gatelist = destMap.shapeInPolyList(dataMap[key_in]);
-        double thisval = iter_in->getKey().value;
+        gatelist = destMap.shapeInPolyList(dataMap[keyIn]);
+        double thisval = iterIn->getKey().value;
         if (colInIdx.has_value())
-            thisval = iter_in->getRow().getValue(colInIdx.value());
+            thisval = iterIn->getRow().getValue(colInIdx.value());
         for (auto gate : gatelist) {
-            int key_out = destMap.getShapeRefFromIndex(gate)->first;
-            AttributeRow &row_out = table_out.getRow(AttributeKey(key_out));
-            if (isObjectVisible(destMap.getLayers(), row_out)) {
+            int keyOut = destMap.getShapeRefFromIndex(gate)->first;
+            AttributeRow &rowOut = tableOut.getRow(AttributeKey(keyOut));
+            if (isObjectVisible(destMap.getLayers(), rowOut)) {
                 double &val = vals[gate];
                 int &count = counts[gate];
                 pushValue(val, count, thisval, pushFunc);
@@ -415,7 +415,7 @@ void PushValues::axialToShape(const ShapeGraph &sourceMap, std::optional<std::st
         }
     }
     size_t i = 0;
-    for (auto iter = table_out.begin(); iter != table_out.end(); iter++) {
+    for (auto iter = tableOut.begin(); iter != tableOut.end(); iter++) {
 
         if (!isObjectVisible(destMap.getLayers(), iter->getRow())) {
             i++;
@@ -435,37 +435,37 @@ void PushValues::axialToAxial(const ShapeGraph &sourceMap, std::optional<std::st
                               ShapeGraph &destMap, std::string colOut, Func pushFunc,
                               std::optional<std::string> countCol) {
 
-    auto &table_in = sourceMap.getAttributeTable();
-    auto &table_out = destMap.getAttributeTable();
+    auto &tableIn = sourceMap.getAttributeTable();
+    auto &tableOut = destMap.getAttributeTable();
 
     auto [colInIdx, colOutIdx, countColIdx] =
-        getColumnIndices(table_in, colIn, table_out, colOut, countCol);
+        getColumnIndices(tableIn, colIn, tableOut, colOut, countCol);
 
     // prepare a temporary value table to store counts and values
-    std::vector<double> vals(table_out.getNumRows());
-    std::vector<int> counts(table_out.getNumRows());
+    std::vector<double> vals(tableOut.getNumRows());
+    std::vector<int> counts(tableOut.getNumRows());
 
-    for (size_t i = 0; i < table_out.getNumRows(); i++) {
+    for (size_t i = 0; i < tableOut.getNumRows(); i++) {
         counts[i] = 0; // count set to zero for all
         vals[i] = -1;
     }
     // note, in the spirit of mapping fewer objects in the gate list, it is
     // *usually* best to perform axial -> gate map in this direction
-    for (auto iter_in = table_in.begin(); iter_in != table_in.end(); iter_in++) {
-        int key_in = iter_in->getKey().value;
-        if (!isObjectVisible(sourceMap.getLayers(), iter_in->getRow())) {
+    for (auto iterIn = tableIn.begin(); iterIn != tableIn.end(); iterIn++) {
+        int keyIn = iterIn->getKey().value;
+        if (!isObjectVisible(sourceMap.getLayers(), iterIn->getRow())) {
             continue;
         }
         std::vector<size_t> gatelist;
         auto shapeMap = sourceMap.getAllShapes();
-        gatelist = destMap.shapeInPolyList(shapeMap[key_in]);
-        double thisval = iter_in->getKey().value;
+        gatelist = destMap.shapeInPolyList(shapeMap[keyIn]);
+        double thisval = iterIn->getKey().value;
         if (colInIdx.has_value())
-            thisval = iter_in->getRow().getValue(colInIdx.value());
+            thisval = iterIn->getRow().getValue(colInIdx.value());
         for (auto gate : gatelist) {
-            int key_out = destMap.getShapeRefFromIndex(gate)->first;
-            AttributeRow &row_out = table_out.getRow(AttributeKey(key_out));
-            if (isObjectVisible(destMap.getLayers(), row_out)) {
+            int keyOut = destMap.getShapeRefFromIndex(gate)->first;
+            AttributeRow &rowOut = tableOut.getRow(AttributeKey(keyOut));
+            if (isObjectVisible(destMap.getLayers(), rowOut)) {
                 double &val = vals[gate];
                 int &count = counts[gate];
                 pushValue(val, count, thisval, pushFunc);
@@ -473,7 +473,7 @@ void PushValues::axialToAxial(const ShapeGraph &sourceMap, std::optional<std::st
         }
     }
     size_t i = 0;
-    for (auto iter = table_out.begin(); iter != table_out.end(); iter++) {
+    for (auto iter = tableOut.begin(); iter != tableOut.end(); iter++) {
 
         if (!isObjectVisible(destMap.getLayers(), iter->getRow())) {
             i++;

@@ -206,7 +206,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToConvex(
     Communicator *, const std::string &name,
     const std::vector<std::pair<std::reference_wrapper<const ShapeMap>, int>> &drawingMaps) {
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::CONVEXMAP));
-    int conn_col =
+    int connCol =
         usermap->getAttributeTable().insertOrResetLockedColumn(ShapeGraph::Column::CONNECTIVITY);
 
     size_t count = 0;
@@ -218,9 +218,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToConvex(
             if (shape.isPolygon()) {
                 int newShapeRef = usermap->makeShape(shape);
                 usermap->getConnections().push_back(Connector());
-                usermap->getAttributeTable()
-                    .getRow(AttributeKey(newShapeRef))
-                    .setValue(conn_col, 0);
+                usermap->getAttributeTable().getRow(AttributeKey(newShapeRef)).setValue(connCol, 0);
                 count++;
             }
         }
@@ -236,7 +234,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToConvex(Communicator *,
                                                               const std::string &name,
                                                               ShapeMap &shapemap, bool copydata) {
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::CONVEXMAP));
-    int conn_col =
+    int connCol =
         usermap->getAttributeTable().insertOrResetLockedColumn(ShapeGraph::Column::CONNECTIVITY);
 
     std::vector<int> lookup;
@@ -266,7 +264,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToConvex(Communicator *,
         if (shape.isPolygon()) {
             int n = usermap->makeShape(shape, -1, extraAttr);
             usermap->getConnections().push_back(Connector());
-            usermap->getAttributeTable().getRow(AttributeKey(n)).setValue(conn_col, 0);
+            usermap->getAttributeTable().getRow(AttributeKey(n)).setValue(connCol, 0);
         }
     }
     if (usermap->getShapeCount() == 0) {

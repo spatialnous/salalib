@@ -202,14 +202,14 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line> &lines,
     }
 
     // three pass operation: (3) create vertex poly entries
-    int current_poly = -1;
+    int currentPoly = -1;
     for (i = 0; i < m_vertex_possibles.size(); i++) {
         if (m_vertex_polys[i] == -1) {
-            current_poly++;
+            currentPoly++;
             std::vector<int> addlist;
             addlist.push_back(int(i));
             while (addlist.size()) {
-                m_vertex_polys[size_t(addlist.back())] = current_poly;
+                m_vertex_polys[size_t(addlist.back())] = currentPoly;
                 std::vector<Point2f> &connections =
                     depthmapX::getMapAtIndex(m_vertex_possibles, addlist.back())->second;
                 addlist.pop_back();
@@ -353,14 +353,14 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
         if (possible || stubpossible) {
             Line line(vertPoss.first, vertex.m_point);
             if (!intersect_exclude(line)) {
-                AxialVertex next_vertex = makeVertex(AxialVertexKey(i), vertex.m_point);
-                if (next_vertex.m_initialised &&
-                    std::find(m_handled_list.begin(), m_handled_list.end(), next_vertex) ==
+                AxialVertex nextVertex = makeVertex(AxialVertexKey(i), vertex.m_point);
+                if (nextVertex.m_initialised &&
+                    std::find(m_handled_list.begin(), m_handled_list.end(), nextVertex) ==
                         m_handled_list.end()) {
-                    openvertices.insert(next_vertex); // <- note, add ignores duplicate adds (each
-                                                      // vertex tends to be added multiple times
-                                                      // before this vertex is handled itself)
-                    bool shortline_segend = false;
+                    openvertices.insert(nextVertex); // <- note, add ignores duplicate adds (each
+                                                     // vertex tends to be added multiple times
+                                                     // before this vertex is handled itself)
+                    bool shortlineSegend = false;
                     Line shortline = line;
                     if (!vertex.m_convex && possible) {
                         Line ext(line.t_end(), line.t_end() + (line.t_end() - line.t_start()));
@@ -369,66 +369,66 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                         line = Line(line.t_start(), ext.t_end());
                         // for radial line segend calc:
                         if (det(-p, vertex.m_b) < 0) {
-                            shortline_segend = true;
+                            shortlineSegend = true;
                         }
                     }
                     if (m_vertex_polys[vertex.m_ref_key] !=
-                        m_vertex_polys[next_vertex.m_ref_key]) { // must be on separate
-                                                                 // polygons
+                        m_vertex_polys[nextVertex.m_ref_key]) { // must be on separate
+                                                                // polygons
                         // radial line(s) (for new point)
-                        RadialLine radialshort(next_vertex, shortline_segend, vertex.m_point,
-                                               next_vertex.m_point,
-                                               next_vertex.m_point + next_vertex.m_b);
+                        RadialLine radialshort(nextVertex, shortlineSegend, vertex.m_point,
+                                               nextVertex.m_point,
+                                               nextVertex.m_point + nextVertex.m_b);
                         poly_connections.push_back(
                             PolyConnector(shortline, (RadialKey)radialshort));
                         radial_lines.push_back(radialshort);
                         if (!vertex.m_convex && possible) {
                             Line longline = Line(vertPoss.first, line.t_end());
                             RadialLine radiallong(radialshort);
-                            radiallong.segend = shortline_segend ? 0 : 1;
+                            radiallong.segend = shortlineSegend ? 0 : 1;
                             poly_connections.push_back(
                                 PolyConnector(longline, (RadialKey)radiallong));
                             radial_lines.push_back(radiallong);
                         }
                     }
-                    shortline_segend = false;
-                    if (!next_vertex.m_convex && next_vertex.m_axial) {
+                    shortlineSegend = false;
+                    if (!nextVertex.m_convex && nextVertex.m_axial) {
                         Line ext(line.t_start() - (line.t_end() - line.t_start()), line.t_start());
                         ext.ray(0, m_region);
                         cutLine(ext, 0);
                         line = Line(ext.t_start(), line.t_end());
                         // for radial line segend calc:
-                        if (det(p, next_vertex.m_b) < 0) {
-                            shortline_segend = true;
+                        if (det(p, nextVertex.m_b) < 0) {
+                            shortlineSegend = true;
                         }
                     }
                     if (m_vertex_polys[vertex.m_ref_key] !=
-                        m_vertex_polys[next_vertex.m_ref_key]) { // must be on separate
-                                                                 // polygons
+                        m_vertex_polys[nextVertex.m_ref_key]) { // must be on separate
+                                                                // polygons
                         // radial line(s) (for original point)
-                        RadialLine radialshort(vertex, shortline_segend, next_vertex.m_point,
+                        RadialLine radialshort(vertex, shortlineSegend, nextVertex.m_point,
                                                vertex.m_point, vertex.m_point + vertex.m_b);
                         poly_connections.push_back(
                             PolyConnector(shortline, (RadialKey)radialshort));
                         radial_lines.push_back(radialshort);
-                        if (!next_vertex.m_convex && next_vertex.m_axial) {
+                        if (!nextVertex.m_convex && nextVertex.m_axial) {
                             Line longline = Line(line.t_start(), vertex.m_point);
                             RadialLine radiallong(radialshort);
-                            radiallong.segend = shortline_segend ? 0 : 1;
+                            radiallong.segend = shortlineSegend ? 0 : 1;
                             poly_connections.push_back(
                                 PolyConnector(longline, (RadialKey)radiallong));
                             radial_lines.push_back(radiallong);
                         }
                     }
-                    if (possible && next_vertex.m_axial) {
+                    if (possible && nextVertex.m_axial) {
                         // axial line
                         lines.push_back(line);
                         keyvertices.push_back(std::set<int>());
                         if (vertex.m_convex) {
                             keyvertices.back().insert(vertex.m_ref_key);
                         }
-                        if (next_vertex.m_convex) {
-                            keyvertices.back().insert(next_vertex.m_ref_key);
+                        if (nextVertex.m_convex) {
+                            keyvertices.back().insert(nextVertex.m_ref_key);
                         }
                     }
                 }
@@ -445,15 +445,15 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
 // possibles list
 
 void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
-    std::vector<std::vector<int>> handled_list;
+    std::vector<std::vector<int>> handledList;
     for (size_t j = 0; j < m_vertex_possibles.size(); j++) {
-        handled_list.push_back(std::vector<int>());
+        handledList.push_back(std::vector<int>());
     }
 
     int i = -1;
     for (const auto &vertPoss : m_vertex_possibles) {
         i++;
-        std::vector<int> &currList = handled_list[size_t(i)];
+        std::vector<int> &currList = handledList[size_t(i)];
         if (vertPoss.second.size() == 1) {
             continue;
         }
@@ -494,7 +494,7 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                     // came!
                     winner = wayback;
                 }
-                handled_list[std::distance(m_vertex_possibles.begin(), vertPossIter)].push_back(
+                handledList[std::distance(m_vertex_possibles.begin(), vertPossIter)].push_back(
                     winner);
                 last = curr;
                 curr = vertPossIter->second.at(winner);

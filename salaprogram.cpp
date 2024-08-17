@@ -995,14 +995,14 @@ void SalaCommand::pushFunc(const SalaObj &func) {
 
 void SalaCommand::evaluate(SalaObj &obj, bool &ret, bool &ifhandled) {
     int begin = m_eval_stack.size() - 1;
-    SalaObj *p_obj = NULL;
+    SalaObj *pObj = NULL;
     switch (m_command) {
     case SC_EXPR:
-        obj = evaluate(begin, p_obj);
+        obj = evaluate(begin, pObj);
         break;
     case SC_RETURN:
         ret = true;
-        obj = evaluate(begin, p_obj);
+        obj = evaluate(begin, pObj);
         break;
     case SC_ROOT: {
         for (size_t i = 0; i < m_children.size(); i++) {
@@ -1012,7 +1012,7 @@ void SalaCommand::evaluate(SalaObj &obj, bool &ret, bool &ifhandled) {
         }
     } break;
     case SC_IF: {
-        SalaObj test = evaluate(begin, p_obj);
+        SalaObj test = evaluate(begin, pObj);
         if (test.toBool() == true) {
             for (size_t i = 0; i < m_children.size(); i++) {
                 m_children[i].evaluate(obj, ret, ifhandled);
@@ -1026,7 +1026,7 @@ void SalaCommand::evaluate(SalaObj &obj, bool &ret, bool &ifhandled) {
     } break;
     case SC_ELIF:
         if (!ifhandled) {
-            SalaObj test = evaluate(begin, p_obj);
+            SalaObj test = evaluate(begin, pObj);
             if (test.toBool() == true) {
                 for (size_t i = 0; i < m_children.size(); i++) {
                     m_children[i].evaluate(obj, ret, ifhandled);
@@ -1049,7 +1049,7 @@ void SalaCommand::evaluate(SalaObj &obj, bool &ret, bool &ifhandled) {
     case SC_FOR: {
         // eventually I'd like to do this with generators / iterators rather than
         // constructing a list each time
-        SalaObj list = evaluate(begin, p_obj);
+        SalaObj list = evaluate(begin, pObj);
         if (list.type == SalaObj::S_LIST) {
             int len = list.data.list.list->size();
             if (len != 0) {
@@ -1077,7 +1077,7 @@ void SalaCommand::evaluate(SalaObj &obj, bool &ret, bool &ifhandled) {
     } break;
     case SC_WHILE: {
         int counter = 0;
-        while (evaluate(begin, p_obj).toBool()) {
+        while (evaluate(begin, pObj).toBool()) {
             for (size_t k = 0; k < m_children.size(); k++) {
                 m_children[k].evaluate(obj, ret, ifhandled);
                 if (ret)

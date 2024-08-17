@@ -43,11 +43,11 @@ void SalaShape::setCentroidAreaPerim() {
     for (size_t i = 0; i < m_points.size(); i++) {
         Point2f &p1 = m_points[i];
         Point2f &p2 = m_points[(i + 1) % m_points.size()];
-        double a_i = (p1.x * p2.y - p2.x * p1.y) / 2.0;
-        m_area += a_i;
-        a_i /= 6.0;
-        m_centroid.x += (p1.x + p2.x) * a_i;
-        m_centroid.y += (p1.y + p2.y) * a_i;
+        double aI = (p1.x * p2.y - p2.x * p1.y) / 2.0;
+        m_area += aI;
+        aI /= 6.0;
+        m_centroid.x += (p1.x + p2.x) * aI;
+        m_centroid.y += (p1.y + p2.y) * aI;
         Point2f side = p2 - p1;
         m_perimeter += side.length();
     }
@@ -88,13 +88,13 @@ double SalaShape::getAngDev() const {
 
 std::vector<SalaEdgeU> SalaShape::getClippingSet(QtRegion &clipframe) const {
     std::vector<SalaEdgeU> edgeset;
-    bool last_inside = (clipframe.contains_touch(m_points[0])) ? true : false;
-    bool found_inside = last_inside;
+    bool lastInside = (clipframe.contains_touch(m_points[0])) ? true : false;
+    bool foundInside = lastInside;
     for (size_t i = 1; i < m_points.size(); i++) {
-        bool next_inside = (clipframe.contains_touch(m_points[i])) ? true : false;
-        found_inside |= next_inside;
-        if (last_inside != next_inside) {
-            if (last_inside) {
+        bool nextInside = (clipframe.contains_touch(m_points[i])) ? true : false;
+        foundInside |= nextInside;
+        if (lastInside != nextInside) {
+            if (lastInside) {
                 EdgeU eu = clipframe.getCutEdgeU(m_points[i - 1], m_points[i]);
                 edgeset.push_back(SalaEdgeU(i, false, eu));
             } else {
@@ -102,9 +102,9 @@ std::vector<SalaEdgeU> SalaShape::getClippingSet(QtRegion &clipframe) const {
                 edgeset.push_back(SalaEdgeU(i - 1, true, eu));
             }
         }
-        last_inside = next_inside;
+        lastInside = nextInside;
     }
-    if (!found_inside) {
+    if (!foundInside) {
         // note: deliberately add a single empty SalaEdgeU if this polygon is never
         // inside the frame
         edgeset.push_back(SalaEdgeU());

@@ -14,7 +14,7 @@ AnalysisResult AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
 
     AnalysisResult result;
 
-    int stepdepth_col = attributes.insertOrResetColumn(Column::STEP_DEPTH);
+    int stepdepthCol = attributes.insertOrResetColumn(Column::STEP_DEPTH);
     result.addAttribute(Column::STEP_DEPTH);
 
     bool *covered = new bool[map.getConnections().size()];
@@ -25,7 +25,7 @@ AnalysisResult AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
     for (auto &lineindex : m_originRefs) {
         foundlist.a().push_back(lineindex);
         covered[lineindex] = true;
-        map.getAttributeRowFromShapeIndex(lineindex).setValue(stepdepth_col, 0.0f);
+        map.getAttributeRowFromShapeIndex(lineindex).setValue(stepdepthCol, 0.0f);
     }
     int depth = 1;
     while (foundlist.a().size()) {
@@ -35,7 +35,7 @@ AnalysisResult AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
                 covered[line.m_connections[k]] = true;
                 foundlist.b().push_back(line.m_connections[k]);
                 map.getAttributeRowFromShapeIndex(line.m_connections[k])
-                    .setValue(stepdepth_col, float(depth));
+                    .setValue(stepdepthCol, float(depth));
             }
         }
         foundlist.a().pop_back();

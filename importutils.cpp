@@ -145,7 +145,7 @@ namespace depthmapX {
         int parsing = 0;
         bool first = true;
 
-        Point2f current_point, min_point, max_point;
+        Point2f currentPoint, minPoint, maxPoint;
 
         while (!stream.eof()) {
 
@@ -162,25 +162,25 @@ namespace depthmapX {
                     parsing = 0;
                 } else {
                     auto tokens = dXstring::split(inputline, ' ', true);
-                    current_point.x = stod(tokens[0]);
-                    current_point.y = stod(tokens[1]);
+                    currentPoint.x = stod(tokens[0]);
+                    currentPoint.y = stod(tokens[1]);
                     numlines++;
                     if (first) {
-                        min_point = current_point;
-                        max_point = current_point;
+                        minPoint = currentPoint;
+                        maxPoint = currentPoint;
                         first = false;
                     } else {
-                        if (current_point.x < min_point.x) {
-                            min_point.x = current_point.x;
+                        if (currentPoint.x < minPoint.x) {
+                            minPoint.x = currentPoint.x;
                         }
-                        if (current_point.y < min_point.y) {
-                            min_point.y = current_point.y;
+                        if (currentPoint.y < minPoint.y) {
+                            minPoint.y = currentPoint.y;
                         }
-                        if (current_point.x > max_point.x) {
-                            max_point.x = current_point.x;
+                        if (currentPoint.x > maxPoint.x) {
+                            maxPoint.x = currentPoint.x;
                         }
-                        if (current_point.y > max_point.y) {
-                            max_point.y = current_point.y;
+                        if (currentPoint.y > maxPoint.y) {
+                            maxPoint.y = currentPoint.y;
                         }
                     }
                 }
@@ -193,7 +193,7 @@ namespace depthmapX {
                                                           ? ShapeMap::DATAMAP
                                                           : ShapeMap::DRAWINGMAP);
 
-        shapeMap.init(numlines, QtRegion(min_point, max_point));
+        shapeMap.init(numlines, QtRegion(minPoint, maxPoint));
 
         // in MSVC 6, ios::eof remains set and it needs to be cleared.
         // in MSVC 8 it's even worse: it won't even seekg until eof flag has been
@@ -230,9 +230,9 @@ namespace depthmapX {
                     parsing = 0;
                 } else {
                     auto tokens = dXstring::split(inputline, ' ', true);
-                    current_point.x = stod(tokens[0]);
-                    current_point.y = stod(tokens[1]);
-                    points.push_back(current_point);
+                    currentPoint.x = stod(tokens[0]);
+                    currentPoint.y = stod(tokens[1]);
+                    points.push_back(currentPoint);
                 }
             }
 
@@ -488,14 +488,14 @@ namespace depthmapX {
         std::vector<Polyline> polylines;
 
         for (size_t jp = 0; jp < dxfLayer.numPoints(); jp++) {
-            const DxfVertex &dxf_point = dxfLayer.getPoint(jp);
-            points.push_back(Point2f(dxf_point.x, dxf_point.y));
+            const DxfVertex &dxfPoint = dxfLayer.getPoint(jp);
+            points.push_back(Point2f(dxfPoint.x, dxfPoint.y));
         }
 
         for (size_t j = 0; j < dxfLayer.numLines(); j++) {
-            const DxfLine &dxf_line = dxfLayer.getLine(j);
-            Line line = Line(Point2f(dxf_line.getStart().x, dxf_line.getStart().y),
-                             Point2f(dxf_line.getEnd().x, dxf_line.getEnd().y));
+            const DxfLine &dxfLine = dxfLayer.getLine(j);
+            Line line = Line(Point2f(dxfLine.getStart().x, dxfLine.getStart().y),
+                             Point2f(dxfLine.getEnd().x, dxfLine.getEnd().y));
             lines.push_back(line);
         }
 

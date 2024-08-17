@@ -28,10 +28,10 @@ void AgentAnalysis::init(std::vector<Agent> &agents, std::vector<PixelRef> &rele
 
 void AgentAnalysis::move(std::vector<Agent> &agents) {
     // go through backwards so remove does not affect later agents
-    for (auto rev_iter = agents.rbegin(); rev_iter != agents.rend(); ++rev_iter) {
-        rev_iter->onMove();
-        if (rev_iter->getFrame() >= static_cast<int>(m_agentLifetime)) {
-            agents.erase(std::next(rev_iter).base());
+    for (auto revIter = agents.rbegin(); revIter != agents.rend(); ++revIter) {
+        revIter->onMove();
+        if (revIter->getFrame() >= static_cast<int>(m_agentLifetime)) {
+            agents.erase(std::next(revIter).base());
         }
     }
 }
@@ -53,12 +53,12 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
     AttributeTable &table = pointmap->getAttributeTable();
     table.getOrInsertColumn(AgentAnalysis::Column::GATE_COUNTS);
 
-    int output_mode = Agent::OUTPUT_COUNTS;
+    int outputMode = Agent::OUTPUT_COUNTS;
     if (m_gateLayer.has_value()) {
-        output_mode |= Agent::OUTPUT_GATE_COUNTS;
+        outputMode |= Agent::OUTPUT_GATE_COUNTS;
     }
 
-    int trail_num = -1;
+    int trailNum = -1;
     if (m_recordTrails.has_value()) {
         if (m_recordTrails->limit < 1) {
             m_recordTrails->limit = 1;
@@ -71,7 +71,7 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
             agentProgram.m_trails = std::vector<std::vector<Event2f>>(50);
         }
 
-        trail_num = 0;
+        trailNum = 0;
     }
 
     // remove any agents that are left from a previous run
@@ -86,15 +86,15 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
         auto length = agents.size();
         size_t k;
         for (k = 0; k < q; k++) {
-            agents.push_back(Agent(&(agentProgram), pointmap, output_mode));
+            agents.push_back(Agent(&(agentProgram), pointmap, outputMode));
         }
         for (k = 0; k < q; k++) {
-            init(agents, releaseLocations, length + k, trail_num);
-            if (trail_num != -1) {
-                trail_num++;
+            init(agents, releaseLocations, length + k, trailNum);
+            if (trailNum != -1) {
+                trailNum++;
                 // after trail count, stop recording:
-                if (maxValue > 0 && trail_num == maxValue) {
-                    trail_num = -1;
+                if (maxValue > 0 && trailNum == maxValue) {
+                    trailNum = -1;
                 }
             }
         }

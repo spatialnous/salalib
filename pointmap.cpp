@@ -261,14 +261,14 @@ void PointMap::addPointsInRegionToSet(const QtRegion &r, std::set<PixelRef> &sel
 
 std::set<PixelRef> PointMap::getPointsInRegion(const QtRegion &r) const {
     std::set<PixelRef> selSet;
-    auto s_bl = pixelate(r.bottom_left, true);
-    auto s_tr = pixelate(r.top_right, true);
+    auto sBl = pixelate(r.bottom_left, true);
+    auto sTr = pixelate(r.top_right, true);
 
     int mask = 0;
     mask |= Point::FILLED;
 
-    for (auto i = s_bl.x; i <= s_tr.x; i++) {
-        for (auto j = s_bl.y; j <= s_tr.y; j++) {
+    for (auto i = sBl.x; i <= sTr.x; i++) {
+        for (auto j = sBl.y; j <= sTr.y; j++) {
             PixelRef ref(i, j);
             if (getPoint(ref).getState() & mask) {
                 selSet.insert(ref);
@@ -1056,14 +1056,14 @@ bool PointMap::unmake(bool removeLinks) {
 // processing
 
 bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
-    static std::vector<PixelRef> bins_b[32];
-    static float far_bin_dists[32];
+    static std::vector<PixelRef> binsB[32];
+    static float farBinDists[32];
     for (int i = 0; i < 32; i++) {
-        far_bin_dists[i] = 0.0f;
+        farBinDists[i] = 0.0f;
     }
-    int neighbourhood_size = 0;
-    double total_dist = 0.0;
-    double total_dist_sqr = 0.0;
+    int neighbourhoodSize = 0;
+    double totalDist = 0.0;
+    double totalDistSqr = 0.0;
 
     Point2f centre0 = depixelate(curs);
 
@@ -1142,15 +1142,15 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
                         // the blocked cells shouldn't contribute to point stats
                         // note m_spacing is used to scale the moment of inertia
                         // appropriately
-                        double this_dist = dist(addlist[n], curs) * m_spacing;
-                        if (this_dist > far_bin_dists[bin]) {
-                            far_bin_dists[bin] = (float)this_dist;
+                        double thisDist = dist(addlist[n], curs) * m_spacing;
+                        if (thisDist > farBinDists[bin]) {
+                            farBinDists[bin] = (float)thisDist;
                         }
-                        total_dist += this_dist;
-                        total_dist_sqr += this_dist * this_dist;
-                        neighbourhood_size++;
+                        totalDist += thisDist;
+                        totalDistSqr += thisDist * thisDist;
+                        neighbourhoodSize++;
 
-                        bins_b[bin].push_back(addlist[n]);
+                        binsB[bin].push_back(addlist[n]);
                     }
                     if (make & 2) {
                         getPoint(addlist[n]).m_processflag |= q_opposite(bin);
@@ -1165,16 +1165,16 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
     if (make & 1) {
         // The bins are cleared in the make function!
         Point &pt = getPoint(curs);
-        pt.m_node->make(curs, bins_b, far_bin_dists,
+        pt.m_node->make(curs, binsB, farBinDists,
                         pt.m_processflag); // note: make clears bins!
         AttributeRow &row = m_attributes->getRow(AttributeKey(curs));
-        row.setValue(PointMap::Column::CONNECTIVITY, float(neighbourhood_size));
-        row.setValue(PointMap::Column::POINT_FIRST_MOMENT, float(total_dist));
-        row.setValue(PointMap::Column::POINT_SECOND_MOMENT, float(total_dist_sqr));
+        row.setValue(PointMap::Column::CONNECTIVITY, float(neighbourhoodSize));
+        row.setValue(PointMap::Column::POINT_FIRST_MOMENT, float(totalDist));
+        row.setValue(PointMap::Column::POINT_SECOND_MOMENT, float(totalDistSqr));
     } else {
         // Clear bins by hand if not using them to make
         for (int i = 0; i < 32; i++) {
-            bins_b[i].clear();
+            binsB[i].clear();
         }
     }
 
@@ -1245,7 +1245,7 @@ bool PointMap::sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q,
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool PointMap::binDisplay(Communicator *, std::set<int> &selSet) {
-    auto bindisplay_col = m_attributes->insertOrResetColumn("Node Bins");
+    auto bindisplayCol = m_attributes->insertOrResetColumn("Node Bins");
 
     for (auto &sel : selSet) {
         Point &p = getPoint(sel);
@@ -1256,7 +1256,7 @@ bool PointMap::binDisplay(Communicator *, std::set<int> &selSet) {
             while (!b.is_tail()) {
                 // m_attributes->setValue( row, bindisplay_col, float((i % 8) + 1) );
                 m_attributes->getRow(AttributeKey(b.cursor()))
-                    .setValue(bindisplay_col, float(b.distance()));
+                    .setValue(bindisplayCol, float(b.distance()));
                 b.next();
             }
         }

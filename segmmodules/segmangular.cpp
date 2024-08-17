@@ -24,41 +24,41 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
     // note: radius must be sorted lowest to highest, but if -1 occurs ("radius n") it needs to be
     // last...
     // ...to ensure no mess ups, we'll re-sort here:
-    bool radius_n = false;
+    bool radiusN = false;
     std::vector<double> radii;
     for (double radius : m_radius_set) {
         if (radius < 0) {
-            radius_n = true;
+            radiusN = true;
         } else {
             radii.push_back(radius);
         }
     }
-    if (radius_n) {
+    if (radiusN) {
         radii.push_back(-1.0);
     }
 
-    std::vector<size_t> depth_col, count_col, total_col;
+    std::vector<size_t> depthCol, countCol, totalCol;
     // first enter table values
     for (auto radius : radii) {
-        std::string depth_col_text = getFormattedColumn(Column::ANGULAR_MEAN_DEPTH, radius);
-        attributes.insertOrResetColumn(depth_col_text.c_str());
-        result.addAttribute(depth_col_text);
-        std::string count_col_text = getFormattedColumn(Column::ANGULAR_NODE_COUNT, radius);
-        attributes.insertOrResetColumn(count_col_text.c_str());
-        result.addAttribute(count_col_text);
-        std::string total_col_text = getFormattedColumn(Column::ANGULAR_TOTAL_DEPTH, radius);
-        attributes.insertOrResetColumn(total_col_text.c_str());
-        result.addAttribute(total_col_text);
+        std::string depthColText = getFormattedColumn(Column::ANGULAR_MEAN_DEPTH, radius);
+        attributes.insertOrResetColumn(depthColText.c_str());
+        result.addAttribute(depthColText);
+        std::string countColText = getFormattedColumn(Column::ANGULAR_NODE_COUNT, radius);
+        attributes.insertOrResetColumn(countColText.c_str());
+        result.addAttribute(countColText);
+        std::string totalColText = getFormattedColumn(Column::ANGULAR_TOTAL_DEPTH, radius);
+        attributes.insertOrResetColumn(totalColText.c_str());
+        result.addAttribute(totalColText);
     }
 
     for (auto radius : radii) {
-        std::string radius_text = makeRadiusText(RadiusType::ANGULAR, radius);
-        std::string depth_col_text = getFormattedColumn(Column::ANGULAR_MEAN_DEPTH, radius);
-        depth_col.push_back(attributes.getColumnIndex(depth_col_text.c_str()));
-        std::string count_col_text = getFormattedColumn(Column::ANGULAR_NODE_COUNT, radius);
-        count_col.push_back(attributes.getColumnIndex(count_col_text.c_str()));
-        std::string total_col_text = getFormattedColumn(Column::ANGULAR_TOTAL_DEPTH, radius);
-        total_col.push_back(attributes.getColumnIndex(total_col_text.c_str()));
+        std::string radiusText = makeRadiusText(RadiusType::ANGULAR, radius);
+        std::string depthColText = getFormattedColumn(Column::ANGULAR_MEAN_DEPTH, radius);
+        depthCol.push_back(attributes.getColumnIndex(depthColText.c_str()));
+        std::string countColText = getFormattedColumn(Column::ANGULAR_NODE_COUNT, radius);
+        countCol.push_back(attributes.getColumnIndex(countColText.c_str()));
+        std::string totalColText = getFormattedColumn(Column::ANGULAR_TOTAL_DEPTH, radius);
+        totalCol.push_back(attributes.getColumnIndex(totalColText.c_str()));
     }
 
     std::vector<bool> covered(map.getShapeCount());
@@ -70,11 +70,11 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         std::vector<std::pair<float, SegmentData>> anglebins;
         anglebins.push_back(std::make_pair(0.0f, SegmentData(0, i, SegmentRef(), 0, 0.0, 0)));
 
-        std::vector<double> total_depth;
-        std::vector<int> node_count;
+        std::vector<double> totalDepth;
+        std::vector<int> nodeCount;
         for (size_t r = 0; r < radii.size(); r++) {
-            total_depth.push_back(0.0);
-            node_count.push_back(0);
+            totalDepth.push_back(0.0);
+            nodeCount.push_back(0);
         }
         // node_count includes this one, but will be added in next algo:
         while (anglebins.size()) {
@@ -82,15 +82,15 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
             SegmentData lineindex = iter->second;
             if (!covered[lineindex.ref]) {
                 covered[lineindex.ref] = true;
-                double depth_to_line = iter->first;
-                total_depth[lineindex.coverage] += depth_to_line;
-                node_count[lineindex.coverage] += 1;
+                double depthToLine = iter->first;
+                totalDepth[lineindex.coverage] += depthToLine;
+                nodeCount[lineindex.coverage] += 1;
                 anglebins.erase(iter);
                 Connector &line = map.getConnections()[lineindex.ref];
                 if (lineindex.dir != -1) {
                     for (auto &segconn : line.m_forward_segconns) {
                         if (!covered[segconn.first.ref]) {
-                            double angle = depth_to_line + segconn.second;
+                            double angle = depthToLine + segconn.second;
                             size_t rbin = lineindex.coverage;
                             while (rbin != radii.size() && radii[rbin] != -1 &&
                                    angle > radii[rbin]) {
@@ -109,7 +109,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                 if (lineindex.dir != 1) {
                     for (auto &segconn : line.m_back_segconns) {
                         if (!covered[segconn.first.ref]) {
-                            double angle = depth_to_line + segconn.second;
+                            double angle = depthToLine + segconn.second;
                             size_t rbin = lineindex.coverage;
                             while (rbin != radii.size() && radii[rbin] != -1 &&
                                    angle > radii[rbin]) {
@@ -131,21 +131,21 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         }
         AttributeRow &row = iter.getRow();
         // set the attributes for this node:
-        int curs_node_count = 0;
-        double curs_total_depth = 0.0;
+        int cursNodeCount = 0;
+        double cursTotalDepth = 0.0;
         for (size_t r = 0; r < radii.size(); r++) {
-            curs_node_count += node_count[r];
-            curs_total_depth += total_depth[r];
-            row.setValue(count_col[r], float(curs_node_count));
-            if (curs_node_count > 1) {
+            cursNodeCount += nodeCount[r];
+            cursTotalDepth += totalDepth[r];
+            row.setValue(countCol[r], float(cursNodeCount));
+            if (cursNodeCount > 1) {
                 // note -- node_count includes this one -- mean depth as per p.108 Social Logic of
                 // Space
-                double mean_depth = curs_total_depth / double(curs_node_count - 1);
-                row.setValue(depth_col[r], float(mean_depth));
-                row.setValue(total_col[r], float(curs_total_depth));
+                double meanDepth = cursTotalDepth / double(cursNodeCount - 1);
+                row.setValue(depthCol[r], float(meanDepth));
+                row.setValue(totalCol[r], float(cursTotalDepth));
             } else {
-                row.setValue(depth_col[r], -1);
-                row.setValue(total_col[r], -1);
+                row.setValue(depthCol[r], -1);
+                row.setValue(totalCol[r], -1);
             }
         }
         //

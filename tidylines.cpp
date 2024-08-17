@@ -34,28 +34,28 @@ void TidyLines::tidy(std::vector<Line> &lines, const QtRegion &region) {
         m_lines[i].test = m_test;
         PixelRefVector list = pixelateLine(m_lines[i].line);
         for (size_t a = 0; a < list.size(); a++) {
-            auto pixel_lines =
+            auto pixelLines =
                 m_pixel_lines(static_cast<size_t>(list[a].y), static_cast<size_t>(list[a].x));
-            for (int j : pixel_lines) {
+            for (int j : pixelLines) {
                 if (m_lines[j].test != m_test && j > (int)i &&
                     intersect_region(lines[i], lines[j], TOLERANCE_B * maxdim)) {
                     m_lines[j].test = m_test;
-                    int axis_i = (lines[i].width() >= lines[i].height()) ? XAXIS : YAXIS;
-                    int axis_j = (lines[j].width() >= lines[j].height()) ? XAXIS : YAXIS;
-                    int axis_reverse = (axis_i == XAXIS) ? YAXIS : XAXIS;
-                    if (axis_i == axis_j &&
-                        fabs(lines[i].grad(axis_reverse) - lines[j].grad(axis_reverse)) <
+                    int axisI = (lines[i].width() >= lines[i].height()) ? XAXIS : YAXIS;
+                    int axisJ = (lines[j].width() >= lines[j].height()) ? XAXIS : YAXIS;
+                    int axisReverse = (axisI == XAXIS) ? YAXIS : XAXIS;
+                    if (axisI == axisJ &&
+                        fabs(lines[i].grad(axisReverse) - lines[j].grad(axisReverse)) <
                             TOLERANCE_A &&
-                        fabs(lines[i].constant(axis_reverse) - lines[j].constant(axis_reverse)) <
+                        fabs(lines[i].constant(axisReverse) - lines[j].constant(axisReverse)) <
                             (TOLERANCE_B * maxdim)) {
                         // check for overlap and merge
-                        int parity = (axis_i == XAXIS) ? 1 : lines[i].sign();
-                        if ((lines[i].start()[axis_i] * parity + TOLERANCE_B * maxdim) >
-                                (lines[j].start()[axis_j] * parity) &&
-                            (lines[i].start()[axis_i] * parity) <
-                                (lines[j].end()[axis_j] * parity + TOLERANCE_B * maxdim)) {
-                            int end = ((lines[i].end()[axis_i] * parity) >
-                                       (lines[j].end()[axis_j] * parity))
+                        int parity = (axisI == XAXIS) ? 1 : lines[i].sign();
+                        if ((lines[i].start()[axisI] * parity + TOLERANCE_B * maxdim) >
+                                (lines[j].start()[axisJ] * parity) &&
+                            (lines[i].start()[axisI] * parity) <
+                                (lines[j].end()[axisJ] * parity + TOLERANCE_B * maxdim)) {
+                            int end = ((lines[i].end()[axisI] * parity) >
+                                       (lines[j].end()[axisJ] * parity))
                                           ? i
                                           : j;
                             lines[j].bx() = lines[end].bx();
@@ -64,12 +64,12 @@ void TidyLines::tidy(std::vector<Line> &lines, const QtRegion &region) {
                             continue; // <- don't do this any more, we've zapped it and
                                       // replaced it with the later line
                         }
-                        if ((lines[j].start()[axis_j] * parity + TOLERANCE_B * maxdim) >
-                                (lines[i].start()[axis_i] * parity) &&
-                            (lines[j].start()[axis_j] * parity) <
-                                (lines[i].end()[axis_i] * parity + TOLERANCE_B * maxdim)) {
-                            int end = ((lines[i].end()[axis_i] * parity) >
-                                       (lines[j].end()[axis_j] * parity))
+                        if ((lines[j].start()[axisJ] * parity + TOLERANCE_B * maxdim) >
+                                (lines[i].start()[axisI] * parity) &&
+                            (lines[j].start()[axisJ] * parity) <
+                                (lines[i].end()[axisI] * parity + TOLERANCE_B * maxdim)) {
+                            int end = ((lines[i].end()[axisI] * parity) >
+                                       (lines[j].end()[axisJ] * parity))
                                           ? i
                                           : j;
                             lines[j].ax() = lines[i].ax();
@@ -128,9 +128,9 @@ void TidyLines::quicktidy(std::map<int, std::pair<Line, int>> &lines, const QtRe
     for (const auto &line : lines) {
         i++;
         PixelRef start = pixelate(line.second.first.start());
-        auto &pixel_lines =
+        auto &pixelLines =
             m_pixel_lines(static_cast<size_t>(start.y), static_cast<size_t>(start.x));
-        for (int k : pixel_lines) {
+        for (int k : pixelLines) {
             if (k > int(i) &&
                 approxeq(m_lines[i].line.start(), m_lines[k].line.start(), tolerance)) {
                 if (approxeq(m_lines[i].line.end(), m_lines[k].line.end(), tolerance)) {

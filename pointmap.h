@@ -467,7 +467,7 @@ inline int flagoctant(int bin) {
 // Another helper, this time to write down the q-octant for the bin opposing you
 
 inline int q_opposite(int bin) {
-    int opposing_bin = (16 + bin) % 32;
+    int opposingBin = (16 + bin) % 32;
 
     /*
      *       \ 6 | 7 /
@@ -477,5 +477,5 @@ inline int q_opposite(int bin) {
      *      / 4 | 5 \
      */
 
-    return flagoctant(opposing_bin);
+    return flagoctant(opposingBin);
 }

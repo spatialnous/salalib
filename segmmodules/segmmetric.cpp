@@ -113,12 +113,12 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
             total += 1;
             //
             Connector &axline = map.getConnections().at(here.ref);
-            int connected_cursor = -2;
+            int connectedCursor = -2;
 
             auto iter = axline.m_back_segconns.begin();
             bool backsegs = true;
 
-            while (connected_cursor != -1) {
+            while (connectedCursor != -1) {
                 if (backsegs && iter == axline.m_back_segconns.end()) {
                     iter = axline.m_forward_segconns.begin();
                     backsegs = false;
@@ -127,22 +127,22 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
                     break;
                 }
 
-                connected_cursor = iter->first.ref;
+                connectedCursor = iter->first.ref;
 
-                if (seen[connected_cursor] > segdepth &&
-                    static_cast<size_t>(connected_cursor) != cursor) {
-                    bool seenalready = (seen[connected_cursor] == 0xffffffff) ? false : true;
-                    float length = seglengths[connected_cursor];
-                    audittrail[connected_cursor] =
-                        TopoMetSegmentRef(connected_cursor, here.dir, here.dist + length, here.ref);
-                    seen[connected_cursor] = segdepth;
+                if (seen[connectedCursor] > segdepth &&
+                    static_cast<size_t>(connectedCursor) != cursor) {
+                    bool seenalready = (seen[connectedCursor] == 0xffffffff) ? false : true;
+                    float length = seglengths[connectedCursor];
+                    audittrail[connectedCursor] =
+                        TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
+                    seen[connectedCursor] = segdepth;
                     if (m_radius == -1 || here.dist + length < m_radius) {
                         // puts in a suitable bin ahead of us...
                         open++;
                         //
                         // better to divide by 511 but have 512 bins...
                         list[(bin + int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
-                            connected_cursor);
+                            connectedCursor);
                     }
                     // not sure why this is outside the radius restriction
                     // (sel_only: with restricted selection set, not all lines will be labelled)
@@ -150,9 +150,9 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
                     // can go twice)
 
                     // Quick mod - TV
-                    if (!m_selSet.has_value() && connected_cursor > int(cursor) &&
+                    if (!m_selSet.has_value() && connectedCursor > int(cursor) &&
                         !seenalready) { // only one way paths, saves doing this twice
-                        int subcur = connected_cursor;
+                        int subcur = connectedCursor;
                         while (subcur != -1) {
                             // in this method of choice, start and end lines are included
                             choicevals[subcur].choice += 1;

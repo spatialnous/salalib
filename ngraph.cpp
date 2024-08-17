@@ -199,42 +199,42 @@ void Bin::make(const PixelRefVector &pixels, char dir) {
         } else {
             // Reorder the pixels:
             if (m_dir == PixelRef::HORIZONTAL) {
-                std::set<PixelRefH> pixels_h;
+                std::set<PixelRefH> pixelsH;
                 for (size_t i = 0; i < pixels.size(); i++) {
-                    pixels_h.insert(PixelRefH(pixels[i]));
+                    pixelsH.insert(PixelRefH(pixels[i]));
                 }
                 // this looks like a simple bubble sort
-                auto curr = pixels_h.begin();
+                auto curr = pixelsH.begin();
                 m_pixel_vecs.push_back(PixelVec(*curr, *curr));
                 ++curr;
-                auto prev = pixels_h.begin();
-                for (; curr != pixels_h.end(); ++curr) {
+                auto prev = pixelsH.begin();
+                for (; curr != pixelsH.end(); ++curr) {
                     if (prev->y != curr->y || prev->x + 1 != curr->x) {
                         m_pixel_vecs.back().m_end = *prev;
                         m_pixel_vecs.push_back(PixelVec(*curr, *curr));
                     }
                     prev = curr;
                 }
-                m_pixel_vecs.back().m_end = *pixels_h.rbegin();
+                m_pixel_vecs.back().m_end = *pixelsH.rbegin();
             }
             if (m_dir == PixelRef::VERTICAL) {
-                std::set<PixelRefV> pixels_v;
+                std::set<PixelRefV> pixelsV;
                 for (size_t i = 0; i < pixels.size(); i++) {
-                    pixels_v.insert(PixelRefV(pixels[i]));
+                    pixelsV.insert(PixelRefV(pixels[i]));
                 }
                 // this looks like a simple bubble sort
-                auto curr = pixels_v.begin();
+                auto curr = pixelsV.begin();
                 m_pixel_vecs.push_back(PixelVec(*curr, *curr));
                 ++curr;
-                auto prev = pixels_v.begin();
-                for (; curr != pixels_v.end(); ++curr) {
+                auto prev = pixelsV.begin();
+                for (; curr != pixelsV.end(); ++curr) {
                     if (prev->x != curr->x || prev->y + 1 != curr->y) {
                         m_pixel_vecs.back().m_end = *prev;
                         m_pixel_vecs.push_back(PixelVec(*curr, *curr));
                     }
                     prev = curr;
                 }
-                m_pixel_vecs.back().m_end = *pixels_v.rbegin();
+                m_pixel_vecs.back().m_end = *pixelsV.rbegin();
             }
 
             m_node_count = static_cast<unsigned short>(pixels.size());

@@ -257,11 +257,11 @@ std::pair<Point2f, double> Isovist::getCentroidArea() {
     for (size_t i = 0; i < m_poly.size(); i++) {
         Point2f &p1 = m_poly.at(i);
         Point2f &p2 = m_poly.at((i + 1) % m_poly.size());
-        double a_i = (p1.x * p2.y - p2.x * p1.y) / 2.0;
-        area += a_i;
-        a_i /= 6.0;
-        centroid.x += (p1.x + p2.x) * a_i;
-        centroid.y += (p1.y + p2.y) * a_i;
+        double aI = (p1.x * p2.y - p2.x * p1.y) / 2.0;
+        area += aI;
+        aI /= 6.0;
+        centroid.x += (p1.x + p2.x) * aI;
+        centroid.y += (p1.y + p2.y) * aI;
         double dpoint = dist(m_centre, p1);
         double dline = dist(m_centre, Line(p1, p2));
         if (i != 0) {

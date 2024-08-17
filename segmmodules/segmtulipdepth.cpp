@@ -14,18 +14,18 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
 
     AnalysisResult result;
 
-    int stepdepth_col = attributes.insertOrResetColumn(Column::ANGULAR_STEP_DEPTH);
+    int stepdepthCol = attributes.insertOrResetColumn(Column::ANGULAR_STEP_DEPTH);
     result.addAttribute(Column::ANGULAR_STEP_DEPTH);
 
     // The original code set tulip_bins to 1024, divided by two and added one
     // in order to duplicate previous code (using a semicircle of tulip bins)
-    size_t tulip_bins = (m_tulip_bins / 2) + 1;
+    size_t tulipBins = (m_tulip_bins / 2) + 1;
 
     std::vector<bool> covered(map.getConnections().size());
     for (size_t i = 0; i < map.getConnections().size(); i++) {
         covered[i] = false;
     }
-    std::vector<std::vector<SegmentData>> bins(tulip_bins);
+    std::vector<std::vector<SegmentData>> bins(tulipBins);
 
     int opencount = 0;
     for (auto &sel : m_originRefs) {
@@ -67,14 +67,14 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
             Connector &line = map.getConnections()[lineindex.ref];
             // convert depth from tulip_bins normalised to standard angle
             // (note the -1)
-            double depth_to_line = depthlevel / ((tulip_bins - 1) * 0.5);
-            map.getAttributeRowFromShapeIndex(lineindex.ref).setValue(stepdepth_col, depth_to_line);
+            double depthToLine = depthlevel / ((tulipBins - 1) * 0.5);
+            map.getAttributeRowFromShapeIndex(lineindex.ref).setValue(stepdepthCol, depthToLine);
             int extradepth;
             if (lineindex.dir != -1) {
                 for (auto &segconn : line.m_forward_segconns) {
                     if (!covered[segconn.first.ref]) {
-                        extradepth = (int)floor(segconn.second * tulip_bins * 0.5);
-                        bins[(currentbin + tulip_bins + extradepth) % tulip_bins].push_back(
+                        extradepth = (int)floor(segconn.second * tulipBins * 0.5);
+                        bins[(currentbin + tulipBins + extradepth) % tulipBins].push_back(
                             SegmentData(segconn.first, lineindex.ref, lineindex.segdepth + 1, 0.0,
                                         0));
                         opencount++;
@@ -84,8 +84,8 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
             if (lineindex.dir != 1) {
                 for (auto &segconn : line.m_back_segconns) {
                     if (!covered[segconn.first.ref]) {
-                        extradepth = (int)floor(segconn.second * tulip_bins * 0.5);
-                        bins[(currentbin + tulip_bins + extradepth) % tulip_bins].push_back(
+                        extradepth = (int)floor(segconn.second * tulipBins * 0.5);
+                        bins[(currentbin + tulipBins + extradepth) % tulipBins].push_back(
                             SegmentData(segconn.first, lineindex.ref, lineindex.segdepth + 1, 0.0,
                                         0));
                         opencount++;

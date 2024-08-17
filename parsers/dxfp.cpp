@@ -57,13 +57,13 @@ DxfLayer *DxfParser::getLayer(
 DxfLineType *DxfParser::getLineType(
     const std::string &line_type_name) // const <- removed as m_layers may be changed if DXF is poor
 {
-    static DxfLineType line_type;
+    static DxfLineType lineType;
 
-    line_type.m_name = line_type_name;
+    lineType.m_name = line_type_name;
 
     std::map<std::string, DxfLineType>::iterator lineTypeIter = m_line_types.find(line_type_name);
     if (lineTypeIter == m_line_types.end()) {
-        m_line_types.insert(std::pair<std::string, DxfLineType>(line_type_name, line_type));
+        m_line_types.insert(std::pair<std::string, DxfLineType>(line_type_name, lineType));
         return &(m_line_types.find(line_type_name)->second);
     }
     return &(lineTypeIter->second);
@@ -233,7 +233,7 @@ void DxfParser::openTables(std::istream &stream) {
     int subsection = UNIDENTIFIED;
 
     DxfLayer layer;
-    DxfLineType line_type;
+    DxfLineType lineType;
 
     while (!stream.eof() && subsection != ENDSEC) {
         switch (subsection) {
@@ -273,9 +273,8 @@ void DxfParser::openTables(std::istream &stream) {
         case LTYPE_ROW:
             stream >> token;
             m_size += token.size;
-            if (line_type.parse(token, this)) {
-                m_line_types.insert(
-                    std::pair<std::string, DxfLineType>(line_type.m_name, line_type));
+            if (lineType.parse(token, this)) {
+                m_line_types.insert(std::pair<std::string, DxfLineType>(lineType.m_name, lineType));
                 if (token.data == "ENDTAB") {
                     subsection = ZEROTOKEN;
                 }
@@ -381,16 +380,16 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
 
     DxfVertex point;
     DxfLine line;
-    DxfPolyLine poly_line;
-    DxfLwPolyLine lw_poly_line;
+    DxfPolyLine polyLine;
+    DxfLwPolyLine lwPolyLine;
     DxfArc arc;
     DxfEllipse ellipse;
     DxfCircle circle;
     DxfSpline spline;
     DxfInsert insert;
 
-    std::string layer_name;
-    std::string line_type_name;
+    std::string layerName;
+    std::string lineTypeName;
 
     while (!stream.eof() && subsection != ENDSEC) {
         switch (subsection) {
@@ -454,41 +453,41 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case POLYLINE:
             stream >> token;
             m_size += token.size;
-            if (poly_line.parse(token, this)) {
-                if (poly_line.m_vertex_count > 0) {
+            if (polyLine.parse(token, this)) {
+                if (polyLine.m_vertex_count > 0) {
                     DxfLayer *layer = block;
                     if (layer == NULL) {
-                        layer = poly_line.m_p_layer;
+                        layer = polyLine.m_p_layer;
                     }
-                    layer->m_poly_lines.push_back(poly_line);
-                    size_t line_count = (poly_line.getAttributes() & DxfPolyLine::CLOSED)
-                                            ? poly_line.numVertices() - 2
-                                            : poly_line.numVertices() - 1;
-                    layer->merge(poly_line); // <- merge bounding box
-                    layer->m_total_line_count += line_count;
-                    poly_line.clear(); // (Now reuse)
+                    layer->m_poly_lines.push_back(polyLine);
+                    size_t lineCount = (polyLine.getAttributes() & DxfPolyLine::CLOSED)
+                                           ? polyLine.numVertices() - 2
+                                           : polyLine.numVertices() - 1;
+                    layer->merge(polyLine); // <- merge bounding box
+                    layer->m_total_line_count += lineCount;
+                    polyLine.clear(); // (Now reuse)
                 }
-                poly_line.clear(); // (Now reuse)
+                polyLine.clear(); // (Now reuse)
                 subsection = ZEROTOKEN;
             }
             break;
         case LWPOLYLINE:
             stream >> token;
             m_size += token.size;
-            if (lw_poly_line.parse(token, this)) {
-                if (lw_poly_line.m_vertex_count > 0) {
+            if (lwPolyLine.parse(token, this)) {
+                if (lwPolyLine.m_vertex_count > 0) {
                     DxfLayer *layer = block;
                     if (layer == NULL) {
-                        layer = lw_poly_line.m_p_layer;
+                        layer = lwPolyLine.m_p_layer;
                     }
-                    layer->m_poly_lines.push_back(lw_poly_line);
-                    size_t line_count = (lw_poly_line.getAttributes() & DxfPolyLine::CLOSED)
-                                            ? lw_poly_line.numVertices() - 2
-                                            : lw_poly_line.numVertices() - 1;
-                    layer->merge(lw_poly_line); // <- merge bounding box
-                    layer->m_total_line_count += line_count;
+                    layer->m_poly_lines.push_back(lwPolyLine);
+                    size_t lineCount = (lwPolyLine.getAttributes() & DxfPolyLine::CLOSED)
+                                           ? lwPolyLine.numVertices() - 2
+                                           : lwPolyLine.numVertices() - 1;
+                    layer->merge(lwPolyLine); // <- merge bounding box
+                    layer->m_total_line_count += lineCount;
                 }
-                lw_poly_line.clear(); // (Now reuse)
+                lwPolyLine.clear(); // (Now reuse)
                 subsection = ZEROTOKEN;
             }
             break;
@@ -544,11 +543,11 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
                         layer = spline.m_p_layer;
                     }
                     layer->m_splines.push_back(spline);
-                    size_t line_count = (spline.getAttributes() & DxfSpline::CLOSED)
-                                            ? spline.numVertices() - 2
-                                            : spline.numVertices() - 1;
+                    size_t lineCount = (spline.getAttributes() & DxfSpline::CLOSED)
+                                           ? spline.numVertices() - 2
+                                           : spline.numVertices() - 1;
                     layer->merge(spline);
-                    layer->m_total_line_count += line_count;
+                    layer->m_total_line_count += lineCount;
                     spline.clear(); // (Now reuse)
                 }
                 subsection = ZEROTOKEN;

@@ -73,12 +73,12 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
         }
 
         Connector &axline = map.getConnections().at(here.ref);
-        int connected_cursor = -2;
+        int connectedCursor = -2;
 
         auto iter = axline.m_back_segconns.begin();
         bool backsegs = true;
 
-        while (connected_cursor != -1) {
+        while (connectedCursor != -1) {
             if (backsegs && iter == axline.m_back_segconns.end()) {
                 iter = axline.m_forward_segconns.begin();
                 backsegs = false;
@@ -87,23 +87,23 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
                 break;
             }
 
-            connected_cursor = iter->first.ref;
-            AttributeRow &row = map.getAttributeRowFromShapeIndex(connected_cursor);
-            if (seen[connected_cursor] > segdepth) {
-                float length = seglengths[connected_cursor];
-                int axialref = axialrefs[connected_cursor];
-                seen[connected_cursor] = segdepth;
-                audittrail[connected_cursor] =
-                    TopoMetSegmentRef(connected_cursor, here.dir, here.dist + length, here.ref);
+            connectedCursor = iter->first.ref;
+            AttributeRow &row = map.getAttributeRowFromShapeIndex(connectedCursor);
+            if (seen[connectedCursor] > segdepth) {
+                float length = seglengths[connectedCursor];
+                int axialref = axialrefs[connectedCursor];
+                seen[connectedCursor] = segdepth;
+                audittrail[connectedCursor] =
+                    TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
                 // puts in a suitable bin ahead of us...
                 open++;
                 //
                 if (axialrefs[here.ref] == axialref) {
-                    list[bin].push_back(connected_cursor);
+                    list[bin].push_back(connectedCursor);
                     row.setValue(sdColIdx, segdepth);
                 } else {
-                    list[(bin + 1) % 2].push_back(connected_cursor);
-                    seen[connected_cursor] =
+                    list[(bin + 1) % 2].push_back(connectedCursor);
+                    seen[connectedCursor] =
                         segdepth + 1; // this is so if another node is connected directly to this
                                       // one but is found later it is still handled -- note it can
                                       // result in the connected cursor being added twice

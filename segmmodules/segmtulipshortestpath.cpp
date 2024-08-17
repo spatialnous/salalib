@@ -15,22 +15,22 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
     AttributeTable &attributes = m_map.getAttributeTable();
 
     std::string colText = Column::ANGULAR_SHORTEST_PATH_ANGLE;
-    size_t angle_col = attributes.insertOrResetColumn(colText);
+    size_t angleCol = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
     colText = Column::ANGULAR_SHORTEST_PATH_ORDER;
-    size_t path_col = attributes.insertOrResetColumn(colText);
+    size_t pathCol = attributes.insertOrResetColumn(colText);
     result.addAttribute(colText);
 
-    size_t tulip_bins = m_tulipBins;
+    size_t tulipBins = m_tulipBins;
 
-    tulip_bins /= 2; // <- actually use semicircle of tulip bins
-    tulip_bins += 1;
+    tulipBins /= 2; // <- actually use semicircle of tulip bins
+    tulipBins += 1;
 
     std::vector<bool> covered(m_map.getConnections().size());
     for (size_t i = 0; i < m_map.getConnections().size(); i++) {
         covered[i] = false;
     }
-    std::vector<std::vector<SegmentData>> bins(tulip_bins);
+    std::vector<std::vector<SegmentData>> bins(tulipBins);
 
     int opencount = 0;
 
@@ -74,14 +74,14 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
             Connector &line = m_map.getConnections()[lineindex.ref];
             // convert depth from tulip_bins normalised to standard angle
             // (note the -1)
-            double depth_to_line = depthlevel / ((tulip_bins - 1) * 0.5);
-            m_map.getAttributeRowFromShapeIndex(lineindex.ref).setValue(angle_col, depth_to_line);
+            double depthToLine = depthlevel / ((tulipBins - 1) * 0.5);
+            m_map.getAttributeRowFromShapeIndex(lineindex.ref).setValue(angleCol, depthToLine);
             int extradepth;
             if (lineindex.dir != -1) {
                 for (auto &segconn : line.m_forward_segconns) {
                     if (!covered[segconn.first.ref]) {
-                        extradepth = (int)floor(segconn.second * tulip_bins * 0.5);
-                        bins[(currentbin + tulip_bins + extradepth) % tulip_bins].push_back(
+                        extradepth = (int)floor(segconn.second * tulipBins * 0.5);
+                        bins[(currentbin + tulipBins + extradepth) % tulipBins].push_back(
                             SegmentData(segconn.first, lineindex.ref, lineindex.segdepth + 1, 0.0,
                                         0));
                         if (parents.find(segconn.first.ref) == parents.end()) {
@@ -94,8 +94,8 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
             if (lineindex.dir != 1) {
                 for (auto &segconn : line.m_back_segconns) {
                     if (!covered[segconn.first.ref]) {
-                        extradepth = (int)floor(segconn.second * tulip_bins * 0.5);
-                        bins[(currentbin + tulip_bins + extradepth) % tulip_bins].push_back(
+                        extradepth = (int)floor(segconn.second * tulipBins * 0.5);
+                        bins[(currentbin + tulipBins + extradepth) % tulipBins].push_back(
                             SegmentData(segconn.first, lineindex.ref, lineindex.segdepth + 1, 0.0,
                                         0));
                         if (parents.find(segconn.first.ref) == parents.end()) {
@@ -115,18 +115,18 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
     int counter = 0;
     while (refToParent != parents.end()) {
         AttributeRow &row = m_map.getAttributeRowFromShapeIndex(refToParent->first);
-        row.setValue(path_col, counter);
+        row.setValue(pathCol, counter);
         counter++;
         refToParent = parents.find(refToParent->second);
     }
-    m_map.getAttributeRowFromShapeIndex(m_refFrom).setValue(path_col, counter);
+    m_map.getAttributeRowFromShapeIndex(m_refFrom).setValue(pathCol, counter);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         AttributeRow &row = iter->getRow();
-        if (row.getValue(path_col) < 0) {
-            row.setValue(angle_col, -1);
+        if (row.getValue(pathCol) < 0) {
+            row.setValue(angleCol, -1);
         } else {
-            row.setValue(path_col, counter - row.getValue(path_col));
+            row.setValue(pathCol, counter - row.getValue(pathCol));
         }
     }
 

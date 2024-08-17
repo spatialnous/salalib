@@ -76,12 +76,12 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
         }
 
         Connector &axline = map.getConnections().at(here.ref);
-        int connected_cursor = -2;
+        int connectedCursor = -2;
 
         auto iter = axline.m_back_segconns.begin();
         bool backsegs = true;
 
-        while (connected_cursor != -1) {
+        while (connectedCursor != -1) {
             if (backsegs && iter == axline.m_back_segconns.end()) {
                 iter = axline.m_forward_segconns.begin();
                 backsegs = false;
@@ -90,19 +90,19 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
                 break;
             }
 
-            connected_cursor = iter->first.ref;
-            if (seen[connected_cursor] > segdepth) {
-                float length = seglengths[connected_cursor];
-                seen[connected_cursor] = segdepth;
-                audittrail[connected_cursor] =
-                    TopoMetSegmentRef(connected_cursor, here.dir, here.dist + length, here.ref);
+            connectedCursor = iter->first.ref;
+            if (seen[connectedCursor] > segdepth) {
+                float length = seglengths[connectedCursor];
+                seen[connectedCursor] = segdepth;
+                audittrail[connectedCursor] =
+                    TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
                 // puts in a suitable bin ahead of us...
                 open++;
                 //
                 // better to divide by 511 but have 512 bins...
                 list[(bin + int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
-                    connected_cursor);
-                AttributeRow &row = map.getAttributeRowFromShapeIndex(connected_cursor);
+                    connectedCursor);
+                AttributeRow &row = map.getAttributeRowFromShapeIndex(connectedCursor);
                 row.setValue(sdColIdx, here.dist + length * 0.5);
             }
             iter++;

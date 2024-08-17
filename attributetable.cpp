@@ -62,15 +62,15 @@ size_t AttributeColumnImpl::read(std::istream &stream) {
     stream.read((char *)&val, sizeof(float));
     m_stats.max = val;
     stream.read((char *)&m_stats.total, sizeof(double));
-    int physical_column;
-    stream.read((char *)&physical_column,
+    int physicalColumn;
+    stream.read((char *)&physicalColumn,
                 sizeof(int)); // physical column is obsolete
     stream.read((char *)&m_hidden, sizeof(bool));
     stream.read((char *)&m_locked, sizeof(bool));
 
     stream.read((char *)&m_displayParams, sizeof(DisplayParams));
     m_formula = dXstring::readString(stream);
-    return static_cast<size_t>(physical_column);
+    return static_cast<size_t>(physicalColumn);
 }
 
 void AttributeColumnImpl::write(std::ostream &stream, int physicalCol) {

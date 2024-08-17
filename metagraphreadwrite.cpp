@@ -283,9 +283,9 @@ bool MetaGraphReadWrite::writePointMaps(std::ofstream &stream,
                                         const std::vector<PointMapOrRef> &pointMaps,
                                         const std::vector<int> displayData,
                                         const std::optional<unsigned int> displayedMap) {
-    unsigned int displayed_pointmap =
+    unsigned int displayedPointmap =
         displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
-    stream.write((char *)&displayed_pointmap, sizeof(displayed_pointmap));
+    stream.write((char *)&displayedPointmap, sizeof(displayedPointmap));
     auto count = pointMaps.size();
     stream.write((char *)&count, sizeof(static_cast<int>(count)));
     auto it = displayData.begin();

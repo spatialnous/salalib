@@ -113,8 +113,8 @@ void LayerManagerImpl::write(std::ostream &stream) const {
 
     stream.write((const char *)&availableLayers, sizeof(KeyType));
     stream.write((const char *)&m_visibleLayers, sizeof(KeyType));
-    int size_as_int = (int)m_layers.size();
-    stream.write((const char *)&size_as_int, sizeof(int));
+    int sizeAsInt = (int)m_layers.size();
+    stream.write((const char *)&sizeAsInt, sizeof(int));
 
     availableLayers = 0xffffffff << (32 + 0xfffffffe);
     int64_t newlayer = 0x1;

@@ -42,13 +42,13 @@ Point2f gps2os(const Point2f &pt) {
     // GRS80 ellipsoid
     double a = 6378137.0000;
     double b = 6356752.3141;
-    double e_sq = (pafmath::sqr(a) - pafmath::sqr(b)) / pafmath::sqr(a);
+    double eSq = (pafmath::sqr(a) - pafmath::sqr(b)) / pafmath::sqr(a);
 
-    double nu = a / sqrt(1.0 - e_sq * pafmath::sqr(sin(phi)));
+    double nu = a / sqrt(1.0 - eSq * pafmath::sqr(sin(phi)));
 
     double x = nu * cos(phi) * cos(lambda);
     double y = nu * cos(phi) * sin(lambda);
-    double z = (1 - e_sq) * nu * sin(phi);
+    double z = (1 - eSq) * nu * sin(phi);
 
     // Now we have the ETRS89 location, convert it to a rough OSGB36 location:
 
@@ -58,13 +58,13 @@ Point2f gps2os(const Point2f &pt) {
     // -446.448    +125.157  -542.060   +20.4894   -0.1502    -0.2470    -0.8421 = (in radians: )
 
     // nb, seconds converted to radians:
-    double r_x = -0.7281901490265230623720509817416e-6;
-    double r_y = -1.1974897923405539041670878328241e-6;
-    double r_z = -4.0826160086234026020206666559563e-6;
+    double rX = -0.7281901490265230623720509817416e-6;
+    double rY = -1.1974897923405539041670878328241e-6;
+    double rZ = -4.0826160086234026020206666559563e-6;
 
-    x = -446.448 + (1.0 + 2.04894e-5) * x - r_z * y + r_y * z;
-    y = +125.157 + r_z * x + (1.0 + 2.04894e-5) * y - r_x * z;
-    z = -542.060 - r_y * x + r_x * y + (1.0 + 2.04894e-5) * z;
+    x = -446.448 + (1.0 + 2.04894e-5) * x - rZ * y + rY * z;
+    y = +125.157 + rZ * x + (1.0 + 2.04894e-5) * y - rX * z;
+    z = -542.060 - rY * x + rX * y + (1.0 + 2.04894e-5) * z;
 
     double p = sqrt(pafmath::sqr(x) + pafmath::sqr(y));
 
@@ -73,64 +73,64 @@ Point2f gps2os(const Point2f &pt) {
     // Airy 1830 (OSGB36) ellipsoid
     a = 6377563.396;
     b = 6356256.910;
-    e_sq = (pafmath::sqr(a) - pafmath::sqr(b)) / pafmath::sqr(a);
+    eSq = (pafmath::sqr(a) - pafmath::sqr(b)) / pafmath::sqr(a);
 
     lambda = atan(y / x);
-    phi = atan(z / (p * (1.0 - e_sq)));
+    phi = atan(z / (p * (1.0 - eSq)));
     double lastphi = phi;
 
-    nu = a / sqrt(1.0 - e_sq * pafmath::sqr(sin(phi)));
+    nu = a / sqrt(1.0 - eSq * pafmath::sqr(sin(phi)));
     do {
-        phi = atan((z + e_sq * nu * sin(phi)) / p);
+        phi = atan((z + eSq * nu * sin(phi)) / p);
     } while (fabs(lastphi - phi) > 1e-6);
 
     // now, it's on the ellipsoid, project it onto the OSGB36 grid:
 
     // E_0 easting of true origin                400 000m
-    double E_0 = 400000;
+    double e0 = 400000;
     // N_0 northing of true origin              -100 000m
-    double N_0 = -100000;
+    double n0 = -100000;
     // F_0 scaling factor on central meridian    0.9996012717
-    double F_0 = 0.9996012717;
+    double f0 = 0.9996012717;
     // lambda_0 longitude of true origin         -2.0 radians: -0.034906585039886591538473815369772
-    double lambda_0 = -0.034906585039886591538473815369772;
+    double lambda0 = -0.034906585039886591538473815369772;
     // phi_0 latitude of true origin             49.0 radians:
-    double phi_0 = 0.85521133347722149269260847655942;
+    double phi0 = 0.85521133347722149269260847655942;
 
-    nu = a * F_0 * pow((1 - e_sq * pafmath::sqr(sin(phi))), -0.5);
+    nu = a * f0 * pow((1 - eSq * pafmath::sqr(sin(phi))), -0.5);
 
     double n = (a - b) / (a + b);
-    double rho = a * F_0 * (1.0 - e_sq) * pow((1 - e_sq * pafmath::sqr(sin(phi))), -1.5);
-    double eta_sq = nu / rho - 1;
+    double rho = a * f0 * (1.0 - eSq) * pow((1 - eSq * pafmath::sqr(sin(phi))), -1.5);
+    double etaSq = nu / rho - 1;
 
-    double n_sq = pow(n, 2);
-    double n_cubed = pow(n, 3);
-    double M =
-        b * F_0 *
-        ((1.0 + n + 0.25 * 5 * (n_sq + n_cubed)) * (phi - phi_0) -
-         (3.0 * (n + n_sq + 0.125 * 7 * n_cubed)) * sin(phi - phi_0) * cos(phi + phi_0) +
-         (0.125 * 15.0 * (n_sq + n_cubed)) * sin(2.0 * (phi - phi_0)) * cos(2.0 * (phi + phi_0)) -
-         (35.0 / 24.0 * n_cubed) * sin(3.0 * (phi - phi_0)) * cos(3.0 * (phi + phi_0)));
-    double I = M + N_0;
-    double II = 0.5 * nu * sin(phi) * cos(phi);
+    double nSq = pow(n, 2);
+    double nCubed = pow(n, 3);
+    double m =
+        b * f0 *
+        ((1.0 + n + 0.25 * 5 * (nSq + nCubed)) * (phi - phi0) -
+         (3.0 * (n + nSq + 0.125 * 7 * nCubed)) * sin(phi - phi0) * cos(phi + phi0) +
+         (0.125 * 15.0 * (nSq + nCubed)) * sin(2.0 * (phi - phi0)) * cos(2.0 * (phi + phi0)) -
+         (35.0 / 24.0 * nCubed) * sin(3.0 * (phi - phi0)) * cos(3.0 * (phi + phi0)));
+    double i = m + n0;
+    double ii = 0.5 * nu * sin(phi) * cos(phi);
     double tanphi = tan(phi);
-    double III =
-        nu * sin(phi) * pow(cos(phi), 3.0) * (5.0 - pafmath::sqr(tanphi) + 9.0 * eta_sq) / 24.0;
-    double IIIA = nu * sin(phi) * pow(cos(phi), 5.0) *
+    double iii =
+        nu * sin(phi) * pow(cos(phi), 3.0) * (5.0 - pafmath::sqr(tanphi) + 9.0 * etaSq) / 24.0;
+    double iiia = nu * sin(phi) * pow(cos(phi), 5.0) *
                   (61.0 - 58.0 * pafmath::sqr(tanphi) + pow(tanphi, 4.0)) / 720.0;
-    double IV = nu * cos(phi);
-    double V = nu * pow(cos(phi), 3.0) * (nu / rho - pafmath::sqr(tanphi)) / 6.0;
-    double VI = nu * pow(cos(phi), 5.0) *
-                (5.0 - 18.0 * pafmath::sqr(tanphi) + pow(tanphi, 4) + 14.0 * eta_sq -
-                 58.0 * pafmath::sqr(tanphi) * eta_sq) /
+    double iv = nu * cos(phi);
+    double v = nu * pow(cos(phi), 3.0) * (nu / rho - pafmath::sqr(tanphi)) / 6.0;
+    double vi = nu * pow(cos(phi), 5.0) *
+                (5.0 - 18.0 * pafmath::sqr(tanphi) + pow(tanphi, 4) + 14.0 * etaSq -
+                 58.0 * pafmath::sqr(tanphi) * etaSq) /
                 120.0;
 
-    double E = E_0 + IV * (lambda - lambda_0) + V * pow((lambda - lambda_0), 3) +
-               VI * pow((lambda - lambda_0), 5);
-    double N = I + II * pow((lambda - lambda_0), 2) + III * pow((lambda - lambda_0), 4) +
-               IIIA * pow((lambda - lambda_0), 6);
+    double e = e0 + iv * (lambda - lambda0) + v * pow((lambda - lambda0), 3) +
+               vi * pow((lambda - lambda0), 5);
+    double nn = i + ii * pow((lambda - lambda0), 2) + iii * pow((lambda - lambda0), 4) +
+                iiia * pow((lambda - lambda0), 6);
 
-    return Point2f(E, N);
+    return Point2f(e, nn);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -712,42 +712,42 @@ void Poly::add_line_segment(const Line &l) {
         // traverse the tree to the insertion point
         //   you'll just have to take my word for it that the next line
         //   gives you the correct position to insert
-        int cut_level = bitcount(m_line_segments - 1) - 2;
+        int cutLevel = bitcount(m_line_segments - 1) - 2;
 
-        if (cut_level < 0) {
+        if (cutLevel < 0) {
             // replace the root node
 
-            QtRegion new_region = runion(QtRegion(*m_p_root), QtRegion(*leaf));
-            RegionTree *new_root = new RegionTreeBranch(new_region, *m_p_root, *leaf);
-            m_p_root = new_root;
+            QtRegion newRegion = runion(QtRegion(*m_p_root), QtRegion(*leaf));
+            RegionTree *newRoot = new RegionTreeBranch(newRegion, *m_p_root, *leaf);
+            m_p_root = newRoot;
         } else {
             RegionTree *here = m_p_root;
-            for (int i = 0; i < cut_level; i++) {
+            for (int i = 0; i < cutLevel; i++) {
                 here = here->m_p_right;
             }
 
             // cut and insert
 
-            RegionTree &insertion_point = here->right();
+            RegionTree &insertionPoint = here->right();
 
-            QtRegion new_region = runion(QtRegion(insertion_point), QtRegion(*leaf));
+            QtRegion newRegion = runion(QtRegion(insertionPoint), QtRegion(*leaf));
 
-            RegionTree *new_node = new RegionTreeBranch(new_region, insertion_point, *leaf);
+            RegionTree *newNode = new RegionTreeBranch(newRegion, insertionPoint, *leaf);
 
-            here->m_p_right = new_node;
+            here->m_p_right = newNode;
 
             // traverse up tree unioning regions
             // (saving data by not recording parents!)
             // Note must be '>=' to catch current root node --- I really stuffed up earlier with
             // '>'!
-            while (cut_level >= 0) {
+            while (cutLevel >= 0) {
                 here = m_p_root;
-                for (int j = 0; j < cut_level; j++) {
+                for (int j = 0; j < cutLevel; j++) {
                     here = here->m_p_right;
                 }
                 here->m_p_region =
                     new Line(runion(QtRegion(here->left()), QtRegion(here->right())));
-                cut_level--;
+                cutLevel--;
             }
         }
     }
@@ -818,40 +818,40 @@ void Poly::destroy_region_tree() {
         return;
     }
 
-    std::vector<RegionTree *> del_node_list;
-    std::vector<short> del_node_dir;
+    std::vector<RegionTree *> delNodeList;
+    std::vector<short> delNodeDir;
 
-    del_node_list.push_back(m_p_root);
+    delNodeList.push_back(m_p_root);
 
     do {
-        RegionTree *current_node = del_node_list.back();
+        RegionTree *currentNode = delNodeList.back();
 
-        if (current_node->m_p_left == current_node && current_node->m_p_right == current_node) {
+        if (currentNode->m_p_left == currentNode && currentNode->m_p_right == currentNode) {
 
-            delete current_node;
-            del_node_list.pop_back();
+            delete currentNode;
+            delNodeList.pop_back();
 
-            if (del_node_list.size() > 0) {
-                if (del_node_dir.back() == 0) {
-                    del_node_list.back()->m_p_left = del_node_list.back();
-                    del_node_dir.pop_back();
+            if (delNodeList.size() > 0) {
+                if (delNodeDir.back() == 0) {
+                    delNodeList.back()->m_p_left = delNodeList.back();
+                    delNodeDir.pop_back();
                 } else {
-                    del_node_list.back()->m_p_right = del_node_list.back();
-                    del_node_dir.pop_back();
+                    delNodeList.back()->m_p_right = delNodeList.back();
+                    delNodeDir.pop_back();
                 }
             }
         } else {
-            if (current_node->m_p_right == NULL) {
-                current_node->m_p_right = current_node;
-            } else if (current_node->m_p_right != current_node) {
-                del_node_list.push_back(current_node->m_p_right);
-                del_node_dir.push_back(1);
+            if (currentNode->m_p_right == NULL) {
+                currentNode->m_p_right = currentNode;
+            } else if (currentNode->m_p_right != currentNode) {
+                delNodeList.push_back(currentNode->m_p_right);
+                delNodeDir.push_back(1);
             } else {
-                del_node_list.push_back(current_node->m_p_left);
-                del_node_dir.push_back(0);
+                delNodeList.push_back(currentNode->m_p_left);
+                delNodeDir.push_back(0);
             }
         }
-    } while (del_node_list.size() > 0);
+    } while (delNodeList.size() > 0);
 
     m_p_root = NULL;
 }
@@ -867,16 +867,16 @@ bool Poly::contains(const Point2f &p) {
     Line l(p, Point2f(get_bounding_box().top_right.x + get_bounding_box().width(),
                       get_bounding_box().top_right.y + get_bounding_box().height()));
 
-    int double_n;
+    int doubleN;
 
     // note, touching intersections count 1/2
     try {
-        double_n = intersections(*(m_p_root), l);
+        doubleN = intersections(*(m_p_root), l);
     } catch (int) {
         throw 1; // throws if on edge
     }
 
-    if (double_n % 2 == 0 && double_n % 4 != 0) {
+    if (doubleN % 2 == 0 && doubleN % 4 != 0) {
         return true;
     }
 

@@ -15,19 +15,19 @@ AnalysisResult VGAAngular::run(Communicator *comm) {
         comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
     }
 
-    std::string mean_depth_col_text = getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH,    //
-                                                          m_radius, m_map.getRegion());  //
-    std::string total_detph_col_text = getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH,  //
-                                                           m_radius, m_map.getRegion()); //
-    std::string count_col_text = getColumnWithRadius(Column::ANGULAR_NODE_COUNT,         //
-                                                     m_radius, m_map.getRegion());       //
+    std::string meanDepthColText = getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH,    //
+                                                       m_radius, m_map.getRegion());  //
+    std::string totalDetphColText = getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH,  //
+                                                        m_radius, m_map.getRegion()); //
+    std::string countColText = getColumnWithRadius(Column::ANGULAR_NODE_COUNT,        //
+                                                   m_radius, m_map.getRegion());      //
 
-    AnalysisResult result({mean_depth_col_text, total_detph_col_text, count_col_text},
+    AnalysisResult result({meanDepthColText, totalDetphColText, countColText},
                           attributes.getNumRows());
 
-    int mean_depth_col = result.getColumnIndex(mean_depth_col_text);
-    int count_col = result.getColumnIndex(count_col_text);
-    int total_depth_col = result.getColumnIndex(total_detph_col_text);
+    int meanDepthCol = result.getColumnIndex(meanDepthColText);
+    int countCol = result.getColumnIndex(countColText);
+    int totalDepthCol = result.getColumnIndex(totalDetphColText);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const auto refs = getRefVector(analysisData);
@@ -53,11 +53,11 @@ AnalysisResult VGAAngular::run(Communicator *comm) {
         std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
 
         if (totalNodes > 0) {
-            result.setValue(ad0.m_attributeDataRow, mean_depth_col,
+            result.setValue(ad0.m_attributeDataRow, meanDepthCol,
                             float(double(totalAngle) / double(totalNodes)));
         }
-        result.setValue(ad0.m_attributeDataRow, total_depth_col, totalAngle);
-        result.setValue(ad0.m_attributeDataRow, count_col, float(totalNodes));
+        result.setValue(ad0.m_attributeDataRow, totalDepthCol, totalAngle);
+        result.setValue(ad0.m_attributeDataRow, countCol, float(totalNodes));
 
         count++; // <- increment count
 

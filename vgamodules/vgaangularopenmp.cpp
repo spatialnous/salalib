@@ -45,14 +45,14 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
     int count = 0;
 
-    std::vector<DataPoint> col_data(attributes.getNumRows());
+    std::vector<DataPoint> colData(attributes.getNumRows());
 
-    int i, N = int(attributes.getNumRows());
+    int i, n = int(attributes.getNumRows());
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif
-    for (i = 0; i < N; i++) {
+    for (i = 0; i < n; i++) {
         if (m_gates_only) {
 #if defined(_OPENMP)
 #pragma omp critical
@@ -61,7 +61,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
             continue;
         }
 
-        DataPoint &dp = col_data[i];
+        DataPoint &dp = colData[i];
 
         std::vector<AnalysisData> analysisData;
         analysisData.reserve(m_map.getAttributeTable().getNumRows());
@@ -113,25 +113,25 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
     }
 
     // n.b. these must be entered in alphabetical order to preserve col indexing:
-    std::string mean_depth_col_text = getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH,    //
-                                                          m_radius, m_map.getRegion());  //
-    std::string total_detph_col_text = getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH,  //
-                                                           m_radius, m_map.getRegion()); //
-    std::string count_col_text = getColumnWithRadius(Column::ANGULAR_NODE_COUNT,         //
-                                                     m_radius, m_map.getRegion());       //
+    std::string meanDepthColText = getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH,    //
+                                                       m_radius, m_map.getRegion());  //
+    std::string totalDetphColText = getColumnWithRadius(Column::ANGULAR_TOTAL_DEPTH,  //
+                                                        m_radius, m_map.getRegion()); //
+    std::string countColText = getColumnWithRadius(Column::ANGULAR_NODE_COUNT,        //
+                                                   m_radius, m_map.getRegion());      //
 
-    AnalysisResult result({mean_depth_col_text, total_detph_col_text, count_col_text},
+    AnalysisResult result({meanDepthColText, totalDetphColText, countColText},
                           attributes.getNumRows());
 
-    int mean_depth_col = result.getColumnIndex(mean_depth_col_text.c_str());
-    int total_depth_col = result.getColumnIndex(total_detph_col_text.c_str());
-    int count_col = result.getColumnIndex(count_col_text.c_str());
+    int meanDepthCol = result.getColumnIndex(meanDepthColText.c_str());
+    int totalDepthCol = result.getColumnIndex(totalDetphColText.c_str());
+    int countCol = result.getColumnIndex(countColText.c_str());
 
-    auto dataIter = col_data.begin();
+    auto dataIter = colData.begin();
     for (size_t i = 0; i < attributes.getNumRows(); i++) {
-        result.setValue(i, mean_depth_col, dataIter->mean_depth);
-        result.setValue(i, total_depth_col, dataIter->total_depth);
-        result.setValue(i, count_col, dataIter->count);
+        result.setValue(i, meanDepthCol, dataIter->mean_depth);
+        result.setValue(i, totalDepthCol, dataIter->total_depth);
+        result.setValue(i, countCol, dataIter->count);
         dataIter++;
     }
 

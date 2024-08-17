@@ -16,22 +16,22 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
         comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
     }
 
-    std::string mspa_col_text = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE,    //
-                                                    m_radius, m_map.getRegion());               //
-    std::string mspl_col_text = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_DISTANCE, //
-                                                    m_radius, m_map.getRegion());               //
-    std::string dist_col_text = getColumnWithRadius(Column::METRIC_MEAN_STRAIGHT_LINE_DISTANCE, //
-                                                    m_radius, m_map.getRegion());               //
-    std::string count_col_text = getColumnWithRadius(Column::METRIC_NODE_COUNT,                 //
-                                                     m_radius, m_map.getRegion());              //
+    std::string mspaColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE,    //
+                                                  m_radius, m_map.getRegion());               //
+    std::string msplColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_DISTANCE, //
+                                                  m_radius, m_map.getRegion());               //
+    std::string distColText = getColumnWithRadius(Column::METRIC_MEAN_STRAIGHT_LINE_DISTANCE, //
+                                                  m_radius, m_map.getRegion());               //
+    std::string countColText = getColumnWithRadius(Column::METRIC_NODE_COUNT,                 //
+                                                   m_radius, m_map.getRegion());              //
 
-    AnalysisResult result({mspa_col_text, mspl_col_text, dist_col_text, count_col_text},
+    AnalysisResult result({mspaColText, msplColText, distColText, countColText},
                           attributes.getNumRows());
 
-    int mspa_col = result.getColumnIndex(mspa_col_text);
-    int mspl_col = result.getColumnIndex(mspl_col_text);
-    int dist_col = result.getColumnIndex(dist_col_text);
-    int count_col = result.getColumnIndex(count_col_text);
+    int mspaCol = result.getColumnIndex(mspaColText);
+    int msplCol = result.getColumnIndex(msplColText);
+    int distCol = result.getColumnIndex(distColText);
+    int countCol = result.getColumnIndex(countColText);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const auto refs = getRefVector(analysisData);
@@ -53,13 +53,13 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
         auto [totalDepth, totalAngle, euclidDepth, totalNodes] =
             traverseSum(analysisData, graph, refs, m_radius, ad0);
 
-        result.setValue(ad0.m_attributeDataRow, mspa_col,                 //
+        result.setValue(ad0.m_attributeDataRow, mspaCol,                  //
                         float(double(totalAngle) / double(totalNodes)));  //
-        result.setValue(ad0.m_attributeDataRow, mspl_col,                 //
+        result.setValue(ad0.m_attributeDataRow, msplCol,                  //
                         float(double(totalDepth) / double(totalNodes)));  //
-        result.setValue(ad0.m_attributeDataRow, dist_col,                 //
+        result.setValue(ad0.m_attributeDataRow, distCol,                  //
                         float(double(euclidDepth) / double(totalNodes))); //
-        result.setValue(ad0.m_attributeDataRow, count_col,                //
+        result.setValue(ad0.m_attributeDataRow, countCol,                 //
                         float(totalNodes));                               //
 
         count++; // <- increment count

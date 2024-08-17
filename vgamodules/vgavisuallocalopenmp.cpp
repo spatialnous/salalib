@@ -47,7 +47,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
 
     count = 0;
 
-    std::vector<DataPoint> col_data(filled.size());
+    std::vector<DataPoint> colData(filled.size());
 
     if (comm) {
         qtimer(atime, 0);
@@ -57,16 +57,16 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
     }
     std::vector<std::set<int>> hoods(filled.size());
 
-    int i, N = int(filled.size());
+    int i, n = int(filled.size());
     std::map<PixelRef, int> refToFilled;
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         refToFilled.insert(std::make_pair(filled[size_t(i)], i));
     }
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
         Point &p = m_map.getPoint(filled[size_t(i)]);
         std::set<PixelRef> neighbourhood;
 #if defined(_OPENMP)
@@ -83,9 +83,9 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif
-    for (i = 0; i < N; ++i) {
+    for (i = 0; i < n; ++i) {
 
-        DataPoint &dp = col_data[i];
+        DataPoint &dp = colData[i];
 
         Point &p = m_map.getPoint(filled[size_t(i)]);
         if ((p.contextfilled() && !filled[size_t(i)].iseven())) {
@@ -147,21 +147,21 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
 
     AnalysisResult result;
 
-    std::string cluster_col_name = Column::VISUAL_CLUSTERING_COEFFICIENT;
-    std::string control_col_name = Column::VISUAL_CONTROL;
-    std::string controllability_col_name = Column::VISUAL_CONTROLLABILITY;
-    int cluster_col = attributes.insertOrResetColumn(cluster_col_name);
-    result.addAttribute(cluster_col_name);
-    int control_col = attributes.insertOrResetColumn(control_col_name);
-    result.addAttribute(control_col_name);
-    int controllability_col = attributes.insertOrResetColumn(controllability_col_name);
-    result.addAttribute(controllability_col_name);
+    std::string clusterColName = Column::VISUAL_CLUSTERING_COEFFICIENT;
+    std::string controlColName = Column::VISUAL_CONTROL;
+    std::string controllabilityColName = Column::VISUAL_CONTROLLABILITY;
+    int clusterCol = attributes.insertOrResetColumn(clusterColName);
+    result.addAttribute(clusterColName);
+    int controlCol = attributes.insertOrResetColumn(controlColName);
+    result.addAttribute(controlColName);
+    int controllabilityCol = attributes.insertOrResetColumn(controllabilityColName);
+    result.addAttribute(controllabilityColName);
 
-    auto dataIter = col_data.begin();
+    auto dataIter = colData.begin();
     for (auto row : rows) {
-        row->setValue(cluster_col, dataIter->cluster);
-        row->setValue(control_col, dataIter->control);
-        row->setValue(controllability_col, dataIter->controllability);
+        row->setValue(clusterCol, dataIter->cluster);
+        row->setValue(controlCol, dataIter->control);
+        row->setValue(controllabilityCol, dataIter->controllability);
         dataIter++;
     }
 

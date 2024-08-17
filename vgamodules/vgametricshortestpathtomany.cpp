@@ -115,18 +115,18 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
 
     for (PixelRef pixelTo : m_pixelsTo) {
         const std::vector<int> &pixelToCols = columns[pixelTo];
-        int path_col = pixelToCols[0];
-        int dist_col = pixelToCols[1];
-        int linked_col = pixelToCols[2];
-        int order_col = pixelToCols[3];
+        int pathCol = pixelToCols[0];
+        int distCol = pixelToCols[1];
+        int linkedCol = pixelToCols[2];
+        int orderCol = pixelToCols[3];
         auto pixelToParent = parents.find(pixelTo);
         if (pixelToParent != parents.end()) {
 
             int counter = 0;
             int linePixelCounter = 0;
             auto *lad = &analysisData.at(getRefIdx(refs, pixelTo));
-            result.setValue(lad->m_attributeDataRow, order_col, counter);
-            result.setValue(lad->m_attributeDataRow, dist_col, lad->m_dist);
+            result.setValue(lad->m_attributeDataRow, orderCol, counter);
+            result.setValue(lad->m_attributeDataRow, distCol, lad->m_dist);
 
             counter++;
             auto currParent = pixelToParent;
@@ -134,21 +134,21 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
             while (currParent != parents.end()) {
                 auto &ad = analysisData.at(getRefIdx(refs, currParent->second));
                 auto &p = ad.m_point;
-                result.setValue(ad.m_attributeDataRow, order_col, counter);
-                result.setValue(ad.m_attributeDataRow, dist_col, ad.m_dist);
+                result.setValue(ad.m_attributeDataRow, orderCol, counter);
+                result.setValue(ad.m_attributeDataRow, distCol, ad.m_dist);
 
                 if (!p.getMergePixel().empty() && p.getMergePixel() == currParent->first) {
-                    result.setValue(ad.m_attributeDataRow, linked_col, 1);
-                    result.setValue(lad->m_attributeDataRow, linked_col, 1);
+                    result.setValue(ad.m_attributeDataRow, linkedCol, 1);
+                    result.setValue(lad->m_attributeDataRow, linkedCol, 1);
                 } else {
                     // apparently we can't just have 1 number in the whole column
-                    result.setValue(ad.m_attributeDataRow, linked_col, 0);
+                    result.setValue(ad.m_attributeDataRow, linkedCol, 0);
                     auto pixelated = m_map.quickPixelateLine(currParent->first, currParent->second);
                     for (auto &linePixel : pixelated) {
                         auto *linePixelRow = attributes.getRowPtr(AttributeKey(linePixel));
                         if (linePixelRow != 0) {
                             auto &lpad = analysisData.at(getRefIdx(refs, linePixel));
-                            result.setValue(lpad.m_attributeDataRow, path_col, linePixelCounter++);
+                            result.setValue(lpad.m_attributeDataRow, pathCol, linePixelCounter++);
                         }
                     }
                 }

@@ -17,9 +17,9 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                            Column::VISUAL_CONTROLLABILITY},
                           m_map.getAttributeTable().getNumRows());
 
-    auto cluster_col = result.getColumnIndex(Column::VISUAL_CLUSTERING_COEFFICIENT);
-    auto control_col = result.getColumnIndex(Column::VISUAL_CONTROL);
-    auto controllability_col = result.getColumnIndex(Column::VISUAL_CONTROLLABILITY);
+    auto clusterCol = result.getColumnIndex(Column::VISUAL_CLUSTERING_COEFFICIENT);
+    auto controlCol = result.getColumnIndex(Column::VISUAL_CONTROL);
+    auto controllabilityCol = result.getColumnIndex(Column::VISUAL_CONTROLLABILITY);
 
     const auto refs = getRefVector(m_map.getAttributeTable());
 
@@ -48,15 +48,15 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                 float control = 0.0f;
 
                 for (size_t i = 0; i < neighbourhood.size(); i++) {
-                    int intersect_size = 0, retro_size = 0;
+                    int intersectSize = 0, retroSize = 0;
                     auto &retpt = m_map.getPoint(neighbourhood[i]);
                     if (retpt.filled() && retpt.hasNode()) {
                         retpt.getNode().first();
                         while (!retpt.getNode().is_tail()) {
-                            retro_size++;
+                            retroSize++;
                             if (std::find(neighbourhood.begin(), neighbourhood.end(),
                                           retpt.getNode().cursor()) != neighbourhood.end()) {
-                                intersect_size++;
+                                intersectSize++;
                             }
                             if (std::find(totalneighbourhood.begin(), totalneighbourhood.end(),
                                           retpt.getNode().cursor()) == totalneighbourhood.end()) {
@@ -66,26 +66,26 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                             }
                             retpt.getNode().next();
                         }
-                        control += 1.0f / float(retro_size);
-                        cluster += intersect_size;
+                        control += 1.0f / float(retroSize);
+                        cluster += intersectSize;
                     }
                 }
 
                 if (neighbourhood.size() > 1) {
-                    result.setValue(         //
-                        refIdx, cluster_col, //
+                    result.setValue(        //
+                        refIdx, clusterCol, //
                         float(cluster /
                               double(neighbourhood.size() * (neighbourhood.size() - 1.0))));
-                    result.setValue(         //
-                        refIdx, control_col, //
+                    result.setValue(        //
+                        refIdx, controlCol, //
                         float(control));
-                    result.setValue(                 //
-                        refIdx, controllability_col, //
+                    result.setValue(                //
+                        refIdx, controllabilityCol, //
                         float(double(neighbourhood.size()) / double(totalneighbourhood.size())));
                 } else {
-                    result.setValue(refIdx, cluster_col, -1);
-                    result.setValue(refIdx, control_col, -1);
-                    result.setValue(refIdx, controllability_col, -1);
+                    result.setValue(refIdx, clusterCol, -1);
+                    result.setValue(refIdx, controlCol, -1);
+                    result.setValue(refIdx, controllabilityCol, -1);
                 }
                 count++; // <- increment count
             }

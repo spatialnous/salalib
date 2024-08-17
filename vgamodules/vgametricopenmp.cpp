@@ -34,14 +34,14 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
     int count = 0;
 
-    std::vector<DataPoint> col_data(attributes.getNumRows());
+    std::vector<DataPoint> colData(attributes.getNumRows());
 
-    int i, N = int(attributes.getNumRows());
+    int i, n = int(attributes.getNumRows());
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif
-    for (i = 0; i < N; i++) {
+    for (i = 0; i < n; i++) {
         if (m_gates_only) {
 #if defined(_OPENMP)
 #pragma omp critical
@@ -50,7 +50,7 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
             continue;
         }
 
-        DataPoint &dp = col_data[i];
+        DataPoint &dp = colData[i];
 
         std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
         const auto graph = getGraph(analysisData, refs, false);
@@ -91,29 +91,29 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
             }
     }
 
-    std::string mspa_col_text = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE,    //
-                                                    m_radius, m_map.getRegion());               //
-    std::string mspl_col_text = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_DISTANCE, //
-                                                    m_radius, m_map.getRegion());               //
-    std::string dist_col_text = getColumnWithRadius(Column::METRIC_MEAN_STRAIGHT_LINE_DISTANCE, //
-                                                    m_radius, m_map.getRegion());               //
-    std::string count_col_text = getColumnWithRadius(Column::METRIC_NODE_COUNT,                 //
-                                                     m_radius, m_map.getRegion());              //
+    std::string mspaColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE,    //
+                                                  m_radius, m_map.getRegion());               //
+    std::string msplColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_DISTANCE, //
+                                                  m_radius, m_map.getRegion());               //
+    std::string distColText = getColumnWithRadius(Column::METRIC_MEAN_STRAIGHT_LINE_DISTANCE, //
+                                                  m_radius, m_map.getRegion());               //
+    std::string countColText = getColumnWithRadius(Column::METRIC_NODE_COUNT,                 //
+                                                   m_radius, m_map.getRegion());              //
 
-    AnalysisResult result({mspa_col_text, mspl_col_text, dist_col_text, count_col_text},
+    AnalysisResult result({mspaColText, msplColText, distColText, countColText},
                           attributes.getNumRows());
 
-    int mspa_col = result.getColumnIndex(mspa_col_text);
-    int mspl_col = result.getColumnIndex(mspl_col_text);
-    int dist_col = result.getColumnIndex(dist_col_text);
-    int count_col = result.getColumnIndex(count_col_text);
+    int mspaCol = result.getColumnIndex(mspaColText);
+    int msplCol = result.getColumnIndex(msplColText);
+    int distCol = result.getColumnIndex(distColText);
+    int countCol = result.getColumnIndex(countColText);
 
-    auto dataIter = col_data.begin();
+    auto dataIter = colData.begin();
     for (size_t i = 0; i < attributes.getNumRows(); i++) {
-        result.setValue(i, mspa_col, dataIter->mspa);
-        result.setValue(i, mspl_col, dataIter->mspl);
-        result.setValue(i, dist_col, dataIter->dist);
-        result.setValue(i, count_col, dataIter->count);
+        result.setValue(i, mspaCol, dataIter->mspa);
+        result.setValue(i, msplCol, dataIter->mspl);
+        result.setValue(i, distCol, dataIter->dist);
+        result.setValue(i, countCol, dataIter->count);
         dataIter++;
     }
 

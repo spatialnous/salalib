@@ -12,25 +12,25 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
 
     // custom linking costs from the attribute table
     std::string linkMetricCostColName = Column::LINK_METRIC_COST;
-    std::string path_col_name = Column::METRIC_SHORTEST_PATH;
-    std::string dist_col_name = Column::METRIC_SHORTEST_PATH_DISTANCE;
-    std::string linked_col_name = Column::METRIC_SHORTEST_PATH_LINKED;
-    std::string order_col_name = Column::METRIC_SHORTEST_PATH_ORDER;
-    std::string zone_col_name = Column::METRIC_SHORTEST_PATH_VISUAL_ZONE;
-    std::string metricZone_col_name = Column::METRIC_SHORTEST_PATH_METRIC_ZONE;
-    std::string invMetricZone_col_name = Column::METRIC_SHORTEST_PATH_INV_METRIC_ZONE;
+    std::string pathColName = Column::METRIC_SHORTEST_PATH;
+    std::string distColName = Column::METRIC_SHORTEST_PATH_DISTANCE;
+    std::string linkedColName = Column::METRIC_SHORTEST_PATH_LINKED;
+    std::string orderColName = Column::METRIC_SHORTEST_PATH_ORDER;
+    std::string zoneColName = Column::METRIC_SHORTEST_PATH_VISUAL_ZONE;
+    std::string metricZoneColName = Column::METRIC_SHORTEST_PATH_METRIC_ZONE;
+    std::string invMetricZoneColName = Column::METRIC_SHORTEST_PATH_INV_METRIC_ZONE;
 
-    AnalysisResult result({path_col_name, dist_col_name, linked_col_name, order_col_name,
-                           zone_col_name, metricZone_col_name, invMetricZone_col_name},
+    AnalysisResult result({pathColName, distColName, linkedColName, orderColName, zoneColName,
+                           metricZoneColName, invMetricZoneColName},
                           attributes.getNumRows());
 
-    int path_col = result.getColumnIndex(path_col_name);
-    int dist_col = result.getColumnIndex(dist_col_name);
-    int linked_col = result.getColumnIndex(linked_col_name);
-    int order_col = result.getColumnIndex(order_col_name);
-    int visualZoneColIdx = result.getColumnIndex(zone_col_name);
-    int metricZoneColIdx = result.getColumnIndex(metricZone_col_name);
-    int invMetricZoneColIdx = result.getColumnIndex(invMetricZone_col_name);
+    int pathCol = result.getColumnIndex(pathColName);
+    int distCol = result.getColumnIndex(distColName);
+    int linkedCol = result.getColumnIndex(linkedColName);
+    int orderCol = result.getColumnIndex(orderColName);
+    int visualZoneColIdx = result.getColumnIndex(zoneColName);
+    int metricZoneColIdx = result.getColumnIndex(metricZoneColName);
+    int invMetricZoneColIdx = result.getColumnIndex(invMetricZoneColName);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
     const auto refs = getRefVector(analysisData);
@@ -43,7 +43,7 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
 
         for (auto &adt : analysisData) {
             adt.m_visitedFromBin = 0;
-            result.setValue(adt.m_attributeDataRow, dist_col, adt.m_dist);
+            result.setValue(adt.m_attributeDataRow, distCol, adt.m_dist);
             adt.m_dist = -1.0f;
         }
 
@@ -51,11 +51,11 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
 
         for (const PixelRef &pixelFrom : m_pixelsFrom) {
             auto adt = analysisData.at(getRefIdx(refs, pixelFrom));
-            result.setValue(adt.m_attributeDataRow, dist_col, 0);
+            result.setValue(adt.m_attributeDataRow, distCol, 0);
         }
 
         auto *lad = &analysisData.at(getRefIdx(refs, m_pixelTo));
-        result.setValue(lad->m_attributeDataRow, order_col, counter);
+        result.setValue(lad->m_attributeDataRow, orderCol, counter);
 
         counter++;
         auto currParent = pixelToParent;
@@ -63,20 +63,20 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
         while (currParent != parents.end()) {
             auto &ad = analysisData.at(getRefIdx(refs, currParent->second));
             auto &p = ad.m_point;
-            result.setValue(ad.m_attributeDataRow, order_col, counter);
+            result.setValue(ad.m_attributeDataRow, orderCol, counter);
 
             if (!p.getMergePixel().empty() && p.getMergePixel() == currParent->first) {
-                result.setValue(ad.m_attributeDataRow, linked_col, 1);
-                result.setValue(lad->m_attributeDataRow, linked_col, 1);
+                result.setValue(ad.m_attributeDataRow, linkedCol, 1);
+                result.setValue(lad->m_attributeDataRow, linkedCol, 1);
             } else {
                 // apparently we can't just have 1 number in the whole column
-                result.setValue(ad.m_attributeDataRow, linked_col, 0);
+                result.setValue(ad.m_attributeDataRow, linkedCol, 0);
                 auto pixelated = m_map.quickPixelateLine(currParent->first, currParent->second);
                 for (auto &linePixel : pixelated) {
                     auto *linePixelRow = attributes.getRowPtr(AttributeKey(linePixel));
                     if (linePixelRow != 0) {
                         auto &lpad = analysisData.at(getRefIdx(refs, linePixel));
-                        result.setValue(lpad.m_attributeDataRow, path_col, linePixelCounter++);
+                        result.setValue(lpad.m_attributeDataRow, pathCol, linePixelCounter++);
                         result.setValue(lpad.m_attributeDataRow, visualZoneColIdx, 0);
                         result.setValue(lpad.m_attributeDataRow, metricZoneColIdx, 0);
                         result.setValue(lpad.m_attributeDataRow, invMetricZoneColIdx, 1);

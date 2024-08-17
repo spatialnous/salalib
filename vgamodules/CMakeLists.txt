@@ -10,7 +10,6 @@ target_sources(salalib
        ivgaangular.h
        ivgametric.h
        ivgavisual.h
-       ianalysisvgametric.h
        vgaisovist.cpp
        vgaangular.cpp
        vgametric.cpp

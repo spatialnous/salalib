@@ -43,17 +43,17 @@ class IVGAVisual : public IVGATraversing {
 
         AnalysisColumn sd(analysisData.size());
 
-        std::vector<ADRefVector<AnalysisData>> search_tree;
-        search_tree.push_back(ADRefVector<AnalysisData>());
+        std::vector<ADRefVector<AnalysisData>> searchTree;
+        searchTree.push_back(ADRefVector<AnalysisData>());
         for (auto &sel : originRefs) {
             auto &ad = analysisData.at(getRefIdx(refs, sel));
-            search_tree.back().push_back({ad, 0});
+            searchTree.back().push_back({ad, 0});
         }
 
         size_t level = 0;
-        while (search_tree[level].size()) {
-            search_tree.push_back(ADRefVector<AnalysisData>());
-            const auto &searchTreeAtLevel = search_tree[level];
+        while (searchTree[level].size()) {
+            searchTree.push_back(ADRefVector<AnalysisData>());
+            const auto &searchTreeAtLevel = searchTree[level];
             for (auto currLvlIter = searchTreeAtLevel.rbegin();
                  currLvlIter != searchTreeAtLevel.rend(); currLvlIter++) {
                 auto &ad = std::get<0>(*currLvlIter).get();
@@ -61,7 +61,7 @@ class IVGAVisual : public IVGATraversing {
                 if (p.filled() && ad.m_visitedFromBin != ~0) {
                     sd.setValue(ad.m_attributeDataRow, float(level), keepStats);
                     if (!p.contextfilled() || ad.m_ref.iseven() || level == 0) {
-                        extractUnseen(graph.at(ad.m_attributeDataRow), search_tree[level + 1]);
+                        extractUnseen(graph.at(ad.m_attributeDataRow), searchTree[level + 1]);
                         ad.m_visitedFromBin = ~0;
                         if (!p.getMergePixel().empty()) {
                             auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
@@ -69,7 +69,7 @@ class IVGAVisual : public IVGATraversing {
                             if (p2misc != ~0) {
                                 sd.setValue(ad2.m_attributeDataRow, float(level), keepStats);
                                 extractUnseen(graph.at(ad2.m_attributeDataRow),
-                                              search_tree[level + 1]);
+                                              searchTree[level + 1]);
                                 p2misc = ~0;
                             }
                         }
@@ -91,15 +91,15 @@ class IVGAVisual : public IVGATraversing {
         int totalDepth = 0;
         int totalNodes = 0;
 
-        std::vector<ADRefVector<AnalysisData>> search_tree;
-        search_tree.push_back(ADRefVector<AnalysisData>());
-        search_tree.back().push_back({ad0, 0});
+        std::vector<ADRefVector<AnalysisData>> searchTree;
+        searchTree.push_back(ADRefVector<AnalysisData>());
+        searchTree.back().push_back({ad0, 0});
 
         std::vector<int> distribution;
         size_t level = 0;
-        while (search_tree[level].size()) {
-            search_tree.push_back(ADRefVector<AnalysisData>());
-            const auto &searchTreeAtLevel = search_tree[level];
+        while (searchTree[level].size()) {
+            searchTree.push_back(ADRefVector<AnalysisData>());
+            const auto &searchTreeAtLevel = searchTree[level];
             distribution.push_back(0);
             for (auto currLvlIter = searchTreeAtLevel.rbegin();
                  currLvlIter != searchTreeAtLevel.rend(); currLvlIter++) {
@@ -112,13 +112,13 @@ class IVGAVisual : public IVGATraversing {
                     distribution.back() += 1;
                     if ((int)radius == -1 || (level < static_cast<size_t>(radius) &&
                                               (!p.contextfilled() || ad3.m_ref.iseven()))) {
-                        extractUnseen(graph.at(ad3.m_attributeDataRow), search_tree[level + 1]);
+                        extractUnseen(graph.at(ad3.m_attributeDataRow), searchTree[level + 1]);
                         ad3.m_visitedFromBin = ~0;
                         if (!p.getMergePixel().empty()) {
                             auto &ad4 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
                             if (ad4.m_visitedFromBin != ~0) {
                                 extractUnseen(graph.at(ad4.m_attributeDataRow),
-                                              search_tree[level + 1]);
+                                              searchTree[level + 1]);
                                 ad4.m_visitedFromBin = ~0;
                             }
                         }
@@ -126,7 +126,7 @@ class IVGAVisual : public IVGATraversing {
                         ad3.m_visitedFromBin = ~0;
                     }
                 }
-                search_tree[level].pop_back();
+                searchTree[level].pop_back();
             }
             level++;
         }
@@ -138,18 +138,18 @@ class IVGAVisual : public IVGATraversing {
                  const std::vector<ADRefVector<AnalysisData>> &graph,
                  const std::vector<PixelRef> &refs, PixelRef sourceRef, PixelRef targetRef) {
 
-        std::vector<ADRefVector<AnalysisData>> search_tree;
-        search_tree.push_back(ADRefVector<AnalysisData>());
+        std::vector<ADRefVector<AnalysisData>> searchTree;
+        searchTree.push_back(ADRefVector<AnalysisData>());
 
-        search_tree.back().push_back({analysisData.at(getRefIdx(refs, sourceRef)), 0});
+        searchTree.back().push_back({analysisData.at(getRefIdx(refs, sourceRef)), 0});
 
         size_t level = 0;
         std::map<PixelRef, PixelRef> parents;
         bool pixelFound = false;
-        while (search_tree[level].size()) {
-            search_tree.push_back(ADRefVector<AnalysisData>());
-            auto &currLevelPix = search_tree[level];
-            auto &nextLevelPix = search_tree[level + 1];
+        while (searchTree[level].size()) {
+            searchTree.push_back(ADRefVector<AnalysisData>());
+            auto &currLevelPix = searchTree[level];
+            auto &nextLevelPix = searchTree[level + 1];
             for (auto iter = currLevelPix.rbegin(); iter != currLevelPix.rend(); ++iter) {
                 auto &ad = std::get<0>(*iter).get();
                 ADRefVector<AnalysisData> newPixels;

@@ -74,18 +74,18 @@ class IVGAAngular : public IVGATraversing {
 
         AnalysisColumn angularDepthCol(analysisData.size());
 
-        std::set<AngularSearchData> search_list; // contains root point
+        std::set<AngularSearchData> searchList; // contains root point
 
         for (auto &sel : originRefs) {
             auto &ad = analysisData.at(getRefIdx(refs, sel));
-            search_list.insert(AngularSearchData(ad, 0.0f, std::nullopt));
+            searchList.insert(AngularSearchData(ad, 0.0f, std::nullopt));
             ad.m_cumAngle = 0.0f;
         }
 
         // note that m_misc is used in a different manner to analyseGraph / PointDepth
         // here it marks the node as used in calculation only
-        while (search_list.size()) {
-            auto internalNode = search_list.extract(search_list.begin());
+        while (searchList.size()) {
+            auto internalNode = searchList.extract(searchList.begin());
             AngularSearchData here = std::move(internalNode.value());
             if (radius != -1.0 && here.angle > radius) {
                 break;
@@ -95,7 +95,7 @@ class IVGAAngular : public IVGATraversing {
             auto &p = ad.m_point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
             if (p.filled() && ad.m_visitedFromBin != ~0) {
-                extractAngular(graph.at(ad.m_attributeDataRow), search_list, m_map, here);
+                extractAngular(graph.at(ad.m_attributeDataRow), searchList, m_map, here);
                 ad.m_visitedFromBin = ~0;
                 angularDepthCol.setValue(ad.m_attributeDataRow, float(ad.m_cumAngle), keepStats);
                 if (!p.getMergePixel().empty()) {
@@ -104,7 +104,7 @@ class IVGAAngular : public IVGATraversing {
                         ad2.m_cumAngle = ad.m_cumAngle;
                         angularDepthCol.setValue(ad2.m_attributeDataRow, float(ad2.m_cumAngle),
                                                  keepStats);
-                        extractAngular(graph.at(ad2.m_attributeDataRow), search_list, m_map,
+                        extractAngular(graph.at(ad2.m_attributeDataRow), searchList, m_map,
                                        AngularSearchData(ad2, here.angle, std::nullopt));
                         ad2.m_visitedFromBin = ~0;
                     }
@@ -122,11 +122,11 @@ class IVGAAngular : public IVGATraversing {
         float totalAngle = 0.0f;
         int totalNodes = 0;
 
-        std::set<AngularSearchData> search_list;
-        search_list.insert(AngularSearchData(ad0, 0.0f, std::nullopt));
+        std::set<AngularSearchData> searchList;
+        searchList.insert(AngularSearchData(ad0, 0.0f, std::nullopt));
         ad0.m_cumAngle = 0.0f;
-        while (search_list.size()) {
-            auto internalNode = search_list.extract(search_list.begin());
+        while (searchList.size()) {
+            auto internalNode = searchList.extract(searchList.begin());
             AngularSearchData here = std::move(internalNode.value());
 
             if (radius != -1.0 && here.angle > radius) {
@@ -137,13 +137,13 @@ class IVGAAngular : public IVGATraversing {
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps'
             // left in
             if (p.filled() && ad1.m_visitedFromBin != ~0) {
-                extractAngular(graph.at(ad1.m_attributeDataRow), search_list, m_map, here);
+                extractAngular(graph.at(ad1.m_attributeDataRow), searchList, m_map, here);
                 ad1.m_visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
                     if (ad2.m_visitedFromBin != ~0) {
                         ad2.m_cumAngle = ad1.m_cumAngle;
-                        extractAngular(graph.at(ad2.m_attributeDataRow), search_list, m_map,
+                        extractAngular(graph.at(ad2.m_attributeDataRow), searchList, m_map,
                                        AngularSearchData(ad2, here.angle, std::nullopt));
                         ad2.m_visitedFromBin = ~0;
                     }
@@ -163,18 +163,18 @@ class IVGAAngular : public IVGATraversing {
                  const PixelRef targetRef) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
-        std::set<AngularSearchData> search_list; // contains root point
+        std::set<AngularSearchData> searchList; // contains root point
         for (const auto &sourceRef : sourceRefs) {
             auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
-            search_list.insert(AngularSearchData(ad, 0.0f, std::nullopt));
+            searchList.insert(AngularSearchData(ad, 0.0f, std::nullopt));
             ad.m_cumAngle = 0.0f;
         }
         // note that m_misc is used in a different manner to analyseGraph / PointDepth
         // here it marks the node as used in calculation only
         std::map<PixelRef, PixelRef> parents;
         bool pixelFound = false;
-        while (search_list.size()) {
-            auto internalNode = search_list.extract(search_list.begin());
+        while (searchList.size()) {
+            auto internalNode = searchList.extract(searchList.begin());
             auto here = std::move(internalNode.value());
 
             auto &ad = here.pixel;
@@ -210,7 +210,7 @@ class IVGAAngular : public IVGATraversing {
                 }
             }
             if (!pixelFound)
-                search_list.insert(newPixels.begin(), newPixels.end());
+                searchList.insert(newPixels.begin(), newPixels.end());
         }
         return std::make_tuple(parents);
     }

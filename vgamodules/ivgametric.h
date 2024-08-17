@@ -97,17 +97,17 @@ class IVGAMetric : public IVGATraversing {
             euclidDistCol = AnalysisColumn(analysisData.size(), 0);
         }
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
-        std::set<MetricSearchData> search_list; // contains root point
+        std::set<MetricSearchData> searchList; // contains root point
 
         for (auto &sel : originRefs) {
             auto &ad = analysisData.at(getRefIdx(refs, sel));
-            search_list.insert(MetricSearchData(ad, 0.0f, std::nullopt));
+            searchList.insert(MetricSearchData(ad, 0.0f, std::nullopt));
         }
 
         // note that m_misc is used in a different manner to analyseGraph / PointDepth
         // here it marks the node as used in calculation only
-        while (search_list.size()) {
-            auto internalNode = search_list.extract(search_list.begin());
+        while (searchList.size()) {
+            auto internalNode = searchList.extract(searchList.begin());
             MetricSearchData here = std::move(internalNode.value());
 
             if (radius != -1.0 && (here.dist * m_map.getSpacing()) > radius) {
@@ -118,7 +118,7 @@ class IVGAMetric : public IVGATraversing {
             auto &p = ad1.m_point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
             if (p.filled() && ad1.m_visitedFromBin != ~0) {
-                extractMetric(graph.at(ad1.m_attributeDataRow), search_list, m_map, here);
+                extractMetric(graph.at(ad1.m_attributeDataRow), searchList, m_map, here);
                 ad1.m_visitedFromBin = ~0;
                 pathAngleCol.setValue(ad1.m_attributeDataRow, float(ad1.m_cumAngle), keepStats);
                 pathLengthCol.setValue(ad1.m_attributeDataRow,
@@ -148,7 +148,7 @@ class IVGAMetric : public IVGATraversing {
                                 keepStats);
                         }
                         extractMetric(
-                            graph.at(ad2.m_attributeDataRow), search_list, m_map,
+                            graph.at(ad2.m_attributeDataRow), searchList, m_map,
                             MetricSearchData(ad2, here.dist + ad2.m_linkCost, std::nullopt));
                         ad2.m_visitedFromBin = ~0;
                     }
@@ -165,19 +165,19 @@ class IVGAMetric : public IVGATraversing {
                  const PixelRef targetRef) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
-        std::set<MetricSearchData> search_list; // contains root point
+        std::set<MetricSearchData> searchList; // contains root point
 
         for (const auto &sourceRef : sourceRefs) {
             auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
-            search_list.insert(MetricSearchData(ad, 0.0f, std::nullopt));
+            searchList.insert(MetricSearchData(ad, 0.0f, std::nullopt));
         }
 
         // note that m_misc is used in a different manner to analyseGraph / PointDepth
         // here it marks the node as used in calculation only
         std::map<PixelRef, PixelRef> parents;
         bool pixelFound = false;
-        while (search_list.size()) {
-            auto internalNode = search_list.extract(search_list.begin());
+        while (searchList.size()) {
+            auto internalNode = searchList.extract(searchList.begin());
             auto here = std::move(internalNode.value());
 
             auto &ad = here.pixel;
@@ -214,7 +214,7 @@ class IVGAMetric : public IVGATraversing {
                 }
             }
             if (!pixelFound)
-                search_list.insert(newPixels.begin(), newPixels.end());
+                searchList.insert(newPixels.begin(), newPixels.end());
         }
         return std::make_tuple(parents);
     }
@@ -227,18 +227,18 @@ class IVGAMetric : public IVGATraversing {
 
         std::set<PixelRef> targetRefsConsumable = targetRefs;
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
-        std::set<MetricSearchData> search_list; // contains root point
+        std::set<MetricSearchData> searchList; // contains root point
 
         for (const auto &sourceRef : sourceRefs) {
             auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
-            search_list.insert(MetricSearchData(ad, 0.0f, std::nullopt));
+            searchList.insert(MetricSearchData(ad, 0.0f, std::nullopt));
         }
 
         // note that m_misc is used in a different manner to analyseGraph / PointDepth
         // here it marks the node as used in calculation only
         std::map<PixelRef, PixelRef> parents;
-        while (search_list.size()) {
-            auto internalNode = search_list.extract(search_list.begin());
+        while (searchList.size()) {
+            auto internalNode = searchList.extract(searchList.begin());
             auto here = std::move(internalNode.value());
 
             auto &ad = here.pixel;
@@ -276,7 +276,7 @@ class IVGAMetric : public IVGATraversing {
                 }
             }
             if (targetRefsConsumable.size() != 0)
-                search_list.insert(newPixels.begin(), newPixels.end());
+                searchList.insert(newPixels.begin(), newPixels.end());
         }
         return std::make_tuple(parents);
     }
@@ -294,11 +294,11 @@ class IVGAMetric : public IVGATraversing {
         float euclidDepth = 0.0f;
         int totalNodes = 0;
 
-        std::set<MetricSearchData> search_list;
-        search_list.insert(MetricSearchData(ad0, 0.0f, std::nullopt));
+        std::set<MetricSearchData> searchList;
+        searchList.insert(MetricSearchData(ad0, 0.0f, std::nullopt));
 
-        while (search_list.size()) {
-            auto internalNode = search_list.extract(search_list.begin());
+        while (searchList.size()) {
+            auto internalNode = searchList.extract(searchList.begin());
             MetricSearchData here = std::move(internalNode.value());
 
             if (radius != -1.0 && (here.dist * m_map.getSpacing()) > radius) {
@@ -308,13 +308,13 @@ class IVGAMetric : public IVGATraversing {
             auto &p = ad1.m_point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
             if (p.filled() && ad1.m_visitedFromBin != ~0) {
-                extractMetric(graph.at(ad1.m_attributeDataRow), search_list, m_map, here);
+                extractMetric(graph.at(ad1.m_attributeDataRow), searchList, m_map, here);
                 ad1.m_visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
                     if (ad2.m_visitedFromBin != ~0) {
                         ad2.m_cumAngle = ad1.m_cumAngle;
-                        extractMetric(graph.at(ad2.m_attributeDataRow), search_list, m_map,
+                        extractMetric(graph.at(ad2.m_attributeDataRow), searchList, m_map,
                                       MetricSearchData(ad2, here.dist, std::nullopt));
                         ad2.m_visitedFromBin = ~0;
                     }

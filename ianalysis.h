@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "salalib/analysisresult.h"
+#include "analysisresult.h"
 
 #include "genlib/comm.h"
 

@@ -10,14 +10,20 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
 
     auto &attributes = m_map.getAttributeTable();
 
-    AnalysisResult result({Column::VISUAL_SHORTEST_PATH, Column::VISUAL_SHORTEST_PATH_LINKED,
-                           Column::VISUAL_SHORTEST_PATH_ORDER, Column::VISUAL_SHORTEST_PATH_ZONE},
+    AnalysisResult result({Column::VISUAL_SHORTEST_PATH,             //
+                           Column::VISUAL_SHORTEST_PATH_LINKED,      //
+                           Column::VISUAL_SHORTEST_PATH_ORDER,       //
+                           Column::VISUAL_SHORTEST_PATH_VISUAL_ZONE, //
+                           Column::VISUAL_SHORTEST_PATH_METRIC_ZONE, //
+                           Column::VISUAL_SHORTEST_PATH_INV_METRIC_ZONE},
                           attributes.getNumRows());
 
-    int path_col = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH);
-    int linked_col = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH_LINKED);
-    int order_col = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH_ORDER);
-    int zone_col = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH_ZONE);
+    int pathColIdx = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH);
+    int linkedColIdx = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH_LINKED);
+    int orderColIdx = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH_ORDER);
+    int visualZoneColIdx = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH_VISUAL_ZONE);
+    int metricZoneColIdx = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH_METRIC_ZONE);
+    int invMetricZoneColIdx = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH_INV_METRIC_ZONE);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const auto refs = getRefVector(analysisData);
@@ -36,44 +42,66 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
         int counter = 0;
         auto *lad = &analysisData.at(getRefIdx(refs, m_pixelTo));
 
-        result.setValue(lad->m_attributeDataRow, order_col, counter);
-        result.setValue(lad->m_attributeDataRow, linked_col, 0);
+        result.setValue(lad->m_attributeDataRow, orderColIdx, counter);
+        result.setValue(lad->m_attributeDataRow, linkedColIdx, 0);
+
         counter++;
         auto currParent = pixelToParent;
+        counter++;
 
         while (currParent != parents.end()) {
             auto &ad = analysisData.at(getRefIdx(refs, currParent->second));
             auto &p = ad.m_point;
-            result.setValue(ad.m_attributeDataRow, order_col, counter);
+            result.setValue(ad.m_attributeDataRow, orderColIdx, counter);
 
             if (!p.getMergePixel().empty() && p.getMergePixel() == currParent->first) {
-                result.setValue(ad.m_attributeDataRow, linked_col, 1);
-                result.setValue(lad->m_attributeDataRow, linked_col, 1);
+                result.setValue(ad.m_attributeDataRow, linkedColIdx, 1);
+                result.setValue(lad->m_attributeDataRow, linkedColIdx, 1);
             } else {
                 // apparently we can't just have 1 number in the whole column
-                result.setValue(ad.m_attributeDataRow, linked_col, 0);
+                result.setValue(ad.m_attributeDataRow, linkedColIdx, 0);
                 auto pixelated = m_map.quickPixelateLine(currParent->first, currParent->second);
                 for (auto &linePixel : pixelated) {
-                    auto *linePixelRow = attributes.getRowPtr(AttributeKey(linePixel));
-                    if (linePixelRow != 0) {
-                        auto &lpad = analysisData.at(getRefIdx(refs, linePixel));
-                        result.setValue(lad->m_attributeDataRow, path_col, linePixelCounter++);
+                    auto linePixelRow = getRefIdxOptional(refs, linePixel);
+                    if (linePixelRow.has_value()) {
+                        auto &lpad = analysisData.at(*linePixelRow);
+                        result.setValue(lpad.m_attributeDataRow, pathColIdx, linePixelCounter++);
+                        result.setValue(lpad.m_attributeDataRow, visualZoneColIdx, 0);
+                        result.setValue(lpad.m_attributeDataRow, metricZoneColIdx, 0);
+                        result.setValue(lpad.m_attributeDataRow, invMetricZoneColIdx, 1);
 
                         ADRefVector<AnalysisData> newPixels;
                         extractUnseen(graph.at(lpad.m_attributeDataRow), newPixels);
                         for (auto &zonePixel : newPixels) {
                             auto &zad = std::get<0>(zonePixel).get();
-                            auto *zonePixelRow = attributes.getRowPtr(AttributeKey(zad.m_ref));
-                            if (zonePixelRow != 0) {
-                                if (zonePixelRow->getValue(zone_col) == -1) {
-                                    result.setValue(zad.m_attributeDataRow, zone_col,
-                                                    linePixelCounter);
-                                }
-                                zad.m_visitedFromBin = 0;
-                                //                                zad.m_extent = zonePixel;
+                            if (result.getValue(zad.m_attributeDataRow, visualZoneColIdx) == -1) {
+                                result.setValue(zad.m_attributeDataRow, visualZoneColIdx,
+                                                linePixelCounter);
                             }
+
+                            double zoneLineDist = dist(linePixel, zad.m_ref) * m_map.getSpacing();
+                            {
+                                float currMetricZonePixelVal =
+                                    result.getValue(zad.m_attributeDataRow, metricZoneColIdx);
+                                if (currMetricZonePixelVal == -1 ||
+                                    zoneLineDist < currMetricZonePixelVal) {
+                                    result.setValue(zad.m_attributeDataRow, metricZoneColIdx,
+                                                    zoneLineDist);
+                                }
+                            }
+                            {
+                                float currInvMetricZonePixelVal =
+                                    result.getValue(zad.m_attributeDataRow, invMetricZoneColIdx);
+                                if (currInvMetricZonePixelVal == -1 ||
+                                    1.0f / (zoneLineDist + 1) > currInvMetricZonePixelVal) {
+                                    result.setValue(zad.m_attributeDataRow, invMetricZoneColIdx,
+                                                    1.0f / (zoneLineDist + 1));
+                                }
+                            }
+                            zad.m_visitedFromBin = 0;
                         }
                     }
+                    std::cout << std::endl;
                 }
             }
 
@@ -87,31 +115,3 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
 
     return result;
 }
-
-// void VGAVisualShortestPath::extractUnseen(Node &node, PixelRefVector &pixels, const PointMap
-// &map,
-//                                           std::vector<AnalysisData> &analysisData) {
-//     for (int i = 0; i < 32; i++) {
-//         Bin &bin = node.bin(i);
-//         for (auto pixVec : bin.m_pixel_vecs) {
-//             for (PixelRef pix = pixVec.start();
-//                  pix.col(bin.m_dir) <= pixVec.end().col(bin.m_dir);) {
-//                 auto &ad = analysisData.at(map.getPixelRefIdx(pix));
-//                 int &misc = ad.m_misc;
-//                 PixelRef &extent = ad.m_extent;
-//                 if (misc == 0) {
-//                     pixels.push_back(pix);
-//                     misc |= (1 << i);
-//                 }
-//                 // 10.2.02 revised --- diagonal was breaking this as it was extent in diagonal or
-//                 // horizontal
-//                 if (!(bin.m_dir & PixelRef::DIAGONAL)) {
-//                     if (extent.col(bin.m_dir) >= pixVec.end().col(bin.m_dir))
-//                         break;
-//                     extent.col(bin.m_dir) = pixVec.end().col(bin.m_dir);
-//                 }
-//                 pix.move(bin.m_dir);
-//             }
-//         }
-//     }
-// }

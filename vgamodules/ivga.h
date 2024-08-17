@@ -28,6 +28,7 @@ class IVGA : public IAnalysis {
 
         float m_dist = 0.0f;
         float m_cumAngle = 0.0f;
+        float m_linkCost = 0.0f;
         AnalysisData(const Point &point, const PixelRef ref, size_t attributeDataRow,
                      int visitedFromBin, PixelRef diagonalExtent, float dist, float cumAngle)
             : m_point(point), m_ref(ref), m_attributeDataRow(attributeDataRow),
@@ -61,6 +62,14 @@ class IVGA : public IAnalysis {
         auto it = std::find(refs.begin(), refs.end(), ref);
         if (it == refs.end())
             throw std::out_of_range("Ref " + std::to_string(ref) + " not in refs");
+        return static_cast<size_t>(std::distance(refs.begin(), it));
+    }
+
+    std::optional<size_t> getRefIdxOptional(const std::vector<PixelRef> &refs,
+                                            const PixelRef ref) const {
+        auto it = std::find(refs.begin(), refs.end(), ref);
+        if (it == refs.end())
+            return std::nullopt;
         return static_cast<size_t>(std::distance(refs.begin(), it));
     }
 

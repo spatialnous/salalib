@@ -6,43 +6,31 @@
 
 #pragma once
 
-#include "ianalysisvgametric.h"
+#include "ivgametric.h"
 #include "salalib/pixelref.h"
 #include "salalib/pointmap.h"
 
-class VGAMetricShortestPath : public IAnalysisVGAMetric {
+class VGAMetricShortestPath : public IVGAMetric {
   private:
-    PointMap &m_map;
     std::set<PixelRef> m_pixelsFrom;
     PixelRef m_pixelTo;
 
-    struct MetricPoint {
-        Point *m_point = nullptr;
-        float m_linkCost = 0;
-        float m_dist = -1.0f;
-        float m_cumdist = -1.0f;
-        bool m_unseen = true;
-    };
-    MetricPoint &getMetricPoint(depthmapX::ColumnMatrix<MetricPoint> &metricPoints, PixelRef ref) {
-        return (metricPoints(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x)));
-    }
-    void extractMetric(Node n, depthmapX::ColumnMatrix<MetricPoint> &metricPoints,
-                       std::set<MetricTriple> &pixels, PointMap *pointdata,
-                       const MetricTriple &curs);
-
   public:
     struct Column {
-        inline static const std::string                                      //
-            LINK_METRIC_COST = "Link Metric Cost",                           //
-            METRIC_SHORTEST_PATH = "Metric Shortest Path",                   //
-            METRIC_SHORTEST_PATH_DISTANCE = "Metric Shortest Path Distance", //
-            METRIC_SHORTEST_PATH_LINKED = "Metric Shortest Path Linked",     //
-            METRIC_SHORTEST_PATH_ORDER = "Metric Shortest Path Order";       //
+        inline static const std::string                                                    //
+            LINK_METRIC_COST = "Link Metric Cost",                                         //
+            METRIC_SHORTEST_PATH = "Metric Shortest Path",                                 //
+            METRIC_SHORTEST_PATH_DISTANCE = "Metric Shortest Path Distance",               //
+            METRIC_SHORTEST_PATH_LINKED = "Metric Shortest Path Linked",                   //
+            METRIC_SHORTEST_PATH_ORDER = "Metric Shortest Path Order",                     //
+            METRIC_SHORTEST_PATH_VISUAL_ZONE = "Metric Shortest Path Visual Zone",         //
+            METRIC_SHORTEST_PATH_METRIC_ZONE = "Metric Shortest Path Metric Zone",         //
+            METRIC_SHORTEST_PATH_INV_METRIC_ZONE = "Metric Shortest Path Inv Metric Zone"; //
     };
 
   public:
     std::string getAnalysisName() const override { return "Metric Shortest Path"; }
     AnalysisResult run(Communicator *) override;
     VGAMetricShortestPath(PointMap &map, std::set<PixelRef> pixelsFrom, PixelRef pixelTo)
-        : m_map(map), m_pixelsFrom(pixelsFrom), m_pixelTo(pixelTo) {}
+        : IVGAMetric(map), m_pixelsFrom(pixelsFrom), m_pixelTo(pixelTo) {}
 };

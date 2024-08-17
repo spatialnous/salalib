@@ -6,16 +6,16 @@
 
 #pragma once
 
+#include "ivgavisual.h"
+
 #include "genlib/stringutils.h"
-#include "salalib/ianalysis.h"
 #include "salalib/pixelref.h"
 #include "salalib/pointmap.h"
 
 #include "genlib/simplematrix.h"
 
-class VGAVisualGlobalOpenMP : public IAnalysis {
+class VGAVisualGlobalOpenMP : public IVGAVisual {
   private:
-    PointMap &m_map;
     double m_radius;
     bool m_gatesOnly;
     std::optional<int> m_limitToThreads;
@@ -54,7 +54,8 @@ class VGAVisualGlobalOpenMP : public IAnalysis {
     VGAVisualGlobalOpenMP(PointMap &map, double radius, bool gatesOnly,
                           std::optional<int> limitToThreads = std::nullopt,
                           bool forceCommUpdatesMasterThread = false)
-        : m_map(map), m_radius(radius), m_gatesOnly(gatesOnly), m_limitToThreads(limitToThreads),
+        : IVGAVisual(map), m_radius(radius), m_gatesOnly(gatesOnly),
+          m_limitToThreads(limitToThreads),
           m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
     std::string getAnalysisName() const override { return "Global Visibility Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *) override;

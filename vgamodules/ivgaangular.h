@@ -27,9 +27,9 @@ class IVGAAngular : public IVGATraversing {
     struct AngularSearchData {
         AnalysisData &pixel;
         float angle;
-        std::optional<const AnalysisData> lastpixel = std::nullopt;
+        std::optional<PixelRef> lastpixel;
         AngularSearchData(AnalysisData &p, float a = 0.0f,
-                          std::optional<const AnalysisData> lp = std::nullopt)
+                          std::optional<PixelRef> lp = std::nullopt)
             : pixel(p), angle(a), lastpixel(lp) {}
         bool operator==(const AngularSearchData &mp2) const {
             return (angle == mp2.angle && pixel.m_ref == mp2.pixel.m_ref);
@@ -53,14 +53,13 @@ class IVGAAngular : public IVGATraversing {
                 auto &ad = std::get<0>(conn).get();
                 if (ad.m_visitedFromBin == 0) {
                     // n.b. dmap v4.06r now sets angle in range 0 to 4 (1 = 90 degrees)
-                    float ang =
-                        (!curs.lastpixel.has_value())
-                            ? 0.0f
-                            : (float)(angle(ad.m_ref, curs.pixel.m_ref, curs.lastpixel->m_ref) /
-                                      (M_PI * 0.5));
+                    float ang = (!curs.lastpixel.has_value())
+                                    ? 0.0f
+                                    : (float)(angle(ad.m_ref, curs.pixel.m_ref, *curs.lastpixel) /
+                                              (M_PI * 0.5));
                     if (ad.m_cumAngle == -1.0 || curs.angle + ang < ad.m_cumAngle) {
                         ad.m_cumAngle = curs.pixel.m_cumAngle + ang;
-                        pixels.insert(AngularSearchData(ad, ad.m_cumAngle, curs.pixel));
+                        pixels.insert(AngularSearchData(ad, ad.m_cumAngle, curs.pixel.m_ref));
                     }
                 }
             }
@@ -160,12 +159,12 @@ class IVGAAngular : public IVGATraversing {
     std::tuple<std::map<PixelRef, PixelRef>>
     traverseFind(std::vector<AnalysisData> &analysisData,
                  const std::vector<ADRefVector<AnalysisData>> &graph,
-                 const std::vector<PixelRef> &refs, const PixelRef sourceRef,
+                 const std::vector<PixelRef> &refs, const std::set<PixelRef> sourceRefs,
                  const PixelRef targetRef) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
         std::set<AngularSearchData> search_list; // contains root point
-        {
+        for (const auto &sourceRef : sourceRefs) {
             auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
             search_list.insert(AngularSearchData(ad, 0.0f, std::nullopt));
             ad.m_cumAngle = 0.0f;
@@ -176,7 +175,7 @@ class IVGAAngular : public IVGATraversing {
         bool pixelFound = false;
         while (search_list.size()) {
             auto internalNode = search_list.extract(search_list.begin());
-            AngularSearchData here = std::move(internalNode.value());
+            auto here = std::move(internalNode.value());
 
             auto &ad = here.pixel;
             auto &p = ad.m_point;

@@ -16,11 +16,13 @@ class VGAAngularShortestPath : public IVGAAngular {
 
   public:
     struct Column {
-        inline static const std::string                                    //
-            ANGULAR_SHORTEST_PATH = "Angular Shortest Path",               //
-            ANGULAR_SHORTEST_PATH_LINKED = "Angular Shortest Path Linked", //
-            ANGULAR_SHORTEST_PATH_ORDER = "Angular Shortest Path Order",   //
-            ANGULAR_SHORTEST_PATH_ZONE = "Angular Shortest Path Zone";     //
+        inline static const std::string                                                      //
+            ANGULAR_SHORTEST_PATH = "Angular Shortest Path",                                 //
+            ANGULAR_SHORTEST_PATH_LINKED = "Angular Shortest Path Linked",                   //
+            ANGULAR_SHORTEST_PATH_ORDER = "Angular Shortest Path Order",                     //
+            ANGULAR_SHORTEST_PATH_VISUAL_ZONE = "Angular Shortest Path Visual Zone",         //
+            ANGULAR_SHORTEST_PATH_METRIC_ZONE = "Angular Shortest Path Metric Zone",         //
+            ANGULAR_SHORTEST_PATH_INV_METRIC_ZONE = "Angular Shortest Path Inv Metric Zone"; //
     };
 
   public:

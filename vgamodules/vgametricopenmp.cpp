@@ -30,19 +30,7 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
         comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
     }
 
-    std::vector<AnalysisData> globalAnalysisData;
-    globalAnalysisData.reserve(m_map.getAttributeTable().getNumRows());
-
-    size_t rowCounter = 0;
-    for (auto &attRow : attributes) {
-        auto &point = m_map.getPoint(attRow.getKey().value);
-        globalAnalysisData.push_back(AnalysisData(point, attRow.getKey().value, rowCounter, 0,
-                                                  attRow.getKey().value, -1.0f, 0.0f));
-        rowCounter++;
-    }
-
-    const auto refs = getRefVector(globalAnalysisData);
-    const auto graph = getGraph(globalAnalysisData, refs, false);
+    const auto refs = getRefVector(attributes);
 
     int count = 0;
 
@@ -53,7 +41,6 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif
-
     for (i = 0; i < N; i++) {
         if (m_gates_only) {
 #if defined(_OPENMP)
@@ -65,56 +52,13 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
         DataPoint &dp = col_data[i];
 
-        std::vector<AnalysisData> analysisData;
-        analysisData.reserve(m_map.getAttributeTable().getNumRows());
+        std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
+        const auto graph = getGraph(analysisData, refs, false);
 
-        size_t rowCounter = 0;
-        for (auto &attRow : attributes) {
-            auto &point = m_map.getPoint(attRow.getKey().value);
-            analysisData.push_back(AnalysisData(point, attRow.getKey().value, rowCounter, 0,
-                                                attRow.getKey().value, -1.0f, 0.0f));
-            rowCounter++;
-        }
-
-        float euclid_depth = 0.0f;
-        float total_depth = 0.0f;
-        float total_angle = 0.0f;
-        int total_nodes = 0;
-
-        // note that m_misc is used in a different manner to analyseGraph / PointDepth
-        // here it marks the node as used in calculation only
-
-        std::set<MetricSearchData> search_list;
         auto &ad0 = analysisData.at(i);
-        search_list.insert(MetricSearchData(ad0, 0.0f, std::nullopt));
-        while (search_list.size()) {
-            auto internalNode = search_list.extract(search_list.begin());
-            MetricSearchData here = std::move(internalNode.value());
 
-            if (int(m_radius) != -1 && double(here.dist) * m_map.getSpacing() > m_radius) {
-                break;
-            }
-            auto &ad1 = here.pixel;
-            auto &p = here.pixel.m_point;
-            // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
-            if (p.filled() && here.pixel.m_visitedFromBin != ~0) {
-                extractMetric(graph.at(ad1.m_attributeDataRow), search_list, m_map, here);
-                here.pixel.m_visitedFromBin = ~0;
-                if (!p.getMergePixel().empty()) {
-                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
-                    if (ad2.m_visitedFromBin != ~0) {
-                        ad2.m_cumAngle = here.pixel.m_cumAngle;
-                        extractMetric(graph.at(ad2.m_attributeDataRow), search_list, m_map,
-                                      MetricSearchData(ad2, here.dist, std::nullopt));
-                        ad2.m_visitedFromBin = ~0;
-                    }
-                }
-                total_depth += here.dist * float(m_map.getSpacing());
-                total_angle += here.pixel.m_cumAngle;
-                euclid_depth += float(m_map.getSpacing() * dist(here.pixel.m_ref, ad0.m_ref));
-                total_nodes += 1;
-            }
-        }
+        auto [totalDepth, totalAngle, euclidDepth, totalNodes] =
+            traverseSum(analysisData, graph, refs, m_radius, ad0);
 
         if (m_legacyWriteMiscs) {
             // kept to achieve parity in binary comparison with old versions
@@ -123,10 +67,10 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
             ad0.m_point.m_dummy_cumangle = ad0.m_cumAngle;
         }
 
-        dp.mspa = float(double(total_angle) / double(total_nodes));
-        dp.mspl = float(double(total_depth) / double(total_nodes));
-        dp.dist = float(double(euclid_depth) / double(total_nodes));
-        dp.count = float(total_nodes);
+        dp.mspa = float(double(totalAngle) / double(totalNodes));
+        dp.mspl = float(double(totalDepth) / double(totalNodes));
+        dp.dist = float(double(euclidDepth) / double(totalNodes));
+        dp.count = float(totalNodes);
 
 #if defined(_OPENMP)
 #pragma omp atomic

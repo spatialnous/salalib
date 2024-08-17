@@ -29,22 +29,23 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
     const auto graph = getGraph(analysisData, refs, true);
 
     bool keepStats = true;
-    AnalysisColumn pathAngleCol, pathLengthCol, distCol;
+    AnalysisColumn pathAngleCol, pathLengthCol, euclidDistCol;
     {
         auto traversalResult = traverse(analysisData, graph, refs, -1, m_originRefs, keepStats);
         pathAngleCol = std::move(traversalResult[0]);
         pathLengthCol = std::move(traversalResult[1]);
-        distCol = std::move(traversalResult[2]);
+        euclidDistCol = std::move(traversalResult[2]);
     }
 
     for (size_t i = 0; i < analysisData.size(); i++) {
         result.setValue(i, pathAngleColIdx, pathAngleCol.getValue(i));
         result.setValue(i, pathLengthColIdx, pathLengthCol.getValue(i));
         if (distColIdx.has_value()) {
-            result.setValue(i, *distColIdx, distCol.getValue(i));
+            result.setValue(i, *distColIdx, euclidDistCol.getValue(i));
         }
     }
-    result.columnStats = {pathAngleCol.getStats(), pathLengthCol.getStats(), distCol.getStats()};
+    result.columnStats = {pathAngleCol.getStats(), pathLengthCol.getStats(),
+                          euclidDistCol.getStats()};
 
     result.completed = true;
 

@@ -10,15 +10,24 @@ class IVGAMetric : public IVGATraversing {
   protected:
     IVGAMetric(const PointMap &map) : IVGATraversing(map) {}
 
-    std::vector<AnalysisData> getAnalysisData(const AttributeTable &attributes) {
+    std::vector<AnalysisData>
+    getAnalysisData(const AttributeTable &attributes,
+                    std::optional<std::string> linkCostColumn = std::nullopt) {
         std::vector<AnalysisData> analysisData;
         analysisData.reserve(attributes.getNumRows());
 
+        std::optional<size_t> linkCostIdx = std::nullopt;
+        if (linkCostColumn.has_value() && attributes.hasColumn(*linkCostColumn)) {
+            linkCostIdx = attributes.getColumnIndex(*linkCostColumn);
+        }
         size_t rowCounter = 0;
         for (auto &attRow : attributes) {
             auto &point = m_map.getPoint(attRow.getKey().value);
             analysisData.push_back(AnalysisData(point, attRow.getKey().value, rowCounter, 0,
                                                 attRow.getKey().value, -1.0f, 0.0f));
+            if (linkCostIdx.has_value()) {
+                analysisData.back().m_linkCost = attRow.getRow().getValue(*linkCostIdx);
+            }
             rowCounter++;
         }
         return analysisData;
@@ -82,10 +91,10 @@ class IVGAMetric : public IVGATraversing {
 
         AnalysisColumn pathAngleCol(analysisData.size(), 0), //
             pathLengthCol(analysisData.size(), 0),           //
-            distCol;                                         //
+            euclidDistCol;                                   //
 
         if (originRefs.size() == 1) {
-            distCol = AnalysisColumn(analysisData.size(), 0);
+            euclidDistCol = AnalysisColumn(analysisData.size(), 0);
         }
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
         std::set<MetricSearchData> search_list; // contains root point
@@ -116,7 +125,7 @@ class IVGAMetric : public IVGATraversing {
                                        float(m_map.getSpacing() * here.dist), keepStats);
                 if (originRefs.size() == 1) {
                     // Note: Euclidean distance is currently only calculated from a single point
-                    distCol.setValue(
+                    euclidDistCol.setValue(
                         ad1.m_attributeDataRow,
                         float(m_map.getSpacing() * dist(ad1.m_ref, *originRefs.begin())),
                         keepStats);
@@ -132,19 +141,144 @@ class IVGAMetric : public IVGATraversing {
                         if (originRefs.size() == 1) {
                             // Note: Euclidean distance is currently only calculated from a single
                             // point
-                            distCol.setValue(ad2.m_attributeDataRow,
-                                             float(m_map.getSpacing() *
-                                                   dist(p.getMergePixel(), *originRefs.begin())),
-                                             keepStats);
+                            euclidDistCol.setValue(
+                                ad2.m_attributeDataRow,
+                                float(m_map.getSpacing() *
+                                      dist(p.getMergePixel(), *originRefs.begin())),
+                                keepStats);
                         }
-                        extractMetric(graph.at(ad2.m_attributeDataRow), search_list, m_map,
-                                      MetricSearchData(ad2, here.dist, std::nullopt));
+                        extractMetric(
+                            graph.at(ad2.m_attributeDataRow), search_list, m_map,
+                            MetricSearchData(ad2, here.dist + ad2.m_linkCost, std::nullopt));
                         ad2.m_visitedFromBin = ~0;
                     }
                 }
             }
         }
-        return {pathAngleCol, pathLengthCol, distCol};
+        return {pathAngleCol, pathLengthCol, euclidDistCol};
+    }
+
+    std::tuple<std::map<PixelRef, PixelRef>>
+    traverseFind(std::vector<AnalysisData> &analysisData,
+                 const std::vector<ADRefVector<AnalysisData>> &graph,
+                 const std::vector<PixelRef> &refs, const std::set<PixelRef> sourceRefs,
+                 const PixelRef targetRef) {
+
+        // in order to calculate Penn angle, the MetricPair becomes a metric triple...
+        std::set<MetricSearchData> search_list; // contains root point
+
+        for (const auto &sourceRef : sourceRefs) {
+            auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
+            search_list.insert(MetricSearchData(ad, 0.0f, std::nullopt));
+        }
+
+        // note that m_misc is used in a different manner to analyseGraph / PointDepth
+        // here it marks the node as used in calculation only
+        std::map<PixelRef, PixelRef> parents;
+        bool pixelFound = false;
+        while (search_list.size()) {
+            auto internalNode = search_list.extract(search_list.begin());
+            auto here = std::move(internalNode.value());
+
+            auto &ad = here.pixel;
+            auto &p = ad.m_point;
+            std::set<MetricSearchData> newPixels;
+            std::set<MetricSearchData> mergePixels;
+            if (ad.m_visitedFromBin != ~0 || (here.dist < ad.m_dist)) {
+                extractMetric(graph.at(ad.m_attributeDataRow), newPixels, m_map, here);
+                ad.m_dist = here.dist;
+                ad.m_visitedFromBin = ~0;
+                if (!p.getMergePixel().empty()) {
+                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                    if (ad2.m_visitedFromBin != ~0 || (here.dist + ad2.m_linkCost < ad2.m_dist)) {
+                        ad2.m_dist = here.dist + ad2.m_linkCost;
+
+                        auto newTripleIter =
+                            newPixels.insert(MetricSearchData(ad2, ad2.m_dist, NoPixel));
+                        extractMetric(graph.at(ad2.m_attributeDataRow), mergePixels, m_map,
+                                      *newTripleIter.first);
+                        for (auto &pixel : mergePixels) {
+                            parents[pixel.pixel.m_ref] = p.getMergePixel();
+                        }
+                        ad2.m_visitedFromBin = ~0;
+                    }
+                }
+            }
+            for (auto &pixel : newPixels) {
+                parents[pixel.pixel.m_ref] = here.pixel.m_ref;
+            }
+            newPixels.insert(mergePixels.begin(), mergePixels.end());
+            for (auto &pixel : newPixels) {
+                if (pixel.pixel.m_ref == targetRef) {
+                    pixelFound = true;
+                }
+            }
+            if (!pixelFound)
+                search_list.insert(newPixels.begin(), newPixels.end());
+        }
+        return std::make_tuple(parents);
+    }
+
+    std::tuple<std::map<PixelRef, PixelRef>>
+    traverseFindMany(std::vector<AnalysisData> &analysisData,
+                     const std::vector<ADRefVector<AnalysisData>> &graph,
+                     const std::vector<PixelRef> &refs, const std::set<PixelRef> sourceRefs,
+                     const std::set<PixelRef> targetRefs) {
+
+        std::set<PixelRef> targetRefsConsumable = targetRefs;
+        // in order to calculate Penn angle, the MetricPair becomes a metric triple...
+        std::set<MetricSearchData> search_list; // contains root point
+
+        for (const auto &sourceRef : sourceRefs) {
+            auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
+            search_list.insert(MetricSearchData(ad, 0.0f, std::nullopt));
+        }
+
+        // note that m_misc is used in a different manner to analyseGraph / PointDepth
+        // here it marks the node as used in calculation only
+        std::map<PixelRef, PixelRef> parents;
+        while (search_list.size()) {
+            auto internalNode = search_list.extract(search_list.begin());
+            auto here = std::move(internalNode.value());
+
+            auto &ad = here.pixel;
+            auto &p = ad.m_point;
+            std::set<MetricSearchData> newPixels;
+            std::set<MetricSearchData> mergePixels;
+            if (ad.m_visitedFromBin != ~0 || (here.dist < ad.m_dist)) {
+                extractMetric(graph.at(ad.m_attributeDataRow), newPixels, m_map, here);
+                ad.m_dist = here.dist;
+                ad.m_visitedFromBin = ~0;
+                if (!p.getMergePixel().empty()) {
+                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                    if (ad2.m_visitedFromBin != ~0 || (here.dist + ad2.m_linkCost < ad2.m_dist)) {
+                        ad2.m_dist = here.dist + ad2.m_linkCost;
+
+                        auto newTripleIter =
+                            newPixels.insert(MetricSearchData(ad2, ad2.m_dist, NoPixel));
+                        extractMetric(graph.at(ad2.m_attributeDataRow), mergePixels, m_map,
+                                      *newTripleIter.first);
+                        for (auto &pixel : mergePixels) {
+                            parents[pixel.pixel.m_ref] = p.getMergePixel();
+                        }
+                        ad2.m_visitedFromBin = ~0;
+                    }
+                }
+            }
+            for (auto &pixel : newPixels) {
+                parents[pixel.pixel.m_ref] = here.pixel.m_ref;
+            }
+            newPixels.insert(mergePixels.begin(), mergePixels.end());
+            for (auto &pixel : newPixels) {
+                auto it = targetRefsConsumable.find(pixel.pixel.m_ref);
+                if (it != targetRefsConsumable.end()) {
+                    targetRefsConsumable.erase(it);
+                }
+            }
+            if (targetRefsConsumable.size() != 0)
+                search_list.insert(newPixels.begin(), newPixels.end());
+        }
+        return std::make_tuple(parents);
     }
 
     // This is a slow algorithm, but should give the correct answer

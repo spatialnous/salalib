@@ -6,29 +6,14 @@
 
 #pragma once
 
-#include "ianalysisvgametric.h"
+#include "ivgametric.h"
 #include "salalib/pixelref.h"
 #include "salalib/pointmap.h"
 
-class VGAMetricShortestPathToMany : public IAnalysisVGAMetric {
+class VGAMetricShortestPathToMany : public IVGAMetric {
   private:
-    PointMap &m_map;
     const std::set<PixelRef> m_pixelsFrom;
     const std::set<PixelRef> m_pixelsTo;
-
-    struct MetricPoint {
-        Point *m_point = nullptr;
-        float m_linkCost = 0;
-        float m_dist = -1.0f;
-        float m_cumdist = -1.0f;
-        bool m_unseen = true;
-    };
-    MetricPoint &getMetricPoint(depthmapX::ColumnMatrix<MetricPoint> &metricPoints, PixelRef ref) {
-        return (metricPoints(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x)));
-    }
-    void extractMetric(Node n, depthmapX::ColumnMatrix<MetricPoint> &metricPoints,
-                       std::set<MetricTriple> &pixels, PointMap *pointdata,
-                       const MetricTriple &curs);
 
   public:
     struct Column {
@@ -49,5 +34,5 @@ class VGAMetricShortestPathToMany : public IAnalysisVGAMetric {
     AnalysisResult run(Communicator *) override;
     VGAMetricShortestPathToMany(PointMap &map, std::set<PixelRef> pixelsFrom,
                                 std::set<PixelRef> pixelsTo)
-        : m_map(map), m_pixelsFrom(pixelsFrom), m_pixelsTo(pixelsTo) {}
+        : IVGAMetric(map), m_pixelsFrom(pixelsFrom), m_pixelsTo(pixelsTo) {}
 };

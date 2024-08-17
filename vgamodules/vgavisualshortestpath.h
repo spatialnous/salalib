@@ -16,16 +16,14 @@ class VGAVisualShortestPath : public IVGAVisual {
 
   public:
     struct Column {
-        inline static const std::string                                  //
-            VISUAL_SHORTEST_PATH = "Visual Shortest Path",               //
-            VISUAL_SHORTEST_PATH_LINKED = "Visual Shortest Path Linked", //
-            VISUAL_SHORTEST_PATH_ORDER = "Visual Shortest Path Order",   //
-            VISUAL_SHORTEST_PATH_ZONE = "Visual Shortest Path Zone";     //
+        inline static const std::string                                                    //
+            VISUAL_SHORTEST_PATH = "Visual Shortest Path",                                 //
+            VISUAL_SHORTEST_PATH_LINKED = "Visual Shortest Path Linked",                   //
+            VISUAL_SHORTEST_PATH_ORDER = "Visual Shortest Path Order",                     //
+            VISUAL_SHORTEST_PATH_VISUAL_ZONE = "Visual Shortest Path Visual Zone",         //
+            VISUAL_SHORTEST_PATH_METRIC_ZONE = "Visual Shortest Path Metric Zone",         //
+            VISUAL_SHORTEST_PATH_INV_METRIC_ZONE = "Visual Shortest Path Inv Metric Zone"; //
     };
-
-    //  private:
-    //    void extractUnseen(Node &node, PixelRefVector &pixels, const PointMap &map,
-    //                       std::vector<AnalysisData> &analysisData);
 
   public:
     std::string getAnalysisName() const override { return "Visibility Shortest Path"; }

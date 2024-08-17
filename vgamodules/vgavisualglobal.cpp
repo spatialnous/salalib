@@ -66,8 +66,8 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
 
     size_t count = 0;
 
-    for (auto &ad : analysisData) {
-        if ((ad.m_point.contextfilled() && !ad.m_ref.iseven()) || (m_gates_only)) {
+    for (auto &ad0 : analysisData) {
+        if ((ad0.m_point.contextfilled() && !ad0.m_ref.iseven()) || (m_gates_only)) {
             count++;
             continue;
         }
@@ -77,19 +77,19 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
         }
 
         auto [totalDepth, totalNodes, distribution] =
-            traverseSum(analysisData, graph, refs, m_radius, ad);
+            traverseSum(analysisData, graph, refs, m_radius, ad0);
         // only set to single float precision after divide
         // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of
         // Space
         if (!m_simpleVersion) {
-            result.setValue(ad.m_attributeDataRow, count_col.value(),
+            result.setValue(ad0.m_attributeDataRow, count_col.value(),
                             float(totalNodes)); // note: total nodes includes this one
         }
         // ERROR !!!!!!
         if (totalNodes > 1) {
             double mean_depth = double(totalDepth) / double(totalNodes - 1);
             if (!m_simpleVersion) {
-                result.setValue(ad.m_attributeDataRow, depth_col.value(), float(mean_depth));
+                result.setValue(ad0.m_attributeDataRow, depth_col.value(), float(mean_depth));
             }
             // total nodes > 2 to avoid divide by 0 (was > 3)
             if (totalNodes > 2 && mean_depth > 1.0) {
@@ -99,26 +99,26 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
                 double rra_d = ra / pafmath::dvalue(totalNodes);
                 double rra_p = ra / pafmath::pvalue(totalNodes);
                 double integ_tk = pafmath::teklinteg(totalNodes, totalDepth);
-                result.setValue(ad.m_attributeDataRow, integ_dv_col.value(), float(1.0 / rra_d));
+                result.setValue(ad0.m_attributeDataRow, integ_dv_col.value(), float(1.0 / rra_d));
                 if (!m_simpleVersion) {
-                    result.setValue(ad.m_attributeDataRow, integ_pv_col.value(),
+                    result.setValue(ad0.m_attributeDataRow, integ_pv_col.value(),
                                     float(1.0 / rra_p));
                 }
                 if (totalDepth - totalNodes + 1 > 1) {
                     if (!m_simpleVersion) {
-                        result.setValue(ad.m_attributeDataRow, integ_tk_col.value(),
+                        result.setValue(ad0.m_attributeDataRow, integ_tk_col.value(),
                                         float(integ_tk));
                     }
                 } else {
                     if (!m_simpleVersion) {
-                        result.setValue(ad.m_attributeDataRow, integ_tk_col.value(), -1.0f);
+                        result.setValue(ad0.m_attributeDataRow, integ_tk_col.value(), -1.0f);
                     }
                 }
             } else {
-                result.setValue(ad.m_attributeDataRow, integ_dv_col.value(), (float)-1);
+                result.setValue(ad0.m_attributeDataRow, integ_dv_col.value(), (float)-1);
                 if (!m_simpleVersion) {
-                    result.setValue(ad.m_attributeDataRow, integ_pv_col.value(), (float)-1);
-                    result.setValue(ad.m_attributeDataRow, integ_tk_col.value(), (float)-1);
+                    result.setValue(ad0.m_attributeDataRow, integ_pv_col.value(), (float)-1);
+                    result.setValue(ad0.m_attributeDataRow, integ_tk_col.value(), (float)-1);
                 }
             }
             double entropy = 0.0, rel_entropy = 0.0, factorial = 1.0;
@@ -135,14 +135,15 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
                 }
             }
             if (!m_simpleVersion) {
-                result.setValue(ad.m_attributeDataRow, entropy_col.value(), float(entropy));
-                result.setValue(ad.m_attributeDataRow, rel_entropy_col.value(), float(rel_entropy));
+                result.setValue(ad0.m_attributeDataRow, entropy_col.value(), float(entropy));
+                result.setValue(ad0.m_attributeDataRow, rel_entropy_col.value(),
+                                float(rel_entropy));
             }
         } else {
             if (!m_simpleVersion) {
-                result.setValue(ad.m_attributeDataRow, depth_col.value(), (float)-1);
-                result.setValue(ad.m_attributeDataRow, entropy_col.value(), (float)-1);
-                result.setValue(ad.m_attributeDataRow, rel_entropy_col.value(), (float)-1);
+                result.setValue(ad0.m_attributeDataRow, depth_col.value(), (float)-1);
+                result.setValue(ad0.m_attributeDataRow, entropy_col.value(), (float)-1);
+                result.setValue(ad0.m_attributeDataRow, rel_entropy_col.value(), (float)-1);
             }
         }
         count++; // <- increment count

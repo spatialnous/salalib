@@ -35,9 +35,11 @@ struct AnalysisResult {
     }
 
     AnalysisResult(std::vector<std::string> &&attributeNames = std::vector<std::string>(),
-                   size_t rowCount = 0)
+                   size_t rowCount = 0, double defValue = -1.0f)
         : newAttributes(attributeNames),
-          attributeData(depthmapX::RowMatrix<double>(rowCount, attributeNames.size())) {}
+          attributeData(depthmapX::RowMatrix<double>(rowCount, attributeNames.size())) {
+        attributeData.initialiseValues(defValue);
+    }
 
     depthmapX::RowMatrix<double> getAttributeData() const { return attributeData; }
 

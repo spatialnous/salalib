@@ -186,8 +186,9 @@ class IVGAVisual : public IVGATraversing {
                     pixelFound = true;
                 }
             }
-            if (!pixelFound)
-                level++;
+            if (pixelFound)
+                break;
+            level++;
         }
         return std::make_tuple(parents);
     }

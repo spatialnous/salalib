@@ -39,7 +39,7 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
 
     size_t count = 0;
     for (auto &ad0 : analysisData) {
-        if (m_gates_only) {
+        if (m_gatesOnly) {
             count++;
             continue;
         }

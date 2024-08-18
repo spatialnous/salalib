@@ -26,8 +26,8 @@ class VGAVisualGlobalOpenMP : public IVGAVisual {
     bool m_legacyWriteMiscs = false;
 
     struct DataPoint {
-        float count, depth, integ_dv, integ_pv;
-        float integ_tk, entropy, rel_entropy;
+        float m_count, m_depth, m_integDv, m_integPv;
+        float m_integTk, m_entropy, m_relEntropy;
     };
     void extractUnseen(Node &node, PixelRefVector &pixels, depthmapX::RowMatrix<int> &miscs,
                        depthmapX::RowMatrix<PixelRef> &extents);

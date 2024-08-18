@@ -69,12 +69,12 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
         // only set to single float precision after divide
         // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of Space
 
-        dp.count = float(totalNodes); // note: total nodes includes this one;
+        dp.m_count = float(totalNodes); // note: total nodes includes this one;
 
         // ERROR !!!!!!
         if (totalNodes > 1) {
             double meanDepth = double(totalDepth) / double(totalNodes - 1);
-            dp.depth = float(meanDepth);
+            dp.m_depth = float(meanDepth);
             // total nodes > 2 to avoid divide by 0 (was > 3)
             if (totalNodes > 2 && meanDepth > 1.0) {
                 double ra = 2.0 * (meanDepth - 1.0) / double(totalNodes - 2);
@@ -82,18 +82,18 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
                 double rraD = ra / pafmath::dvalue(totalNodes);
                 double rraP = ra / pafmath::pvalue(totalNodes);
                 double integTk = pafmath::teklinteg(totalNodes, totalDepth);
-                dp.integ_dv = float(1.0 / rraD);
-                dp.integ_pv = float(1.0 / rraP);
+                dp.m_integDv = float(1.0 / rraD);
+                dp.m_integPv = float(1.0 / rraP);
 
                 if (totalDepth - totalNodes + 1 > 1) {
-                    dp.integ_tk = float(integTk);
+                    dp.m_integTk = float(integTk);
                 } else {
-                    dp.integ_tk = -1.0f;
+                    dp.m_integTk = -1.0f;
                 }
             } else {
-                dp.integ_dv = -1.0f;
-                dp.integ_pv = -1.0f;
-                dp.integ_tk = -1.0f;
+                dp.m_integDv = -1.0f;
+                dp.m_integPv = -1.0f;
+                dp.m_integTk = -1.0f;
             }
             double entropy = 0.0, relEntropy = 0.0, factorial = 1.0;
             // n.b., this distribution contains the root node itself in distribution[0]
@@ -108,12 +108,12 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
                     relEntropy += (float)prob * log2(prob / q);
                 }
             }
-            dp.entropy = float(entropy);
-            dp.rel_entropy = float(relEntropy);
+            dp.m_entropy = float(entropy);
+            dp.m_relEntropy = float(relEntropy);
         } else {
-            dp.depth = -1.0f;
-            dp.entropy = -1.0f;
-            dp.rel_entropy = -1.0f;
+            dp.m_depth = -1.0f;
+            dp.m_entropy = -1.0f;
+            dp.m_relEntropy = -1.0f;
         }
 
 #if defined(_OPENMP)
@@ -166,13 +166,13 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
     auto dataIter = colData.begin();
     for (size_t i = 0; i < attributes.getNumRows(); i++) {
-        result.setValue(i, integDvCol, dataIter->integ_dv);
-        result.setValue(i, integPvCol, dataIter->integ_pv);
-        result.setValue(i, integTkCol, dataIter->integ_tk);
-        result.setValue(i, countCol, dataIter->count);
-        result.setValue(i, depthCol, dataIter->depth);
-        result.setValue(i, entropyCol, dataIter->entropy);
-        result.setValue(i, relEntropyCol, dataIter->rel_entropy);
+        result.setValue(i, integDvCol, dataIter->m_integDv);
+        result.setValue(i, integPvCol, dataIter->m_integPv);
+        result.setValue(i, integTkCol, dataIter->m_integTk);
+        result.setValue(i, countCol, dataIter->m_count);
+        result.setValue(i, depthCol, dataIter->m_depth);
+        result.setValue(i, entropyCol, dataIter->m_entropy);
+        result.setValue(i, relEntropyCol, dataIter->m_relEntropy);
         dataIter++;
     }
 

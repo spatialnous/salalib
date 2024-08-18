@@ -38,22 +38,24 @@ class IVGAMetric : public IVGATraversing {
     // otherwise would have a duplicate key for pqmap / pqvector)
 
     struct MetricSearchData {
-        AnalysisData &pixel;
-        float dist;
-        std::optional<PixelRef> lastpixel;
+        AnalysisData &m_pixel;
+        float m_dist;
+        std::optional<PixelRef> m_lastpixel;
         MetricSearchData(AnalysisData &p, float d = 0.0f, std::optional<PixelRef> lp = std::nullopt)
-            : pixel(p), dist(d), lastpixel(lp) {}
+            : m_pixel(p), m_dist(d), m_lastpixel(lp) {}
         bool operator==(const MetricSearchData &mp2) const {
-            return (dist == mp2.dist && pixel.m_ref == mp2.pixel.m_ref);
+            return (m_dist == mp2.m_dist && m_pixel.m_ref == mp2.m_pixel.m_ref);
         }
         bool operator<(const MetricSearchData &mp2) const {
-            return (dist < mp2.dist) || (dist == mp2.dist && pixel.m_ref < mp2.pixel.m_ref);
+            return (m_dist < mp2.m_dist) ||
+                   (m_dist == mp2.m_dist && m_pixel.m_ref < mp2.m_pixel.m_ref);
         }
         bool operator>(const MetricSearchData &mp2) const {
-            return (dist > mp2.dist) || (dist == mp2.dist && pixel.m_ref > mp2.pixel.m_ref);
+            return (m_dist > mp2.m_dist) ||
+                   (m_dist == mp2.m_dist && m_pixel.m_ref > mp2.m_pixel.m_ref);
         }
         bool operator!=(const MetricSearchData &mp2) const {
-            return (dist != mp2.dist) || (pixel.m_ref != mp2.pixel.m_ref);
+            return (m_dist != mp2.m_dist) || (m_pixel.m_ref != mp2.m_pixel.m_ref);
         }
     };
 
@@ -62,22 +64,22 @@ class IVGAMetric : public IVGATraversing {
         // if (dist == 0.0f || concaveConnected()) { // increases effiency but is too
         // inaccurate if (dist == 0.0f || !fullyConnected()) { // increases effiency
         // but can miss lines
-        if (curs.dist == 0.0f || curs.pixel.m_point.blocked() ||
-            map.blockedAdjacent(curs.pixel.m_ref)) {
+        if (curs.m_dist == 0.0f || curs.m_pixel.m_point.blocked() ||
+            map.blockedAdjacent(curs.m_pixel.m_ref)) {
             for (auto &conn : conns) {
                 auto &ad = std::get<0>(conn).get();
                 if (ad.m_visitedFromBin == 0 &&
                     (ad.m_dist == -1.0 ||
-                     (curs.dist + dist(ad.m_ref, curs.pixel.m_ref) < ad.m_dist))) {
-                    ad.m_dist = curs.dist + (float)dist(ad.m_ref, curs.pixel.m_ref);
+                     (curs.m_dist + dist(ad.m_ref, curs.m_pixel.m_ref) < ad.m_dist))) {
+                    ad.m_dist = curs.m_dist + (float)dist(ad.m_ref, curs.m_pixel.m_ref);
                     // n.b. dmap v4.06r now sets angle in range 0 to 4 (1 = 90 degrees)
                     ad.m_cumAngle =
-                        curs.pixel.m_cumAngle +
-                        (!curs.lastpixel.has_value()
+                        curs.m_pixel.m_cumAngle +
+                        (!curs.m_lastpixel.has_value()
                              ? 0.0f
-                             : (float)(angle(ad.m_ref, curs.pixel.m_ref, *curs.lastpixel) /
+                             : (float)(angle(ad.m_ref, curs.m_pixel.m_ref, *curs.m_lastpixel) /
                                        (M_PI * 0.5)));
-                    pixels.insert(MetricSearchData(ad, ad.m_dist, curs.pixel.m_ref));
+                    pixels.insert(MetricSearchData(ad, ad.m_dist, curs.m_pixel.m_ref));
                 }
             }
         }
@@ -110,11 +112,11 @@ class IVGAMetric : public IVGATraversing {
             auto internalNode = searchList.extract(searchList.begin());
             MetricSearchData here = std::move(internalNode.value());
 
-            if (radius != -1.0 && (here.dist * m_map.getSpacing()) > radius) {
+            if (radius != -1.0 && (here.m_dist * m_map.getSpacing()) > radius) {
                 break;
             }
 
-            auto &ad1 = here.pixel;
+            auto &ad1 = here.m_pixel;
             auto &p = ad1.m_point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
             if (p.filled() && ad1.m_visitedFromBin != ~0) {
@@ -122,7 +124,7 @@ class IVGAMetric : public IVGATraversing {
                 ad1.m_visitedFromBin = ~0;
                 pathAngleCol.setValue(ad1.m_attributeDataRow, float(ad1.m_cumAngle), keepStats);
                 pathLengthCol.setValue(ad1.m_attributeDataRow,
-                                       float(m_map.getSpacing() * here.dist), keepStats);
+                                       float(m_map.getSpacing() * here.m_dist), keepStats);
                 if (originRefs.size() == 1) {
                     // Note: Euclidean distance is currently only calculated from a single point
                     euclidDistCol.setValue(
@@ -137,7 +139,7 @@ class IVGAMetric : public IVGATraversing {
                         pathAngleCol.setValue(ad2.m_attributeDataRow, float(ad2.m_cumAngle),
                                               keepStats);
                         pathLengthCol.setValue(ad2.m_attributeDataRow,
-                                               float(m_map.getSpacing() * here.dist), keepStats);
+                                               float(m_map.getSpacing() * here.m_dist), keepStats);
                         if (originRefs.size() == 1) {
                             // Note: Euclidean distance is currently only calculated from a single
                             // point
@@ -149,7 +151,7 @@ class IVGAMetric : public IVGATraversing {
                         }
                         extractMetric(
                             graph.at(ad2.m_attributeDataRow), searchList, m_map,
-                            MetricSearchData(ad2, here.dist + ad2.m_linkCost, std::nullopt));
+                            MetricSearchData(ad2, here.m_dist + ad2.m_linkCost, std::nullopt));
                         ad2.m_visitedFromBin = ~0;
                     }
                 }
@@ -180,36 +182,36 @@ class IVGAMetric : public IVGATraversing {
             auto internalNode = searchList.extract(searchList.begin());
             auto here = std::move(internalNode.value());
 
-            auto &ad = here.pixel;
+            auto &ad = here.m_pixel;
             auto &p = ad.m_point;
             std::set<MetricSearchData> newPixels;
             std::set<MetricSearchData> mergePixels;
-            if (ad.m_visitedFromBin != ~0 || (here.dist < ad.m_dist)) {
+            if (ad.m_visitedFromBin != ~0 || (here.m_dist < ad.m_dist)) {
                 extractMetric(graph.at(ad.m_attributeDataRow), newPixels, m_map, here);
-                ad.m_dist = here.dist;
+                ad.m_dist = here.m_dist;
                 ad.m_visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
-                    if (ad2.m_visitedFromBin != ~0 || (here.dist + ad2.m_linkCost < ad2.m_dist)) {
-                        ad2.m_dist = here.dist + ad2.m_linkCost;
+                    if (ad2.m_visitedFromBin != ~0 || (here.m_dist + ad2.m_linkCost < ad2.m_dist)) {
+                        ad2.m_dist = here.m_dist + ad2.m_linkCost;
 
                         auto newTripleIter =
                             newPixels.insert(MetricSearchData(ad2, ad2.m_dist, NoPixel));
                         extractMetric(graph.at(ad2.m_attributeDataRow), mergePixels, m_map,
                                       *newTripleIter.first);
                         for (auto &pixel : mergePixels) {
-                            parents[pixel.pixel.m_ref] = p.getMergePixel();
+                            parents[pixel.m_pixel.m_ref] = p.getMergePixel();
                         }
                         ad2.m_visitedFromBin = ~0;
                     }
                 }
             }
             for (auto &pixel : newPixels) {
-                parents[pixel.pixel.m_ref] = here.pixel.m_ref;
+                parents[pixel.m_pixel.m_ref] = here.m_pixel.m_ref;
             }
             newPixels.insert(mergePixels.begin(), mergePixels.end());
             for (auto &pixel : newPixels) {
-                if (pixel.pixel.m_ref == targetRef) {
+                if (pixel.m_pixel.m_ref == targetRef) {
                     pixelFound = true;
                 }
             }
@@ -241,36 +243,36 @@ class IVGAMetric : public IVGATraversing {
             auto internalNode = searchList.extract(searchList.begin());
             auto here = std::move(internalNode.value());
 
-            auto &ad = here.pixel;
+            auto &ad = here.m_pixel;
             auto &p = ad.m_point;
             std::set<MetricSearchData> newPixels;
             std::set<MetricSearchData> mergePixels;
-            if (ad.m_visitedFromBin != ~0 || (here.dist < ad.m_dist)) {
+            if (ad.m_visitedFromBin != ~0 || (here.m_dist < ad.m_dist)) {
                 extractMetric(graph.at(ad.m_attributeDataRow), newPixels, m_map, here);
-                ad.m_dist = here.dist;
+                ad.m_dist = here.m_dist;
                 ad.m_visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
-                    if (ad2.m_visitedFromBin != ~0 || (here.dist + ad2.m_linkCost < ad2.m_dist)) {
-                        ad2.m_dist = here.dist + ad2.m_linkCost;
+                    if (ad2.m_visitedFromBin != ~0 || (here.m_dist + ad2.m_linkCost < ad2.m_dist)) {
+                        ad2.m_dist = here.m_dist + ad2.m_linkCost;
 
                         auto newTripleIter =
                             newPixels.insert(MetricSearchData(ad2, ad2.m_dist, NoPixel));
                         extractMetric(graph.at(ad2.m_attributeDataRow), mergePixels, m_map,
                                       *newTripleIter.first);
                         for (auto &pixel : mergePixels) {
-                            parents[pixel.pixel.m_ref] = p.getMergePixel();
+                            parents[pixel.m_pixel.m_ref] = p.getMergePixel();
                         }
                         ad2.m_visitedFromBin = ~0;
                     }
                 }
             }
             for (auto &pixel : newPixels) {
-                parents[pixel.pixel.m_ref] = here.pixel.m_ref;
+                parents[pixel.m_pixel.m_ref] = here.m_pixel.m_ref;
             }
             newPixels.insert(mergePixels.begin(), mergePixels.end());
             for (auto &pixel : newPixels) {
-                auto it = targetRefsConsumable.find(pixel.pixel.m_ref);
+                auto it = targetRefsConsumable.find(pixel.m_pixel.m_ref);
                 if (it != targetRefsConsumable.end()) {
                     targetRefsConsumable.erase(it);
                 }
@@ -301,10 +303,10 @@ class IVGAMetric : public IVGATraversing {
             auto internalNode = searchList.extract(searchList.begin());
             MetricSearchData here = std::move(internalNode.value());
 
-            if (radius != -1.0 && (here.dist * m_map.getSpacing()) > radius) {
+            if (radius != -1.0 && (here.m_dist * m_map.getSpacing()) > radius) {
                 break;
             }
-            auto &ad1 = here.pixel;
+            auto &ad1 = here.m_pixel;
             auto &p = ad1.m_point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
             if (p.filled() && ad1.m_visitedFromBin != ~0) {
@@ -315,11 +317,11 @@ class IVGAMetric : public IVGATraversing {
                     if (ad2.m_visitedFromBin != ~0) {
                         ad2.m_cumAngle = ad1.m_cumAngle;
                         extractMetric(graph.at(ad2.m_attributeDataRow), searchList, m_map,
-                                      MetricSearchData(ad2, here.dist, std::nullopt));
+                                      MetricSearchData(ad2, here.m_dist, std::nullopt));
                         ad2.m_visitedFromBin = ~0;
                     }
                 }
-                totalDepth += float(here.dist * m_map.getSpacing());
+                totalDepth += float(here.m_dist * m_map.getSpacing());
                 totalAngle += ad1.m_cumAngle;
                 euclidDepth += float(m_map.getSpacing() * dist(ad1.m_ref, ad0.m_ref));
                 totalNodes += 1;

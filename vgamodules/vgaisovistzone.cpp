@@ -38,9 +38,9 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
             std::set<MetricTriple> newPixels;
             extractMetric(lp.getNode(), newPixels, m_map, MetricTriple(0.0f, ref, NoPixel));
             for (auto &zonePixel : newPixels) {
-                auto *zonePixelRow = attributes.getRowPtr(AttributeKey(zonePixel.pixel));
+                auto *zonePixelRow = attributes.getRowPtr(AttributeKey(zonePixel.m_pixel));
                 if (zonePixelRow != 0) {
-                    double zoneLineDist = dist(ref, zonePixel.pixel) * m_map.getSpacing();
+                    double zoneLineDist = dist(ref, zonePixel.m_pixel) * m_map.getSpacing();
                     float currZonePixelVal = zonePixelRow->getValue(zoneColumnIndex);
                     if ((currZonePixelVal == -1 || zoneLineDist < currZonePixelVal) &&
                         (m_restrictDistance <= 0 ||
@@ -70,7 +70,7 @@ void VGAIsovistZone::extractMetric(Node n, std::set<MetricTriple> &pixels, Point
                  pix.col(bin.m_dir) <= pixVec.end().col(bin.m_dir);) {
                 Point &pt = map.getPoint(pix);
                 if (pt.filled()) {
-                    pixels.insert(MetricTriple(0, pix, curs.pixel));
+                    pixels.insert(MetricTriple(0, pix, curs.m_pixel));
                 }
                 pix.move(bin.m_dir);
             }

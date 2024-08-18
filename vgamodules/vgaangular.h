@@ -14,7 +14,7 @@
 class VGAAngular : public IVGAAngular {
   private:
     double m_radius;
-    bool m_gates_only;
+    bool m_gatesOnly;
 
   public:
     struct Column {
@@ -38,7 +38,7 @@ class VGAAngular : public IVGAAngular {
 
   public:
     VGAAngular(const PointMap &map, double radius, bool gates_only)
-        : IVGAAngular(map), m_radius(radius), m_gates_only(gates_only) {}
+        : IVGAAngular(map), m_radius(radius), m_gatesOnly(gates_only) {}
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     AnalysisResult run(Communicator *comm) override;
 };

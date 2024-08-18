@@ -11,25 +11,25 @@
 
 class VGAIsovistZone : public IAnalysis {
     struct MetricTriple {
-        float dist;
-        PixelRef pixel;
-        PixelRef lastpixel;
+        float m_dist;
+        PixelRef m_pixel;
+        PixelRef m_lastpixel;
         MetricTriple(float d = 0.0f, PixelRef p = NoPixel, PixelRef lp = NoPixel) {
-            dist = d;
-            pixel = p;
-            lastpixel = lp;
+            m_dist = d;
+            m_pixel = p;
+            m_lastpixel = lp;
         }
         inline bool operator==(const MetricTriple &mp2) const {
-            return (dist == mp2.dist && pixel == mp2.pixel);
+            return (m_dist == mp2.m_dist && m_pixel == mp2.m_pixel);
         }
         inline bool operator<(const MetricTriple &mp2) const {
-            return (dist < mp2.dist) || (dist == mp2.dist && pixel < mp2.pixel);
+            return (m_dist < mp2.m_dist) || (m_dist == mp2.m_dist && m_pixel < mp2.m_pixel);
         }
         inline bool operator>(const MetricTriple &mp2) const {
-            return (dist > mp2.dist) || (dist == mp2.dist && pixel > mp2.pixel);
+            return (m_dist > mp2.m_dist) || (m_dist == mp2.m_dist && m_pixel > mp2.m_pixel);
         }
         inline bool operator!=(const MetricTriple &mp2) const {
-            return (dist != mp2.dist) || (pixel != mp2.pixel);
+            return (m_dist != mp2.m_dist) || (m_pixel != mp2.m_pixel);
         }
     };
 

@@ -53,7 +53,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif
     for (i = 0; i < n; i++) {
-        if (m_gates_only) {
+        if (m_gatesOnly) {
 #if defined(_OPENMP)
 #pragma omp critical
 #endif
@@ -82,10 +82,10 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
 
         if (totalNodes > 0) {
-            dp.mean_depth = float(double(totalAngle) / double(totalNodes));
+            dp.m_meanDepth = float(double(totalAngle) / double(totalNodes));
         }
-        dp.total_depth = totalAngle;
-        dp.count = float(totalNodes);
+        dp.m_totalDepth = totalAngle;
+        dp.m_count = float(totalNodes);
 
 #if defined(_OPENMP)
 #pragma omp atomic
@@ -129,9 +129,9 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
     auto dataIter = colData.begin();
     for (size_t i = 0; i < attributes.getNumRows(); i++) {
-        result.setValue(i, meanDepthCol, dataIter->mean_depth);
-        result.setValue(i, totalDepthCol, dataIter->total_depth);
-        result.setValue(i, countCol, dataIter->count);
+        result.setValue(i, meanDepthCol, dataIter->m_meanDepth);
+        result.setValue(i, totalDepthCol, dataIter->m_totalDepth);
+        result.setValue(i, countCol, dataIter->m_count);
         dataIter++;
     }
 

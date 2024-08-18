@@ -14,7 +14,7 @@
 class VGAMetric : public IVGAMetric {
   private:
     double m_radius;
-    bool m_gates_only;
+    bool m_gatesOnly;
 
   public:
     struct Column {
@@ -39,7 +39,7 @@ class VGAMetric : public IVGAMetric {
 
   public:
     VGAMetric(const PointMap &map, double radius, bool gates_only)
-        : IVGAMetric(map), m_radius(radius), m_gates_only(gates_only) {}
+        : IVGAMetric(map), m_radius(radius), m_gatesOnly(gates_only) {}
     std::string getAnalysisName() const override { return "Metric Analysis"; }
     AnalysisResult run(Communicator *comm) override;
 };

@@ -37,7 +37,7 @@ AnalysisResult VGAAngular::run(Communicator *comm) {
 
     for (auto &ad0 : analysisData) {
 
-        if (m_gates_only) {
+        if (m_gatesOnly) {
             count++;
             continue;
         }

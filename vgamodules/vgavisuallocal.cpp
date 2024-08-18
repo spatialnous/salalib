@@ -29,7 +29,7 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
         for (size_t j = 0; j < m_map.getRows(); j++) {
             PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
             if (m_map.getPoint(curs).filled()) {
-                if ((m_map.getPoint(curs).contextfilled() && !curs.iseven()) || (m_gates_only)) {
+                if ((m_map.getPoint(curs).contextfilled() && !curs.iseven()) || (m_gatesOnly)) {
                     count++;
                     continue;
                 }

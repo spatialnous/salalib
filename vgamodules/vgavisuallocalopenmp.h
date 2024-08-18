@@ -17,7 +17,7 @@ class VGAVisualLocalOpenMP : public IAnalysis {
     bool m_forceCommUpdatesMasterThread = false;
 
     struct DataPoint {
-        float cluster, control, controllability;
+        float m_cluster, m_control, m_controllability;
     };
 
     void dumpNeighbourhood(Node &node, std::set<PixelRef> &hood) const;
@@ -31,8 +31,7 @@ class VGAVisualLocalOpenMP : public IAnalysis {
     };
 
   public:
-    VGAVisualLocalOpenMP(PointMap &map,
-                         std::optional<int> limitToThreads = std::nullopt,
+    VGAVisualLocalOpenMP(PointMap &map, std::optional<int> limitToThreads = std::nullopt,
                          bool forceCommUpdatesMasterThread = false)
         : m_map(map), m_limitToThreads(limitToThreads),
           m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}

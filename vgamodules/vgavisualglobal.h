@@ -14,7 +14,7 @@
 class VGAVisualGlobal : public IVGAVisual {
   private:
     double m_radius;
-    bool m_gates_only;
+    bool m_gatesOnly;
     bool m_simpleVersion = false;
 
     // To maintain binary compatibility with older .graph versions
@@ -44,7 +44,7 @@ class VGAVisualGlobal : public IVGAVisual {
 
   public:
     VGAVisualGlobal(const PointMap &map, double radius, bool gates_only)
-        : IVGAVisual(map), m_radius(radius), m_gates_only(gates_only) {}
+        : IVGAVisual(map), m_radius(radius), m_gatesOnly(gates_only) {}
     std::string getAnalysisName() const override { return "Global Visibility Analysis"; }
     AnalysisResult run(Communicator *comm) override;
 

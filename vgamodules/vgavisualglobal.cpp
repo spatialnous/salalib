@@ -67,7 +67,7 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
     size_t count = 0;
 
     for (auto &ad0 : analysisData) {
-        if ((ad0.m_point.contextfilled() && !ad0.m_ref.iseven()) || (m_gates_only)) {
+        if ((ad0.m_point.contextfilled() && !ad0.m_ref.iseven()) || (m_gatesOnly)) {
             count++;
             continue;
         }

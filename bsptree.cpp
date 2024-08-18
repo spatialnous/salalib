@@ -49,15 +49,14 @@ void BSPTree::make(Communicator *communicator, time_t atime, const std::vector<L
         lineStack.pop();
 
         if (!currLines.first.empty()) {
-            currNode->m_left = std::unique_ptr<BSPNode>(new BSPNode(currNode));
-            nodeStack.push(currNode->m_left.get());
-            lineStack.push(makeLines(communicator, atime, currLines.first, currNode->m_left.get()));
+            currNode->left = std::unique_ptr<BSPNode>(new BSPNode(currNode));
+            nodeStack.push(currNode->left.get());
+            lineStack.push(makeLines(communicator, atime, currLines.first, currNode->left.get()));
         }
         if (!currLines.second.empty()) {
-            currNode->m_right = std::unique_ptr<BSPNode>(new BSPNode(currNode));
-            nodeStack.push(currNode->m_right.get());
-            lineStack.push(
-                makeLines(communicator, atime, currLines.second, currNode->m_right.get()));
+            currNode->right = std::unique_ptr<BSPNode>(new BSPNode(currNode));
+            nodeStack.push(currNode->right.get());
+            lineStack.push(makeLines(communicator, atime, currLines.second, currNode->right.get()));
         }
     }
 }
@@ -121,7 +120,7 @@ BSPTree::makeLines(Communicator *, time_t, const std::vector<Line> &lines, BSPNo
     // for optimization of the tree (this reduced a six-minute gen time to a 38 second gen time)
     int chosen = -1;
     if (lines.size() > 3) {
-        chosen = BSPTree::pickMidpointLine(lines, base->m_parent);
+        chosen = BSPTree::pickMidpointLine(lines, base->parent);
     } else {
         // TODO: This was originally `chosen = pafrand() % lines.size();`, but was making the
         // isovists non-reproducible. Just pick the first line for the moment. Figure out later

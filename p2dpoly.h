@@ -296,78 +296,77 @@ struct EdgeU {
 
 class QtRegion {
   public:
-    Point2f bottom_left;
-    Point2f top_right;
+    Point2f bottomLeft;
+    Point2f topRight;
     QtRegion(const Point2f &bl = Point2f(), const Point2f &tr = Point2f()) {
-        bottom_left = bl;
-        top_right = tr;
+        bottomLeft = bl;
+        topRight = tr;
     }
     QtRegion(const QtRegion &r) {
-        bottom_left = r.bottom_left;
-        top_right = r.top_right;
+        bottomLeft = r.bottomLeft;
+        topRight = r.topRight;
     }
     QtRegion &operator=(const QtRegion &r) {
-        bottom_left = r.bottom_left;
-        top_right = r.top_right;
+        bottomLeft = r.bottomLeft;
+        topRight = r.topRight;
         return *this;
     }
     bool operator==(const QtRegion &other) const {
-        return bottom_left == other.bottom_left && top_right == other.top_right;
+        return bottomLeft == other.bottomLeft && topRight == other.topRight;
     }
 
-    double height() const { return fabs(top_right.y - bottom_left.y); }
+    double height() const { return fabs(topRight.y - bottomLeft.y); }
     double width() const
-    // The assumption that top_right.x is always > bottom_left.x is not always true.
+    // The assumption that topRight.x is always > bottomLeft.x is not always true.
     // Returning a negative value here causes an infinite loop at axialmap.cpp line 3106
     // after overlapdist is assigned a negative value at axialmap.cpp line 3084.
     // height() above could also be changed for this reason, but this is a band-aid
-    // fix for the real problem, which is why the top_right > bottom_left assumption
+    // fix for the real problem, which is why the topRight > bottomLeft assumption
     // is assumed to be 100% valid but is, in some instances, not valid.
-    // { return top_right.x - bottom_left.x; }
+    // { return topRight.x - bottomLeft.x; }
     {
-        return fabs(top_right.x - bottom_left.x);
+        return fabs(topRight.x - bottomLeft.x);
     }
     double area() const { return height() * width(); }
     void normalScale(const QtRegion &r) {
-        top_right.normalScale(r);
-        bottom_left.normalScale(r);
+        topRight.normalScale(r);
+        bottomLeft.normalScale(r);
     }
     void denormalScale(const QtRegion &r) {
-        top_right.denormalScale(r);
-        bottom_left.denormalScale(r);
+        topRight.denormalScale(r);
+        bottomLeft.denormalScale(r);
     }
     void scale(const Point2f &scalevec) {
-        top_right.scale(scalevec);
-        bottom_left.scale(scalevec);
+        topRight.scale(scalevec);
+        bottomLeft.scale(scalevec);
     }
     void offset(const Point2f &offset) {
-        top_right += offset;
-        bottom_left += offset;
+        topRight += offset;
+        bottomLeft += offset;
     }
     Point2f getCentre() const {
-        return Point2f((bottom_left.x + top_right.x) / 2.0, (bottom_left.y + top_right.y) / 2.0);
+        return Point2f((bottomLeft.x + topRight.x) / 2.0, (bottomLeft.y + topRight.y) / 2.0);
     }
     //
     bool contains(const Point2f &p) const {
-        return (p.x > bottom_left.x && p.x < top_right.x && p.y > bottom_left.y &&
-                p.y < top_right.y);
+        return (p.x > bottomLeft.x && p.x < topRight.x && p.y > bottomLeft.y && p.y < topRight.y);
     }
     bool contains_touch(const Point2f &p) const {
-        return (p.x >= bottom_left.x && p.x <= top_right.x && p.y >= bottom_left.y &&
-                p.y <= top_right.y);
+        return (p.x >= bottomLeft.x && p.x <= topRight.x && p.y >= bottomLeft.y &&
+                p.y <= topRight.y);
     }
     void encompass(const Point2f &p) {
-        if (p.x < bottom_left.x)
-            bottom_left.x = p.x;
-        if (p.x > top_right.x)
-            top_right.x = p.x;
-        if (p.y < bottom_left.y)
-            bottom_left.y = p.y;
-        if (p.y > top_right.y)
-            top_right.y = p.y;
+        if (p.x < bottomLeft.x)
+            bottomLeft.x = p.x;
+        if (p.x > topRight.x)
+            topRight.x = p.x;
+        if (p.y < bottomLeft.y)
+            bottomLeft.y = p.y;
+        if (p.y > topRight.y)
+            topRight.y = p.y;
     }
     //
-    bool atZero() const { return bottom_left.atZero() || top_right.atZero(); }
+    bool atZero() const { return bottomLeft.atZero() || topRight.atZero(); }
     //
     Point2f getEdgeUPoint(const EdgeU &eu);
     EdgeU getCutEdgeU(const Point2f &inside, const Point2f &outside);
@@ -381,28 +380,28 @@ class QtRegion {
     friend QtRegion rintersect(const QtRegion &a, const QtRegion &b); // undefined?
     //
     void grow(const double scalar) {
-        Point2f dim = top_right - bottom_left;
+        Point2f dim = topRight - bottomLeft;
         dim.scale(scalar - 1.0);
-        top_right += dim;
-        bottom_left -= dim;
+        topRight += dim;
+        bottomLeft -= dim;
     }
 };
 
 // First time we have a region available to use...
 inline void Point2f::normalScale(const QtRegion &r) {
     if (r.width() != 0)
-        x = (x - r.bottom_left.x) / r.width();
+        x = (x - r.bottomLeft.x) / r.width();
     else
         x = 0.0;
     if (r.height() != 0)
-        y = (y - r.bottom_left.y) / r.height();
+        y = (y - r.bottomLeft.y) / r.height();
     else
         y = 0.0;
 }
 
 inline void Point2f::denormalScale(const QtRegion &r) {
-    x = x * r.width() + r.bottom_left.x;
-    y = y * r.height() + r.bottom_left.y;
+    x = x * r.width() + r.bottomLeft.x;
+    y = y * r.height() + r.bottomLeft.y;
 }
 
 // Lines are stored left to right as regions,
@@ -412,29 +411,29 @@ inline void Point2f::denormalScale(const QtRegion &r) {
 class Line : public QtRegion {
   protected:
     struct Bits {
-        Bits() : x_dummy(0), y_dummy(0), z_dummy(0) {}
+        Bits() : xDummy(0), yDummy(0), zDummy(0) {}
         char parity : 8;    // 1 ... positive, 0 ... negative
         char direction : 8; // 1 ... positive, 0 ... negative
 
         // dummy variables as it seems to be necessary that the width of this struct is 8 bytes
         // and I don't want any uninitialised memory that gets written to file accidentally
-        char x_dummy : 8;
-        char y_dummy : 8;
-        int z_dummy : 32;
+        char xDummy : 8;
+        char yDummy : 8;
+        int zDummy : 32;
     };
-    Bits bits;
+    Bits m_bits;
 
   public:
     Line();
     Line(const Point2f &a, const Point2f &b);
     Line(const QtRegion &r) : QtRegion(r) {
-        bits.parity = 1;
-        bits.direction = 1;
+        m_bits.parity = 1;
+        m_bits.direction = 1;
     }
-    Line(const Line &l) : QtRegion(l) { bits = l.bits; }
+    Line(const Line &l) : QtRegion(l) { m_bits = l.m_bits; }
     Line &operator=(const Line &l) {
         this->QtRegion::operator=(l);
-        bits = l.bits;
+        m_bits = l.m_bits;
         return *this;
     }
     bool operator==(const Line &other) const {
@@ -462,37 +461,37 @@ class Line : public QtRegion {
     //
     friend double dot(const Line &a, const Line &b);
     //
-    double ax() const { return bottom_left.x; }
-    double &ax() { return bottom_left.x; }
-    double bx() const { return top_right.x; }
-    double &bx() { return top_right.x; }
-    double ay() const { return bits.parity ? bottom_left.y : top_right.y; }
-    double &ay() { return bits.parity ? bottom_left.y : top_right.y; }
-    double by() const { return bits.parity ? top_right.y : bottom_left.y; }
-    double &by() { return bits.parity ? top_right.y : bottom_left.y; }
+    double ax() const { return bottomLeft.x; }
+    double &ax() { return bottomLeft.x; }
+    double bx() const { return topRight.x; }
+    double &bx() { return topRight.x; }
+    double ay() const { return m_bits.parity ? bottomLeft.y : topRight.y; }
+    double &ay() { return m_bits.parity ? bottomLeft.y : topRight.y; }
+    double by() const { return m_bits.parity ? topRight.y : bottomLeft.y; }
+    double &by() { return m_bits.parity ? topRight.y : bottomLeft.y; }
     //
     const Point2f start() const {
-        return Point2f(bottom_left.x, (bits.parity ? bottom_left.y : top_right.y));
+        return Point2f(bottomLeft.x, (m_bits.parity ? bottomLeft.y : topRight.y));
     }
     const Point2f end() const {
-        return Point2f(top_right.x, (bits.parity ? top_right.y : bottom_left.y));
+        return Point2f(topRight.x, (m_bits.parity ? topRight.y : bottomLeft.y));
     }
     const Point2f midpoint() const { return Point2f((start() + end()) / 2); }
     //
     // helpful to have a user friendly indication of direction:
-    bool rightward() const { return bits.direction == 1; }
-    bool upward() const { return bits.direction == bits.parity; }
+    bool rightward() const { return m_bits.direction == 1; }
+    bool upward() const { return m_bits.direction == m_bits.parity; }
     //
     const Point2f t_start() const {
-        return Point2f((rightward() ? bottom_left.x : top_right.x),
-                       (upward() ? bottom_left.y : top_right.y));
+        return Point2f((rightward() ? bottomLeft.x : topRight.x),
+                       (upward() ? bottomLeft.y : topRight.y));
     }
     const Point2f t_end() const {
-        return Point2f((rightward() ? top_right.x : bottom_left.x),
-                       (upward() ? top_right.y : bottom_left.y));
+        return Point2f((rightward() ? topRight.x : bottomLeft.x),
+                       (upward() ? topRight.y : bottomLeft.y));
     }
     //
-    short sign() const { return bits.parity ? 1 : -1; }
+    short sign() const { return m_bits.parity ? 1 : -1; }
     //
     double grad(int axis) const {
         return (axis == YAXIS) ? sign() * height() / width() : sign() * width() / height();
@@ -502,11 +501,11 @@ class Line : public QtRegion {
     }
     //
     double length() const {
-        return (double)sqrt((top_right.x - bottom_left.x) * (top_right.x - bottom_left.x) +
-                            (top_right.y - bottom_left.y) * (top_right.y - bottom_left.y));
+        return (double)sqrt((topRight.x - bottomLeft.x) * (topRight.x - bottomLeft.x) +
+                            (topRight.y - bottomLeft.y) * (topRight.y - bottomLeft.y));
     }
     //
-    short direction() const { return bits.direction; }
+    short direction() const { return m_bits.direction; }
     Point2f vector() const { return t_end() - t_start(); }
 };
 
@@ -555,28 +554,28 @@ class RegionTree {
     friend class Poly;
 
   protected:
-    Line *m_p_region;
-    RegionTree *m_p_left;
-    RegionTree *m_p_right;
+    Line *m_pRegion;
+    RegionTree *m_pLeft;
+    RegionTree *m_pRight;
 
   public:
     RegionTree() {
-        m_p_region = NULL;
-        m_p_left = this;
-        m_p_right = this;
+        m_pRegion = NULL;
+        m_pLeft = this;
+        m_pRight = this;
     }
     virtual ~RegionTree() {
-        if (m_p_region)
-            delete m_p_region;
+        if (m_pRegion)
+            delete m_pRegion;
     }
     //
     virtual bool is_leaf() const = 0;
     //
-    RegionTree &left() const { return *m_p_left; }
-    RegionTree &right() const { return *m_p_right; }
+    RegionTree &left() const { return *m_pLeft; }
+    RegionTree &right() const { return *m_pRight; }
     //
-    operator QtRegion() const { return *(QtRegion *)m_p_region; }
-    operator Line() const { return *(Line *)m_p_region; }
+    operator QtRegion() const { return *(QtRegion *)m_pRegion; }
+    operator Line() const { return *(Line *)m_pRegion; }
     //
     friend bool intersect(const RegionTree &a, const RegionTree &b);
     friend bool subintersect(const RegionTree &a, const RegionTree &b);
@@ -589,9 +588,9 @@ class RegionTreeBranch : public RegionTree {
   public:
     RegionTreeBranch() : RegionTree() { ; }
     RegionTreeBranch(const Line &r, const RegionTree &a, const RegionTree &b) {
-        m_p_left = (RegionTree *)&a;
-        m_p_right = (RegionTree *)&b;
-        m_p_region = new Line(r); // copy
+        m_pLeft = (RegionTree *)&a;
+        m_pRight = (RegionTree *)&b;
+        m_pRegion = new Line(r); // copy
     }
     virtual bool is_leaf() const { return false; }
 };
@@ -603,31 +602,31 @@ class RegionTreeLeaf : public RegionTree {
     RegionTreeLeaf() : RegionTree() { ; }
     RegionTreeLeaf(const Line &l) {
         // no subnodes (but nice recursive properties)
-        m_p_left = this;
-        m_p_right = this;
-        m_p_region = new Line(l);
+        m_pLeft = this;
+        m_pRight = this;
+        m_pRegion = new Line(l);
     }
     virtual bool is_leaf() const { return true; }
 };
 
 class Poly {
   protected:
-    int m_line_segments;
-    RegionTree *m_p_root;
+    int m_lineSegments;
+    RegionTree *m_pRoot;
 
   public:
     Poly() {
-        m_p_root = NULL;
-        m_line_segments = 0;
+        m_pRoot = NULL;
+        m_lineSegments = 0;
     }
     Poly(const Poly &p) {
-        m_line_segments = p.m_line_segments;
-        m_p_root = copy_region_tree(p.m_p_root);
+        m_lineSegments = p.m_lineSegments;
+        m_pRoot = copy_region_tree(p.m_pRoot);
     }
     Poly &operator=(const Poly &p) {
         if (this != &p) {
-            m_line_segments = p.m_line_segments;
-            m_p_root = copy_region_tree(p.m_p_root);
+            m_lineSegments = p.m_lineSegments;
+            m_pRoot = copy_region_tree(p.m_pRoot);
         }
         return *this;
     }
@@ -637,12 +636,12 @@ class Poly {
     // essentially, the destructor...
     void destroy_region_tree();
     //
-    RegionTree &get_region_tree() const { return *m_p_root; }
+    RegionTree &get_region_tree() const { return *m_pRoot; }
     //
     void add_line_segment(const Line &l);
     //
-    int get_line_segments() { return m_line_segments; }
-    QtRegion get_bounding_box() { return *(QtRegion *)(m_p_root->m_p_region); }
+    int get_line_segments() { return m_lineSegments; }
+    QtRegion get_bounding_box() { return *(QtRegion *)(m_pRoot->m_pRegion); }
     //
     bool contains(const Point2f &p);
     friend bool intersect(const Poly &a, const Poly &b);

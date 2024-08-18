@@ -21,9 +21,9 @@
 const char *const g_default_file_set = "File set";
 
 struct FilePath {
-    std::string m_path;
-    std::string m_name;
-    std::string m_ext;
+    std::string path;
+    std::string name;
+    std::string ext;
     FilePath(const std::string &pathname) {
         size_t dot = pathname.find_last_of('.');
 #ifdef _WIN32
@@ -32,13 +32,13 @@ struct FilePath {
         size_t slash = pathname.find_last_of('/'); // Other
 #endif
         if (slash != std::string::npos) {
-            m_path = pathname.substr(0, slash + 1);
+            path = pathname.substr(0, slash + 1);
         }
         if (dot != std::string::npos) {
-            m_name = pathname.substr(slash + 1, dot - slash - 1);
-            m_ext = pathname.substr(dot + 1);
+            name = pathname.substr(slash + 1, dot - slash - 1);
+            ext = pathname.substr(dot + 1);
         } else {
-            m_name = pathname.substr(slash + 1);
+            name = pathname.substr(slash + 1);
         }
     }
 };
@@ -54,7 +54,7 @@ class Communicator {
 
   protected:
     mutable bool m_cancelled;
-    bool m_delete_flag;
+    bool m_deleteFlag;
     // nb. converted to Win32 UTF-16 Unicode path (AT 31.01.11) Linux, MacOS use UTF-8 (AT 29.04.11)
     std::string m_infilename;
     std::ifstream *m_infile;
@@ -68,12 +68,12 @@ class Communicator {
         m_infile2 = NULL;
         m_outfile = NULL;
         m_cancelled = false;
-        m_delete_flag = false;
+        m_deleteFlag = false;
     }
     //
     bool GetDeleteFlag() // used by ICommunicator and IComm together
     {
-        return m_delete_flag;
+        return m_deleteFlag;
     }
     //
     virtual ~Communicator() {
@@ -91,7 +91,7 @@ class Communicator {
     void SetInfile(const char *filename) {
         m_infile = new std::ifstream(filename);
         FilePath fp(filename);
-        m_infilename = fp.m_name;
+        m_infilename = fp.name;
     }
     void SetInfile2(const char *filename) { m_infile2 = new std::ifstream(filename); }
     std::string GetInfileName() {
@@ -144,14 +144,14 @@ class ICommunicator : public Communicator {
     friend class IComm; // IComm is found in idepthmap.h
                         //
   protected:
-    mutable size_t num_steps;
-    mutable size_t num_records;
-    mutable size_t step;
-    mutable size_t record;
+    mutable size_t m_numSteps;
+    mutable size_t m_numRecords;
+    mutable size_t m_step;
+    mutable size_t m_record;
     //
   public:
     ICommunicator() {
-        m_delete_flag = true;
+        m_deleteFlag = true;
     } // note: an ICommunicator lets IComm know that it should delete it
     virtual ~ICommunicator() { ; }
     virtual void CommPostMessage(size_t m, size_t x) const;
@@ -160,16 +160,16 @@ class ICommunicator : public Communicator {
 inline void ICommunicator::CommPostMessage(size_t m, size_t x) const {
     switch (m) {
     case Communicator::NUM_STEPS:
-        num_steps = x;
+        m_numSteps = x;
         break;
     case Communicator::CURRENT_STEP:
-        step = x;
+        m_step = x;
         break;
     case Communicator::NUM_RECORDS:
-        num_records = x;
+        m_numRecords = x;
         break;
     case Communicator::CURRENT_RECORD:
-        record = x;
+        m_record = x;
         break;
     default:
         break;

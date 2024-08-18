@@ -12,11 +12,11 @@ namespace depthmapX {
     class BaseException : public std::exception {
       public:
         BaseException() {}
-        BaseException(std::string message) : _message(message) {}
-        virtual const char *what() const noexcept { return _message.c_str(); }
+        BaseException(std::string message) : m_message(message) {}
+        virtual const char *what() const noexcept { return m_message.c_str(); }
 
       private:
-        std::string _message;
+        std::string m_message;
     };
 
     class RuntimeException : public BaseException {

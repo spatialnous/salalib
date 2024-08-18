@@ -35,12 +35,12 @@ class TigerMap {
     bool m_init;
 
   public:
-    std::map<std::string, TigerCategory> m_categories;
+    std::map<std::string, TigerCategory> categories;
     TigerMap() { m_init = false; }
 
     void parse(const std::vector<std::string> &fileset, Communicator *communicator);
 
-    Point2f getBottomLeft() { return m_region.bottom_left; }
-    Point2f getTopRight() { return m_region.top_right; }
+    Point2f getBottomLeft() { return m_region.bottomLeft; }
+    Point2f getTopRight() { return m_region.topRight; }
     QtRegion getRegion() { return m_region; }
 };

@@ -21,7 +21,7 @@ bool SalaShape::read(std::istream &stream) {
     stream.read((char *)&m_area, sizeof(m_area));
     stream.read((char *)&m_perimeter, sizeof(m_perimeter));
 
-    dXreadwrite::readIntoVector(stream, m_points);
+    dXreadwrite::readIntoVector(stream, points);
 
     return true;
 }
@@ -32,7 +32,7 @@ bool SalaShape::write(std::ostream &stream) const {
     stream.write((char *)&m_centroid, sizeof(m_centroid));
     stream.write((char *)&m_area, sizeof(m_area));
     stream.write((char *)&m_perimeter, sizeof(m_perimeter));
-    dXreadwrite::writeVector(stream, m_points);
+    dXreadwrite::writeVector(stream, points);
     return true;
 }
 
@@ -40,9 +40,9 @@ void SalaShape::setCentroidAreaPerim() {
     m_area = 0.0;
     m_perimeter = 0.0;
     m_centroid = Point2f(0, 0);
-    for (size_t i = 0; i < m_points.size(); i++) {
-        Point2f &p1 = m_points[i];
-        Point2f &p2 = m_points[(i + 1) % m_points.size()];
+    for (size_t i = 0; i < points.size(); i++) {
+        Point2f &p1 = points[i];
+        Point2f &p2 = points[(i + 1) % points.size()];
         double aI = (p1.x * p2.y - p2.x * p1.y) / 2.0;
         m_area += aI;
         aI /= 6.0;
@@ -60,7 +60,7 @@ void SalaShape::setCentroidAreaPerim() {
     m_area = fabs(m_area);
     if (isOpen()) {
         // take off the automatically collected final side
-        Point2f side = m_points.back() - m_points.front();
+        Point2f side = points.back() - points.front();
         m_perimeter -= side.length();
     }
 }
@@ -71,8 +71,8 @@ void SalaShape::setCentroid(const Point2f &p) { m_centroid = p; }
 // get the angular deviation along the length of a poly line:
 double SalaShape::getAngDev() const {
     double dev = 0.0;
-    for (size_t i = 1; i < m_points.size() - 1; i++) {
-        double ang = angle(m_points[i - 1], m_points[i], m_points[i + 1]);
+    for (size_t i = 1; i < points.size() - 1; i++) {
+        double ang = angle(points[i - 1], points[i], points[i + 1]);
 
         // Quick mod - TV
 #if defined(_MSC_VER)
@@ -88,17 +88,17 @@ double SalaShape::getAngDev() const {
 
 std::vector<SalaEdgeU> SalaShape::getClippingSet(QtRegion &clipframe) const {
     std::vector<SalaEdgeU> edgeset;
-    bool lastInside = (clipframe.contains_touch(m_points[0])) ? true : false;
+    bool lastInside = (clipframe.contains_touch(points[0])) ? true : false;
     bool foundInside = lastInside;
-    for (size_t i = 1; i < m_points.size(); i++) {
-        bool nextInside = (clipframe.contains_touch(m_points[i])) ? true : false;
+    for (size_t i = 1; i < points.size(); i++) {
+        bool nextInside = (clipframe.contains_touch(points[i])) ? true : false;
         foundInside |= nextInside;
         if (lastInside != nextInside) {
             if (lastInside) {
-                EdgeU eu = clipframe.getCutEdgeU(m_points[i - 1], m_points[i]);
+                EdgeU eu = clipframe.getCutEdgeU(points[i - 1], points[i]);
                 edgeset.push_back(SalaEdgeU(i, false, eu));
             } else {
-                EdgeU eu = clipframe.getCutEdgeU(m_points[i], m_points[i - 1]);
+                EdgeU eu = clipframe.getCutEdgeU(points[i], points[i - 1]);
                 edgeset.push_back(SalaEdgeU(i - 1, true, eu));
             }
         }

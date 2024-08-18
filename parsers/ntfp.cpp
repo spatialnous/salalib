@@ -20,28 +20,28 @@
 
 int NtfPoint::parse(const std::string &token, bool secondhalf /* = false */) {
     if (secondhalf) {
-        std::string second = token.substr(0, m_chars);
+        std::string second = token.substr(0, chars);
         b = stoi(second);
-        if (m_chars == 5) {
+        if (chars == 5) {
             b *= 100;
         }
         return 2;
-    } else if ((int)token.length() < m_chars * 2) {
-        if ((int)token.length() < m_chars) {
+    } else if ((int)token.length() < chars * 2) {
+        if ((int)token.length() < chars) {
             return 0;
         }
-        std::string first = token.substr(0, m_chars);
+        std::string first = token.substr(0, chars);
         a = stoi(first);
-        if (m_chars == 5) {
+        if (chars == 5) {
             a *= 100;
         }
         return 1;
     } else {
-        std::string first = token.substr(0, m_chars);
-        std::string second = token.substr(m_chars, m_chars);
+        std::string first = token.substr(0, chars);
+        std::string second = token.substr(chars, chars);
         a = stoi(first);
         b = stoi(second);
-        if (m_chars == 5) {
+        if (chars == 5) {
             a *= 100;
             b *= 100;
         }
@@ -58,8 +58,8 @@ void NtfMap::fitBounds(const Line &li) {
 }
 
 void NtfMap::addGeom(size_t layerIdx, NtfGeometry &geom) {
-    m_line_count += geom.lines.size();
-    layers[layerIdx].m_line_count += geom.lines.size();
+    m_lineCount += geom.lines.size();
+    layers[layerIdx].m_lineCount += geom.lines.size();
     layers[layerIdx].geometries.push_back(geom);
     for (size_t i = 0; i < geom.lines.size(); i++) {
         fitBounds(geom.lines[i]);
@@ -83,12 +83,12 @@ void NtfMap::open(const std::vector<std::string> &fileset, Communicator *comm) {
 
     std::vector<int> featcodes;
     /*
-       m_bottom_left.a =  2147483647;   // 2^31 - 1
-       m_bottom_left.b =  2147483647;
-       m_top_right.a   = -2147483647;
-       m_top_right.b   = -2147483647;
+       m_bottomLeft.a =  2147483647;   // 2^31 - 1
+       m_bottomLeft.b =  2147483647;
+       m_topRight.a   = -2147483647;
+       m_topRight.b   = -2147483647;
     */
-    m_line_count = 0;
+    m_lineCount = 0;
     layers.clear();
 
     for (size_t i = 0; i < fileset.size(); i++) {

@@ -70,7 +70,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
 
     region.grow(1.30);
     mapData.polygons.init(lines, region);
-    mapData.polygons.m_handled_list.clear();
+    mapData.polygons.handledList.clear();
 
     // find a corner visible from the seed:
     AxialVertexKey seedvertex = mapData.polygons.seedVertex(seed);
@@ -90,7 +90,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     mapData.radialLines.clear();
 
     AxialVertex vertex = mapData.polygons.makeVertex(seedvertex, seed);
-    if (!vertex.m_initialised) {
+    if (!vertex.initialised) {
         // oops... can't init for some reason
         throw depthmapX::RuntimeException("Failed to initialise axial vertices");
     }
@@ -100,8 +100,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     if (comm) {
         qtimer(atime, 0);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 2);
-        comm->CommPostMessage(Communicator::NUM_RECORDS,
-                              mapData.polygons.m_vertex_possibles.size());
+        comm->CommPostMessage(Communicator::NUM_RECORDS, mapData.polygons.vertexPossibles.size());
     }
 
     std::set<AxialVertex> openvertices;
@@ -154,7 +153,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     // -> don't know what this was for: alllinemap.sortBins(m_poly_connections);
     map.makeConnections(preaxialdata);
 
-    map.setKeyVertexCount(mapData.polygons.m_vertex_possibles.size());
+    map.setKeyVertexCount(mapData.polygons.vertexPossibles.size());
 }
 
 std::tuple<ShapeGraph, ShapeGraph>
@@ -227,7 +226,7 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
                 if (rkStart.vertex == rkEnd.vertex) {
                     auto radialSegIter = radialsegs.find(rkEnd);
                     if (radialSegIter != radialsegs.end() &&
-                        rkStart == radialSegIter->second.radial_b) {
+                        rkStart == radialSegIter->second.radialB) {
                         radialSegIter->second.indices.insert(axIter->first);
                         axSeg->second.insert(std::distance(radialsegs.begin(), radialSegIter));
                     }
@@ -250,8 +249,8 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
         keyvertexconns.push_back(std::vector<int>());
         auto &conn = keyvertexconns.back();
         Connector &axa = connectors[y];
-        for (size_t z = 0; z < axa.m_connections.size(); z++) {
-            std::set<int> &axb = map.getKeyVertices()[axa.m_connections[z]];
+        for (size_t z = 0; z < axa.connections.size(); z++) {
+            std::set<int> &axb = map.getKeyVertices()[axa.connections[z]];
             for (int axbi : axb) {
                 auto res = std::lower_bound(conn.begin(), conn.end(), axbi);
                 if (res == conn.end() || axbi < *res) {
@@ -336,12 +335,12 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
             PixelRef pix = pixels[j];
             const auto &shapes = map.getShapesAtPixel(pix);
             for (const ShapeRef &shape : shapes) {
-                auto iter = depthmapX::findBinary(testedshapes, shape.m_shape_ref);
+                auto iter = depthmapX::findBinary(testedshapes, shape.shapeRef);
                 if (iter != testedshapes.end()) {
                     continue;
                 }
-                testedshapes.insert(iter, int(shape.m_shape_ref));
-                const Line &line = map.getAllShapes().find(shape.m_shape_ref)->second.getLine();
+                testedshapes.insert(iter, int(shape.shapeRef));
+                const Line &line = map.getAllShapes().find(shape.shapeRef)->second.getLine();
                 //
                 if (intersect_region(line, polyconnections[i].line, tolerance * line.length())) {
                     switch (intersect_line_distinguish(line, polyconnections[i].line,
@@ -350,17 +349,17 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                         break;
                     case 2: {
                         size_t index =
-                            depthmapX::findIndexFromKey(axialdividers, (int)shape.m_shape_ref);
-                        if (index != shape.m_shape_ref) {
+                            depthmapX::findIndexFromKey(axialdividers, (int)shape.shapeRef);
+                        if (index != shape.shapeRef) {
                             throw 1; // for the code to work later this can't be true!
                         }
                         axialdividers[index].insert(connindex);
-                        connIter->second.insert(shape.m_shape_ref);
+                        connIter->second.insert(shape.shapeRef);
                     } break;
                     case 1: {
                         size_t index =
-                            depthmapX::findIndexFromKey(axialdividers, (int)shape.m_shape_ref);
-                        if (index != shape.m_shape_ref) {
+                            depthmapX::findIndexFromKey(axialdividers, (int)shape.shapeRef);
+                        if (index != shape.shapeRef) {
                             throw 1; // for the code to work later this can't be true!
                         }
                         //
@@ -368,7 +367,7 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                         // openspace properly
                         if (radiallines[connindex].cuts(line)) {
                             axialdividers[index].insert(connindex);
-                            connIter->second.insert(shape.m_shape_ref);
+                            connIter->second.insert(shape.shapeRef);
                         }
                     } break;
                     default:

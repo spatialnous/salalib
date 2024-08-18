@@ -10,11 +10,9 @@
 
 struct SalaEvent {
     enum { SALA_NULL_EVENT, SALA_CREATED, SALA_DELETED, SALA_MOVED };
-    int m_action;
-    int m_shape_ref;
-    SalaShape m_geometry;
-    SalaEvent(int action = SALA_NULL_EVENT, int shape_ref = -1) {
-        m_action = action;
-        m_shape_ref = shape_ref;
-    }
+    int action;
+    int shapeRef;
+    SalaShape geometry;
+    SalaEvent(int action = SALA_NULL_EVENT, int shapeRef = -1)
+        : action(action), shapeRef(shapeRef) {}
 };

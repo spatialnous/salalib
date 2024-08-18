@@ -34,14 +34,14 @@ AnalysisResult AxialLocal::run(Communicator *comm, ShapeGraph &map, bool) {
         AttributeRow &row = iter.getRow();
 
         double control = 0.0;
-        const auto &connections = map.getConnections()[i].m_connections;
+        const auto &connections = map.getConnections()[i].connections;
         std::vector<size_t> totalneighbourhood;
         for (auto connection : connections) {
             // n.b., as of Depthmap 10.0, connections[j] and i cannot coexist
             // if (connections[j] != i) {
             depthmapX::addIfNotExists(totalneighbourhood, connection);
             int retroSize = 0;
-            auto &retconnectors = map.getConnections()[connection].m_connections;
+            auto &retconnectors = map.getConnections()[connection].connections;
             for (auto retconnector : retconnectors) {
                 retroSize++;
                 depthmapX::addIfNotExists(totalneighbourhood, retconnector);

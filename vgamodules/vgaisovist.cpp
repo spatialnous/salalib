@@ -42,22 +42,22 @@ AnalysisResult VGAIsovist::run(Communicator *comm) {
 
                 setData(isovist, count, result, m_simpleVersion);
                 Node &node = m_map.getPoint(curs).getNode();
-                std::vector<PixelRef> *occ = node.m_occlusion_bins;
+                std::vector<PixelRef> *occ = node.occlusionBins;
                 for (size_t k = 0; k < 32; k++) {
                     occ[k].clear();
                     node.bin(static_cast<int>(k)).setOccDistance(0.0f);
                 }
                 for (size_t k = 0; k < isovist.getOcclusionPoints().size(); k++) {
                     const PointDist &pointdist = isovist.getOcclusionPoints().at(k);
-                    int bin = whichbin(pointdist.m_point - m_map.depixelate(curs));
+                    int bin = whichbin(pointdist.point - m_map.depixelate(curs));
                     // only occlusion bins with a certain distance recorded (arbitrary scale note!)
-                    if (pointdist.m_dist > 1.5) {
-                        PixelRef pix = m_map.pixelate(pointdist.m_point);
+                    if (pointdist.dist > 1.5) {
+                        PixelRef pix = m_map.pixelate(pointdist.point);
                         if (pix != curs) {
                             occ[bin].push_back(pix);
                         }
                     }
-                    node.bin(bin).setOccDistance(static_cast<float>(pointdist.m_dist));
+                    node.bin(bin).setOccDistance(static_cast<float>(pointdist.dist));
                 }
                 count++;
                 if (comm) {

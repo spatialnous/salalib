@@ -30,20 +30,20 @@ class IVGATraversing : public IVGA {
             auto &conns = graph.back();
             for (int i = 0; i < 32; i++) {
                 Bin &bin = point.getNode().bin(i);
-                for (auto pixVec : bin.m_pixel_vecs) {
+                for (auto pixVec : bin.pixelVecs) {
                     for (PixelRef pix = pixVec.start();
-                         pix.col(bin.m_dir) <= pixVec.end().col(bin.m_dir);) {
+                         pix.col(bin.dir) <= pixVec.end().col(bin.dir);) {
                         auto &ad3 = analysisData.at(getRefIdx(refs, pix));
                         conns.push_back({ad3, i});
 
                         // 10.2.02 revised --- diagonal was breaking this as it was extent in
                         // diagonal or horizontal
-                        if (diagonalFix && !(bin.m_dir & PixelRef::DIAGONAL)) {
-                            if (ad3.m_diagonalExtent.col(bin.m_dir) >= pixVec.end().col(bin.m_dir))
+                        if (diagonalFix && !(bin.dir & PixelRef::DIAGONAL)) {
+                            if (ad3.m_diagonalExtent.col(bin.dir) >= pixVec.end().col(bin.dir))
                                 break;
-                            ad3.m_diagonalExtent.col(bin.m_dir) = pixVec.end().col(bin.m_dir);
+                            ad3.m_diagonalExtent.col(bin.dir) = pixVec.end().col(bin.dir);
                         }
-                        pix.move(bin.m_dir);
+                        pix.move(bin.dir);
                     }
                 }
             }

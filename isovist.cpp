@@ -53,8 +53,8 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const QtRegion &region, do
     // now it is constructed, make the isovist polygon:
     m_poly.clear();
     m_perimeter = 0.0;
-    m_occluded_perimeter = 0.0;
-    m_occlusion_points.clear();
+    m_occludedPerimeter = 0.0;
+    m_occlusionPoints.clear();
 
     bool markedcentre = false;
     auto prev = m_blocks.begin();
@@ -71,14 +71,14 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const QtRegion &region, do
             // record perimeter information:
             double occluded = dist(prev->endpoint, curr->startpoint);
             m_perimeter += occluded;
-            m_occluded_perimeter += occluded;
+            m_occludedPerimeter += occluded;
             // record the near *point* for use in agent analysis
             // (as the point will not move between isovists, so can record *which*
             // occlusion this is, and spot novel ones)
             if (dist(prev->endpoint, m_centre) < dist(curr->startpoint, m_centre)) {
-                m_occlusion_points.push_back(PointDist(prev->endpoint, occluded));
+                m_occlusionPoints.push_back(PointDist(prev->endpoint, occluded));
             } else {
-                m_occlusion_points.push_back(PointDist(curr->startpoint, occluded));
+                m_occlusionPoints.push_back(PointDist(curr->startpoint, occluded));
             }
         }
         m_poly.push_back(curr->endpoint);
@@ -98,16 +98,16 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const QtRegion &region, do
         // record perimeter information:
         double occluded = dist(m_blocks.rbegin()->endpoint, m_blocks.begin()->startpoint);
         m_perimeter += occluded;
-        m_occluded_perimeter += occluded;
+        m_occludedPerimeter += occluded;
         // record the near *point* for use in agent analysis
         // (as the point will not move between isovists, so can record *which*
         // occlusion this is, and spot novel ones)
         if (occluded > 1.5) {
             if (dist(m_blocks.rbegin()->endpoint, m_centre) <
                 dist(m_blocks.begin()->startpoint, m_centre)) {
-                m_occlusion_points.push_back(PointDist(m_blocks.rbegin()->endpoint, occluded));
+                m_occlusionPoints.push_back(PointDist(m_blocks.rbegin()->endpoint, occluded));
             } else {
-                m_occlusion_points.push_back(PointDist(m_blocks.begin()->startpoint, occluded));
+                m_occlusionPoints.push_back(PointDist(m_blocks.begin()->startpoint, occluded));
             }
         }
     }
@@ -140,17 +140,17 @@ void Isovist::make(BSPNode *here) {
     if (m_gaps.size()) {
         int which = here->classify(m_centre);
         if (which == BSPNode::BSPLEFT) {
-            if (here->m_left.get())
-                make(here->m_left.get());
+            if (here->left.get())
+                make(here->left.get());
             drawnode(here->getLine(), here->getTag());
-            if (here->m_right)
-                make(here->m_right.get());
+            if (here->right)
+                make(here->right.get());
         } else {
-            if (here->m_right.get())
-                make(here->m_right.get());
+            if (here->right.get())
+                make(here->right.get());
             drawnode(here->getLine(), here->getTag());
-            if (here->m_left)
-                make(here->m_left.get());
+            if (here->left)
+                make(here->left.get());
         }
     }
 }
@@ -266,16 +266,16 @@ std::pair<Point2f, double> Isovist::getCentroidArea() {
         double dline = dist(m_centre, Line(p1, p2));
         if (i != 0) {
             // This is not minimum radial -- it's the distance to the closest corner!
-            if (dline < m_min_radial) {
-                m_min_radial = dline;
+            if (dline < m_minRadial) {
+                m_minRadial = dline;
                 dist(m_centre, Line(p1, p2));
             }
-            if (dpoint > m_max_radial) {
-                m_max_radial = dpoint;
+            if (dpoint > m_maxRadial) {
+                m_maxRadial = dpoint;
             }
         } else {
-            m_max_radial = dpoint;
-            m_min_radial = dline;
+            m_maxRadial = dpoint;
+            m_minRadial = dline;
         }
     }
     centroid.scale(2.0 / fabs(area));

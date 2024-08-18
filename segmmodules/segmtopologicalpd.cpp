@@ -75,15 +75,15 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
         Connector &axline = map.getConnections().at(here.ref);
         int connectedCursor = -2;
 
-        auto iter = axline.m_back_segconns.begin();
+        auto iter = axline.backSegconns.begin();
         bool backsegs = true;
 
         while (connectedCursor != -1) {
-            if (backsegs && iter == axline.m_back_segconns.end()) {
-                iter = axline.m_forward_segconns.begin();
+            if (backsegs && iter == axline.backSegconns.end()) {
+                iter = axline.forwardSegconns.begin();
                 backsegs = false;
             }
-            if (!backsegs && iter == axline.m_forward_segconns.end()) {
+            if (!backsegs && iter == axline.forwardSegconns.end()) {
                 break;
             }
 

@@ -19,58 +19,6 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
 
     auto [parents] = traverseFindMany(analysisData, graph, refs, m_pixelsFrom, m_pixelsTo);
 
-    //    // in order to calculate Penn angle, the MetricPair becomes a metric triple...
-    //    std::set<MetricTriple> search_list; // contains root point
-
-    //    for (const PixelRef &pixelFrom : m_pixelsFrom) {
-    //        search_list.insert(MetricTriple(0.0f, pixelFrom, NoPixel));
-    //    }
-
-    //    // note that m_misc is used in a different manner to analyseGraph / PointDepth
-    //    // here it marks the node as used in calculation only
-    //    std::map<PixelRef, PixelRef> parents;
-    //    std::set<PixelRef> pixelsTo = m_pixelsTo; // consumable set
-    //    while (search_list.size()) {
-    //        std::set<MetricTriple>::iterator it = search_list.begin();
-    //        MetricTriple here = *it;
-    //        search_list.erase(it);
-    //        MetricPoint &mp = getMetricPoint(metricPoints, here.pixel);
-    //        std::set<MetricTriple> newPixels;
-    //        std::set<MetricTriple> mergePixels;
-    //        if (mp.m_unseen || (here.dist < mp.m_dist)) {
-    //            extractMetric(mp.m_point->getNode(), metricPoints, newPixels, &m_map, here);
-    //            mp.m_dist = here.dist;
-    //            mp.m_unseen = false;
-    //            if (!mp.m_point->getMergePixel().empty()) {
-    //                MetricPoint &mp2 = getMetricPoint(metricPoints, mp.m_point->getMergePixel());
-    //                if (mp2.m_unseen || (here.dist + mp2.m_linkCost < mp2.m_dist)) {
-    //                    mp2.m_dist = here.dist + mp2.m_linkCost;
-    //                    mp2.m_unseen = false;
-
-    //                    auto newTripleIter = newPixels.insert(
-    //                        MetricTriple(mp2.m_dist, mp.m_point->getMergePixel(), NoPixel));
-    //                    extractMetric(mp2.m_point->getNode(), metricPoints, mergePixels, &m_map,
-    //                                  *newTripleIter.first);
-    //                    for (auto &pixel : mergePixels) {
-    //                        parents[pixel.pixel] = mp.m_point->getMergePixel();
-    //                    }
-    //                }
-    //            }
-    //            for (auto &pixel : newPixels) {
-    //                parents[pixel.pixel] = here.pixel;
-    //            }
-    //            newPixels.insert(mergePixels.begin(), mergePixels.end());
-    //            for (auto &pixel : newPixels) {
-    //                auto it = pixelsTo.find(pixel.pixel);
-    //                if (it != pixelsTo.end()) {
-    //                    pixelsTo.erase(it);
-    //                }
-    //            }
-    //            if (pixelsTo.size() != 0)
-    //                search_list.insert(newPixels.begin(), newPixels.end());
-    //        }
-    //    }
-
     for (const PixelRef &pixelFrom : m_pixelsFrom) {
         analysisData.at(getRefIdx(refs, pixelFrom)).m_dist = 0.0f;
     }

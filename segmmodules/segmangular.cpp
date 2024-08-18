@@ -88,7 +88,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                 anglebins.erase(iter);
                 Connector &line = map.getConnections()[lineindex.ref];
                 if (lineindex.dir != -1) {
-                    for (auto &segconn : line.m_forward_segconns) {
+                    for (auto &segconn : line.forwardSegconns) {
                         if (!covered[segconn.first.ref]) {
                             double angle = depthToLine + segconn.second;
                             size_t rbin = lineindex.coverage;
@@ -107,7 +107,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                     }
                 }
                 if (lineindex.dir != 1) {
-                    for (auto &segconn : line.m_back_segconns) {
+                    for (auto &segconn : line.backSegconns) {
                         if (!covered[segconn.first.ref]) {
                             double angle = depthToLine + segconn.second;
                             size_t rbin = lineindex.coverage;

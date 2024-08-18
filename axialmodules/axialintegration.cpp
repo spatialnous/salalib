@@ -335,13 +335,13 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                                   // radius previous
                 }
                 Connector &line = map.getConnections()[index];
-                for (size_t k = 0; k < line.m_connections.size(); k++) {
-                    if (!covered[line.m_connections[k]]) {
-                        covered[line.m_connections[k]] = true;
-                        foundlist.b().push_back(std::pair<int, int>(line.m_connections[k], index));
+                for (size_t k = 0; k < line.connections.size(); k++) {
+                    if (!covered[line.connections[k]]) {
+                        covered[line.connections[k]] = true;
+                        foundlist.b().push_back(std::pair<int, int>(line.connections[k], index));
                         if (m_weighted_measure_col != -1) {
                             // the weight is taken from the discovered node:
-                            weight = weights[line.m_connections[k]];
+                            weight = weights[line.connections[k]];
                             totalWeight += weight;
                             wTotalDepth += depth * weight;
                         }
@@ -352,7 +352,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                                                  // looking ahead here
                             while (here != i) {  // not i means not the current root for the path
                                 audittrail[here][r].choice += 1;
-                                audittrail[here][r].weighted_choice += weight * rootweight;
+                                audittrail[here][r].weightedChoice += weight * rootweight;
                                 here = audittrail[here][0]
                                            .previous
                                            .ref; // <- note, just using 0th position: radius for
@@ -360,8 +360,8 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                             }
                             if (m_weighted_measure_col != -1) {
                                 // in weighted choice, root node and current node receive values:
-                                audittrail[i][r].weighted_choice += (weight * rootweight) * 0.5;
-                                audittrail[line.m_connections[k]][r].weighted_choice +=
+                                audittrail[i][r].weightedChoice += (weight * rootweight) * 0.5;
+                                audittrail[line.connections[k]][r].weightedChoice +=
                                     (weight * rootweight) * 0.5;
                             }
                         }
@@ -519,7 +519,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
             double totalChoice = 0.0, wTotalChoice = 0.0;
             for (size_t r = 0; r < radii.size(); r++) {
                 totalChoice += audittrail[i][r].choice;
-                wTotalChoice += audittrail[i][r].weighted_choice;
+                wTotalChoice += audittrail[i][r].weightedChoice;
                 // n.b., normalise choice according to (n-1)(n-2)/2 (maximum possible through
                 // routes)
                 double nodeCount = row.getValue(countCol[r]);

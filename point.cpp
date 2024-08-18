@@ -17,7 +17,7 @@ std::istream &Point::read(std::istream &stream) {
     int dummy = 0;
     stream.read(reinterpret_cast<char *>(&dummy), sizeof(dummy));
 
-    stream.read((char *)&m_grid_connections, sizeof(m_grid_connections));
+    stream.read((char *)&m_gridConnections, sizeof(m_gridConnections));
 
     stream.read((char *)&m_merge, sizeof(m_merge));
     bool ngraph;
@@ -39,7 +39,7 @@ std::ostream &Point::write(std::ostream &stream) const {
     stream.write((char *)&m_block, sizeof(m_block));
     int dummy = 0;
     stream.write((char *)&dummy, sizeof(dummy));
-    stream.write((char *)&m_grid_connections, sizeof(m_grid_connections));
+    stream.write((char *)&m_gridConnections, sizeof(m_gridConnections));
     stream.write((char *)&m_merge, sizeof(m_merge));
     bool ngraph;
     if (m_node) {

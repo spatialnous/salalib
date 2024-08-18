@@ -52,9 +52,9 @@ void ShapeGraph::makeConnections(const KeyVertices &keyvertices) {
         AttributeRow &row = m_attributes->getRow(AttributeKey(key));
         // all indices should match...
         m_connectors.push_back(Connector());
-        m_connectors[i].m_connections =
+        m_connectors[i].connections =
             getLineConnections(key, TOLERANCE_B * __max(m_region.height(), m_region.width()));
-        row.setValue(connCol, float(m_connectors[i].m_connections.size()));
+        row.setValue(connCol, float(m_connectors[i].connections.size()));
         row.setValue(lengCol, float(shape.second.getLine().length()));
         if (keyvertices.size()) {
             // note: depends on lines being recorded in same order as keyvertices...
@@ -100,10 +100,10 @@ void ShapeGraph::outputNet(std::ostream &netfile) const {
             Line li = shape.second.getLine();
             Point2f p1 = li.start();
             Point2f p2 = li.end();
-            p1.x = offset.x + (p1.x - m_region.bottom_left.x) / maxdim;
-            p2.x = offset.x + (p2.x - m_region.bottom_left.x) / maxdim;
-            p1.y = 1.0 - (offset.y + (p1.y - m_region.bottom_left.y) / maxdim);
-            p2.y = 1.0 - (offset.y + (p2.y - m_region.bottom_left.y) / maxdim);
+            p1.x = offset.x + (p1.x - m_region.bottomLeft.x) / maxdim;
+            p2.x = offset.x + (p2.x - m_region.bottomLeft.x) / maxdim;
+            p1.y = 1.0 - (offset.y + (p1.y - m_region.bottomLeft.y) / maxdim);
+            p2.y = 1.0 - (offset.y + (p2.y - m_region.bottomLeft.y) / maxdim);
             netfile << (i * 2 + 1) << " \"" << i << "a\" " << p1.x << " " << p1.y << std::endl;
             netfile << (i * 2 + 2) << " \"" << i << "b\" " << p2.x << " " << p2.y << std::endl;
         }
@@ -116,13 +116,13 @@ void ShapeGraph::outputNet(std::ostream &netfile) const {
         // it works for an automatically converted axial map, I'm not sure it works for others...
         for (size_t j = 0; j < m_connectors.size(); j++) {
             const Connector &conn = m_connectors[j];
-            for (auto &segconn : conn.m_forward_segconns) {
+            for (auto &segconn : conn.forwardSegconns) {
                 SegmentRef ref = segconn.first;
                 float weight = segconn.second;
                 netfile << (j * 2 + 1) << " " << (ref.ref * 2 + ((ref.dir == 1) ? 1 : 2)) << " "
                         << weight << std::endl;
             }
-            for (auto &segconn : conn.m_back_segconns) {
+            for (auto &segconn : conn.backSegconns) {
                 SegmentRef ref = segconn.first;
                 float weight = segconn.second;
                 netfile << (j * 2 + 2) << " " << (ref.ref * 2 + ((ref.dir == 1) ? 1 : 2)) << " "
@@ -135,15 +135,15 @@ void ShapeGraph::outputNet(std::ostream &netfile) const {
         for (const auto &shape : m_shapes) {
             i++;
             Point2f p = shape.second.getCentroid();
-            p.x = offset.x + (p.x - m_region.bottom_left.x) / maxdim;
-            p.y = 1.0 - (offset.y + (p.y - m_region.bottom_left.y) / maxdim);
+            p.x = offset.x + (p.x - m_region.bottomLeft.x) / maxdim;
+            p.y = 1.0 - (offset.y + (p.y - m_region.bottomLeft.y) / maxdim);
             netfile << (i + 1) << " \"" << i << "\" " << p.x << " " << p.y << std::endl;
         }
         netfile << "*Edges" << std::endl;
         for (size_t j = 0; j < m_connectors.size(); j++) {
             const Connector &conn = m_connectors[j];
-            for (size_t k = 0; k < conn.m_connections.size(); k++) {
-                auto to = conn.m_connections[k];
+            for (size_t k = 0; k < conn.connections.size(); k++) {
+                auto to = conn.connections[k];
                 if (j < to) {
                     netfile << (j + 1) << " " << (to + 1) << " 1" << std::endl;
                 }
@@ -156,7 +156,7 @@ bool ShapeGraph::readShapeGraphData(std::istream &stream) {
 
     m_attributes->clear();
     m_connectors.clear();
-    m_map_type = ShapeMap::EMPTYMAP;
+    m_mapType = ShapeMap::EMPTYMAP;
 
     // note that keyvertexcount and keyvertices are different things! (length keyvertices not the
     // same as keyvertexcount!)
@@ -209,7 +209,7 @@ void ShapeGraph::writeAxialConnectionsAsDotGraph(std::ostream &stream) {
     stream.precision(12);
 
     for (size_t i = 0; i < connectors.size(); i++) {
-        const auto &connections = connectors[i].m_connections;
+        const auto &connections = connectors[i].connections;
         for (auto connection : connections) {
             stream << "    " << i << " -- " << connection << std::endl;
         }
@@ -245,7 +245,7 @@ void ShapeGraph::writeAxialConnectionsAsPairsCSV(std::ostream &stream) {
     stream << "refA,refB" << std::endl;
 
     for (size_t i = 0; i < connectors.size(); i++) {
-        auto &connections = connectors[i].m_connections;
+        auto &connections = connectors[i].connections;
         if (i != 0)
             stream << std::endl;
         for (auto iter = connections.begin(); iter != connections.end(); ++iter) {
@@ -265,13 +265,13 @@ void ShapeGraph::writeSegmentConnectionsAsPairsCSV(std::ostream &stream) {
 
     // directed links
     for (size_t i = 0; i < connectors.size(); i++) {
-        for (auto &segconn : connectors[i].m_forward_segconns) {
+        for (auto &segconn : connectors[i].forwardSegconns) {
             stream << std::endl;
             stream << i << "," << segconn.first.ref << "," << segconn.second << "," << 0 // forward
                    << "," << int(segconn.first.dir);
         }
 
-        for (auto &segconn : connectors[i].m_back_segconns) {
+        for (auto &segconn : connectors[i].backSegconns) {
             stream << std::endl;
             stream << i << "," << segconn.first.ref << "," << segconn.second << "," << 1 // back
                    << "," << int(segconn.first.dir);
@@ -288,11 +288,11 @@ void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {
     auto iter = pixShapes.begin();
     for (; iter != pixShapes.end(); ++iter) {
         for (auto jter = iter; jter != pixShapes.end(); ++jter) {
-            auto aIter = m_shapes.find(int(iter->m_shape_ref));
-            auto bIter = m_shapes.find(int(jter->m_shape_ref));
+            auto aIter = m_shapes.find(int(iter->shapeRef));
+            auto bIter = m_shapes.find(int(jter->shapeRef));
             auto a = static_cast<size_t>(std::distance(m_shapes.begin(), aIter));
             auto b = static_cast<size_t>(std::distance(m_shapes.begin(), bIter));
-            auto &connections = m_connectors[size_t(a)].m_connections;
+            auto &connections = m_connectors[size_t(a)].connections;
             if (aIter != m_shapes.end() && bIter != m_shapes.end() && aIter->second.isLine() &&
                 bIter->second.isLine() &&
                 std::find(connections.begin(), connections.end(), b) != connections.end()) {
@@ -348,11 +348,11 @@ void ShapeGraph::unlinkFromShapeMap(const ShapeMap &shapemap) {
 void ShapeGraph::makeNewSegMap(Communicator *comm) {
     // now make a connection set from the ends of lines:
     struct LineConnector {
-        const Line &m_line;
-        Connector &m_connector;
-        int m_index;
+        const Line &line;
+        Connector &connector;
+        int index;
         LineConnector(const Line &line, Connector &connector, int index)
-            : m_line(line), m_connector(connector), m_index(index) {}
+            : line(line), connector(connector), index(index) {}
     };
 
     std::vector<Connector> connectionset;
@@ -384,21 +384,21 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
 
     size_t count = 0;
     for (auto &lineConnectorA : lineConnectors) {
-        Connector &connectionsetA = lineConnectorA.second.m_connector;
-        const Line &lineA = lineConnectorA.second.m_line;
-        int idxA = lineConnectorA.second.m_index;
+        Connector &connectionsetA = lineConnectorA.second.connector;
+        const Line &lineA = lineConnectorA.second.line;
+        int idxA = lineConnectorA.second.index;
         // n.b., vector() is based on t_start and t_end, so we must use t_start and t_end here and
         // throughout
         PixelRef pix1 = pixelate(lineA.t_start());
         std::vector<ShapeRef> &shapes1 =
             m_pixel_shapes(static_cast<size_t>(pix1.y), static_cast<size_t>(pix1.x));
         for (auto &shape : shapes1) {
-            auto lineConnectorB = lineConnectors.find(shape.m_shape_ref);
-            if (lineConnectorB != lineConnectors.end() && idxA < lineConnectorB->second.m_index) {
+            auto lineConnectorB = lineConnectors.find(shape.shapeRef);
+            if (lineConnectorB != lineConnectors.end() && idxA < lineConnectorB->second.index) {
 
-                Connector &connectionsetB = lineConnectorB->second.m_connector;
-                const Line &lineB = lineConnectorB->second.m_line;
-                int idxB = lineConnectorB->second.m_index;
+                Connector &connectionsetB = lineConnectorB->second.connector;
+                const Line &lineB = lineConnectorB->second.line;
+                int idxB = lineConnectorB->second.index;
 
                 Point2f alpha = lineA.vector();
                 Point2f beta = lineB.vector();
@@ -406,17 +406,14 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
                 beta.normalise();
                 if (approxeq(lineA.t_start(), lineB.t_start(), (maxdim * TOLERANCE_B))) {
                     float x = float(2.0 * acos(__min(__max(-dot(alpha, beta), -1.0), 1.0)) / M_PI);
-                    depthmapX::addIfNotExists(connectionsetA.m_back_segconns, SegmentRef(1, idxB),
-                                              x);
-                    depthmapX::addIfNotExists(connectionsetB.m_back_segconns, SegmentRef(1, idxA),
-                                              x);
+                    depthmapX::addIfNotExists(connectionsetA.backSegconns, SegmentRef(1, idxB), x);
+                    depthmapX::addIfNotExists(connectionsetB.backSegconns, SegmentRef(1, idxA), x);
                 }
                 if (approxeq(lineA.t_start(), lineB.t_end(), (maxdim * TOLERANCE_B))) {
                     float x = float(2.0 * acos(__min(__max(-dot(alpha, -beta), -1.0), 1.0)) / M_PI);
-                    depthmapX::addIfNotExists(connectionsetA.m_back_segconns, SegmentRef(-1, idxB),
+                    depthmapX::addIfNotExists(connectionsetA.backSegconns, SegmentRef(-1, idxB), x);
+                    depthmapX::addIfNotExists(connectionsetB.forwardSegconns, SegmentRef(1, idxA),
                                               x);
-                    depthmapX::addIfNotExists(connectionsetB.m_forward_segconns,
-                                              SegmentRef(1, idxA), x);
                 }
             }
         }
@@ -425,12 +422,12 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
         std::vector<ShapeRef> &shapes2 =
             m_pixel_shapes(static_cast<size_t>(pix2.y), static_cast<size_t>(pix2.x));
         for (auto &shape : shapes2) {
-            auto lineConnectorB = lineConnectors.find(shape.m_shape_ref);
-            if (lineConnectorB != lineConnectors.end() && idxA < lineConnectorB->second.m_index) {
+            auto lineConnectorB = lineConnectors.find(shape.shapeRef);
+            if (lineConnectorB != lineConnectors.end() && idxA < lineConnectorB->second.index) {
 
-                Connector &connectionsetB = lineConnectorB->second.m_connector;
-                const Line &lineB = lineConnectorB->second.m_line;
-                int idxB = lineConnectorB->second.m_index;
+                Connector &connectionsetB = lineConnectorB->second.connector;
+                const Line &lineB = lineConnectorB->second.line;
+                int idxB = lineConnectorB->second.index;
 
                 Point2f alpha = lineA.vector();
                 Point2f beta = lineB.vector();
@@ -439,18 +436,17 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
                 beta.normalise();
                 if (approxeq(lineA.t_end(), lineB.t_start(), (maxdim * TOLERANCE_B))) {
                     float x = float(2.0 * acos(__min(__max(-dot(-alpha, beta), -1.0), 1.0)) / M_PI);
-                    depthmapX::addIfNotExists(connectionsetA.m_forward_segconns,
-                                              SegmentRef(1, idxB), x);
-                    depthmapX::addIfNotExists(connectionsetB.m_back_segconns, SegmentRef(-1, idxA),
+                    depthmapX::addIfNotExists(connectionsetA.forwardSegconns, SegmentRef(1, idxB),
                                               x);
+                    depthmapX::addIfNotExists(connectionsetB.backSegconns, SegmentRef(-1, idxA), x);
                 }
                 if (approxeq(lineA.t_end(), lineB.t_end(), (maxdim * TOLERANCE_B))) {
                     float x =
                         float(2.0 * acos(__min(__max(-dot(-alpha, -beta), -1.0), 1.0)) / M_PI);
-                    depthmapX::addIfNotExists(connectionsetA.m_forward_segconns,
-                                              SegmentRef(-1, idxB), x);
-                    depthmapX::addIfNotExists(connectionsetB.m_forward_segconns,
-                                              SegmentRef(-1, idxA), x);
+                    depthmapX::addIfNotExists(connectionsetA.forwardSegconns, SegmentRef(-1, idxB),
+                                              x);
+                    depthmapX::addIfNotExists(connectionsetB.forwardSegconns, SegmentRef(-1, idxA),
+                                              x);
                 }
             }
         }
@@ -507,7 +503,7 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
         // if the line is ascending or decending
         int parity = (axis == XAXIS) ? 1 : line.sign();
 
-        auto &connections = m_connectors[i].m_connections;
+        auto &connections = m_connectors[i].connections;
         for (size_t j = 0; j < connections.size(); j++) {
             // find the intersection point and add...
             // note: more than one break at the same place allowed
@@ -599,12 +595,10 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
                                 beta.normalise();
                                 float x = float(
                                     2.0 * acos(__min(__max(-dot(alpha, beta), -1.0), 1.0)) / M_PI);
-                                depthmapX::addIfNotExists(
-                                    connectors[size_t(segA)].m_forward_segconns,
-                                    SegmentRef(-1, seg1), x);
-                                depthmapX::addIfNotExists(
-                                    connectors[size_t(seg1)].m_forward_segconns,
-                                    SegmentRef(-1, segA), x);
+                                depthmapX::addIfNotExists(connectors[size_t(segA)].forwardSegconns,
+                                                          SegmentRef(-1, seg1), x);
+                                depthmapX::addIfNotExists(connectors[size_t(seg1)].forwardSegconns,
+                                                          SegmentRef(-1, segA), x);
                             }
                             if (seg2 != -1) {
                                 Point2f alpha =
@@ -615,10 +609,9 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
                                 beta.normalise();
                                 float x = float(
                                     2.0 * acos(__min(__max(-dot(alpha, beta), -1.0), 1.0)) / M_PI);
-                                depthmapX::addIfNotExists(
-                                    connectors[size_t(segA)].m_forward_segconns,
-                                    SegmentRef(1, seg2), x);
-                                depthmapX::addIfNotExists(connectors[size_t(seg2)].m_back_segconns,
+                                depthmapX::addIfNotExists(connectors[size_t(segA)].forwardSegconns,
+                                                          SegmentRef(1, seg2), x);
+                                depthmapX::addIfNotExists(connectors[size_t(seg2)].backSegconns,
                                                           SegmentRef(-1, segA), x);
                             }
                         }
@@ -632,11 +625,10 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
                                 beta.normalise();
                                 float x = float(
                                     2.0 * acos(__min(__max(-dot(alpha, beta), -1.0), 1.0)) / M_PI);
-                                depthmapX::addIfNotExists(connectors[size_t(segB)].m_back_segconns,
+                                depthmapX::addIfNotExists(connectors[size_t(segB)].backSegconns,
                                                           SegmentRef(-1, seg1), x);
-                                depthmapX::addIfNotExists(
-                                    connectors[size_t(seg1)].m_forward_segconns,
-                                    SegmentRef(1, segB), x);
+                                depthmapX::addIfNotExists(connectors[size_t(seg1)].forwardSegconns,
+                                                          SegmentRef(1, segB), x);
                             }
                             if (seg2 != -1) {
                                 Point2f alpha =
@@ -647,9 +639,9 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
                                 beta.normalise();
                                 float x = float(
                                     2.0 * acos(__min(__max(-dot(alpha, beta), -1.0), 1.0)) / M_PI);
-                                depthmapX::addIfNotExists(connectors[size_t(segB)].m_back_segconns,
+                                depthmapX::addIfNotExists(connectors[size_t(segB)].backSegconns,
                                                           SegmentRef(1, seg2), x);
-                                depthmapX::addIfNotExists(connectors[size_t(seg2)].m_back_segconns,
+                                depthmapX::addIfNotExists(connectors[size_t(seg2)].backSegconns,
                                                           SegmentRef(1, segB), x);
                             }
                         }
@@ -663,9 +655,9 @@ void ShapeGraph::makeSegmentMap(std::vector<Line> &lines, std::vector<Connector>
                 }
             }
             if (segA != -1 && segB != -1) {
-                depthmapX::addIfNotExists(connectors[size_t(segA)].m_forward_segconns,
+                depthmapX::addIfNotExists(connectors[size_t(segA)].forwardSegconns,
                                           SegmentRef(1, segB), 0.0f);
-                depthmapX::addIfNotExists(connectors[size_t(segB)].m_back_segconns,
+                depthmapX::addIfNotExists(connectors[size_t(segB)].backSegconns,
                                           SegmentRef(-1, segA), 0.0f);
             }
             segA = segB;
@@ -700,23 +692,23 @@ void ShapeGraph::makeSegmentConnections(std::vector<Connector> &connectionset) {
         Connector &connector = connectionset[size_t(i)];
         AttributeRow &row = m_attributes->getRow(AttributeKey(shape.first));
 
-        row.setValue(refCol, float(connector.m_segment_axialref));
+        row.setValue(refCol, float(connector.segmentAxialref));
         row.setValue(lengCol, float(shape.second.getLine().length()));
 
         // all indices should match... (including lineset/connectionset versus m_shapes)
         m_connectors.push_back(connector);
         float totalWeight = 0.0f;
-        for (auto iter = connector.m_forward_segconns.begin();
-             iter != connector.m_forward_segconns.end(); ++iter) {
+        for (auto iter = connector.forwardSegconns.begin(); iter != connector.forwardSegconns.end();
+             ++iter) {
             totalWeight += iter->second;
         }
-        for (auto iter = connector.m_back_segconns.begin(); iter != connector.m_back_segconns.end();
+        for (auto iter = connector.backSegconns.begin(); iter != connector.backSegconns.end();
              ++iter) {
             totalWeight += iter->second;
         }
         row.setValue(wConnCol, float(totalWeight));
         row.setValue(uwConnCol,
-                     float(connector.m_forward_segconns.size() + connector.m_back_segconns.size()));
+                     float(connector.forwardSegconns.size() + connector.backSegconns.size()));
 
         // free up connectionset as we go along:
         connectionset[size_t(i)] = Connector();

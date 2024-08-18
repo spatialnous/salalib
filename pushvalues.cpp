@@ -100,10 +100,10 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
     // which takes both options from the other parts of this conditional.
 
     struct ValueCountRow {
-        double m_value = -1;
-        int m_count = 0;
-        AttributeRow &m_row;
-        ValueCountRow(AttributeRow &row) : m_row(row) {}
+        double value = -1;
+        int count = 0;
+        AttributeRow &row;
+        ValueCountRow(AttributeRow &row) : row(row) {}
     };
 
     // prepare a temporary value table to store counts and values
@@ -125,14 +125,13 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
                     continue;
                 auto valCount = valCounts.find(AttributeKey(pix));
                 if (valCount != valCounts.end()) {
-                    pushValue(valCount->second.m_value, valCount->second.m_count, thisval,
-                              pushFunc);
+                    pushValue(valCount->second.value, valCount->second.count, thisval, pushFunc);
                 }
             }
         } else if (shape.second.isPolyLine()) {
             std::set<PixelRef> polylinePixels;
-            for (size_t i = 1; i < shape.second.m_points.size(); i++) {
-                Line li(shape.second.m_points[i - 1], shape.second.m_points[i]);
+            for (size_t i = 1; i < shape.second.points.size(); i++) {
+                Line li(shape.second.points[i - 1], shape.second.points[i]);
                 PixelRefVector linePixels = destMap.pixelateLine(li);
                 polylinePixels.insert(linePixels.begin(), linePixels.end());
             }
@@ -141,8 +140,7 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
                     continue;
                 auto valCount = valCounts.find(AttributeKey(pix));
                 if (valCount != valCounts.end()) {
-                    pushValue(valCount->second.m_value, valCount->second.m_count, thisval,
-                              pushFunc);
+                    pushValue(valCount->second.value, valCount->second.count, thisval, pushFunc);
                 }
             }
         }
@@ -151,9 +149,9 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
     // then collect the polygons and push to vga map
     for (auto &valCount : valCounts) {
         int keyOut = valCount.first.value;
-        double &val = valCount.second.m_value;
-        int &count = valCount.second.m_count;
-        AttributeRow &row = valCount.second.m_row;
+        double &val = valCount.second.value;
+        int &count = valCount.second.count;
+        AttributeRow &row = valCount.second.row;
         std::vector<size_t> gatelist;
         if (!isObjectVisible(destMap.getLayers(), row)) {
             continue;

@@ -13,7 +13,7 @@ class AttributeTableView {
   public:
     AttributeTableView(const AttributeTable &table);
 
-    const AttributeTable &m_table;
+    const AttributeTable &table;
 
     // columnIndex < 0 -> not set
     virtual void setDisplayColIndex(int columnIndex);
@@ -48,7 +48,7 @@ class AttributeTableHandle : public AttributeTableView {
 };
 
 struct index_item_key : public std::function<bool(AttributeKey)> {
-    explicit index_item_key(const AttributeKey &baseline) : m_baseline(baseline) {}
-    bool operator()(const AttributeIndexItem &arg) { return arg.key.value == m_baseline.value; }
-    const AttributeKey &m_baseline;
+    explicit index_item_key(const AttributeKey &baseline) : baseline(baseline) {}
+    bool operator()(const AttributeIndexItem &arg) { return arg.key.value == baseline.value; }
+    const AttributeKey &baseline;
 };

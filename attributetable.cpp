@@ -26,30 +26,30 @@ void AttributeColumnImpl::setFormula(std::string newFormula) { m_formula = newFo
 
 const std::string &AttributeColumnImpl::getFormula() const { return m_formula; }
 
-const AttributeColumnStats &AttributeColumnImpl::getStats() const { return m_stats; }
+const AttributeColumnStats &AttributeColumnImpl::getStats() const { return stats; }
 
 void AttributeColumnImpl::updateStats(float val, float oldVal) const {
-    if (m_stats.total < 0) {
-        m_stats.total = val;
+    if (stats.total < 0) {
+        stats.total = val;
     } else {
-        m_stats.total += val;
-        m_stats.total -= oldVal;
+        stats.total += val;
+        stats.total -= oldVal;
     }
-    if (val > m_stats.max) {
-        m_stats.max = val;
+    if (val > stats.max) {
+        stats.max = val;
     }
-    if (m_stats.min < 0 || val < m_stats.min) {
-        m_stats.min = val;
+    if (stats.min < 0 || val < stats.min) {
+        stats.min = val;
     }
 }
 
-void AttributeColumnImpl::setStats(const AttributeColumnStats &stats) const {
-    m_stats.max = stats.max;
-    m_stats.min = stats.min;
-    m_stats.total = stats.total;
-    m_stats.visibleTotal = stats.visibleTotal;
-    m_stats.visibleMax = stats.visibleMax;
-    m_stats.visibleMin = stats.visibleMin;
+void AttributeColumnImpl::setStats(const AttributeColumnStats &otherSats) const {
+    stats.max = otherSats.max;
+    stats.min = otherSats.min;
+    stats.total = otherSats.total;
+    stats.visibleTotal = otherSats.visibleTotal;
+    stats.visibleMax = otherSats.visibleMax;
+    stats.visibleMin = otherSats.visibleMin;
 }
 
 void AttributeColumnImpl::setName(const std::string &name) { m_name = name; }
@@ -58,10 +58,10 @@ size_t AttributeColumnImpl::read(std::istream &stream) {
     m_name = dXstring::readString(stream);
     float val;
     stream.read((char *)&val, sizeof(float));
-    m_stats.min = val;
+    stats.min = val;
     stream.read((char *)&val, sizeof(float));
-    m_stats.max = val;
-    stream.read((char *)&m_stats.total, sizeof(double));
+    stats.max = val;
+    stream.read((char *)&stats.total, sizeof(double));
     int physicalColumn;
     stream.read((char *)&physicalColumn,
                 sizeof(int)); // physical column is obsolete
@@ -75,11 +75,11 @@ size_t AttributeColumnImpl::read(std::istream &stream) {
 
 void AttributeColumnImpl::write(std::ostream &stream, int physicalCol) {
     dXstring::writeString(stream, m_name);
-    float min = (float)m_stats.min;
-    float max = (float)m_stats.max;
+    float min = (float)stats.min;
+    float max = (float)stats.max;
     stream.write((char *)&min, sizeof(float));
     stream.write((char *)&max, sizeof(float));
-    stream.write((char *)&m_stats.total, sizeof(m_stats.total));
+    stream.write((char *)&stats.total, sizeof(stats.total));
     stream.write((char *)&physicalCol, sizeof(int));
     stream.write((char *)&m_hidden, sizeof(bool));
     stream.write((char *)&m_locked, sizeof(bool));
@@ -235,7 +235,7 @@ size_t AttributeTable::insertOrResetColumn(const std::string &columnName,
     }
 
     // it exists - we need to reset it
-    m_columns[iter->second].m_stats = AttributeColumnStats();
+    m_columns[iter->second].stats = AttributeColumnStats();
     m_columns[iter->second].setLock(false);
     for (auto &row : m_rows) {
         row.second->setValue(iter->second, -1.0f);

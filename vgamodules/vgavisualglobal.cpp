@@ -157,8 +157,8 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
     if (m_legacyWriteMiscs) {
         // kept to achieve parity in binary comparison with old versions
         for (auto &ad2 : analysisData) {
-            ad2.m_point.m_dummy_misc = ad2.m_visitedFromBin;
-            ad2.m_point.m_dummy_extent = ad2.m_diagonalExtent;
+            ad2.m_point.dummyMisc = ad2.m_visitedFromBin;
+            ad2.m_point.dummyExtent = ad2.m_diagonalExtent;
         }
     }
 

@@ -88,8 +88,8 @@ class DxfEntity {
   protected:
     // Reference data
     int m_tag;
-    DxfLineType *m_p_line_type = nullptr;
-    DxfLayer *m_p_layer = nullptr;
+    DxfLineType *m_pLineType = nullptr;
+    DxfLayer *m_pLayer = nullptr;
 
   public:
     DxfEntity(int tag = -1);
@@ -243,7 +243,7 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
     enum { CLOSED = 1 }; // CLOSED = closed polygon
   protected:
     int m_attributes;
-    size_t m_vertex_count;
+    size_t m_vertexCount;
     std::vector<DxfVertex> m_vertices;
 
   public:
@@ -257,17 +257,17 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
     //
     // some basic manipulation
     void scale(const DxfVertex &base_vertex, const DxfVertex &scale) {
-        for (size_t i = 0; i < m_vertex_count; i++)
+        for (size_t i = 0; i < m_vertexCount; i++)
             m_vertices[i].scale(base_vertex, scale);
         DxfRegion::scale(base_vertex, scale);
     }
     void rotate(const DxfVertex &base_vertex, double angle) {
-        for (size_t i = 0; i < m_vertex_count; i++)
+        for (size_t i = 0; i < m_vertexCount; i++)
             m_vertices[i].rotate(base_vertex, angle);
         DxfRegion::rotate(base_vertex, angle);
     }
     void translate(const DxfVertex &translation) {
-        for (size_t i = 0; i < m_vertex_count; i++)
+        for (size_t i = 0; i < m_vertexCount; i++)
             m_vertices[i].translate(translation);
         DxfRegion::translate(translation);
     }
@@ -282,7 +282,7 @@ class DxfLwPolyLine : public DxfPolyLine {
     friend class DxfParser;
     //
   protected:
-    int m_expected_vertex_count;
+    int m_expectedVertexCount;
 
   public:
     DxfLwPolyLine(int tag = -1);
@@ -442,9 +442,9 @@ class DxfSpline : public DxfEntity, public DxfRegion {
   protected:
     int m_xyz;
     int m_attributes;
-    size_t m_ctrl_pt_count;
-    size_t m_knot_count;
-    std::vector<DxfVertex> m_ctrl_pts;
+    size_t m_ctrlPtCount;
+    size_t m_knotCount;
+    std::vector<DxfVertex> m_ctrlPts;
     std::vector<double> m_knots;
 
   public:
@@ -457,18 +457,18 @@ class DxfSpline : public DxfEntity, public DxfRegion {
     //
     // some basic manipulation
     void scale(const DxfVertex &base_vertex, const DxfVertex &scale) {
-        for (size_t i = 0; i < m_ctrl_pt_count; i++)
-            m_ctrl_pts[i].scale(base_vertex, scale);
+        for (size_t i = 0; i < m_ctrlPtCount; i++)
+            m_ctrlPts[i].scale(base_vertex, scale);
         DxfRegion::scale(base_vertex, scale);
     }
     void rotate(const DxfVertex &base_vertex, double angle) {
-        for (size_t i = 0; i < m_ctrl_pt_count; i++)
-            m_ctrl_pts[i].rotate(base_vertex, angle);
+        for (size_t i = 0; i < m_ctrlPtCount; i++)
+            m_ctrlPts[i].rotate(base_vertex, angle);
         DxfRegion::rotate(base_vertex, angle);
     }
     void translate(const DxfVertex &translation) {
-        for (size_t i = 0; i < m_ctrl_pt_count; i++)
-            m_ctrl_pts[i].translate(translation);
+        for (size_t i = 0; i < m_ctrlPtCount; i++)
+            m_ctrlPts[i].translate(translation);
         DxfRegion::translate(translation);
     }
 
@@ -523,14 +523,14 @@ class DxfLayer : public DxfTableRow, public DxfRegion {
     // Originally was going to be clever, but it's far easier to have a list for each type:
     std::vector<DxfVertex> m_points;
     std::vector<DxfLine> m_lines;
-    std::vector<DxfPolyLine> m_poly_lines;
+    std::vector<DxfPolyLine> m_polyLines;
     std::vector<DxfArc> m_arcs;
     std::vector<DxfEllipse> m_ellipses;
     std::vector<DxfCircle> m_circles;
     std::vector<DxfSpline> m_splines;
     std::vector<DxfInsert> m_inserts;
-    size_t m_total_point_count = 0;
-    size_t m_total_line_count = 0;
+    size_t m_totalPointCount = 0;
+    size_t m_totalLineCount = 0;
 
   public:
     DxfLayer(const std::string &name = "");
@@ -551,8 +551,8 @@ class DxfLayer : public DxfTableRow, public DxfRegion {
     size_t numCircles() const;
     size_t numSplines() const;
     //
-    size_t numTotalPoints() const { return m_total_point_count; }
-    size_t numTotalLines() const { return m_total_line_count; }
+    size_t numTotalPoints() const { return m_totalPointCount; }
+    size_t numTotalLines() const { return m_totalLineCount; }
     //
     // this merges an insert (so the insert remains flattened)
     void insert(DxfInsert &insert, DxfParser *parser);
@@ -566,7 +566,7 @@ class DxfBlock : public DxfLayer {
     friend class DxfLayer;
 
   protected:
-    DxfVertex m_base_point;
+    DxfVertex m_basePoint;
 
   public:
     DxfBlock(const std::string &name = "");
@@ -614,7 +614,7 @@ class DxfParser {
     DxfRegion m_region;
     std::map<std::string, DxfLayer> m_layers;
     std::map<std::string, DxfBlock> m_blocks;
-    std::map<std::string, DxfLineType> m_line_types;
+    std::map<std::string, DxfLineType> m_lineTypes;
     //
     size_t m_size;
     Communicator *m_communicator;

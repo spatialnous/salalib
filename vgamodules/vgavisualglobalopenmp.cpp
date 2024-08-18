@@ -137,8 +137,8 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
         if (m_legacyWriteMiscs) {
             // kept to achieve parity in binary comparison with old versions
-            ad0.m_point.m_dummy_misc = ad0.m_visitedFromBin;
-            ad0.m_point.m_dummy_extent = ad0.m_diagonalExtent;
+            ad0.m_point.dummyMisc = ad0.m_visitedFromBin;
+            ad0.m_point.dummyExtent = ad0.m_diagonalExtent;
         }
     }
 
@@ -179,31 +179,4 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
     result.completed = true;
 
     return result;
-}
-
-void VGAVisualGlobalOpenMP::extractUnseen(Node &node, PixelRefVector &pixels,
-                                          depthmapX::RowMatrix<int> &miscs,
-                                          depthmapX::RowMatrix<PixelRef> &extents) {
-    for (int i = 0; i < 32; i++) {
-        Bin &bin = node.bin(i);
-        for (auto pixVec : bin.m_pixel_vecs) {
-            for (PixelRef pix = pixVec.start();
-                 pix.col(bin.m_dir) <= pixVec.end().col(bin.m_dir);) {
-                int &misc = miscs(pix.y, pix.x);
-                PixelRef &extent = extents(pix.y, pix.x);
-                if (misc == 0) {
-                    pixels.push_back(pix);
-                    misc |= (1 << i);
-                }
-                // 10.2.02 revised --- diagonal was breaking this as it was extent in diagonal or
-                // horizontal
-                if (!(bin.m_dir & PixelRef::DIAGONAL)) {
-                    if (extent.col(bin.m_dir) >= pixVec.end().col(bin.m_dir))
-                        break;
-                    extent.col(bin.m_dir) = pixVec.end().col(bin.m_dir);
-                }
-                pix.move(bin.m_dir);
-            }
-        }
-    }
 }

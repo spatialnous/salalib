@@ -65,14 +65,13 @@ void VGAIsovistZone::extractMetric(Node n, std::set<MetricTriple> &pixels, Point
                                    const MetricTriple &curs) {
     for (int i = 0; i < 32; i++) {
         Bin &bin = n.bin(i);
-        for (auto pixVec : bin.m_pixel_vecs) {
-            for (PixelRef pix = pixVec.start();
-                 pix.col(bin.m_dir) <= pixVec.end().col(bin.m_dir);) {
+        for (auto pixVec : bin.pixelVecs) {
+            for (PixelRef pix = pixVec.start(); pix.col(bin.dir) <= pixVec.end().col(bin.dir);) {
                 Point &pt = map.getPoint(pix);
                 if (pt.filled()) {
                     pixels.insert(MetricTriple(0, pix, curs.m_pixel));
                 }
-                pix.move(bin.m_dir);
+                pix.move(bin.dir);
             }
         }
     }

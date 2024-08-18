@@ -9,20 +9,20 @@
 class IsovistDefinition {
   public:
     IsovistDefinition(double x, double y, double angle, double viewAngle)
-        : mLocation(x, y), mAngle(angle), mViewAngle(viewAngle) {
+        : m_location(x, y), m_angle(angle), m_viewAngle(viewAngle) {
         if (viewAngle >= 2 * M_PI) {
-            mAngle = 0.0;
-            mViewAngle = 0.0;
+            m_angle = 0.0;
+            m_viewAngle = 0.0;
         }
     }
 
-    IsovistDefinition(double x, double y) : mLocation(x, y), mAngle(0), mViewAngle(0) {}
+    IsovistDefinition(double x, double y) : m_location(x, y), m_angle(0), m_viewAngle(0) {}
 
-    const Point2f &getLocation() const { return mLocation; }
-    double getAngle() const { return mAngle; }
-    double getViewAngle() const { return mViewAngle; }
+    const Point2f &getLocation() const { return m_location; }
+    double getAngle() const { return m_angle; }
+    double getViewAngle() const { return m_viewAngle; }
     double getLeftAngle() const {
-        double leftAngle = mAngle - 0.5 * mViewAngle;
+        double leftAngle = m_angle - 0.5 * m_viewAngle;
         if (leftAngle < 0) {
             leftAngle += 2 * M_PI;
         }
@@ -30,7 +30,7 @@ class IsovistDefinition {
     }
 
     double getRightAngle() const {
-        double rightAngle = mAngle + 0.5 * mViewAngle;
+        double rightAngle = m_angle + 0.5 * m_viewAngle;
         if (rightAngle > 2 * M_PI) {
             rightAngle -= 2 * M_PI;
         }
@@ -38,7 +38,7 @@ class IsovistDefinition {
     }
 
   private:
-    Point2f mLocation;
-    double mAngle;
-    double mViewAngle;
+    Point2f m_location;
+    double m_angle;
+    double m_viewAngle;
 };

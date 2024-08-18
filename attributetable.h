@@ -126,7 +126,7 @@ class AttributeColumnImpl : public AttributeColumn, AttributeColumnStats {
   public:
     // stats are mutable - we need to be able to update them all the time,
     // even when not allowed to modify the column settings
-    mutable AttributeColumnStats m_stats;
+    mutable AttributeColumnStats stats;
 
     void setName(const std::string &name);
     // returns the physical column for comaptibility with the old attribute table
@@ -322,35 +322,35 @@ class AttributeTable : public AttributeColumnManager {
     // iterator
     template <typename iterator_type> class iterator_item_impl : public iterator_item {
       public:
-        iterator_item_impl(const iterator_type &iter) : m_iter(iter) {}
+        iterator_item_impl(const iterator_type &iter) : iter(iter) {}
         template <typename other_type>
-        iterator_item_impl(const iterator_item_impl<other_type> &other) : m_iter(other.m_iter) {}
+        iterator_item_impl(const iterator_item_impl<other_type> &other) : iter(other.iter) {}
 
         template <typename other_type>
         iterator_item_impl<iterator_type> &operator=(const iterator_item_impl<other_type> &other) {
-            m_iter = other.m_iter;
+            iter = other.iter;
             return *this;
         }
 
-        const AttributeKey &getKey() const { return m_iter->first; }
+        const AttributeKey &getKey() const { return iter->first; }
 
-        const AttributeRow &getRow() const { return *m_iter->second; }
+        const AttributeRow &getRow() const { return *iter->second; }
 
-        AttributeRow &getRow() { return *m_iter->second; }
+        AttributeRow &getRow() { return *iter->second; }
 
-        void forward() const { ++m_iter; }
+        void forward() const { ++iter; }
 
-        auto forward(int n) const { return std::next(m_iter, n); }
+        auto forward(int n) const { return std::next(iter, n); }
 
-        void back() const { --m_iter; }
+        void back() const { --iter; }
 
         template <typename other_type>
         bool operator==(const iterator_item_impl<other_type> &other) const {
-            return m_iter == other.m_iter;
+            return iter == other.iter;
         }
 
       public:
-        mutable iterator_type m_iter;
+        mutable iterator_type iter;
     };
 
     // iterator implementation - templated on iterator type for const/non-const

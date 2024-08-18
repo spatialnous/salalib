@@ -107,8 +107,8 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
         if (m_legacyWriteMiscs) {
             // kept to achieve parity in binary comparison with old versions
-            ad0.m_point.m_dummy_misc = ad0.m_visitedFromBin;
-            ad0.m_point.m_dummy_cumangle = ad0.m_cumAngle;
+            ad0.m_point.dummyMisc = ad0.m_visitedFromBin;
+            ad0.m_point.dummyCumangle = ad0.m_cumAngle;
         }
     }
 

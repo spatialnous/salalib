@@ -94,7 +94,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
     for (auto &ad : analysisData) {
         auto &p = ad.m_point;
         result.setValue(ad.m_attributeDataRow, col, static_cast<float>(ad.m_misc));
-        p.m_dummy_misc = 0;
+        p.dummyMisc = 0;
     }
 
     result.completed = true;

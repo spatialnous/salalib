@@ -20,7 +20,7 @@ void TidyLines::tidy(std::vector<Line> &lines, const QtRegion &region) {
         lines.end());
 
     // now load up m_lines...
-    initLines(lines.size(), m_region.bottom_left, m_region.top_right);
+    initLines(lines.size(), m_region.bottomLeft, m_region.topRight);
     for (auto &line : lines) {
         addLine(line);
     }
@@ -35,7 +35,7 @@ void TidyLines::tidy(std::vector<Line> &lines, const QtRegion &region) {
         PixelRefVector list = pixelateLine(m_lines[i].line);
         for (size_t a = 0; a < list.size(); a++) {
             auto pixelLines =
-                m_pixel_lines(static_cast<size_t>(list[a].y), static_cast<size_t>(list[a].x));
+                m_pixelLines(static_cast<size_t>(list[a].y), static_cast<size_t>(list[a].x));
             for (int j : pixelLines) {
                 if (m_lines[j].test != m_test && j > (int)i &&
                     intersect_region(lines[i], lines[j], TOLERANCE_B * maxdim)) {
@@ -116,7 +116,7 @@ void TidyLines::quicktidy(std::map<int, std::pair<Line, int>> &lines, const QtRe
     }
 
     // now load up m_lines...
-    initLines(lines.size(), m_region.bottom_left, m_region.top_right);
+    initLines(lines.size(), m_region.bottomLeft, m_region.topRight);
     for (const auto &line : lines) {
         addLine(line.second.first);
     }
@@ -128,8 +128,7 @@ void TidyLines::quicktidy(std::map<int, std::pair<Line, int>> &lines, const QtRe
     for (const auto &line : lines) {
         i++;
         PixelRef start = pixelate(line.second.first.start());
-        auto &pixelLines =
-            m_pixel_lines(static_cast<size_t>(start.y), static_cast<size_t>(start.x));
+        auto &pixelLines = m_pixelLines(static_cast<size_t>(start.y), static_cast<size_t>(start.x));
         for (int k : pixelLines) {
             if (k > int(i) &&
                 approxeq(m_lines[i].line.start(), m_lines[k].line.start(), tolerance)) {

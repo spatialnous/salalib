@@ -71,7 +71,7 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
             map.getAttributeRowFromShapeIndex(lineindex.ref).setValue(stepdepthCol, depthToLine);
             int extradepth;
             if (lineindex.dir != -1) {
-                for (auto &segconn : line.m_forward_segconns) {
+                for (auto &segconn : line.forwardSegconns) {
                     if (!covered[segconn.first.ref]) {
                         extradepth = (int)floor(segconn.second * tulipBins * 0.5);
                         bins[(currentbin + tulipBins + extradepth) % tulipBins].push_back(
@@ -82,7 +82,7 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
                 }
             }
             if (lineindex.dir != 1) {
-                for (auto &segconn : line.m_back_segconns) {
+                for (auto &segconn : line.backSegconns) {
                     if (!covered[segconn.first.ref]) {
                         extradepth = (int)floor(segconn.second * tulipBins * 0.5);
                         bins[(currentbin + tulipBins + extradepth) % tulipBins].push_back(

@@ -89,13 +89,13 @@ class SpacePixel : public PixelBase {
     std::string m_name = "Default";
     bool m_show;
     bool m_edit;
-    depthmapX::RowMatrix<std::vector<int>> m_pixel_lines;
+    depthmapX::RowMatrix<std::vector<int>> m_pixelLines;
 
     int m_ref;
     std::map<int, LineTest> m_lines;
     //
     // for screen drawing
-    mutable std::vector<int> m_display_lines;
+    mutable std::vector<int> m_displayLines;
     mutable int m_current;
     //
     // for line testing

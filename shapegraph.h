@@ -24,16 +24,16 @@ struct AnalysisInfo {
     SegmentRef previous;
     int depth;
     double choice;
-    double weighted_choice;
-    double weighted_choice2; // EFEF
+    double weightedChoice;
+    double weightedChoice2; // EFEF
     AnalysisInfo() {
         choicecovered = false;
         leaf = true;
         previous = SegmentRef();
         depth = 0;
         choice = 0.0;
-        weighted_choice = 0.0;
-        weighted_choice2 = 0.0;
+        weightedChoice = 0.0;
+        weightedChoice2 = 0.0;
     }
     void clearLine() {
         choicecovered = false;

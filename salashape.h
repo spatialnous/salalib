@@ -15,7 +15,7 @@
 
 class SalaShape {
   public:
-    std::vector<Point2f> m_points;
+    std::vector<Point2f> points;
     enum {
         SHAPE_POINT = 0x01,
         SHAPE_LINE = 0x02,
@@ -114,11 +114,11 @@ class SalaShape {
         if (isLine()) {
             lines.push_back(getLine());
         } else if (isPolyLine() || isPolygon()) {
-            for (size_t j = 0; j < m_points.size() - 1; j++) {
-                lines.push_back(Line(m_points[j], m_points[j + 1]));
+            for (size_t j = 0; j < points.size() - 1; j++) {
+                lines.push_back(Line(points[j], points[j + 1]));
             }
             if (isClosed()) {
-                lines.push_back(Line(m_points[m_points.size() - 1], m_points[0]));
+                lines.push_back(Line(points[points.size() - 1], points[0]));
             }
         }
         return lines;

@@ -530,7 +530,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                 float seglength;
                 int extradepth;
                 if (lineindex.dir != -1) {
-                    for (auto &segconn : line.m_forward_segconns) {
+                    for (auto &segconn : line.forwardSegconns) {
                         rbin = rbinbase;
                         SegmentRef conn = segconn.first;
                         if ((uncovered[conn.ref][(conn.dir == 1 ? 0 : 1)] & coverage) != 0) {
@@ -583,7 +583,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                     }
                 }
                 if (lineindex.dir != 1) {
-                    for (auto &segconn : line.m_back_segconns) {
+                    for (auto &segconn : line.backSegconns) {
                         rbin = rbinbase;
                         SegmentRef conn = segconn.first;
                         if ((uncovered[conn.ref][(conn.dir == 1 ? 0 : 1)] & coverage) != 0) {
@@ -684,9 +684,9 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                                 // previously encountered nodes added to it
                                 audittrail[here.ref][k][heredir].choice += choicecount;
                                 // nb, weighted values calculated anyway to save time on 'if'
-                                audittrail[here.ref][k][heredir].weighted_choice += choiceweight;
+                                audittrail[here.ref][k][heredir].weightedChoice += choiceweight;
                                 // EFEF*
-                                audittrail[here.ref][k][heredir].weighted_choice2 += choiceweight2;
+                                audittrail[here.ref][k][heredir].weightedChoice2 += choiceweight2;
                                 //*EFEF
                                 // if the node hasn't been encountered before, the choicecount and
                                 // choiceweight is incremented for all remaining nodes to be
@@ -704,11 +704,11 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                                     // note, for weighted choice, the start and end points have
                                     // choice added to them:
                                     if (m_weighted_measure_col != -1) {
-                                        audittrail[here.ref][k][heredir].weighted_choice +=
+                                        audittrail[here.ref][k][heredir].weightedChoice +=
                                             (weights[here.ref] * rootweight) / 2.0;
                                         // EFEF*
                                         if (weightingCol2 != -1) {
-                                            audittrail[here.ref][k][heredir].weighted_choice2 +=
+                                            audittrail[here.ref][k][heredir].weightedChoice2 +=
                                                 (weights2[here.ref] * rootweight) /
                                                 2.0; // rootweight!
                                         }
@@ -721,12 +721,12 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                             // to them: (this is the summed weight for all starting nodes
                             // encountered in this path)
                             if (m_weighted_measure_col != -1) {
-                                audittrail[here.ref][k][(here.dir == 1) ? 0 : 1].weighted_choice +=
+                                audittrail[here.ref][k][(here.dir == 1) ? 0 : 1].weightedChoice +=
                                     choiceweight / 2.0;
                                 // EFEF*
                                 if (weightingCol2 != -1) {
                                     audittrail[here.ref][k][(here.dir == 1) ? 0 : 1]
-                                        .weighted_choice2 += choiceweight2 / 2.0;
+                                        .weightedChoice2 += choiceweight2 / 2.0;
                                 }
                                 //*EFEF
                             }
@@ -803,11 +803,11 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                 // should already have been accumulated by radius at this stage
                 double totalChoice =
                     audittrail[cursor][r][0].choice + audittrail[cursor][r][1].choice;
-                double totalWeightedChoice = audittrail[cursor][r][0].weighted_choice +
-                                             audittrail[cursor][r][1].weighted_choice;
+                double totalWeightedChoice = audittrail[cursor][r][0].weightedChoice +
+                                             audittrail[cursor][r][1].weightedChoice;
                 // EFEF*
-                double totalWeightedChoice2 = audittrail[cursor][r][0].weighted_choice2 +
-                                              audittrail[cursor][r][1].weighted_choice2;
+                double totalWeightedChoice2 = audittrail[cursor][r][0].weightedChoice2 +
+                                              audittrail[cursor][r][1].weightedChoice2;
                 //*EFEF
 
                 // normalised choice now excluded for two reasons:

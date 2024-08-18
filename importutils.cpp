@@ -270,7 +270,7 @@ namespace depthmapX {
         }
 
         // for each category
-        for (const auto &val : map.m_categories) {
+        for (const auto &val : map.categories) {
 
             auto &shapeMap = maps.emplace_back(val.first, mapType == depthmapX::ImportType::DATAMAP
                                                               ? ShapeMap::DATAMAP

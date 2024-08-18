@@ -16,7 +16,7 @@ sparkSieve2::sparkSieve2(const Point2f &centre, double maxdist) {
     m_centre = centre;
     m_maxdist = maxdist;
 
-    m_gaps.push_back(sparkZone2(0.0, 1.0));
+    gaps.push_back(sparkZone2(0.0, 1.0));
 }
 
 sparkSieve2::~sparkSieve2() {}
@@ -65,10 +65,10 @@ void sparkSieve2::block(const std::vector<Line> &lines, int q) {
 }
 
 void sparkSieve2::collectgarbage() {
-    auto iter = m_gaps.begin();
+    auto iter = gaps.begin();
     auto blockIter = m_blocks.begin();
 
-    for (; blockIter != m_blocks.end() && iter != m_gaps.end();) {
+    for (; blockIter != m_blocks.end() && iter != gaps.end();) {
         if (blockIter->end < iter->start) {
             blockIter++;
             continue;
@@ -89,14 +89,14 @@ void sparkSieve2::collectgarbage() {
             }
         }
         if (iter->end <= iter->start + 1e-10) { // 1e-10 required for floating point error
-            iter = m_gaps.erase(iter);
+            iter = gaps.erase(iter);
             continue; // on the next iteration, stay with this block
         } else if (blockIter->end > iter->end) {
             ++iter;
             continue; // on the next iteration, stay with this block
         } else if (create) {
             // add a new gap (has to be behind us), and move the start in front of us
-            m_gaps.insert(iter, sparkZone2(iter->start, blockIter->start));
+            gaps.insert(iter, sparkZone2(iter->start, blockIter->start));
             iter->start = blockIter->end;
         }
         blockIter++;

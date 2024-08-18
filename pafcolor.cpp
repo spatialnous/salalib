@@ -79,11 +79,11 @@ PafColor &PafColor::makeColor(double field, DisplayParams dp) {
         switch (dp.colorscale) {
         case DisplayParams::MONOCHROME:
         case DisplayParams::GREYSCALE:
-            m_color = 0x00000000; // <- monochrome and greyscale, simply hide
+            color = 0x00000000; // <- monochrome and greyscale, simply hide
             break;
         default:
             // if in colour, then show greyed out:
-            m_color = 0x007f7f7f; // <- grey retained for visibility on certain values
+            color = 0x007f7f7f; // <- grey retained for visibility on certain values
             break;
         }
         return *this;
@@ -131,40 +131,40 @@ PafColor &PafColor::makeColor(double field, DisplayParams dp) {
 // this makes an Axman-like colour range
 
 PafColor &PafColor::makeAxmanesque(double field) {
-    m_color = 0xff000000 | g_nicecolor[int((field - 1e-9) * 10.0)];
+    color = 0xff000000 | g_nicecolor[int((field - 1e-9) * 10.0)];
     return *this;
 }
 
 PafColor &PafColor::makeHueOnlyAxmanesque(double field) {
-    m_color = 0xff000000 | g_nicecolorhsb[int((field - 1e-9) * 10.0)];
+    color = 0xff000000 | g_nicecolorhsb[int((field - 1e-9) * 10.0)];
     return *this;
 }
 
 // this makes a purple-orange scheme that is red-green colour-blind safe
 
 PafColor &PafColor::makePurpleOrange(double field) {
-    m_color = 0xff000000 | g_purpleorange[int((field - 1e-9) * 7.0)];
+    color = 0xff000000 | g_purpleorange[int((field - 1e-9) * 7.0)];
     return *this;
 }
 
 // this makes a blue-red scheme that is red-green colour-blind safe
 
 PafColor &PafColor::makeBlueRed(double field) {
-    m_color = 0xff000000 | g_bluered[int((field - 1e-9) * 7.0)];
+    color = 0xff000000 | g_bluered[int((field - 1e-9) * 7.0)];
     return *this;
 }
 
 // this makes a greyscale colour range
 
 PafColor &PafColor::makeGreyScale(double field) {
-    m_color = 0xff000000 | g_greyscale[int((field - 1e-9) * 7.0)];
+    color = 0xff000000 | g_greyscale[int((field - 1e-9) * 7.0)];
     return *this;
 }
 
 // note, makeDepthmapClassic converts to a safe HTML colour
 
 PafColor &PafColor::makeDepthmapClassic(double field, double blue, double red) {
-    m_color = 0xff000000; // set alpha to 255, solid colour
+    color = 0xff000000; // set alpha to 255, solid colour
     double green = blue + (red - blue) / 10.0;
     // NB previously included colour muting: the 1.0 was originally 0.9 to mute
     // the colours slightly

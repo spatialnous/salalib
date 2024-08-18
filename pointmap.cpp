@@ -30,7 +30,7 @@ PointMap::PointMap(const QtRegion &parentRegion, const std::string &name)
 
     m_cols = 0;
     m_rows = 0;
-    m_filled_point_count = 0;
+    m_filledPointCount = 0;
 
     m_spacing = 0.0;
 
@@ -49,7 +49,7 @@ void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattribu
 
     m_cols = sourcemap.getCols();
     m_rows = sourcemap.getRows();
-    m_filled_point_count = sourcemap.getFilledPointCount();
+    m_filledPointCount = sourcemap.getFilledPointCount();
 
     m_spacing = sourcemap.getSpacing();
 
@@ -61,7 +61,7 @@ void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattribu
     m_undocounter = sourcemap.m_undocounter;
 
     m_offset = sourcemap.m_offset;
-    m_bottom_left = sourcemap.m_bottom_left;
+    m_bottomLeft = sourcemap.m_bottomLeft;
 
     if (copypoints || copyattributes) {
         m_points = sourcemap.m_points;
@@ -110,8 +110,8 @@ void PointMap::communicate(time_t &atime, Communicator *comm, size_t record) {
 bool PointMap::setGrid(double spacing, const Point2f &offset) {
     m_spacing = spacing;
     // note, the internal offset is the offset from the bottom left
-    double xoffset = fmod(m_parentRegion->bottom_left.x + offset.x, m_spacing);
-    double yoffset = fmod(m_parentRegion->bottom_left.y + offset.y, m_spacing);
+    double xoffset = fmod(m_parentRegion->bottomLeft.x + offset.x, m_spacing);
+    double yoffset = fmod(m_parentRegion->bottomLeft.y + offset.y, m_spacing);
     if (xoffset < m_spacing / 2.0)
         xoffset += m_spacing;
     if (xoffset > m_spacing / 2.0)
@@ -124,7 +124,7 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
     m_offset = Point2f(-xoffset, -yoffset);
 
     if (m_points.size() != 0) {
-        m_filled_point_count = 0;
+        m_filledPointCount = 0;
     }
     m_undocounter = 0; // <- reset the undo counter... sorry... once you've done
                        // this you can't undo
@@ -133,13 +133,12 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
     m_cols = static_cast<size_t>(floor((xoffset + m_parentRegion->width()) / m_spacing + 0.5) + 1);
     m_rows = static_cast<size_t>(floor((yoffset + m_parentRegion->height()) / m_spacing + 0.5) + 1);
 
-    m_bottom_left = Point2f(m_parentRegion->bottom_left.x + m_offset.x,
-                            m_parentRegion->bottom_left.y + m_offset.y);
+    m_bottomLeft = Point2f(m_parentRegion->bottomLeft.x + m_offset.x,
+                           m_parentRegion->bottomLeft.y + m_offset.y);
 
-    m_region =
-        QtRegion(Point2f(m_bottom_left.x - m_spacing / 2.0, m_bottom_left.y - m_spacing / 2.0),
-                 Point2f(m_bottom_left.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
-                         m_bottom_left.y + double(m_rows - 1) * m_spacing + m_spacing / 2.0));
+    m_region = QtRegion(Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
+                        Point2f(m_bottomLeft.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
+                                m_bottomLeft.y + double(m_rows - 1) * m_spacing + m_spacing / 2.0));
 
     m_points = depthmapX::ColumnMatrix<Point>(m_rows, m_cols);
     for (size_t j = 0; j < m_cols; j++) {
@@ -154,7 +153,7 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
     m_processed = false;
     m_boundarygraph = false;
 
-    m_merge_lines.clear();
+    m_mergeLines.clear();
 
     return true;
 }
@@ -165,13 +164,13 @@ bool PointMap::clearAllPoints() {
             point.set(Point::EMPTY, m_undocounter);
         }
     }
-    m_filled_point_count = 0;
-    m_merge_lines.clear();
+    m_filledPointCount = 0;
+    m_mergeLines.clear();
     return true;
 }
 
 bool PointMap::clearPointsInRange(PixelRef bl, PixelRef tr, std::set<int> &selSet) {
-    if (!m_filled_point_count) {
+    if (!m_filledPointCount) {
         return false;
     }
 
@@ -192,12 +191,12 @@ bool PointMap::clearPointsInRange(PixelRef bl, PixelRef tr, std::set<int> &selSe
                     PixelRef p = pnt.m_merge;
                     auto &point = getPoint(p);
                     depthmapX::findAndErase(
-                        m_merge_lines,
+                        m_mergeLines,
                         PixelRefPair(PixelRef(static_cast<short>(i), static_cast<short>(j)), p));
                     point.m_merge = NoPixel;
                     point.m_state &= ~Point::MERGED;
                 }
-                m_filled_point_count--;
+                m_filledPointCount--;
             }
         }
     }
@@ -210,19 +209,19 @@ bool PointMap::undoPoints() {
         return false;
     }
     for (auto &p : m_points) {
-        if (p.m_undoCounter == m_undocounter) {
+        if (p.undoCounter == m_undocounter) {
             if (p.m_state & Point::FILLED) {
                 p.m_state &= ~Point::FILLED;
                 p.m_state |= Point::EMPTY;
-                p.m_undoCounter = 0; // probably shouldn't set to 0 (can't undo)  Eventually
-                                     // will implement 'redo' counter as well
-                m_filled_point_count--;
+                p.undoCounter = 0; // probably shouldn't set to 0 (can't undo)  Eventually
+                                   // will implement 'redo' counter as well
+                m_filledPointCount--;
             } else if (p.m_state & Point::EMPTY) {
                 p.m_state |= Point::FILLED;
                 p.m_state &= ~Point::EMPTY;
-                p.m_undoCounter = 0; // probably shouldn't set to 0 (can't undo)  Eventually
-                                     // will implement 'redo' counter as well
-                m_filled_point_count++;
+                p.undoCounter = 0; // probably shouldn't set to 0 (can't undo)  Eventually
+                                   // will implement 'redo' counter as well
+                m_filledPointCount++;
             }
         }
     }
@@ -237,8 +236,8 @@ PixelRef PointMap::pixelate(const Point2f &p, bool constrain, int scalefactor) c
     PixelRef ref;
 
     double spacing = m_spacing / double(scalefactor);
-    ref.x = static_cast<short>(floor((p.x - m_bottom_left.x + (m_spacing / 2.0)) / spacing));
-    ref.y = static_cast<short>(floor((p.y - m_bottom_left.y + (m_spacing / 2.0)) / spacing));
+    ref.x = static_cast<short>(floor((p.x - m_bottomLeft.x + (m_spacing / 2.0)) / spacing));
+    ref.y = static_cast<short>(floor((p.y - m_bottomLeft.y + (m_spacing / 2.0)) / spacing));
 
     if (constrain) {
         if (ref.x < 0)
@@ -261,8 +260,8 @@ void PointMap::addPointsInRegionToSet(const QtRegion &r, std::set<PixelRef> &sel
 
 std::set<PixelRef> PointMap::getPointsInRegion(const QtRegion &r) const {
     std::set<PixelRef> selSet;
-    auto sBl = pixelate(r.bottom_left, true);
-    auto sTr = pixelate(r.top_right, true);
+    auto sBl = pixelate(r.bottomLeft, true);
+    auto sTr = pixelate(r.topRight, true);
 
     int mask = 0;
     mask |= Point::FILLED;
@@ -283,7 +282,7 @@ void PointMap::fillLine(const Line &li) {
     for (size_t j = 0; j < pixels.size(); j++) {
         if (getPoint(pixels[j]).empty()) {
             getPoint(pixels[j]).set(Point::FILLED, m_undocounter);
-            m_filled_point_count++;
+            m_filledPointCount++;
         }
     }
 }
@@ -366,10 +365,10 @@ bool PointMap::fillPoint(const Point2f &p, bool add) {
     }
     Point &pt = getPoint(pix);
     if (add && !pt.filled()) {
-        m_filled_point_count++;
+        m_filledPointCount++;
         pt.set(Point::FILLED, ++m_undocounter);
     } else if (!add && (pt.m_state & Point::FILLED)) {
-        m_filled_point_count--;
+        m_filledPointCount--;
         pt.set(Point::EMPTY, ++m_undocounter);
         if (pt.m_merge != NoPixel) {
             unmergePixel(pix);
@@ -425,7 +424,7 @@ bool PointMap::makePoints(const Point2f &seed, int fill_type, Communicator *comm
         filltype = Point::AUGMENTED;
 
     getPoint(seedref).set(filltype, m_undocounter);
-    m_filled_point_count++;
+    m_filledPointCount++;
 
     // Now... start making lines:
     pflipper<PixelRefVector> surface;
@@ -490,7 +489,7 @@ int PointMap::expand(const PixelRef p1, const PixelRef p2, PixelRefVector &list,
         }
     }
     getPoint(p2).set(filltype, m_undocounter);
-    m_filled_point_count++;
+    m_filledPointCount++;
     list.push_back(p2);
 
     // 8 = success
@@ -519,9 +518,9 @@ void PointMap::outputMergeLines(std::ostream &stream, char delim) {
     stream << "x1" << delim << "y1" << delim << "x2" << delim << "y2" << std::endl;
 
     stream.precision(12);
-    for (size_t i = 0; i < m_merge_lines.size(); i++) {
+    for (size_t i = 0; i < m_mergeLines.size(); i++) {
 
-        Line li(depixelate(m_merge_lines[i].a), depixelate(m_merge_lines[i].b));
+        Line li(depixelate(m_mergeLines[i].a), depixelate(m_mergeLines[i].b));
 
         stream << li.start().x << delim << li.start().y << delim << li.end().x << delim
                << li.end().y << std::endl;
@@ -591,8 +590,8 @@ void PointMap::outputNet(std::ostream &netfile) {
     for (auto &iter : graph) {
         auto graphKey = iter.first;
         Point2f p = depixelate(graphKey);
-        p.x = offset.x + (p.x - m_region.bottom_left.x) / maxdim;
-        p.y = 1.0 - (offset.y + (p.y - m_region.bottom_left.y) / maxdim);
+        p.x = offset.x + (p.x - m_region.bottomLeft.x) / maxdim;
+        p.y = 1.0 - (offset.y + (p.y - m_region.bottomLeft.y) / maxdim);
         netfile << (j + 1) << " \"" << graphKey << "\" " << p.x << " " << p.y << std::endl;
         j++;
     }
@@ -767,14 +766,13 @@ bool PointMap::readMetadata(std::istream &stream) {
     m_rows = static_cast<size_t>(rows);
     m_cols = static_cast<size_t>(cols);
 
-    stream.read((char *)&m_filled_point_count, sizeof(m_filled_point_count));
+    stream.read((char *)&m_filledPointCount, sizeof(m_filledPointCount));
 
-    stream.read((char *)&m_bottom_left, sizeof(m_bottom_left));
+    stream.read((char *)&m_bottomLeft, sizeof(m_bottomLeft));
 
-    m_region =
-        QtRegion(Point2f(m_bottom_left.x - m_spacing / 2.0, m_bottom_left.y - m_spacing / 2.0),
-                 Point2f(m_bottom_left.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
-                         m_bottom_left.y + double(m_rows - 1) * m_spacing + m_spacing / 2.0));
+    m_region = QtRegion(Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
+                        Point2f(m_bottomLeft.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
+                                m_bottomLeft.y + double(m_rows - 1) * m_spacing + m_spacing / 2.0));
     return true;
 }
 
@@ -804,7 +802,7 @@ bool PointMap::readPointsAndAttributes(std::istream &stream) {
             // Add merge line if merged:
             if (!pnt.m_merge.empty()) {
                 depthmapX::addIfNotExists(
-                    m_merge_lines,
+                    m_mergeLines,
                     PixelRefPair(PixelRef(static_cast<short>(j), static_cast<short>(k)),
                                  pnt.m_merge));
             }
@@ -843,9 +841,9 @@ bool PointMap::writeMetadata(std::ostream &stream) const {
     stream.write(reinterpret_cast<char *>(&rows), sizeof(rows));
     stream.write(reinterpret_cast<char *>(&cols), sizeof(cols));
 
-    stream.write((char *)&m_filled_point_count, sizeof(m_filled_point_count));
+    stream.write((char *)&m_filledPointCount, sizeof(m_filledPointCount));
 
-    stream.write((char *)&m_bottom_left, sizeof(m_bottom_left));
+    stream.write((char *)&m_bottomLeft, sizeof(m_bottomLeft));
     return true;
 }
 
@@ -935,7 +933,7 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
                 PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
                 if (getPoint(curs).filled() && !getPoint(curs).edge()) {
                     m_points(j, i).m_state &= ~Point::FILLED;
-                    m_filled_point_count--;
+                    m_filledPointCount--;
                 }
             }
         }
@@ -1028,7 +1026,7 @@ bool PointMap::unmake(bool removeLinks) {
                 if (removeLinks) {
                     pnt.m_merge = NoPixel;
                 }
-                pnt.m_grid_connections = 0;
+                pnt.m_gridConnections = 0;
                 pnt.m_node = nullptr;
                 pnt.m_lines.clear();
                 pnt.setBlock(false);
@@ -1039,7 +1037,7 @@ bool PointMap::unmake(bool removeLinks) {
     m_blockedlines = false;
 
     if (removeLinks) {
-        m_merge_lines.clear();
+        m_mergeLines.clear();
     }
 
     m_attributes->clear();
@@ -1084,36 +1082,36 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
         QtRegion viewport0 = regionate(curs, 1e-10);
         switch (q) {
         case 0:
-            viewport0.top_right.x = centre0.x;
-            viewport0.bottom_left.y = centre0.y - border;
+            viewport0.topRight.x = centre0.x;
+            viewport0.bottomLeft.y = centre0.y - border;
             break;
         case 6:
-            viewport0.top_right.x = centre0.x + border;
-            viewport0.bottom_left.y = centre0.y;
+            viewport0.topRight.x = centre0.x + border;
+            viewport0.bottomLeft.y = centre0.y;
             break;
         case 1:
-            viewport0.bottom_left.x = centre0.x;
-            viewport0.bottom_left.y = centre0.y - border;
+            viewport0.bottomLeft.x = centre0.x;
+            viewport0.bottomLeft.y = centre0.y - border;
             break;
         case 7:
-            viewport0.bottom_left.x = centre0.x - border;
-            viewport0.bottom_left.y = centre0.y;
+            viewport0.bottomLeft.x = centre0.x - border;
+            viewport0.bottomLeft.y = centre0.y;
             break;
         case 2:
-            viewport0.top_right.x = centre0.x;
-            viewport0.top_right.y = centre0.y + border;
+            viewport0.topRight.x = centre0.x;
+            viewport0.topRight.y = centre0.y + border;
             break;
         case 4:
-            viewport0.top_right.x = centre0.x + border;
-            viewport0.top_right.y = centre0.y;
+            viewport0.topRight.x = centre0.x + border;
+            viewport0.topRight.y = centre0.y;
             break;
         case 3:
-            viewport0.bottom_left.x = centre0.x;
-            viewport0.top_right.y = centre0.y + border;
+            viewport0.bottomLeft.x = centre0.x;
+            viewport0.topRight.y = centre0.y + border;
             break;
         case 5:
-            viewport0.bottom_left.x = centre0.x - border;
-            viewport0.top_right.y = centre0.y;
+            viewport0.bottomLeft.x = centre0.x - border;
+            viewport0.topRight.y = centre0.y;
             break;
         }
         std::vector<Line> lines0;
@@ -1189,7 +1187,7 @@ bool PointMap::sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q,
     bool hasgaps = false;
     int firstind = 0;
 
-    for (auto iter = sieve.m_gaps.begin(); iter != sieve.m_gaps.end(); ++iter) {
+    for (auto iter = sieve.gaps.begin(); iter != sieve.gaps.end(); ++iter) {
         // this goes through all open points
         if (iter->remove) {
             continue;
@@ -1270,8 +1268,8 @@ bool PointMap::mergePoints(const Point2f &p, QtRegion &firstPointsBounds,
 
     // note that in a multiple selection, the point p is adjusted by the selection
     // bounds
-    PixelRef bl = pixelate(firstPointsBounds.bottom_left);
-    PixelRef tr = pixelate(firstPointsBounds.top_right);
+    PixelRef bl = pixelate(firstPointsBounds.bottomLeft);
+    PixelRef tr = pixelate(firstPointsBounds.topRight);
     //
     PixelRef offset = pixelate(p) - PixelRef(tr.x, bl.y);
     //
@@ -1301,7 +1299,7 @@ bool PointMap::unmergePoints(std::set<int> &firstPoints) {
 // Either of the pixels can be given here and the other will also be unmerged
 bool PointMap::unmergePixel(PixelRef a) {
     PixelRef c = getPoint(a).m_merge;
-    depthmapX::findAndErase(m_merge_lines, PixelRefPair(a, c));
+    depthmapX::findAndErase(m_mergeLines, PixelRefPair(a, c));
     getPoint(c).m_merge = NoPixel;
     getPoint(c).m_state &= ~Point::MERGED;
     getPoint(a).m_merge = NoPixel;
@@ -1316,17 +1314,17 @@ bool PointMap::mergePixels(PixelRef a, PixelRef b) {
     if (a != b && getPoint(a).m_merge != b) {
         if (!getPoint(a).m_merge.empty()) {
             PixelRef c = getPoint(a).m_merge;
-            auto it = std::find(m_merge_lines.begin(), m_merge_lines.end(), PixelRefPair(a, c));
-            if (it != m_merge_lines.end())
-                m_merge_lines.erase(it);
+            auto it = std::find(m_mergeLines.begin(), m_mergeLines.end(), PixelRefPair(a, c));
+            if (it != m_mergeLines.end())
+                m_mergeLines.erase(it);
             getPoint(c).m_merge = NoPixel;
             getPoint(c).m_state &= ~Point::MERGED;
         }
         if (!getPoint(b).m_merge.empty()) {
             PixelRef c = getPoint(b).m_merge;
-            auto it = std::find(m_merge_lines.begin(), m_merge_lines.end(), PixelRefPair(b, c));
-            if (it != m_merge_lines.end())
-                m_merge_lines.erase(it);
+            auto it = std::find(m_mergeLines.begin(), m_mergeLines.end(), PixelRefPair(b, c));
+            if (it != m_mergeLines.end())
+                m_mergeLines.erase(it);
             getPoint(c).m_merge = NoPixel;
             getPoint(c).m_state &= ~Point::MERGED;
         }
@@ -1334,7 +1332,7 @@ bool PointMap::mergePixels(PixelRef a, PixelRef b) {
         getPoint(a).m_state |= Point::MERGED;
         getPoint(b).m_merge = a;
         getPoint(b).m_state |= Point::MERGED;
-        m_merge_lines.push_back(PixelRefPair(a, b));
+        m_mergeLines.push_back(PixelRefPair(a, b));
     }
 
     // actually this return now triggers redraw whatever
@@ -1388,13 +1386,13 @@ void PointMap::addGridConnections() {
         PixelRef curs = iter->getKey().value;
         PixelRef node = curs.right();
         Point &point = getPoint(curs);
-        point.m_grid_connections = 0;
+        point.m_gridConnections = 0;
         for (int i = 0; i < 32; i += 4) {
             Bin &bin = point.m_node->bin(i);
             bin.first();
             while (!bin.is_tail()) {
                 if (node == bin.cursor()) {
-                    point.m_grid_connections |= (1 << (i / 4));
+                    point.m_gridConnections |= (1 << (i / 4));
                     break;
                 }
                 bin.next();

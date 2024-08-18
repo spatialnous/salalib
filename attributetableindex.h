@@ -33,19 +33,19 @@ class ConstAttributeIndexItem {
 class AttributeIndexItem : public ConstAttributeIndexItem {
   public:
     AttributeIndexItem(const AttributeKey &k, double v, AttributeRow &r)
-        : ConstAttributeIndexItem(k, v, r), mutable_row(&r) {}
+        : ConstAttributeIndexItem(k, v, r), mutableRow(&r) {}
     AttributeIndexItem(const AttributeIndexItem &other)
-        : ConstAttributeIndexItem(other), mutable_row(other.mutable_row) {}
+        : ConstAttributeIndexItem(other), mutableRow(other.mutableRow) {}
     AttributeIndexItem &operator=(const AttributeIndexItem &other) {
         if (this == &other) {
             return *this;
         }
         ConstAttributeIndexItem::operator=(other);
-        mutable_row = other.mutable_row;
+        mutableRow = other.mutableRow;
         return *this;
     }
 
-    AttributeRow *mutable_row;
+    AttributeRow *mutableRow;
 };
 
 inline bool operator<(const ConstAttributeIndexItem &lhs, const ConstAttributeIndexItem &rhs) {

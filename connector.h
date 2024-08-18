@@ -70,18 +70,18 @@ inline bool operator!=(SegmentData a, SegmentData b) { return a.metricdepth != b
 
 struct Connector {
     //  if this is a segment, this is the key for the axial line:
-    int m_segment_axialref;
+    int segmentAxialref;
     // use one or other of these
-    std::vector<size_t> m_connections;
+    std::vector<size_t> connections;
     //
-    std::map<SegmentRef, float> m_back_segconns;
-    std::map<SegmentRef, float> m_forward_segconns;
+    std::map<SegmentRef, float> backSegconns;
+    std::map<SegmentRef, float> forwardSegconns;
     //
-    Connector(int axialref = -1) { m_segment_axialref = axialref; }
+    Connector(int axialref = -1) { segmentAxialref = axialref; }
     void clear() {
-        m_connections.clear();
-        m_back_segconns.clear();
-        m_forward_segconns.clear();
+        connections.clear();
+        backSegconns.clear();
+        forwardSegconns.clear();
     }
     //
     bool read(std::istream &stream);

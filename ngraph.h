@@ -12,19 +12,22 @@
 #include <set>
 
 struct PixelVec {
-    PixelRef m_start;
-    PixelRef m_end;
     PixelVec(const PixelRef start = NoPixel, const PixelRef end = NoPixel) {
         m_start = (int)start;
         m_end = (int)end;
     };
     PixelRef start() const { return m_start; }
-    PixelRef end() const { return m_end; }
-    //
+    PixelRef end() const { return m_end; } //
+    void setStart(PixelRef start) { m_start = start; }
+    void setEnd(PixelRef end) { m_end = end; } //
     std::istream &read(std::istream &stream, const char dir);
     std::istream &read(std::istream &stream, const char dir, const PixelVec &context);
     std::ostream &write(std::ostream &stream, const char dir);
     std::ostream &write(std::ostream &stream, const char dir, const PixelVec &context);
+
+  private:
+    PixelRef m_start;
+    PixelRef m_end;
 };
 
 class Bin {
@@ -32,27 +35,27 @@ class Bin {
 
   protected:
     // TODO: in new version increase precision?
-    unsigned short m_node_count;
+    unsigned short m_nodeCount;
     float m_distance;
-    float m_occ_distance;
+    float m_occDistance;
 
   public:
-    char m_dir;
-    std::vector<PixelVec> m_pixel_vecs;
+    char dir;
+    std::vector<PixelVec> pixelVecs;
     Bin() {
-        m_dir = PixelRef::NODIR;
-        m_node_count = 0;
+        dir = PixelRef::NODIR;
+        m_nodeCount = 0;
         m_distance = 0.0f;
-        m_occ_distance = 0.0f;
+        m_occDistance = 0.0f;
     }
     //
-    void make(const PixelRefVector &pixels, char m_dir);
+    void make(const PixelRefVector &pixels, char onDir);
 
-    int count() const { return m_node_count; }
+    int count() const { return m_nodeCount; }
     float distance() const { return m_distance; }
-    float occdistance() const { return m_occ_distance; }
+    float occdistance() const { return m_occDistance; }
     //
-    void setOccDistance(float d) { m_occ_distance = d; }
+    void setOccDistance(float d) { m_occDistance = d; }
     //
     bool containsPoint(const PixelRef p) const;
     //
@@ -81,7 +84,7 @@ class Node {
 
   public:
     // testing some agent stuff:
-    std::vector<PixelRef> m_occlusion_bins[32];
+    std::vector<PixelRef> occlusionBins[32];
 
   public:
     // Note: this function clears the bins as it goes

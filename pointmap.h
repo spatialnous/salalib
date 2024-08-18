@@ -57,16 +57,16 @@ class PointMap : public AttributeMap {
     std::string m_name;
     const QtRegion *m_parentRegion;
     depthmapX::ColumnMatrix<Point> m_points; // will contain the graph reference when created
-    int m_filled_point_count;
+    int m_filledPointCount;
     double m_spacing;
     Point2f m_offset;
-    Point2f m_bottom_left;
+    Point2f m_bottomLeft;
     bool m_initialised;
     bool m_blockedlines;
     bool m_processed;
     bool m_boundarygraph;
     int m_undocounter;
-    std::vector<PixelRefPair> m_merge_lines;
+    std::vector<PixelRefPair> m_mergeLines;
 
   public: // known columns
     struct Column {
@@ -115,12 +115,12 @@ class PointMap : public AttributeMap {
         // unnecessary converter until the m_merge_lines variable is
         // replaced with a std container
         std::vector<std::pair<PixelRef, PixelRef>> mergedPixelPairs;
-        for (size_t i = 0; i < m_merge_lines.size(); i++) {
-            mergedPixelPairs.push_back(std::make_pair(m_merge_lines[i].a, m_merge_lines[i].b));
+        for (size_t i = 0; i < m_mergeLines.size(); i++) {
+            mergedPixelPairs.push_back(std::make_pair(m_mergeLines[i].a, m_mergeLines[i].b));
         }
         return mergedPixelPairs;
     }
-    const std::vector<PixelRefPair> &getMergeLines() const { return m_merge_lines; }
+    const std::vector<PixelRefPair> &getMergeLines() const { return m_mergeLines; }
 
     bool isProcessed() const { return m_processed; }
     void fillLine(const Line &li);
@@ -175,7 +175,7 @@ class PointMap : public AttributeMap {
     // to be phased out
     bool blockedAdjacent(const PixelRef p) const;
 
-    int getFilledPointCount() const { return m_filled_point_count; }
+    int getFilledPointCount() const { return m_filledPointCount; }
 
     void requireIsovistAnalysis() {
         if (!hasIsovistAnalysis()) {
@@ -222,15 +222,15 @@ class PointMap : public AttributeMap {
 // inlined to make thread safe
 
 inline Point2f PointMap::depixelate(const PixelRef &p, double scalefactor) const {
-    return Point2f(m_bottom_left.x + m_spacing * scalefactor * double(p.x),
-                   m_bottom_left.y + m_spacing * scalefactor * double(p.y));
+    return Point2f(m_bottomLeft.x + m_spacing * scalefactor * double(p.x),
+                   m_bottomLeft.y + m_spacing * scalefactor * double(p.y));
 }
 
 inline QtRegion PointMap::regionate(const PixelRef &p, double border) const {
-    return QtRegion(Point2f(m_bottom_left.x + m_spacing * (double(p.x) - 0.5 - border),
-                            m_bottom_left.y + m_spacing * (double(p.y) - 0.5 - border)),
-                    Point2f(m_bottom_left.x + m_spacing * (double(p.x) + 0.5 + border),
-                            m_bottom_left.y + m_spacing * (double(p.y) + 0.5 + border)));
+    return QtRegion(Point2f(m_bottomLeft.x + m_spacing * (double(p.x) - 0.5 - border),
+                            m_bottomLeft.y + m_spacing * (double(p.y) - 0.5 - border)),
+                    Point2f(m_bottomLeft.x + m_spacing * (double(p.x) + 0.5 + border),
+                            m_bottomLeft.y + m_spacing * (double(p.y) + 0.5 + border)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

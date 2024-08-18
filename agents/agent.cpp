@@ -362,8 +362,8 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
         int choices = 0;
         Node &node = m_pointmap->getPoint(m_node).getNode();
         for (int i = 0; i < vbin; i++) {
-            if (node.m_occlusion_bins[(directionbin + i) % 32].size()) {
-                choices += node.m_occlusion_bins[(directionbin + i) % 32].size();
+            if (node.occlusionBins[(directionbin + i) % 32].size()) {
+                choices += node.occlusionBins[(directionbin + i) % 32].size();
             }
         }
         if (choices == 0) {
@@ -377,10 +377,10 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
             }
         } else {
             size_t chosen = pafmath::pafrand() % choices;
-            for (; chosen >= node.m_occlusion_bins[directionbin % 32].size(); directionbin++) {
-                chosen -= node.m_occlusion_bins[directionbin % 32].size();
+            for (; chosen >= node.occlusionBins[directionbin % 32].size(); directionbin++) {
+                chosen -= node.occlusionBins[directionbin % 32].size();
             }
-            tarpixelate = node.m_occlusion_bins[directionbin % 32].at(chosen);
+            tarpixelate = node.occlusionBins[directionbin % 32].at(chosen);
         }
     } else {
         int subset = 1;
@@ -396,9 +396,9 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
             PixelRef nigpix;
             double fardist = -1.0;
             for (int k = 0; k < subset; k++) {
-                for (size_t j = 0; j < node.m_occlusion_bins[(directionbin + i + k) % 32].size();
+                for (size_t j = 0; j < node.occlusionBins[(directionbin + i + k) % 32].size();
                      j++) {
-                    PixelRef pix = node.m_occlusion_bins[(directionbin + i + k) % 32].at(j);
+                    PixelRef pix = node.occlusionBins[(directionbin + i + k) % 32].at(j);
                     if (dist(pix, m_node) > fardist) {
                         fardist = dist(pix, m_node);
                         nigpix = pix;

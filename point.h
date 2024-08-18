@@ -47,24 +47,24 @@ class Point {
         CONNECT_SE = 0x80
     };
 
-    int m_undoCounter;
+    int undoCounter;
 
     // These intermediary variables were only used for storing arbitrary data during the
     // analysis. They have been replaced with analysis-local ones, and only kept here for
     // binary compatibility with older versions of graph files
     // undocounter / point seen register / agent reference number, etc
-    mutable int m_dummy_misc;
+    mutable int dummyMisc;
     // used to speed up metric analysis
-    mutable float m_dummy_dist;
+    mutable float dummyDist;
     // cummulative angle -- used in metric analysis and angular analysis
-    mutable float m_dummy_cumangle;
+    mutable float dummyCumangle;
     // used to speed up graph analysis (not sure whether or not it breaks it!)
-    mutable PixelRef m_dummy_extent;
+    mutable PixelRef dummyExtent;
 
   protected:
     int m_block; // not used, unlikely to be used, but kept for time being
     int m_state;
-    char m_grid_connections;      // this is a standard set of grid connections, with bits set for
+    char m_gridConnections;       // this is a standard set of grid connections, with bits set for
                                   // E,NE,N,NW,W,SW,S,SE
     std::unique_ptr<Node> m_node; // graph links
     Point2f m_location; // note: this is large, but it helps allow loading of non-standard grid
@@ -84,17 +84,17 @@ class Point {
         m_state = EMPTY;
         m_block = 0;
         //        m_misc = 0;
-        m_grid_connections = 0;
+        m_gridConnections = 0;
         m_node = nullptr;
         m_processflag = 0;
         m_merge = NoPixel;
-        m_user_data = NULL;
+        m_userData = NULL;
     }
     Point &operator=(const Point &p) {
         m_block = p.m_block;
         m_state = p.m_state;
         //        m_misc = p.m_misc;
-        m_grid_connections = p.m_grid_connections;
+        m_gridConnections = p.m_gridConnections;
         m_node = p.m_node ? std::unique_ptr<Node>(new Node(*p.m_node)) : nullptr;
         m_location = p.m_location;
         m_color = p.m_color;
@@ -111,7 +111,7 @@ class Point {
         m_block = p.m_block;
         m_state = p.m_state;
         //        m_misc = p.m_misc;
-        m_grid_connections = p.m_grid_connections;
+        m_gridConnections = p.m_gridConnections;
         m_node = p.m_node ? std::unique_ptr<Node>(new Node(*p.m_node)) : nullptr;
         m_location = p.m_location;
         m_color = p.m_color;
@@ -136,7 +136,7 @@ class Point {
     //
     void set(int state, int undocounter = 0) {
         m_state = state | (m_state & Point::BLOCKED); // careful not to clear the blocked flag
-        m_undoCounter = undocounter;
+        undoCounter = undocounter;
     }
     void setBlock(bool blocked = true) {
         if (blocked)
@@ -165,16 +165,16 @@ class Point {
     int getUndoCounter() // used as: undocounter, in graph construction, and an agent reference,
                          // as well as for making axial maps
     {
-        return m_undoCounter;
+        return undoCounter;
     }
-    void setUndoCounter(int undoCounter) { m_undoCounter = undoCounter; }
+    void setUndoCounter(int newUndoCountValue) { undoCounter = newUndoCountValue; }
     // note -- set merge pixel should be done only through merge pixels
     PixelRef getMergePixel() { return m_merge; }
     PixelRef getMergePixel() const { return m_merge; }
     Node &getNode() { return *m_node; }
     Node &getNode() const { return *m_node; }
     bool hasNode() const { return m_node != nullptr; }
-    char getGridConnections() const { return m_grid_connections; }
+    char getGridConnections() const { return m_gridConnections; }
     float getBinDistance(int i);
     const Point2f &getLocation() const { return m_location; }
 
@@ -184,9 +184,9 @@ class Point {
     //
   protected:
     // for user processing, set their own data on the point:
-    void *m_user_data;
+    void *m_userData;
 
   public:
-    void *getUserData() { return m_user_data; }
-    void setUserData(void *user_data) { m_user_data = user_data; }
+    void *getUserData() { return m_userData; }
+    void setUserData(void *user_data) { m_userData = user_data; }
 };

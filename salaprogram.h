@@ -207,60 +207,60 @@ class SalaObj {
         int var;
         int count; // used by brackets to count how many objects they have
     };
-    Data data{};
-    Type type;
+    Data m_data{};
+    Type m_type;
 
   public:
-    SalaObj() { type = S_NONE; }
+    SalaObj() { m_type = S_NONE; }
     // Two usages: (a) used for brackets (=groups of things, hence the count) and commas
     //             (b) used for lists
     SalaObj(Type t) {
-        type = t;
+        m_type = t;
         if (t & S_LIST) {
-            data.list.refcount = new int(1);
-            data.list.list = new std::vector<SalaObj>;
+            m_data.list.refcount = new int(1);
+            m_data.list.list = new std::vector<SalaObj>;
         } else {
-            data.count = 1;
+            m_data.count = 1;
         }
     }
     // Two usages: (a) used to address variable or user function tables
     //             (b) used for lists
     SalaObj(Type t, int v) {
-        type = t;
+        m_type = t;
         if (t & S_LIST) {
-            data.list.refcount = new int(1);
-            data.list.list = new std::vector<SalaObj>(static_cast<size_t>(v)); // set blanks
+            m_data.list.refcount = new int(1);
+            m_data.list.list = new std::vector<SalaObj>(static_cast<size_t>(v)); // set blanks
         } else {
-            data.var = v;
+            m_data.var = v;
         }
     }
     // other constructors
     SalaObj(bool a) {
-        type = S_BOOL;
-        data.b = a;
+        m_type = S_BOOL;
+        m_data.b = a;
     }
     SalaObj(int a) {
-        type = S_INT;
-        data.i = a;
+        m_type = S_INT;
+        m_data.i = a;
     }
     SalaObj(double a) {
-        type = S_DOUBLE;
-        data.f = a;
+        m_type = S_DOUBLE;
+        m_data.f = a;
     }
     SalaObj(Func f) {
-        type = S_FUNCTION;
-        data.func = f;
+        m_type = S_FUNCTION;
+        m_data.func = f;
     }
     SalaObj(const std::string &a) {
-        type = S_STRING;
-        data.str.refcount = new int(1);
-        data.str.string = new std::string(a);
+        m_type = S_STRING;
+        m_data.str.refcount = new int(1);
+        m_data.str.string = new std::string(a);
     }
     // note, type required here as sometimes this will be an axial map, sometimes segment map,
     // sometimes point map, also not fully filled in until runtime, but still required by parse
     SalaObj(Type t, SalaGrf graph) {
-        type = t;
-        data.graph = graph;
+        m_type = t;
+        m_data.graph = graph;
     }
     //
     SalaObj(const SalaObj &obj);
@@ -269,10 +269,10 @@ class SalaObj {
     void reset();
     void uninit() {
         reset();
-        type = S_UNINIT;
+        m_type = S_UNINIT;
     } // <- used to uninitialise variables before running program, thus they give nice error
       // messages if used before initialisation
-    int func() const { return static_cast<int>(data.func); }
+    int func() const { return static_cast<int>(m_data.func); }
     int precedence() const;
     bool toBool() const;
     int toInt() const;
@@ -301,7 +301,7 @@ class SalaObj {
     int length();
     // check for no parameters
     void ensureNone() {
-        if (type != SalaObj::S_NONE)
+        if (m_type != SalaObj::S_NONE)
             throw SalaError("Does not take any parameters");
     }
     //
@@ -343,19 +343,19 @@ class SalaCommand {
     SalaCommand *m_parent;
     std::vector<SalaCommand> m_children;
     //
-    std::map<std::string, int> m_var_names;
+    std::map<std::string, int> m_varNames;
     //
     Command m_command;
     int m_indent; // vital for program flow due to Pythonesque syntax
-    std::vector<SalaObj> m_eval_stack;
-    std::vector<SalaObj> m_func_stack;
+    std::vector<SalaObj> m_evalStack;
+    std::vector<SalaObj> m_funcStack;
     //
-    SalaObj m_for_iter; // object used in a for loop
+    SalaObj m_forIter; // object used in a for loop
     //
     int m_line; // useful for debugging to know which line this command starts on
     std::string
-        m_last_string; // occassionally useful in debugging if the user does something unsyntactical
-                       //
+        m_lastString; // occassionally useful in debugging if the user does something unsyntactical
+                      //
   public:
     SalaCommand() {
         m_program = NULL;
@@ -379,12 +379,12 @@ class SalaCommand {
 class SalaProgram {
     friend class SalaCommand;
     //
-    SalaCommand m_root_command;
-    std::vector<SalaObj> m_var_stack;
-    std::vector<SalaError> m_error_stack;
+    SalaCommand m_rootCommand;
+    std::vector<SalaObj> m_varStack;
+    std::vector<SalaError> m_errorStack;
     //
-    // column is stored away from the context, as it's not actually passed to the program itself,
-    // just used to update a column
+    // column is stored away from the context, as it's not actually passed to the program
+    // itself, just used to update a column
     int m_col;
     // m_thisobj stores contextual information (which attribute table, node etc)
     // NB ! -- this can be messed with by SalaCommand!
@@ -393,7 +393,7 @@ class SalaProgram {
     bool m_marked; // this is used to tell the program that a node has been "marked" -- all marks
                    // are cleared at the end of the execution
     // marks for state management in maps
-    std::map<int, SalaObj> marks;
+    std::map<int, SalaObj> m_marks;
 
   public:
     SalaProgram(SalaObj context);
@@ -406,33 +406,33 @@ class SalaProgram {
 };
 
 inline SalaObj::SalaObj(const SalaObj &obj) {
-    type = obj.type;
-    switch (obj.type) {
+    m_type = obj.m_type;
+    switch (obj.m_type) {
     case S_FUNCTION:
-        data.func = obj.data.func;
+        m_data.func = obj.m_data.func;
         break;
     case S_BOOL:
-        data.b = obj.data.b;
+        m_data.b = obj.m_data.b;
         break;
     case S_INT:
-        data.i = obj.data.i;
+        m_data.i = obj.m_data.i;
         break;
     case S_DOUBLE:
-        data.f = obj.data.f;
+        m_data.f = obj.m_data.f;
         break;
     case S_VAR:
-        data.var = obj.data.var;
+        m_data.var = obj.m_data.var;
         break;
     case S_STRING:
-        data.str.string = obj.data.str.string;
-        data.str.refcount = obj.data.str.refcount;
-        *(data.str.refcount) += 1;
+        m_data.str.string = obj.m_data.str.string;
+        m_data.str.refcount = obj.m_data.str.refcount;
+        *(m_data.str.refcount) += 1;
         break;
     case S_LIST:
     case S_TUPLE:
-        data.list.list = obj.data.list.list;
-        data.list.refcount = obj.data.list.refcount;
-        *(data.list.refcount) += 1;
+        m_data.list.list = obj.m_data.list.list;
+        m_data.list.refcount = obj.m_data.list.refcount;
+        *(m_data.list.refcount) += 1;
         break;
     case S_NONE:
     case S_UNINIT:
@@ -440,13 +440,13 @@ inline SalaObj::SalaObj(const SalaObj &obj) {
         break;
     case S_SHAPEMAPOBJ:
     case S_SHAPEMAP:
-        data.graph.map.shape = obj.data.graph.map.shape;
-        data.graph.node = obj.data.graph.node;
+        m_data.graph.map.shape = obj.m_data.graph.map.shape;
+        m_data.graph.node = obj.m_data.graph.node;
         break;
     case S_POINTMAPOBJ:
     case S_POINTMAP:
-        data.graph.map.point = obj.data.graph.map.point;
-        data.graph.node = obj.data.graph.node;
+        m_data.graph.map.point = obj.m_data.graph.map.point;
+        m_data.graph.node = obj.m_data.graph.node;
         break;
     case S_OPEN_BRACKET:
     case S_CLOSE_BRACKET:
@@ -456,7 +456,7 @@ inline SalaObj::SalaObj(const SalaObj &obj) {
     case S_COMMA:
     case S_CONST_LIST:
     case S_CONST_TUPLE:
-        data.count = obj.data.count;
+        m_data.count = obj.m_data.count;
         break;
     default:
         throw SalaError("Cannot instantiate unknown type");
@@ -466,33 +466,33 @@ inline SalaObj::SalaObj(const SalaObj &obj) {
 inline SalaObj &SalaObj::operator=(const SalaObj &obj) {
     if (this != &obj) {
         reset();
-        type = obj.type;
-        switch (obj.type) {
+        m_type = obj.m_type;
+        switch (obj.m_type) {
         case S_FUNCTION:
-            data.func = obj.data.func;
+            m_data.func = obj.m_data.func;
             break;
         case S_BOOL:
-            data.b = obj.data.b;
+            m_data.b = obj.m_data.b;
             break;
         case S_INT:
-            data.i = obj.data.i;
+            m_data.i = obj.m_data.i;
             break;
         case S_DOUBLE:
-            data.f = obj.data.f;
+            m_data.f = obj.m_data.f;
             break;
         case S_VAR:
-            data.var = obj.data.var;
+            m_data.var = obj.m_data.var;
             break;
         case S_STRING:
-            data.str.string = obj.data.str.string;
-            data.str.refcount = obj.data.str.refcount;
-            *(data.str.refcount) += 1;
+            m_data.str.string = obj.m_data.str.string;
+            m_data.str.refcount = obj.m_data.str.refcount;
+            *(m_data.str.refcount) += 1;
             break;
         case S_LIST:
         case S_TUPLE:
-            data.list.list = obj.data.list.list;
-            data.list.refcount = obj.data.list.refcount;
-            *(data.list.refcount) += 1;
+            m_data.list.list = obj.m_data.list.list;
+            m_data.list.refcount = obj.m_data.list.refcount;
+            *(m_data.list.refcount) += 1;
             break;
         case S_NONE:
         case S_UNINIT:
@@ -500,13 +500,13 @@ inline SalaObj &SalaObj::operator=(const SalaObj &obj) {
             break;
         case S_SHAPEMAPOBJ:
         case S_SHAPEMAP:
-            data.graph.map.shape = obj.data.graph.map.shape;
-            data.graph.node = obj.data.graph.node;
+            m_data.graph.map.shape = obj.m_data.graph.map.shape;
+            m_data.graph.node = obj.m_data.graph.node;
             break;
         case S_POINTMAPOBJ:
         case S_POINTMAP:
-            data.graph.map.point = obj.data.graph.map.point;
-            data.graph.node = obj.data.graph.node;
+            m_data.graph.map.point = obj.m_data.graph.map.point;
+            m_data.graph.node = obj.m_data.graph.node;
             break;
         case S_OPEN_BRACKET:
         case S_CLOSE_BRACKET:
@@ -516,7 +516,7 @@ inline SalaObj &SalaObj::operator=(const SalaObj &obj) {
         case S_COMMA:
         case S_CONST_LIST:
         case S_CONST_TUPLE:
-            data.count = obj.data.count;
+            m_data.count = obj.m_data.count;
             break;
         default:
             throw SalaError("Cannot instantiate unknown type");
@@ -526,33 +526,33 @@ inline SalaObj &SalaObj::operator=(const SalaObj &obj) {
 }
 inline SalaObj::~SalaObj() { reset(); }
 inline void SalaObj::reset() {
-    if (type & S_STRING) {
-        *(data.str.refcount) -= 1;
-        if (*(data.str.refcount) == 0) {
-            delete data.str.refcount;
-            delete data.str.string;
+    if (m_type & S_STRING) {
+        *(m_data.str.refcount) -= 1;
+        if (*(m_data.str.refcount) == 0) {
+            delete m_data.str.refcount;
+            delete m_data.str.string;
         }
-        data.str.refcount = NULL;
-        data.str.string = NULL;
-    } else if (type & S_LIST) {
-        *(data.list.refcount) -= 1;
-        if (*(data.list.refcount) == 0) {
-            delete data.str.refcount;
-            delete data.list.list;
+        m_data.str.refcount = NULL;
+        m_data.str.string = NULL;
+    } else if (m_type & S_LIST) {
+        *(m_data.list.refcount) -= 1;
+        if (*(m_data.list.refcount) == 0) {
+            delete m_data.str.refcount;
+            delete m_data.list.list;
         }
-        data.str.refcount = NULL;
-        data.list.list = NULL;
+        m_data.str.refcount = NULL;
+        m_data.list.list = NULL;
     }
-    type = S_NONE;
+    m_type = S_NONE;
 }
 inline bool SalaObj::toBool() const {
-    switch (type) {
+    switch (m_type) {
     case S_BOOL:
-        return data.b;
+        return m_data.b;
     case S_INT:
-        return data.i != 0;
+        return m_data.i != 0;
     case S_DOUBLE:
-        return data.f != 0.0;
+        return m_data.f != 0.0;
     default:
         throw SalaError(std::string("Cannot convert ") + getTypeIndefArt() + getTypeStr() +
                         std::string(" to a boolean value"));
@@ -560,13 +560,13 @@ inline bool SalaObj::toBool() const {
     return false;
 }
 inline int SalaObj::toInt() const {
-    switch (type) {
+    switch (m_type) {
     case S_BOOL:
-        return data.b ? 1 : 0;
+        return m_data.b ? 1 : 0;
     case S_INT:
-        return data.i;
+        return m_data.i;
     case S_DOUBLE:
-        return int(std::floor(data.f)); // ensure properly implemented
+        return int(std::floor(m_data.f)); // ensure properly implemented
     default:
         throw SalaError(std::string("Cannot convert ") + getTypeIndefArt() + getTypeStr() +
                         std::string(" to an integer value"));
@@ -574,13 +574,13 @@ inline int SalaObj::toInt() const {
     return 0;
 }
 inline double SalaObj::toDouble() const {
-    switch (type) {
+    switch (m_type) {
     case S_BOOL:
-        return data.b ? 1.0 : 0.0;
+        return m_data.b ? 1.0 : 0.0;
     case S_INT:
-        return double(data.i);
+        return double(m_data.i);
     case S_DOUBLE:
-        return data.f;
+        return m_data.f;
     default:
         throw SalaError(std::string("Cannot convert ") + getTypeIndefArt() + getTypeStr() +
                         std::string(" to a floating point number"));
@@ -588,13 +588,13 @@ inline double SalaObj::toDouble() const {
     return 0.0;
 }
 inline std::string SalaObj::toString() const {
-    switch (type) {
+    switch (m_type) {
     case S_INT:
-        return dXstring::formatString(data.i);
+        return dXstring::formatString(m_data.i);
     case S_DOUBLE:
-        return dXstring::formatString(data.f);
+        return dXstring::formatString(m_data.f);
     case S_STRING:
-        return *(data.str.string);
+        return *(m_data.str.string);
     default:
         throw SalaError(std::string("Cannot convert ") + getTypeIndefArt() + getTypeStr() +
                         std::string(" to a string"));
@@ -602,26 +602,26 @@ inline std::string SalaObj::toString() const {
     return std::string();
 }
 inline const std::string &SalaObj::toStringRef() const {
-    if (type != S_STRING) {
+    if (m_type != S_STRING) {
         throw SalaError(std::string("Cannot convert ") + getTypeIndefArt() + getTypeStr() +
                         std::string(" to a string reference"));
     }
-    return *(data.str.string);
+    return *(m_data.str.string);
 }
 
 inline SalaObj operator+(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_BOOL:
         throw SalaError("Cannot add booleans");
     case SalaObj::S_INT:
-        return SalaObj(a.data.i + b.data.i);
+        return SalaObj(a.m_data.i + b.m_data.i);
     case SalaObj::S_DOUBLE:
-        return SalaObj(a.data.f + b.data.f);
+        return SalaObj(a.m_data.f + b.m_data.f);
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) + b.data.f)
-                                          : (a.data.f + double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) + b.m_data.f)
+                                            : (a.m_data.f + double(b.m_data.i));
     case SalaObj::S_STRING:
-        return SalaObj(*(a.data.str.string) + *(b.data.str.string));
+        return SalaObj(*(a.m_data.str.string) + *(b.m_data.str.string));
     default:
         throw SalaError(std::string("Cannot add ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" to ") + b.getTypeIndefArt() + b.getTypeStr());
@@ -629,16 +629,16 @@ inline SalaObj operator+(SalaObj &a, SalaObj &b) {
     return SalaObj();
 }
 inline SalaObj operator-(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_BOOL:
         throw SalaError("Cannot subtract booleans");
     case SalaObj::S_INT:
-        return SalaObj(a.data.i - b.data.i);
+        return SalaObj(a.m_data.i - b.m_data.i);
     case SalaObj::S_DOUBLE:
-        return SalaObj(a.data.f - b.data.f);
+        return SalaObj(a.m_data.f - b.m_data.f);
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) - b.data.f)
-                                          : (a.data.f - double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) - b.m_data.f)
+                                            : (a.m_data.f - double(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot subtract ") + b.getTypeIndefArt() + b.getTypeStr() +
                         std::string(" from ") + a.getTypeIndefArt() + a.getTypeStr());
@@ -646,27 +646,27 @@ inline SalaObj operator-(SalaObj &a, SalaObj &b) {
     return SalaObj();
 }
 inline SalaObj operator-(SalaObj &a) {
-    switch (a.type) {
+    switch (a.m_type) {
     case SalaObj::S_BOOL:
         throw SalaError("Cannot minus booleans");
     case SalaObj::S_INT:
-        return SalaObj(-a.data.i);
+        return SalaObj(-a.m_data.i);
     case SalaObj::S_DOUBLE:
-        return SalaObj(-a.data.f);
+        return SalaObj(-a.m_data.f);
     default:
         throw SalaError(std::string("Cannot minus ") + a.getTypeIndefArt() + a.getTypeStr());
     }
     return SalaObj();
 }
 inline SalaObj operator*(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_INT:
-        return SalaObj(a.data.i * b.data.i);
+        return SalaObj(a.m_data.i * b.m_data.i);
     case SalaObj::S_DOUBLE:
-        return SalaObj(a.data.f * b.data.f);
+        return SalaObj(a.m_data.f * b.m_data.f);
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) * b.data.f)
-                                          : (a.data.f * double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) * b.m_data.f)
+                                            : (a.m_data.f * double(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot multiply ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" by ") + b.getTypeIndefArt() + b.getTypeStr());
@@ -674,14 +674,14 @@ inline SalaObj operator*(SalaObj &a, SalaObj &b) {
     return SalaObj();
 }
 inline SalaObj operator%(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_INT:
-        return SalaObj(a.data.i % b.data.i);
+        return SalaObj(a.m_data.i % b.m_data.i);
     case SalaObj::S_DOUBLE:
-        return SalaObj(fmod(a.data.f, b.data.f));
+        return SalaObj(fmod(a.m_data.f, b.m_data.f));
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? fmod(double(a.data.i), b.data.f)
-                                          : fmod(a.data.f, double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? fmod(double(a.m_data.i), b.m_data.f)
+                                            : fmod(a.m_data.f, double(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot multiply ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" by ") + b.getTypeIndefArt() + b.getTypeStr());
@@ -689,17 +689,17 @@ inline SalaObj operator%(SalaObj &a, SalaObj &b) {
     return SalaObj();
 }
 inline SalaObj operator/(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_INT:
-        if (b.data.i != 0)
-            return SalaObj(a.data.i / b.data.i);
+        if (b.m_data.i != 0)
+            return SalaObj(a.m_data.i / b.m_data.i);
         else
             throw SalaError("Integer divide by zero error");
     case SalaObj::S_DOUBLE:
-        return SalaObj(a.data.f / b.data.f);
+        return SalaObj(a.m_data.f / b.m_data.f);
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) / b.data.f)
-                                          : (a.data.f / double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) / b.m_data.f)
+                                            : (a.m_data.f / double(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot divide ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" by ") + a.getTypeIndefArt() + b.getTypeStr());
@@ -707,28 +707,28 @@ inline SalaObj operator/(SalaObj &a, SalaObj &b) {
     return SalaObj();
 }
 // assume already bools (use convert to bool first)
-inline bool operator&&(SalaObj &a, SalaObj &b) { return a.data.b && b.data.b; }
+inline bool operator&&(SalaObj &a, SalaObj &b) { return a.m_data.b && b.m_data.b; }
 // assume already bools (use convert to bool first)
-inline bool operator||(SalaObj &a, SalaObj &b) { return a.data.b || b.data.b; }
+inline bool operator||(SalaObj &a, SalaObj &b) { return a.m_data.b || b.m_data.b; }
 // assume already bools (use convert to bool first)
-inline bool operator!(SalaObj &a) { return !a.data.b; }
+inline bool operator!(SalaObj &a) { return !a.m_data.b; }
 inline bool operator==(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_NONE:
         return true; // none == none
     case SalaObj::S_BOOL:
-        return a.data.b == b.data.b;
+        return a.m_data.b == b.m_data.b;
     case SalaObj::S_INT:
-        return a.data.i == b.data.i;
+        return a.m_data.i == b.m_data.i;
     case SalaObj::S_DOUBLE:
-        return a.data.f == b.data.f;
+        return a.m_data.f == b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) == b.data.f)
-                                          : (a.data.f == double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) == b.m_data.f)
+                                            : (a.m_data.f == double(b.m_data.i));
     case SalaObj::S_STRING:
-        return a.data.str == b.data.str;
+        return a.m_data.str == b.m_data.str;
     case SalaObj::S_LIST:
-        return a.data.list == b.data.list;
+        return a.m_data.list == b.m_data.list;
     default:
         throw SalaError(std::string("Cannot compare ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" with ") + b.getTypeIndefArt() + b.getTypeStr() +
@@ -738,39 +738,39 @@ inline bool operator==(SalaObj &a, SalaObj &b) {
 }
 inline SalaObj op_is(SalaObj &a, SalaObj &b) {
     // note, op_is is forgiving: does not complain if cannot compare, just returns false
-    switch (a.type & b.type) {
+    switch (a.m_type & b.m_type) {
     case SalaObj::S_NONE:
         return true; // none is none
     case SalaObj::S_BOOL:
-        return a.data.b == b.data.b;
+        return a.m_data.b == b.m_data.b;
     case SalaObj::S_INT:
-        return a.data.i == b.data.i;
+        return a.m_data.i == b.m_data.i;
     case SalaObj::S_DOUBLE:
-        return a.data.f == b.data.f;
+        return a.m_data.f == b.m_data.f;
     // n.b., no number! int is not double and v.v.
     case SalaObj::S_STRING:
-        return a.data.str.string == b.data.str.string; // n.b.: pointer compare!
+        return a.m_data.str.string == b.m_data.str.string; // n.b.: pointer compare!
     case SalaObj::S_LIST:
-        return a.data.list.list == b.data.list.list; // n.b.: pointer compare!
+        return a.m_data.list.list == b.m_data.list.list; // n.b.: pointer compare!
     }
     return false;
 }
 
 inline bool operator!=(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_BOOL:
-        return a.data.b != b.data.b;
+        return a.m_data.b != b.m_data.b;
     case SalaObj::S_INT:
-        return a.data.i != b.data.i;
+        return a.m_data.i != b.m_data.i;
     case SalaObj::S_DOUBLE:
-        return a.data.f != b.data.f;
+        return a.m_data.f != b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) != b.data.f)
-                                          : (a.data.f != double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) != b.m_data.f)
+                                            : (a.m_data.f != double(b.m_data.i));
     case SalaObj::S_STRING:
-        return a.data.str != b.data.str;
+        return a.m_data.str != b.m_data.str;
     case SalaObj::S_LIST:
-        return a.data.list != b.data.list;
+        return a.m_data.list != b.m_data.list;
     default:
         throw SalaError(std::string("Cannot compare ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" with ") + b.getTypeIndefArt() + b.getTypeStr() +
@@ -779,18 +779,18 @@ inline bool operator!=(SalaObj &a, SalaObj &b) {
     return false;
 }
 inline bool operator<(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_BOOL:
-        return a.data.b < b.data.b;
+        return a.m_data.b < b.m_data.b;
     case SalaObj::S_INT:
-        return a.data.i < b.data.i;
+        return a.m_data.i < b.m_data.i;
     case SalaObj::S_DOUBLE:
-        return a.data.f < b.data.f;
+        return a.m_data.f < b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) < b.data.f)
-                                          : (a.data.f < double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) < b.m_data.f)
+                                            : (a.m_data.f < double(b.m_data.i));
     case SalaObj::S_STRING:
-        return a.data.str < b.data.str;
+        return a.m_data.str < b.m_data.str;
     default:
         throw SalaError(std::string("Cannot compare ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" with ") + b.getTypeIndefArt() + b.getTypeStr() +
@@ -799,18 +799,18 @@ inline bool operator<(SalaObj &a, SalaObj &b) {
     return false;
 }
 inline bool operator>(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_BOOL:
-        return a.data.b > b.data.b;
+        return a.m_data.b > b.m_data.b;
     case SalaObj::S_INT:
-        return a.data.i > b.data.i;
+        return a.m_data.i > b.m_data.i;
     case SalaObj::S_DOUBLE:
-        return a.data.f > b.data.f;
+        return a.m_data.f > b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) > b.data.f)
-                                          : (a.data.f > double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) > b.m_data.f)
+                                            : (a.m_data.f > double(b.m_data.i));
     case SalaObj::S_STRING:
-        return a.data.str > b.data.str;
+        return a.m_data.str > b.m_data.str;
     default:
         throw SalaError(std::string("Cannot compare ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" with ") + b.getTypeIndefArt() + b.getTypeStr() +
@@ -819,16 +819,16 @@ inline bool operator>(SalaObj &a, SalaObj &b) {
     return false;
 }
 inline bool operator<=(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_BOOL:
-        return a.data.b <= b.data.b;
+        return a.m_data.b <= b.m_data.b;
     case SalaObj::S_INT:
-        return a.data.i <= b.data.i;
+        return a.m_data.i <= b.m_data.i;
     case SalaObj::S_DOUBLE:
-        return a.data.f <= b.data.f;
+        return a.m_data.f <= b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) <= b.data.f)
-                                          : (a.data.f <= double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) <= b.m_data.f)
+                                            : (a.m_data.f <= double(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot compare ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" with ") + b.getTypeIndefArt() + b.getTypeStr() +
@@ -837,16 +837,16 @@ inline bool operator<=(SalaObj &a, SalaObj &b) {
     return false;
 }
 inline bool operator>=(SalaObj &a, SalaObj &b) {
-    switch (a.type | b.type) {
+    switch (a.m_type | b.m_type) {
     case SalaObj::S_BOOL:
-        return a.data.b >= b.data.b;
+        return a.m_data.b >= b.m_data.b;
     case SalaObj::S_INT:
-        return a.data.i >= b.data.i;
+        return a.m_data.i >= b.m_data.i;
     case SalaObj::S_DOUBLE:
-        return a.data.f >= b.data.f;
+        return a.m_data.f >= b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.type == SalaObj::S_INT) ? (double(a.data.i) >= b.data.f)
-                                          : (a.data.f >= double(b.data.i));
+        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) >= b.m_data.f)
+                                            : (a.m_data.f >= double(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot compare ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" with ") + b.getTypeIndefArt() + b.getTypeStr() +
@@ -857,31 +857,31 @@ inline bool operator>=(SalaObj &a, SalaObj &b) {
 // list operations: note -> precheck in program and sort into list and string
 inline SalaObj &SalaObj::list_at(int i) {
     if (i < 0)
-        i += (int)data.list.list->size();
-    if (i < 0 || size_t(i) >= data.list.list->size())
+        i += (int)m_data.list.list->size();
+    if (i < 0 || size_t(i) >= m_data.list.list->size())
         throw SalaError("Index out of range");
-    return data.list.list->at(static_cast<size_t>(i));
+    return m_data.list.list->at(static_cast<size_t>(i));
 }
 inline SalaObj SalaObj::char_at(int i) // actually returns a string of the char
 {
     if (i < 0)
-        i += static_cast<int>(data.str.length());
-    if (i < 0 || i >= static_cast<int>(data.str.length()))
+        i += static_cast<int>(m_data.str.length());
+    if (i < 0 || i >= static_cast<int>(m_data.str.length()))
         throw SalaError("String index out of range");
-    return SalaObj(std::string(1, data.str.char_at(static_cast<size_t>(i))));
+    return SalaObj(std::string(1, m_data.str.char_at(static_cast<size_t>(i))));
 }
 inline int SalaObj::length() {
-    if (type & S_LIST)
-        return (int)data.list.list->size();
-    else if (type == S_STRING)
-        return (int)data.str.length();
+    if (m_type & S_LIST)
+        return (int)m_data.list.list->size();
+    else if (m_type == S_STRING)
+        return (int)m_data.str.length();
     throw SalaError("Cannot get the length of " + getTypeIndefArt() + getTypeStr());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
 
 inline const std::string SalaObj::getTypeStr() const {
-    switch (type) {
+    switch (m_type) {
     case S_NONE:
         return "none";
     case S_UNINIT:
@@ -905,16 +905,16 @@ inline const std::string SalaObj::getTypeStr() const {
     default:
         break;
     }
-    if (type & S_GRAPHOBJ) {
+    if (m_type & S_GRAPHOBJ) {
         return "graph object";
-    } else if (type & S_MAP) {
+    } else if (m_type & S_MAP) {
         return "graph";
     }
     return "unknown type";
 }
 
 inline const std::string SalaObj::getTypeIndefArt() const {
-    switch (type & ~S_GRAPHOBJ) {
+    switch (m_type & ~S_GRAPHOBJ) {
     case S_FUNCTION:
     case S_BOOL:
     case S_DOUBLE:

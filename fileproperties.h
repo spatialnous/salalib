@@ -8,10 +8,10 @@
 
 class FileProperties {
   protected:
-    std::string m_create_person;
-    std::string m_create_organization;
-    std::string m_create_date;
-    std::string m_create_program;
+    std::string m_createPerson;
+    std::string m_createOrganization;
+    std::string m_createDate;
+    std::string m_createProgram;
     std::string m_title;
     std::string m_location;
     std::string m_description;
@@ -22,19 +22,19 @@ class FileProperties {
     //
     void setProperties(const std::string &person, const std::string &organization,
                        const std::string &date, const std::string &program) {
-        m_create_person = person;
-        m_create_organization = organization;
-        m_create_date = date;
-        m_create_program = program;
+        m_createPerson = person;
+        m_createOrganization = organization;
+        m_createDate = date;
+        m_createProgram = program;
     }
     void setTitle(const std::string &title) { m_title = title; }
     void setLocation(const std::string &location) { m_location = location; }
     void setDescription(const std::string &description) { m_description = description; }
     //
-    const std::string &getPerson() const { return m_create_person; }
-    const std::string &getOrganization() const { return m_create_organization; }
-    const std::string &getDate() const { return m_create_date; }
-    const std::string &getProgram() const { return m_create_program; }
+    const std::string &getPerson() const { return m_createPerson; }
+    const std::string &getOrganization() const { return m_createOrganization; }
+    const std::string &getDate() const { return m_createDate; }
+    const std::string &getProgram() const { return m_createProgram; }
     const std::string &getTitle() const { return m_title; }
     const std::string &getLocation() const { return m_location; }
     const std::string &getDescription() const { return m_description; }
@@ -44,10 +44,10 @@ class FileProperties {
 };
 
 inline bool FileProperties::read(std::istream &stream) {
-    m_create_person = dXstring::readString(stream);
-    m_create_organization = dXstring::readString(stream);
-    m_create_date = dXstring::readString(stream);
-    m_create_program = dXstring::readString(stream);
+    m_createPerson = dXstring::readString(stream);
+    m_createOrganization = dXstring::readString(stream);
+    m_createDate = dXstring::readString(stream);
+    m_createProgram = dXstring::readString(stream);
     m_title = dXstring::readString(stream);
     m_location = dXstring::readString(stream);
     m_description = dXstring::readString(stream);
@@ -56,10 +56,10 @@ inline bool FileProperties::read(std::istream &stream) {
 }
 
 inline bool FileProperties::write(std::ostream &stream) const {
-    dXstring::writeString(stream, m_create_person);
-    dXstring::writeString(stream, m_create_organization);
-    dXstring::writeString(stream, m_create_date);
-    dXstring::writeString(stream, m_create_program);
+    dXstring::writeString(stream, m_createPerson);
+    dXstring::writeString(stream, m_createOrganization);
+    dXstring::writeString(stream, m_createDate);
+    dXstring::writeString(stream, m_createProgram);
     dXstring::writeString(stream, m_title);
     dXstring::writeString(stream, m_location);
     dXstring::writeString(stream, m_description);

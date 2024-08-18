@@ -13,54 +13,48 @@
 #include "genlib/simplematrix.h"
 
 struct AxialVertexKey {
-    int m_ref_key;
-    short m_ref_a;
-    short m_ref_b;
-    AxialVertexKey(int ref = -1, short a = -1, short b = -1) {
-        m_ref_key = ref;
-        m_ref_a = a;
-        m_ref_b = b;
-    }
+    int refKey;
+    short refA;
+    short refB;
+    AxialVertexKey(int ref = -1, short a = -1, short b = -1) : refKey(ref), refA(a), refB(b) {}
     friend bool operator==(const AxialVertexKey &a, const AxialVertexKey &b);
     friend bool operator!=(const AxialVertexKey &a, const AxialVertexKey &b);
     friend bool operator>(const AxialVertexKey &a, const AxialVertexKey &b);
     friend bool operator<(const AxialVertexKey &a, const AxialVertexKey &b);
 };
 inline bool operator==(const AxialVertexKey &a, const AxialVertexKey &b) {
-    return (a.m_ref_key == b.m_ref_key && a.m_ref_a == b.m_ref_a && a.m_ref_b == b.m_ref_b);
+    return (a.refKey == b.refKey && a.refA == b.refA && a.refB == b.refB);
 }
 inline bool operator!=(const AxialVertexKey &a, const AxialVertexKey &b) {
-    return (a.m_ref_key != b.m_ref_key || a.m_ref_a != b.m_ref_a || a.m_ref_b != b.m_ref_b);
+    return (a.refKey != b.refKey || a.refA != b.refA || a.refB != b.refB);
 }
 inline bool operator>(const AxialVertexKey &a, const AxialVertexKey &b) {
-    return (a.m_ref_key > b.m_ref_key ||
-            (a.m_ref_key == b.m_ref_key &&
-             (a.m_ref_a > b.m_ref_a || (a.m_ref_a == b.m_ref_a && a.m_ref_b > b.m_ref_b))));
+    return (a.refKey > b.refKey ||
+            (a.refKey == b.refKey && (a.refA > b.refA || (a.refA == b.refA && a.refB > b.refB))));
 }
 inline bool operator<(const AxialVertexKey &a, const AxialVertexKey &b) {
-    return (a.m_ref_key < b.m_ref_key ||
-            (a.m_ref_key == b.m_ref_key &&
-             (a.m_ref_a < b.m_ref_a || (a.m_ref_a == b.m_ref_a && a.m_ref_b < b.m_ref_b))));
+    return (a.refKey < b.refKey ||
+            (a.refKey == b.refKey && (a.refA < b.refA || (a.refA == b.refA && a.refB < b.refB))));
 }
 
 const AxialVertexKey NoVertex(-1, -1, -1);
 
 struct AxialVertex : public AxialVertexKey {
-    Point2f m_point;
-    Point2f m_openspace;
-    Point2f m_a;
-    Point2f m_b;
-    bool m_clockwise;
-    bool m_convex;
-    bool m_initialised;
-    bool m_axial;
-    AxialVertex(const AxialVertexKey &vertex_key = NoVertex, const Point2f &point = Point2f(),
-                const Point2f &openspace = Point2f())
+    Point2f point;
+    Point2f openspace;
+    Point2f a;
+    Point2f b;
+    bool clockwise;
+    bool convex;
+    bool initialised;
+    bool axial;
+    AxialVertex(const AxialVertexKey &vertex_key = NoVertex, const Point2f &p = Point2f(),
+                const Point2f &opsp = Point2f())
         : AxialVertexKey(vertex_key) {
-        m_point = point;
-        m_openspace = openspace;
-        m_initialised = false;
-        m_axial = false;
+        point = p;
+        openspace = opsp;
+        initialised = false;
+        axial = false;
     }
 };
 
@@ -123,11 +117,11 @@ struct RadialLine : public RadialKey {
 
 struct RadialSegment {
     std::set<int> indices;
-    RadialKey radial_b;
+    RadialKey radialB;
 
-    RadialSegment(RadialKey &rb) { radial_b = rb; }
-    RadialSegment(const RadialKey &rb) { radial_b = rb; }
-    RadialSegment() { radial_b = RadialKey(); }
+    RadialSegment(RadialKey &rb) { radialB = rb; }
+    RadialSegment(const RadialKey &rb) { radialB = rb; }
+    RadialSegment() { radialB = RadialKey(); }
 };
 
 struct PolyConnector {
@@ -143,14 +137,13 @@ class AxialPolygons : public SpacePixel {
     friend class ShapeGraphs;
 
   protected:
-    std::vector<int> m_vertex_polys;
-    depthmapX::ColumnMatrix<std::vector<int>> m_pixel_polys;
+    std::vector<int> m_vertexPolys;
+    depthmapX::ColumnMatrix<std::vector<int>> m_pixelPolys;
 
   public:
-    AxialPolygons() : m_pixel_polys(0, 0) {}
-    std::set<AxialVertex> m_handled_list;
-    std::map<Point2f, std::vector<Point2f>> m_vertex_possibles;
-
+    AxialPolygons() : m_pixelPolys(0, 0) {}
+    std::set<AxialVertex> handledList;
+    std::map<Point2f, std::vector<Point2f>> vertexPossibles;
     void clear();
     void init(std::vector<Line> &lines, const QtRegion &region);
     void makeVertexPossibles(const std::vector<Line> &lines,

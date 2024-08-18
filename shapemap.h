@@ -57,10 +57,10 @@ class ShapeMap : public AttributeMap {
 
   protected:
     std::string m_name;
-    int m_map_type = EMPTYMAP;
+    int m_mapType = EMPTYMAP;
     bool m_hasgraph = false;
     // counters
-    int m_obj_ref = -1;
+    int m_objRef = -1;
     //
     // quick grab for shapes
     depthmapX::ColumnMatrix<std::vector<ShapeRef>> m_pixel_shapes; // i rows of j columns
@@ -89,7 +89,7 @@ class ShapeMap : public AttributeMap {
         m_rows = other.m_rows;
         m_cols = other.m_cols;
         m_region = std::move(other.m_region);
-        m_map_type = other.m_map_type;
+        m_mapType = other.m_mapType;
     }
 
   public:
@@ -142,7 +142,7 @@ class ShapeMap : public AttributeMap {
     // num shapes for this object (note, request by object rowid
     // -- on interrogation, this is what you will usually receive)
     size_t getShapeCount(size_t rowid) const {
-        return depthmapX::getMapAtIndex(m_shapes, rowid)->second.m_points.size();
+        return depthmapX::getMapAtIndex(m_shapes, rowid)->second.points.size();
     }
     //
     int getIndex(size_t rowid) const { return depthmapX::getMapAtIndex(m_shapes, rowid)->first; }
@@ -240,12 +240,12 @@ class ShapeMap : public AttributeMap {
     const std::vector<Connector> &getConnections() const { return m_connectors; }
     std::vector<Connector> &getConnections() { return m_connectors; }
     //
-    bool isAllLineMap() const { return m_map_type == ALLLINEMAP; }
-    bool isSegmentMap() const { return m_map_type == SEGMENTMAP; }
-    bool isAxialMap() const { return m_map_type == ALLLINEMAP || m_map_type == AXIALMAP; }
-    bool isPeshMap() const { return m_map_type == PESHMAP; }
-    int getMapType() const { return m_map_type; }
-    void setMapType(int newMapType) { m_map_type = newMapType; }
+    bool isAllLineMap() const { return m_mapType == ALLLINEMAP; }
+    bool isSegmentMap() const { return m_mapType == SEGMENTMAP; }
+    bool isAxialMap() const { return m_mapType == ALLLINEMAP || m_mapType == AXIALMAP; }
+    bool isPeshMap() const { return m_mapType == PESHMAP; }
+    int getMapType() const { return m_mapType; }
+    void setMapType(int newMapType) { m_mapType = newMapType; }
     // Attribute functionality
 
   public:

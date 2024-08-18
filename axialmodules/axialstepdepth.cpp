@@ -30,11 +30,11 @@ AnalysisResult AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
     int depth = 1;
     while (foundlist.a().size()) {
         Connector &line = map.getConnections()[foundlist.a().back()];
-        for (size_t k = 0; k < line.m_connections.size(); k++) {
-            if (!covered[line.m_connections[k]]) {
-                covered[line.m_connections[k]] = true;
-                foundlist.b().push_back(line.m_connections[k]);
-                map.getAttributeRowFromShapeIndex(line.m_connections[k])
+        for (size_t k = 0; k < line.connections.size(); k++) {
+            if (!covered[line.connections[k]]) {
+                covered[line.connections[k]] = true;
+                foundlist.b().push_back(line.connections[k]);
+                map.getAttributeRowFromShapeIndex(line.connections[k])
                     .setValue(stepdepthCol, float(depth));
             }
         }

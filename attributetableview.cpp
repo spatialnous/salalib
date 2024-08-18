@@ -5,7 +5,7 @@
 #include "attributetableview.h"
 
 AttributeTableView::AttributeTableView(const AttributeTable &table)
-    : m_table(table), m_displayColumn(-1) {}
+    : table(table), m_displayColumn(-1) {}
 
 void AttributeTableView::setDisplayColIndex(int columnIndex) {
     if (columnIndex < -1) {
@@ -15,14 +15,14 @@ void AttributeTableView::setDisplayColIndex(int columnIndex) {
     }
     // recalculate the index even if it's the same column in case stuff has
     // changed
-    m_index = makeAttributeIndex(m_table, columnIndex);
+    m_index = makeAttributeIndex(table, columnIndex);
     m_displayColumn = columnIndex;
 }
 
 float AttributeTableView::getNormalisedValue(const AttributeKey &key,
                                              const AttributeRow &row) const {
     if (m_displayColumn < 0) {
-        auto endIter = m_table.end();
+        auto endIter = table.end();
         --endIter;
         return (float)key.value / (float)endIter->getKey().value;
     }
@@ -31,9 +31,9 @@ float AttributeTableView::getNormalisedValue(const AttributeKey &key,
 
 const DisplayParams &AttributeTableView::getDisplayParams() const {
     if (m_displayColumn < 0) {
-        return m_table.getDisplayParams();
+        return table.getDisplayParams();
     }
-    return m_table.getColumn(m_displayColumn).getDisplayParams();
+    return table.getColumn(m_displayColumn).getDisplayParams();
 }
 
 void AttributeTableHandle::setDisplayColIndex(int columnIndex) {

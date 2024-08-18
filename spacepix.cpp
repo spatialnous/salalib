@@ -195,12 +195,12 @@ PixelRefVector PixelBase::pixelateLineTouching(Line l, double tolerance) const {
             }
         }
     } else {
-        int first = (int)floor(l.bottom_left.y - tolerance);
-        int last = (int)floor(l.top_right.y + tolerance);
+        int first = (int)floor(l.bottomLeft.y - tolerance);
+        int last = (int)floor(l.topRight.y + tolerance);
         for (int i = first; i <= last; i++) {
-            int j1 = (int)floor((first == i ? l.bottom_left.y : double(i)) * grad + constant -
+            int j1 = (int)floor((first == i ? l.bottomLeft.y : double(i)) * grad + constant -
                                 l.sign() * tolerance);
-            int j2 = (int)floor((last == i ? l.top_right.y : double(i + 1)) * grad + constant +
+            int j2 = (int)floor((last == i ? l.topRight.y : double(i + 1)) * grad + constant +
                                 l.sign() * tolerance);
             if (bounds.encloses(PixelRef(static_cast<short>(j1), static_cast<short>(i)))) {
                 pixelList.push_back(PixelRef(static_cast<short>(j1), static_cast<short>(i)));
@@ -280,7 +280,7 @@ PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) const {
     return list;
 }
 
-SpacePixel::SpacePixel(const std::string &name) : m_pixel_lines(0, 0) {
+SpacePixel::SpacePixel(const std::string &name) : m_pixelLines(0, 0) {
     m_name = name;
     m_show = true;
     m_edit = false;
@@ -298,7 +298,7 @@ SpacePixel::SpacePixel(const std::string &name) : m_pixel_lines(0, 0) {
 }
 
 SpacePixel::SpacePixel(const SpacePixel &spacepixel)
-    : m_pixel_lines(spacepixel.m_pixel_lines.rows(), spacepixel.m_pixel_lines.columns()) {
+    : m_pixelLines(spacepixel.m_pixelLines.rows(), spacepixel.m_pixelLines.columns()) {
     // n.b., not strictly allowed
     construct(spacepixel);
 }
@@ -326,11 +326,11 @@ void SpacePixel::construct(const SpacePixel &spacepixel) {
     m_newline = true;
 
     if (!m_rows || !m_cols) {
-        m_display_lines.clear();
+        m_displayLines.clear();
         return;
     }
 
-    m_pixel_lines = spacepixel.m_pixel_lines;
+    m_pixelLines = spacepixel.m_pixelLines;
 
     m_color = spacepixel.m_color;
     m_style = spacepixel.m_style;
@@ -364,10 +364,10 @@ PixelRef SpacePixel::pixelate(const Point2f &p, bool constrain, int) const {
 }
 
 void SpacePixel::makeViewportLines(const QtRegion &viewport) const {
-    if (m_display_lines.empty() || m_newline) {
-        m_display_lines = std::vector<int>(m_lines.size());
+    if (m_displayLines.empty() || m_newline) {
+        m_displayLines = std::vector<int>(m_lines.size());
         m_newline = false;
-        std::fill(m_display_lines.begin(), m_display_lines.end(), 0);
+        std::fill(m_displayLines.begin(), m_displayLines.end(), 0);
     }
 
     m_current = -1; // note: findNext expects first to be labelled -1
@@ -379,14 +379,14 @@ void SpacePixel::makeViewportLines(const QtRegion &viewport) const {
     r_viewport.normalScale( m_region );
     */
 
-    PixelRef bl = pixelate(viewport.bottom_left);
-    PixelRef tr = pixelate(viewport.top_right);
+    PixelRef bl = pixelate(viewport.bottomLeft);
+    PixelRef tr = pixelate(viewport.topRight);
 
     for (int i = bl.x; i <= tr.x; i++) {
         for (int j = bl.y; j <= tr.y; j++) {
-            auto &pixelLines = m_pixel_lines(static_cast<size_t>(j), static_cast<size_t>(i));
+            auto &pixelLines = m_pixelLines(static_cast<size_t>(j), static_cast<size_t>(i));
             for (int pixelLine : pixelLines) {
-                m_display_lines[size_t(depthmapX::findIndexFromKey(m_lines, pixelLine))] = 1;
+                m_displayLines[size_t(depthmapX::findIndexFromKey(m_lines, pixelLine))] = 1;
             }
         }
     }
@@ -401,8 +401,7 @@ bool SpacePixel::findNextLine(bool &nextlayer) const {
     if (m_newline) // after adding a line you must reinitialise the display lines
         return false;
 
-    while (++m_current < (int)m_lines.size() &&
-           m_display_lines[static_cast<size_t>(m_current)] == 0)
+    while (++m_current < (int)m_lines.size() && m_displayLines[static_cast<size_t>(m_current)] == 0)
         ;
 
     if (m_current < (int)m_lines.size()) {
@@ -415,7 +414,7 @@ bool SpacePixel::findNextLine(bool &nextlayer) const {
 }
 
 const Line &SpacePixel::getNextLine() const {
-    m_display_lines[static_cast<size_t>(m_current)] = 0; // You've drawn it
+    m_displayLines[static_cast<size_t>(m_current)] = 0; // You've drawn it
     /*
     // Fixing: removed rectangle scaling
     l.denormalScale( m_region );
@@ -424,7 +423,7 @@ const Line &SpacePixel::getNextLine() const {
 }
 
 void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, double density) {
-    m_display_lines.clear();
+    m_displayLines.clear();
     m_lines.clear();
     m_ref = -1;
     m_test = 0;
@@ -447,12 +446,12 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
     // m_pixel_height = m_region.height() / double(m_rows);
     // m_pixel_width  = m_region.width()  / double(m_cols);
 
-    m_pixel_lines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
-                                                           static_cast<size_t>(m_cols));
+    m_pixelLines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
+                                                          static_cast<size_t>(m_cols));
 }
 
 void SpacePixel::reinitLines(double density) {
-    m_display_lines.clear();
+    m_displayLines.clear();
 
     double whRatio = m_region.width() / m_region.height();
     double hwRatio = m_region.height() / m_region.width();
@@ -465,15 +464,15 @@ void SpacePixel::reinitLines(double density) {
     if (m_cols < 1)
         m_cols = 1;
 
-    m_pixel_lines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
-                                                           static_cast<size_t>(m_cols));
+    m_pixelLines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
+                                                          static_cast<size_t>(m_cols));
 
     // now re-add the lines:
     for (const auto &line : m_lines) {
         PixelRefVector list = pixelateLine(line.second.line);
         for (size_t j = 0; j < list.size(); j++) {
-            // note: m_pixel_lines will be reordered by sortPixelLines
-            m_pixel_lines(static_cast<size_t>(list[j].y), static_cast<size_t>(list[j].x))
+            // note: m_pixelLines will be reordered by sortPixelLines
+            m_pixelLines(static_cast<size_t>(list[j].y), static_cast<size_t>(list[j].x))
                 .push_back(line.first);
         }
     }
@@ -497,8 +496,8 @@ void SpacePixel::addLine(const Line &line) {
     PixelRefVector list = pixelateLine(line);
 
     for (size_t i = 0; i < list.size(); i++) {
-        // note: m_pixel_lines will be reordered by sortPixelLines
-        m_pixel_lines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x))
+        // note: m_pixelLines will be reordered by sortPixelLines
+        m_pixelLines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x))
             .push_back(m_ref);
     }
 }
@@ -517,7 +516,7 @@ int SpacePixel::addLineDynamic(const Line &line) {
         if (list[i].x >= 0 && list[i].y >= 0 && static_cast<size_t>(list[i].x) < m_cols &&
             static_cast<size_t>(list[i].y) < m_rows) {
             // note, this probably won't be reordered on dynamic
-            m_pixel_lines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x))
+            m_pixelLines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x))
                 .push_back(m_ref);
         }
     }
@@ -528,7 +527,7 @@ int SpacePixel::addLineDynamic(const Line &line) {
 void SpacePixel::sortPixelLines() {
     for (size_t i = 0; i < static_cast<size_t>(m_cols); i++) {
         for (size_t j = 0; j < static_cast<size_t>(m_rows); j++) {
-            std::vector<int> &pixelLines = m_pixel_lines(j, i);
+            std::vector<int> &pixelLines = m_pixelLines(j, i);
             // tidy up in case of removal
             for (auto revIter = pixelLines.rbegin(); revIter != pixelLines.rend(); ++revIter) {
                 if (m_lines.find(*revIter) == m_lines.end()) {
@@ -548,7 +547,7 @@ bool SpacePixel::intersect(const Line &l, double tolerance) {
 
     for (size_t i = 0; i < list.size(); i++) {
         auto &pixelLines =
-            m_pixel_lines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x));
+            m_pixelLines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x));
         for (int lineref : pixelLines) {
             LineTest &linetest = m_lines.find(lineref)->second;
             if (linetest.test != m_test) {
@@ -573,7 +572,7 @@ bool SpacePixel::intersect_exclude(const Line &l, double tolerance) {
 
     for (size_t i = 0; i < list.size(); i++) {
         auto &pixelLines =
-            m_pixel_lines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x));
+            m_pixelLines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x));
         for (int lineref : pixelLines) {
             LineTest &linetest = m_lines.find(lineref)->second;
             if (linetest.test != m_test) {
@@ -617,7 +616,7 @@ void SpacePixel::cutLine(Line &l, short dir) {
     for (size_t i = 0; i < vec.size() && !found; i++) {
         // depending on direction of line either move head to tail or tail to head
         PixelRef pix = (dir == l.direction()) ? vec[i] : vec[vec.size() - 1 - i];
-        auto &pixelLines = m_pixel_lines(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
+        auto &pixelLines = m_pixelLines(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
         for (int lineref : pixelLines) {
             // try {
             LineTest &linetest = m_lines.find(lineref)->second;
@@ -749,7 +748,7 @@ void SpacePixel::cutLine(Line &l, short dir) {
 
 bool SpacePixel::read(std::istream &stream) {
     // clear anything that was there:
-    m_display_lines.clear();
+    m_displayLines.clear();
     m_lines.clear();
 
     // read name:
@@ -780,8 +779,8 @@ bool SpacePixel::read(std::istream &stream) {
     // m_pixel_width  = m_region.width()  / double(m_cols);
 
     // prepare loader:
-    m_pixel_lines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
-                                                           static_cast<size_t>(m_cols));
+    m_pixelLines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
+                                                          static_cast<size_t>(m_cols));
 
     stream.read((char *)&m_ref, sizeof(m_ref));
     dXreadwrite::readIntoMap(stream, m_lines);
@@ -793,8 +792,8 @@ bool SpacePixel::read(std::istream &stream) {
         PixelRefVector list = pixelateLine(line.second.line);
 
         for (size_t m = 0; m < list.size(); m++) {
-            // note: m_pixel_lines is an *ordered* list! --- used by other ops.
-            m_pixel_lines(static_cast<size_t>(list[m].y), static_cast<size_t>(list[m].x))
+            // note: m_pixelLines is an *ordered* list! --- used by other ops.
+            m_pixelLines(static_cast<size_t>(list[m].y), static_cast<size_t>(list[m].x))
                 .push_back(n);
         }
     }

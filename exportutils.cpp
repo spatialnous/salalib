@@ -12,7 +12,7 @@ void exportUtils::writeMapShapesAsCat(ShapeMap &map, std::ostream &stream) {
         SalaShape &shape = refShape.second;
         if (shape.isPolyLine() || shape.isPolygon()) {
             stream << "Begin " << (shape.isPolyLine() ? "Polyline" : "Polygon") << std::endl;
-            for (Point2f p : shape.m_points) {
+            for (Point2f p : shape.points) {
                 stream << p.x << " " << p.y << std::endl;
             }
             stream << "End " << (shape.isPolyLine() ? "Polyline" : "Polygon") << std::endl;

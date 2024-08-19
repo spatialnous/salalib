@@ -63,13 +63,9 @@ class Communicator {
     // nb. converted to Win32 UTF-16 Unicode path (AT 31.01.11) Linux, MacOS use UTF-8 (AT 29.04.11)
     std::vector<std::string> m_fileset; // <- sometimes you want to load a whole set of files
   public:
-    Communicator() {
-        m_infile = NULL;
-        m_infile2 = NULL;
-        m_outfile = NULL;
-        m_cancelled = false;
-        m_deleteFlag = false;
-    }
+    Communicator()
+        : m_cancelled(false), m_deleteFlag(false), m_infile(nullptr), m_infile2(nullptr),
+          m_outfile(nullptr) {}
     //
     bool GetDeleteFlag() // used by ICommunicator and IComm together
     {
@@ -79,13 +75,13 @@ class Communicator {
     virtual ~Communicator() {
         if (m_infile)
             delete m_infile;
-        m_infile = NULL;
+        m_infile = nullptr;
         if (m_infile2)
             delete m_infile2;
-        m_infile2 = NULL;
+        m_infile2 = nullptr;
         if (m_outfile)
             delete m_outfile;
-        m_outfile = NULL;
+        m_outfile = nullptr;
     }
     //
     void SetInfile(const char *filename) {
@@ -153,8 +149,8 @@ class ICommunicator : public Communicator {
     ICommunicator() {
         m_deleteFlag = true;
     } // note: an ICommunicator lets IComm know that it should delete it
-    virtual ~ICommunicator() { ; }
-    virtual void CommPostMessage(size_t m, size_t x) const;
+    ~ICommunicator() override { ; }
+    void CommPostMessage(size_t m, size_t x) const override;
 };
 
 inline void ICommunicator::CommPostMessage(size_t m, size_t x) const {

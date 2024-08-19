@@ -16,7 +16,7 @@ struct BSPNode {
 
   private:
     Line m_line;
-    int m_tag;
+    int m_tag = -1;
 
   public:
     enum { BSPLEFT, BSPRIGHT };
@@ -24,10 +24,7 @@ struct BSPNode {
     std::unique_ptr<BSPNode> right;
     BSPNode *parent;
 
-    BSPNode(BSPNode *p = NULL) : left(nullptr), right(nullptr) {
-        parent = p;
-        m_tag = -1;
-    }
+    BSPNode(BSPNode *p = nullptr) : m_tag(-1), left(nullptr), right(nullptr), parent(p) {}
     bool isLeaf() { return left == nullptr && right == nullptr; }
     int classify(const Point2f &p) {
         Point2f v0 = m_line.end() - m_line.start();

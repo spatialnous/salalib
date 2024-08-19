@@ -16,7 +16,7 @@ struct xmlelement {
     bool closetag;
     std::map<std::string, std::string> attributes;
     std::vector<xmlelement> subelements;
-    xmlelement() { closetag = false; }
+    xmlelement() : closetag(false) {}
     bool parse(std::ifstream &stream, bool parsesubelements = false);
     friend std::ostream &operator<<(std::ostream &stream, const xmlelement &elem);
 
@@ -27,5 +27,5 @@ struct xmlelement {
 
 struct xmlerror {
     std::string error;
-    xmlerror(const std::string &e = std::string()) { error = e; }
+    xmlerror(const std::string &e = std::string()) : error(e) {}
 };

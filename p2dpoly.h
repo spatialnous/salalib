@@ -44,15 +44,10 @@ class Point2f {
     double x;
     double y;
     Point2f()
+        : x(0.0), y(0.0)
     //      { x = P2DNULL; y = P2DNULL; }
-    {
-        x = 0.0;
-        y = 0.0;
-    }
-    Point2f(double a, double b) {
-        x = a;
-        y = b;
-    }
+    {}
+    Point2f(double a, double b) : x(a), y(b) {}
     bool atZero() const
     //      { return x == P2DNULL || y == P2DNULL; }
     {
@@ -211,10 +206,10 @@ Point2f gps2os(const Point2f &p);
 class Event2f : public Point2f {
   public:
     double t; // time in seconds
-    Event2f() : Point2f() { t = 0.0; }
-    Event2f(double _x, double _y, double _t) : Point2f(_x, _y) { t = _t; }
-    Event2f(Point2f &_p) : Point2f(_p) { t = 0.0; }
-    Event2f(Point2f &_p, double _t) : Point2f(_p) { t = _t; }
+    Event2f() : Point2f(), t(0.0) {}
+    Event2f(double _x, double _y, double _t) : Point2f(_x, _y), t(_t) {}
+    Event2f(Point2f &_p) : Point2f(_p), t(0.0) {}
+    Event2f(Point2f &_p, double _t) : Point2f(_p), t(_t) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -224,16 +219,9 @@ class Point3f {
     double x;
     double y;
     double z;
-    Point3f(double a = 0.0, double b = 0.0, double c = 0.0) {
-        x = a;
-        y = b;
-        z = c;
-    }
-    Point3f(const Point2f &p) {
-        x = p.x;
-        y = 0.0;
-        z = p.y;
-    } // Note! not z = -y (due to an incosistency earlier...)
+    Point3f(double a = 0.0, double b = 0.0, double c = 0.0) : x(a), y(b), z(c) {}
+    Point3f(const Point2f &p)
+        : x(p.x), y(0.0), z(p.y) {} // Note! not z = -y (due to an incosistency earlier...)
     bool inside(const Point3f &bl, const Point3f &tr) // now inclusive (...)
     {
         return (x >= bl.x && y >= bl.y && z >= bl.z && x <= tr.x && y <= tr.y && z <= tr.z);
@@ -281,14 +269,8 @@ inline Point3f cross(const Point3f &a, const Point3f &b) {
 struct EdgeU {
     int edge;
     double u;
-    EdgeU(int e = -1, double _u = 0.0) {
-        edge = e;
-        u = _u;
-    }
-    EdgeU(const EdgeU &eu) {
-        edge = eu.edge;
-        u = eu.u;
-    }
+    EdgeU(int e = -1, double _u = 0.0) : edge(e), u(_u) {}
+    EdgeU(const EdgeU &eu) : edge(eu.edge), u(eu.u) {}
     friend bool ccwEdgeU(const EdgeU &a, const EdgeU &b, const EdgeU &c);
 };
 
@@ -298,14 +280,9 @@ class QtRegion {
   public:
     Point2f bottomLeft;
     Point2f topRight;
-    QtRegion(const Point2f &bl = Point2f(), const Point2f &tr = Point2f()) {
-        bottomLeft = bl;
-        topRight = tr;
-    }
-    QtRegion(const QtRegion &r) {
-        bottomLeft = r.bottomLeft;
-        topRight = r.topRight;
-    }
+    QtRegion(const Point2f &bl = Point2f(), const Point2f &tr = Point2f())
+        : bottomLeft(bl), topRight(tr) {}
+    QtRegion(const QtRegion &r) : bottomLeft(r.bottomLeft), topRight(r.topRight) {}
     QtRegion &operator=(const QtRegion &r) {
         bottomLeft = r.bottomLeft;
         topRight = r.topRight;
@@ -430,7 +407,7 @@ class Line : public QtRegion {
         m_bits.parity = 1;
         m_bits.direction = 1;
     }
-    Line(const Line &l) : QtRegion(l) { m_bits = l.m_bits; }
+    Line(const Line &l) : QtRegion(l), m_bits(l.m_bits) {}
     Line &operator=(const Line &l) {
         this->QtRegion::operator=(l);
         m_bits = l.m_bits;
@@ -559,11 +536,7 @@ class RegionTree {
     RegionTree *m_pRight;
 
   public:
-    RegionTree() {
-        m_pRegion = NULL;
-        m_pLeft = this;
-        m_pRight = this;
-    }
+    RegionTree() : m_pRegion(nullptr), m_pLeft(this), m_pRight(this) {}
     virtual ~RegionTree() {
         if (m_pRegion)
             delete m_pRegion;
@@ -592,7 +565,7 @@ class RegionTreeBranch : public RegionTree {
         m_pRight = (RegionTree *)&b;
         m_pRegion = new Line(r); // copy
     }
-    virtual bool is_leaf() const { return false; }
+    bool is_leaf() const override { return false; }
 };
 
 // Leaf on a region tree...
@@ -606,7 +579,7 @@ class RegionTreeLeaf : public RegionTree {
         m_pRight = this;
         m_pRegion = new Line(l);
     }
-    virtual bool is_leaf() const { return true; }
+    bool is_leaf() const override { return true; }
 };
 
 class Poly {
@@ -615,14 +588,8 @@ class Poly {
     RegionTree *m_pRoot;
 
   public:
-    Poly() {
-        m_pRoot = NULL;
-        m_lineSegments = 0;
-    }
-    Poly(const Poly &p) {
-        m_lineSegments = p.m_lineSegments;
-        m_pRoot = copy_region_tree(p.m_pRoot);
-    }
+    Poly() : m_lineSegments(0), m_pRoot(nullptr) {}
+    Poly(const Poly &p) : m_lineSegments(p.m_lineSegments), m_pRoot(copy_region_tree(p.m_pRoot)) {}
     Poly &operator=(const Poly &p) {
         if (this != &p) {
             m_lineSegments = p.m_lineSegments;

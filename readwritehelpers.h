@@ -16,7 +16,7 @@ namespace dXreadwrite {
     // POD) read in vector data and write to an existing vector (overwriting its previous contents)
     template <typename T> size_t readIntoVector(std::istream &stream, std::vector<T> &vec) {
         vec.clear();
-        unsigned int size;
+        unsigned int size = 0;
         stream.read(reinterpret_cast<char *>(&size), sizeof(size));
         if (size > 0) {
             vec.resize(size);
@@ -80,7 +80,7 @@ namespace dXreadwrite {
     template <typename K, typename V>
     size_t readIntoMap(std::istream &stream, std::map<K, V> &map) {
         map.clear();
-        unsigned int size;
+        unsigned int size = 0;
         stream.read(reinterpret_cast<char *>(&size), sizeof(size));
         for (size_t i = 0; i < size; ++i) {
             K key;

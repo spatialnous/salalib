@@ -21,11 +21,8 @@ namespace depthmapX {
      */
     template <typename T> class BaseMatrix {
       protected:
-        BaseMatrix(size_t rows, size_t columns) {
-            m_data = new T[rows * columns];
-            m_rows = rows;
-            m_columns = columns;
-        }
+        BaseMatrix(size_t rows, size_t columns)
+            : m_data(new T[rows * columns]), m_rows(rows), m_columns(columns) {}
 
         BaseMatrix(const BaseMatrix<T> &other) : BaseMatrix<T>(other.m_rows, other.m_columns) {
             std::copy(other.begin(), other.end(), m_data);
@@ -165,12 +162,12 @@ namespace depthmapX {
             return *this;
         }
 
-        T &operator()(size_t row, size_t column) {
+        T &operator()(size_t row, size_t column) override {
             this->access_check(row, column);
             return this->m_data[column + row * this->m_columns];
         }
 
-        T const &operator()(size_t row, size_t column) const {
+        T const &operator()(size_t row, size_t column) const override {
             this->access_check(row, column);
             return this->m_data[column + row * this->m_columns];
         }
@@ -198,12 +195,12 @@ namespace depthmapX {
             return *this;
         }
 
-        T &operator()(size_t row, size_t column) {
+        T &operator()(size_t row, size_t column) override {
             this->access_check(row, column);
             return this->m_data[row + column * this->m_rows];
         }
 
-        T const &operator()(size_t row, size_t column) const {
+        T const &operator()(size_t row, size_t column) const override {
             this->access_check(row, column);
             return this->m_data[row + column * this->m_rows];
         }

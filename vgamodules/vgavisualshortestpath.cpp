@@ -101,7 +101,6 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
                             zad.visitedFromBin = 0;
                         }
                     }
-                    std::cout << std::endl;
                 }
             }
 

@@ -47,10 +47,10 @@ class VGAAngularOpenMP : public IVGAAngular {
     }
 
   public:
-    VGAAngularOpenMP(const PointMap &map, double radius, bool gates_only,
+    VGAAngularOpenMP(const PointMap &map, double radius, bool gatesOnly,
                      std::optional<int> limitToThreads = std::nullopt,
                      bool forceCommUpdatesMasterThread = false)
-        : IVGAAngular(map), m_radius(radius), m_gatesOnly(gates_only),
+        : IVGAAngular(map), m_radius(radius), m_gatesOnly(gatesOnly),
           m_limitToThreads(limitToThreads),
           m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
     std::string getAnalysisName() const override { return "Angular Analysis (OpenMP)"; }

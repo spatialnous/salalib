@@ -61,7 +61,7 @@ struct AgentProgram {
     //
     // for evolution
     void mutate();
-    friend AgentProgram crossover(const AgentProgram &prog_a, const AgentProgram &prog_b);
+    friend AgentProgram crossover(const AgentProgram &progA, const AgentProgram &progB);
     // to reload later:
     void save(const std::string &filename);
     bool open(const std::string &filename);

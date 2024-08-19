@@ -128,7 +128,7 @@ class PointMap : public AttributeMap {
     bool fillPoint(const Point2f &p, bool add = true); // use add = false for remove point
     // bool blockPoint(const Point2f& p, bool add = true); // no longer used
     //
-    bool makePoints(const Point2f &seed, int fill_type,
+    bool makePoints(const Point2f &seed, int fillType,
                     Communicator *comm = nullptr); // Point2f non-reference deliberate
     bool clearAllPoints();                         // Clear *selected* points
     bool clearPointsInRange(PixelRef bl, PixelRef tr,

@@ -31,11 +31,11 @@ class SegmentTulip : ISegment {
             TOTAL = "Total";             //
     };
     static std::string
-    getFormattedColumn(std::string column, int tulip_bins, RadiusType radiusType, double radius,
+    getFormattedColumn(std::string column, int tulipBins, RadiusType radiusType, double radius,
                        std::optional<std::string> routeWeightColName = std::nullopt,
                        std::optional<std::string> weightCol1Name = std::nullopt,
                        std::optional<std::string> weightCol2Name = std::nullopt) {
-        std::string colName = "T" + dXstring::formatString(tulip_bins, "%d") + " " + column;
+        std::string colName = "T" + dXstring::formatString(tulipBins, "%d") + " " + column;
         bool spaceAdded = false;
         if (routeWeightColName.has_value() && weightCol1Name.has_value()) {
             colName += " [";
@@ -72,12 +72,12 @@ class SegmentTulip : ISegment {
         return colName;
     }
     static size_t
-    getFormattedColumnIdx(AttributeTable &attributes, std::string column, int tulip_bins,
+    getFormattedColumnIdx(AttributeTable &attributes, std::string column, int tulipBins,
                           RadiusType radiusType, double radius,
                           std::optional<std::string> weightCol1Name = std::nullopt,
                           std::optional<std::string> weightCol2Name = std::nullopt,
                           std::optional<std::string> routeWeightColName = std::nullopt) {
-        return attributes.getColumnIndex(getFormattedColumn(column, tulip_bins, radiusType, radius,
+        return attributes.getColumnIndex(getFormattedColumn(column, tulipBins, radiusType, radius,
                                                             weightCol1Name, weightCol2Name,
                                                             routeWeightColName));
     }
@@ -87,11 +87,11 @@ class SegmentTulip : ISegment {
 
   public:
     SegmentTulip(std::set<double> radiusSet, std::optional<const std::set<int>> selSet,
-                 int tulip_bins, int weightedMeasureCol, RadiusType radius_type, bool choice,
-                 bool interactive = false, int weightedMeasureCol2 = -1, int routeweight_col = -1)
-        : m_radiusSet(radiusSet), m_selSet(selSet), m_tulipBins(tulip_bins),
+                 int tulipBins, int weightedMeasureCol, RadiusType radiusType, bool choice,
+                 bool interactive = false, int weightedMeasureCol2 = -1, int routeweightCol = -1)
+        : m_radiusSet(radiusSet), m_selSet(selSet), m_tulipBins(tulipBins),
           m_weightedMeasureCol(weightedMeasureCol), m_weightedMeasureCol2(weightedMeasureCol2),
-          m_routeweightCol(routeweight_col), m_radiusType(radius_type), m_choice(choice),
+          m_routeweightCol(routeweightCol), m_radiusType(radiusType), m_choice(choice),
           m_interactive(interactive) {}
     void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
         m_forceLegacyColumnOrder = forceLegacyColumnOrder;

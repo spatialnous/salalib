@@ -181,5 +181,5 @@ class Point {
 
   public:
     void *getUserData() { return m_userData; }
-    void setUserData(void *user_data) { m_userData = user_data; }
+    void setUserData(void *userData) { m_userData = userData; }
 };

@@ -54,8 +54,8 @@ class AttributeMap : public PixelBase {
         return m_attributes->getColumn(attributeIdx).getDisplayParams();
     }
     // make a local copy of the display params for access speed:
-    void setDisplayParams(const DisplayParams &dp, size_t attributeIdx, bool apply_to_all = false) {
-        if (apply_to_all)
+    void setDisplayParams(const DisplayParams &dp, size_t attributeIdx, bool applyToAll = false) {
+        if (applyToAll)
             m_attributes->setDisplayParams(dp);
         else
             m_attributes->getColumn(attributeIdx).setDisplayParams(dp);

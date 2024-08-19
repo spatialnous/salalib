@@ -83,7 +83,7 @@ class Node {
 
   public:
     // Note: this function clears the bins as it goes
-    void make(const PixelRef pix, PixelRefVector *bins, float *bin_far_dists, int q_octants);
+    void make(const PixelRef pix, PixelRefVector *bins, float *binFarDists, int qOctants);
 
     bool concaveConnected();
     bool fullyConnected();
@@ -101,9 +101,9 @@ class Node {
     }
     int bincount(int i) { return m_bins[i].count(); }
     float bindistance(int i) { return m_bins[i].distance(); }
-    void setbindistances(float bin_dists[32]) {
+    void setbindistances(float binDists[32]) {
         for (int i = 0; i < 32; i++)
-            m_bins[i].m_distance = bin_dists[i];
+            m_bins[i].m_distance = binDists[i];
     }
     float occdistance(int i) { return m_bins[i].occdistance(); }
     //

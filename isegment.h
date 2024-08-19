@@ -18,7 +18,7 @@
 class ISegment {
   public:
     virtual std::string getAnalysisName() const = 0;
-    virtual AnalysisResult run(Communicator *comm, ShapeGraph &map, bool simple_version) = 0;
+    virtual AnalysisResult run(Communicator *comm, ShapeGraph &map, bool simpleVersion) = 0;
     virtual ~ISegment() {}
 
     // Axial map helper: convert a radius for angular analysis
@@ -35,13 +35,13 @@ class ISegment {
         return radiusText;
     }
 
-    static std::string makeRadiusText(RadiusType radius_type, double radius) {
+    static std::string makeRadiusText(RadiusType radiusType, double radius) {
         std::string radiusText;
         if (radius != -1) {
-            if (radius_type == RadiusType::TOPOLOGICAL) {
+            if (radiusType == RadiusType::TOPOLOGICAL) {
                 radiusText =
                     std::string(" R") + dXstring::formatString(int(radius), "%d") + " step";
-            } else if (radius_type == RadiusType::METRIC) {
+            } else if (radiusType == RadiusType::METRIC) {
                 radiusText = std::string(" R") + makeFloatRadiusText(radius) + " metric";
             } else { // radius angular
                 radiusText = std::string(" R") + makeFloatRadiusText(radius);

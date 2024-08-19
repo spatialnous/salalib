@@ -37,9 +37,9 @@ class VGAIsovist : public IVGA {
     AnalysisResult run(Communicator *comm) override;
 
   private:
-    std::vector<std::string> createAttributes(bool simple_version) const;
+    std::vector<std::string> createAttributes(bool simpleVersion) const;
     std::set<std::string> setData(Isovist &isovist, size_t &index, AnalysisResult &result,
-                                  bool simple_version) const;
+                                  bool simpleVersion) const;
     BSPNode makeBSPtree(Communicator *communicator,
                         const std::vector<SalaShape> &boundaryShapes) const;
 

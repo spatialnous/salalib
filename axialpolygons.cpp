@@ -321,8 +321,8 @@ AxialVertexKey AxialPolygons::seedVertex(const Point2f &seed) {
 // vertices that comprise the line
 void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vector<Line> &lines,
                                    KeyVertices &keyvertices,
-                                   std::vector<PolyConnector> &poly_connections,
-                                   std::vector<RadialLine> &radial_lines) {
+                                   std::vector<PolyConnector> &polyConnections,
+                                   std::vector<RadialLine> &radialLines) {
     auto it = openvertices.rbegin();
     AxialVertex vertex = *it;
     openvertices.erase(std::next(it).base());
@@ -376,16 +376,15 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                         // radial line(s) (for new point)
                         RadialLine radialshort(nextVertex, shortlineSegend, vertex.point,
                                                nextVertex.point, nextVertex.point + nextVertex.b);
-                        poly_connections.push_back(
-                            PolyConnector(shortline, (RadialKey)radialshort));
-                        radial_lines.push_back(radialshort);
+                        polyConnections.push_back(PolyConnector(shortline, (RadialKey)radialshort));
+                        radialLines.push_back(radialshort);
                         if (!vertex.convex && possible) {
                             Line longline = Line(vertPoss.first, line.t_end());
                             RadialLine radiallong(radialshort);
                             radiallong.segend = shortlineSegend ? 0 : 1;
-                            poly_connections.push_back(
+                            polyConnections.push_back(
                                 PolyConnector(longline, (RadialKey)radiallong));
-                            radial_lines.push_back(radiallong);
+                            radialLines.push_back(radiallong);
                         }
                     }
                     shortlineSegend = false;
@@ -405,16 +404,15 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                         // radial line(s) (for original point)
                         RadialLine radialshort(vertex, shortlineSegend, nextVertex.point,
                                                vertex.point, vertex.point + vertex.b);
-                        poly_connections.push_back(
-                            PolyConnector(shortline, (RadialKey)radialshort));
-                        radial_lines.push_back(radialshort);
+                        polyConnections.push_back(PolyConnector(shortline, (RadialKey)radialshort));
+                        radialLines.push_back(radialshort);
                         if (!nextVertex.convex && nextVertex.axial) {
                             Line longline = Line(line.t_start(), vertex.point);
                             RadialLine radiallong(radialshort);
                             radiallong.segend = shortlineSegend ? 0 : 1;
-                            poly_connections.push_back(
+                            polyConnections.push_back(
                                 PolyConnector(longline, (RadialKey)radiallong));
-                            radial_lines.push_back(radiallong);
+                            radialLines.push_back(radiallong);
                         }
                     }
                     if (possible && nextVertex.axial) {
@@ -432,8 +430,8 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
             }
         }
     }
-    std::sort(radial_lines.begin(), radial_lines.end());
-    radial_lines.erase(std::unique(radial_lines.begin(), radial_lines.end()), radial_lines.end());
+    std::sort(radialLines.begin(), radialLines.end());
+    radialLines.erase(std::unique(radialLines.begin(), radialLines.end()), radialLines.end());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

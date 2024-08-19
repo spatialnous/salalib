@@ -77,12 +77,12 @@ AnalysisResult VGAIsovist::run(Communicator *comm) {
     return result;
 }
 
-std::vector<std::string> VGAIsovist::createAttributes(bool simple_version) const {
+std::vector<std::string> VGAIsovist::createAttributes(bool simpleVersion) const {
     std::vector<std::string> cols;
 
     cols.push_back(Column::ISOVIST_AREA);
 
-    if (!simple_version) {
+    if (!simpleVersion) {
         cols.push_back(Column::ISOVIST_COMPACTNESS);
         cols.push_back(Column::ISOVIST_DRIFT_ANGLE);
         cols.push_back(Column::ISOVIST_DRIFT_MAGNITUDE);
@@ -95,7 +95,7 @@ std::vector<std::string> VGAIsovist::createAttributes(bool simple_version) const
 }
 
 std::set<std::string> VGAIsovist::setData(Isovist &isovist, size_t &index, AnalysisResult &result,
-                                          bool simple_version) const {
+                                          bool simpleVersion) const {
     std::set<std::string> newColumns;
     auto [centroid, area] = isovist.getCentroidArea();
     auto [driftmag, driftang] = isovist.getDriftData();
@@ -104,7 +104,7 @@ std::set<std::string> VGAIsovist::setData(Isovist &isovist, size_t &index, Analy
     size_t currCol = 0;
     result.setValue(index, currCol, area);
 
-    if (!simple_version) {
+    if (!simpleVersion) {
         ++currCol;
         result.setValue(index, currCol, 4.0 * M_PI * area / (perimeter * perimeter));
 

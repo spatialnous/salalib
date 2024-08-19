@@ -47,10 +47,10 @@ class VGAMetricOpenMP : public IVGAMetric {
     }
 
   public:
-    VGAMetricOpenMP(const PointMap &map, double radius, bool gates_only,
+    VGAMetricOpenMP(const PointMap &map, double radius, bool gatesOnly,
                     std::optional<int> limitToThreads = std::nullopt,
                     bool forceCommUpdatesMasterThread = false)
-        : IVGAMetric(map), m_radius(radius), m_gatesOnly(gates_only),
+        : IVGAMetric(map), m_radius(radius), m_gatesOnly(gatesOnly),
           m_limitToThreads(limitToThreads),
           m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
     std::string getAnalysisName() const override { return "Metric Analysis (OpenMP)"; }

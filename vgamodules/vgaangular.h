@@ -37,8 +37,8 @@ class VGAAngular : public IVGAAngular {
     }
 
   public:
-    VGAAngular(const PointMap &map, double radius, bool gates_only)
-        : IVGAAngular(map), m_radius(radius), m_gatesOnly(gates_only) {}
+    VGAAngular(const PointMap &map, double radius, bool gatesOnly)
+        : IVGAAngular(map), m_radius(radius), m_gatesOnly(gatesOnly) {}
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     AnalysisResult run(Communicator *comm) override;
 };

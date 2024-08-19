@@ -38,8 +38,8 @@ class VGAMetric : public IVGAMetric {
     }
 
   public:
-    VGAMetric(const PointMap &map, double radius, bool gates_only)
-        : IVGAMetric(map), m_radius(radius), m_gatesOnly(gates_only) {}
+    VGAMetric(const PointMap &map, double radius, bool gatesOnly)
+        : IVGAMetric(map), m_radius(radius), m_gatesOnly(gatesOnly) {}
     std::string getAnalysisName() const override { return "Metric Analysis"; }
     AnalysisResult run(Communicator *comm) override;
 };

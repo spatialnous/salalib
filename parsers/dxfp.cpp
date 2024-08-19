@@ -41,27 +41,27 @@ const DxfVertex &DxfParser::getExtMin() const { return m_region.getExtMin(); }
 const DxfVertex &DxfParser::getExtMax() const { return m_region.getExtMax(); }
 
 DxfLayer *DxfParser::getLayer(
-    const std::string &layer_name) // const <- removed as m_layers may be changed if DXF is poor
+    const std::string &layerName) // const <- removed as m_layers may be changed if DXF is poor
 {
-    std::map<std::string, DxfLayer>::iterator layerIter = m_layers.find(layer_name);
+    std::map<std::string, DxfLayer>::iterator layerIter = m_layers.find(layerName);
     if (layerIter == m_layers.end()) {
-        m_layers.insert(std::pair<std::string, DxfLayer>(layer_name, DxfLayer(layer_name)));
-        return &(m_layers.find(layer_name)->second);
+        m_layers.insert(std::pair<std::string, DxfLayer>(layerName, DxfLayer(layerName)));
+        return &(m_layers.find(layerName)->second);
     }
     return &(layerIter->second);
 }
 
 DxfLineType *DxfParser::getLineType(
-    const std::string &line_type_name) // const <- removed as m_layers may be changed if DXF is poor
+    const std::string &lineTypeName) // const <- removed as m_layers may be changed if DXF is poor
 {
     static DxfLineType lineType;
 
-    lineType.m_name = line_type_name;
+    lineType.m_name = lineTypeName;
 
-    std::map<std::string, DxfLineType>::iterator lineTypeIter = m_lineTypes.find(line_type_name);
+    std::map<std::string, DxfLineType>::iterator lineTypeIter = m_lineTypes.find(lineTypeName);
     if (lineTypeIter == m_lineTypes.end()) {
-        m_lineTypes.insert(std::pair<std::string, DxfLineType>(line_type_name, lineType));
-        return &(m_lineTypes.find(line_type_name)->second);
+        m_lineTypes.insert(std::pair<std::string, DxfLineType>(lineTypeName, lineType));
+        return &(m_lineTypes.find(lineTypeName)->second);
     }
     return &(lineTypeIter->second);
 }

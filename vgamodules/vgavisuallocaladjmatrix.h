@@ -31,10 +31,10 @@ class VGAVisualLocalAdjMatrix : public IAnalysis {
     };
 
   public:
-    VGAVisualLocalAdjMatrix(PointMap &map, bool gates_only,
+    VGAVisualLocalAdjMatrix(PointMap &map, bool gatesOnly,
                             std::optional<int> limitToThreads = std::nullopt,
                             bool forceCommUpdatesMasterThread = false)
-        : m_map(map), m_gatesOnly(gates_only), m_limitToThreads(limitToThreads),
+        : m_map(map), m_gatesOnly(gatesOnly), m_limitToThreads(limitToThreads),
           m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
     std::string getAnalysisName() const override {
         return "Local Visibility Analysis (Adj. Matrix)";

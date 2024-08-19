@@ -373,7 +373,7 @@ bool PointMap::fillPoint(const Point2f &p, bool add) {
 // NB --- I've returned to original
 
 // AV TV // semifilled
-bool PointMap::makePoints(const Point2f &seed, int fill_type, Communicator *comm) {
+bool PointMap::makePoints(const Point2f &seed, int fillType, Communicator *comm) {
     if (!m_initialised || m_points.size() == 0) {
         return false;
     }
@@ -407,9 +407,9 @@ bool PointMap::makePoints(const Point2f &seed, int fill_type, Communicator *comm
     // int filltype = fill_type ? Point::FILLED | Point::CONTEXTFILLED :
     // Point::FILLED;
     int filltype;
-    if (fill_type == 0) // FULLFILL
+    if (fillType == 0) // FULLFILL
         filltype = Point::FILLED;
-    else if (fill_type == 1) // SEMIFILL
+    else if (fillType == 1) // SEMIFILL
         filltype = Point::FILLED | Point::CONTEXTFILLED;
     else // AUGMENT
         filltype = Point::AUGMENTED;

@@ -345,11 +345,11 @@ class SalaCommand {
   protected:
     int parse(std::istream &program, int line);
     int decode(std::string string);
-    int decode_member(const std::string &string, bool apply_to_this);
+    int decode_member(const std::string &string, bool applyToThis);
     void pushFunc(const SalaObj &func);
     //
     void evaluate(SalaObj &obj, bool &ret, bool &ifhandled);
-    SalaObj evaluate(int &pointer, SalaObj *&p_obj);
+    SalaObj evaluate(int &pointer, SalaObj *&pObj);
     SalaObj connections(SalaObj graphnode, SalaObj param);
 };
 

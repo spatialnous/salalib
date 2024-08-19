@@ -57,15 +57,15 @@ class Agent {
 
   public:
     Agent() : m_program(nullptr), m_pointmap(nullptr), m_outputMode(OUTPUT_NOTHING) {}
-    Agent(AgentProgram *program, PointMap *pointmap, int output_mode = OUTPUT_NOTHING);
-    void onInit(PixelRef node, int trail_num = -1);
+    Agent(AgentProgram *program, PointMap *pointmap, int outputMode = OUTPUT_NOTHING);
+    void onInit(PixelRef node, int trailNum = -1);
     void onClose();
     Point2f onLook(bool wholeisovist);
     Point2f onStandardLook(bool wholeisovist);
     Point2f onWeightedLook(bool wholeisovist);
     Point2f onOcclusionLook(bool wholeisovist, int looktype);
-    Point2f onLoSLook(bool wholeisovist, int look_type);
-    Point2f onDirectedLoSLook(bool wholeisovist, int look_type);
+    Point2f onLoSLook(bool wholeisovist, int lookType);
+    Point2f onDirectedLoSLook(bool wholeisovist, int lookType);
     Point2f onGibsonianLook(bool wholeisovist);
     Point2f onGibsonianLook2(bool wholeisovist);
     int onGibsonianRule(int rule);

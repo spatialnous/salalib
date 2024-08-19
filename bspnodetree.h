@@ -23,7 +23,7 @@ class BSPNodeTree {
     void destroy() {
         if (m_root) {
             delete m_root;
-            m_root = NULL;
+            m_root = nullptr;
         }
         m_built = false;
     }

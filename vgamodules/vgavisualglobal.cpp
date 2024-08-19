@@ -6,18 +6,18 @@
 
 #include "vgavisualglobal.h"
 
-std::vector<std::string> VGAVisualGlobal::getColumns(bool simple_version) const {
+std::vector<std::string> VGAVisualGlobal::getColumns(bool simpleVersion) const {
 
     std::vector<std::string> columns;
     // n.b. these must be entered in alphabetical order to preserve col indexing:
     // dX simple version test // TV
-    if (!simple_version) {
+    if (!simpleVersion) {
         columns.push_back(getColumnWithRadius(Column::VISUAL_ENTROPY, m_radius));
     }
 
     columns.push_back(getColumnWithRadius(Column::VISUAL_INTEGRATION_HH, m_radius));
 
-    if (!simple_version) {
+    if (!simpleVersion) {
         columns.push_back(getColumnWithRadius(Column::VISUAL_INTEGRATION_PV, m_radius));
         columns.push_back(getColumnWithRadius(Column::VISUAL_INTEGRATION_TK, m_radius));
         columns.push_back(getColumnWithRadius(Column::VISUAL_MEAN_DEPTH, m_radius));

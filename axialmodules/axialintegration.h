@@ -77,7 +77,7 @@ class AxialIntegration : IAxial {
   private:
     static std::vector<int> getFormattedRadii(std::set<double> radiusSet);
     std::vector<std::string> getRequiredColumns(std::vector<int> radii,
-                                                std::string weightingColName, bool simple_version);
+                                                std::string weightingColName, bool simpleVersion);
 
   public:
     AxialIntegration(std::set<double> radiusSet, int weightedMeasureCol, bool choice,

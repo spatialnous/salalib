@@ -40,7 +40,7 @@ class AgentAnalysis : public IAnalysis {
 
   private: // internal functions
     void init(std::vector<Agent> &agents, std::vector<PixelRef> &releaseLocations, size_t agent,
-              int trail_num);
+              int trailNum);
 
     void move(std::vector<Agent> &agents);
 

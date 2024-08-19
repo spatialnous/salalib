@@ -11,10 +11,10 @@
 #include "salalib/pushvalues.h"
 
 void AgentAnalysis::init(std::vector<Agent> &agents, std::vector<PixelRef> &releaseLocations,
-                         size_t agent, int trail_num) {
+                         size_t agent, int trailNum) {
     if (releaseLocations.size()) {
         auto which = pafmath::pafrand() % releaseLocations.size();
-        agents[agent].onInit(releaseLocations[which], trail_num);
+        agents[agent].onInit(releaseLocations[which], trailNum);
     } else {
         const PointMap &map = agents[agent].getPointMap();
         PixelRef pix;
@@ -22,7 +22,7 @@ void AgentAnalysis::init(std::vector<Agent> &agents, std::vector<PixelRef> &rele
             pix = map.pickPixel(
                 pafmath::prandom(static_cast<int>(m_randomReleaseLocationsSeed.value())));
         } while (!map.getPoint(pix).filled());
-        agents[agent].onInit(pix, trail_num);
+        agents[agent].onInit(pix, trailNum);
     }
 }
 

@@ -163,7 +163,7 @@ AttributeRow &AttributeRowImpl::incrValue(const std::string &colName, float valu
 
 AttributeRow &AttributeTable::getRow(const AttributeKey &key) {
     auto *row = getRowPtr(key);
-    if (row == 0) {
+    if (row == nullptr) {
         throw std::out_of_range("Invalid row key");
     }
     return *row;
@@ -171,7 +171,7 @@ AttributeRow &AttributeTable::getRow(const AttributeKey &key) {
 
 const AttributeRow &AttributeTable::getRow(const AttributeKey &key) const {
     auto *row = getRowPtr(key);
-    if (row == 0) {
+    if (row == nullptr) {
         throw std::out_of_range("Invalid row key");
     }
     return *row;
@@ -180,7 +180,7 @@ const AttributeRow &AttributeTable::getRow(const AttributeKey &key) const {
 AttributeRow *AttributeTable::getRowPtr(const AttributeKey &key) {
     auto iter = m_rows.find(key);
     if (iter == m_rows.end()) {
-        return 0;
+        return nullptr;
     }
     return iter->second.get();
 }
@@ -188,7 +188,7 @@ AttributeRow *AttributeTable::getRowPtr(const AttributeKey &key) {
 const AttributeRow *AttributeTable::getRowPtr(const AttributeKey &key) const {
     auto iter = m_rows.find(key);
     if (iter == m_rows.end()) {
-        return 0;
+        return nullptr;
     }
     return iter->second.get();
 }

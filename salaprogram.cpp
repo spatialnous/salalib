@@ -907,7 +907,7 @@ int SalaCommand::decode(std::string string) // string copied as makelower applie
 //    a graph node / table row (for "select by query" and "edit connections")
 //    a map (not yet implemented, but intended for scripting agents)
 
-int SalaCommand::decode_member(const std::string &string, bool apply_to_this) {
+int SalaCommand::decode_member(const std::string &string, bool applyToThis) {
     int retvar = SP_NONE;
 
     // note, all hardcoded for built in classes:
@@ -915,7 +915,7 @@ int SalaCommand::decode_member(const std::string &string, bool apply_to_this) {
     for (size_t i = 0; i < g_sala_member_funcs.size(); i++) {
         // note '&' in the type -- essentially allows for inheritance between
         // objects (tuple is type of list, etc)
-        if (!apply_to_this || (m_program->m_thisobj.m_type & g_sala_member_funcs[i].type) != 0) {
+        if (!applyToThis || (m_program->m_thisobj.m_type & g_sala_member_funcs[i].type) != 0) {
             if (string == g_sala_member_funcs[i].name) {
                 pushFunc(g_sala_member_funcs[i].func);
                 retvar = SP_FUNCTION;
@@ -923,7 +923,7 @@ int SalaCommand::decode_member(const std::string &string, bool apply_to_this) {
             }
         }
     }
-    if (retvar == SP_FUNCTION && apply_to_this) {
+    if (retvar == SP_FUNCTION && applyToThis) {
         m_evalStack.push_back(SalaObj(SalaObj::S_THIS));
     }
     return retvar;
@@ -1097,7 +1097,7 @@ void SalaCommand::evaluate(SalaObj &obj, bool &ret, bool &ifhandled) {
     }
 }
 
-SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
+SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
     if (pointer < 0) {
         throw SalaError("Missing argument", m_line);
     }
@@ -1115,8 +1115,8 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     data = evaluate(pointer, p_obj) + evaluate(pointer, p_obj);
 #else
                 {
-                    SalaObj tmp1 = evaluate(pointer, p_obj);
-                    SalaObj tmp2 = evaluate(pointer, p_obj);
+                    SalaObj tmp1 = evaluate(pointer, pObj);
+                    SalaObj tmp2 = evaluate(pointer, pObj);
                     data = tmp1 + tmp2;
                 }
 #endif
@@ -1127,14 +1127,14 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     data = evaluate(pointer, p_obj) - evaluate(pointer, p_obj);
 #else
                 {
-                    SalaObj tmp1 = evaluate(pointer, p_obj);
-                    SalaObj tmp2 = evaluate(pointer, p_obj);
+                    SalaObj tmp1 = evaluate(pointer, pObj);
+                    SalaObj tmp2 = evaluate(pointer, pObj);
                     data = tmp1 - tmp2;
                 }
 #endif
                     break;
                 case SalaObj::S_PLUS:
-                    data = evaluate(pointer, p_obj); // just ignore it
+                    data = evaluate(pointer, pObj); // just ignore it
                     break;
                 case SalaObj::S_MINUS:
                     // Quick mod - TV
@@ -1142,7 +1142,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     data = -evaluate(pointer, p_obj);
 #else
                 {
-                    SalaObj tmp1 = evaluate(pointer, p_obj);
+                    SalaObj tmp1 = evaluate(pointer, pObj);
                     data = -tmp1;
                 }
 #endif
@@ -1153,8 +1153,8 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     data = evaluate(pointer, p_obj) * evaluate(pointer, p_obj);
 #else
                 {
-                    SalaObj tmp1 = evaluate(pointer, p_obj);
-                    SalaObj tmp2 = evaluate(pointer, p_obj);
+                    SalaObj tmp1 = evaluate(pointer, pObj);
+                    SalaObj tmp2 = evaluate(pointer, pObj);
                     data = tmp1 * tmp2;
                 }
 #endif
@@ -1165,49 +1165,49 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     data = evaluate(pointer, p_obj) / evaluate(pointer, p_obj);
 #else
                 {
-                    SalaObj tmp1 = evaluate(pointer, p_obj);
-                    SalaObj tmp2 = evaluate(pointer, p_obj);
+                    SalaObj tmp1 = evaluate(pointer, pObj);
+                    SalaObj tmp2 = evaluate(pointer, pObj);
                     data = tmp2 / tmp1;
                 }
 #endif
                     break;
                 case SalaObj::S_MODULO:
-                    data = evaluate(pointer, p_obj);
+                    data = evaluate(pointer, pObj);
 
                     // Quick mod - TV
 #if defined(_MSC_VER)
                     data = evaluate(pointer, p_obj) % data; // reverse order
 #else
                     {
-                        SalaObj tmp1 = evaluate(pointer, p_obj);
+                        SalaObj tmp1 = evaluate(pointer, pObj);
                         data = tmp1 % data;
                     }
 #endif
                     break;
                 case SalaObj::S_POWER:
-                    data = evaluate(pointer, p_obj); // reverse order
-                    data = pow(evaluate(pointer, p_obj).toDouble(), data.toDouble());
+                    data = evaluate(pointer, pObj); // reverse order
+                    data = pow(evaluate(pointer, pObj).toDouble(), data.toDouble());
                     break;
                 case SalaObj::S_ASSIGN:
-                    data = evaluate(pointer, p_obj); // reverse order
-                    evaluate(pointer, p_obj);
-                    if (p_obj != nullptr) {
-                        *p_obj = data;
+                    data = evaluate(pointer, pObj); // reverse order
+                    evaluate(pointer, pObj);
+                    if (pObj != nullptr) {
+                        *pObj = data;
                     } else {
                         throw SalaError("Cannot assign to constant, function or none", m_line);
                     }
                     data = SalaObj(); // assign returns nil value
                     break;
                 case SalaObj::S_LIST_ACCESS: {
-                    int x = evaluate(pointer, p_obj).toInt();
-                    data = evaluate(pointer, p_obj);
+                    int x = evaluate(pointer, pObj).toInt();
+                    data = evaluate(pointer, pObj);
                     if (data.m_type == SalaObj::S_LIST) {
                         // setting p_obj allows things above this in the stack to modify it
-                        p_obj = &(data.list_at(x));
-                        return *p_obj;
+                        pObj = &(data.list_at(x));
+                        return *pObj;
                     } else if (data.m_type == SalaObj::S_STRING) {
                         // but n.b., strings cannot be modified, keep p_obj as null
-                        p_obj = nullptr;
+                        pObj = nullptr;
                         return data.char_at(x);
                     } else
                         throw SalaError("Cannot be applied to " + data.getTypeIndefArt() +
@@ -1237,14 +1237,14 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     // but... it's on the eval stack... it would be nice simply to pop the
                     // eval stack at this point if the first half evaluates to true, thus
                     // emulating C... but it's in reverse order too!
-                    data = evaluate(pointer, p_obj);
-                    data = evaluate(pointer, p_obj).toBool() || data.toBool();
+                    data = evaluate(pointer, pObj);
+                    data = evaluate(pointer, pObj).toBool() || data.toBool();
                     break;
                 case SalaObj::S_AND:
-                    data = evaluate(pointer, p_obj).toBool() && evaluate(pointer, p_obj).toBool();
+                    data = evaluate(pointer, pObj).toBool() && evaluate(pointer, pObj).toBool();
                     break;
                 case SalaObj::S_NOT:
-                    data = !evaluate(pointer, p_obj).toBool();
+                    data = !evaluate(pointer, pObj).toBool();
                     break;
                 case SalaObj::S_EQ:
                     // Quick mod - TV
@@ -1252,8 +1252,8 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     data = evaluate(pointer, p_obj) == evaluate(pointer, p_obj);
 #else
                 {
-                    SalaObj tmp1 = evaluate(pointer, p_obj);
-                    SalaObj tmp2 = evaluate(pointer, p_obj);
+                    SalaObj tmp1 = evaluate(pointer, pObj);
+                    SalaObj tmp2 = evaluate(pointer, pObj);
                     data = (tmp1 == tmp2);
                 }
 #endif
@@ -1264,8 +1264,8 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     data = op_is(evaluate(pointer, p_obj), evaluate(pointer, p_obj));
 #else
                 {
-                    SalaObj tmp1 = evaluate(pointer, p_obj);
-                    SalaObj tmp2 = evaluate(pointer, p_obj);
+                    SalaObj tmp1 = evaluate(pointer, pObj);
+                    SalaObj tmp2 = evaluate(pointer, pObj);
                     data = op_is(tmp1, tmp2);
                 }
 #endif
@@ -1276,58 +1276,58 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     data = evaluate(pointer, p_obj) != evaluate(pointer, p_obj);
 #else
                 {
-                    SalaObj tmp1 = evaluate(pointer, p_obj);
-                    SalaObj tmp2 = evaluate(pointer, p_obj);
+                    SalaObj tmp1 = evaluate(pointer, pObj);
+                    SalaObj tmp2 = evaluate(pointer, pObj);
                     data = (tmp1 != tmp2);
                 }
 #endif
                     break;
                 case SalaObj::S_GT:
-                    data = evaluate(pointer, p_obj);
+                    data = evaluate(pointer, pObj);
                     // Quick mod - TV
 #if defined(_MSC_VER)
                     data = evaluate(pointer, p_obj) > data; // revese order
 #else
                     {
-                        SalaObj tmp1 = evaluate(pointer, p_obj);
+                        SalaObj tmp1 = evaluate(pointer, pObj);
                         data = (tmp1 > data);
                     }
 #endif
                     break;
                 case SalaObj::S_LT:
-                    data = evaluate(pointer, p_obj);
+                    data = evaluate(pointer, pObj);
                     // Quick mod - TV
 #if defined(_MSC_VER)
                     data = evaluate(pointer, p_obj) < data; // revese order
 #else
                     {
-                        SalaObj tmp1 = evaluate(pointer, p_obj);
+                        SalaObj tmp1 = evaluate(pointer, pObj);
                         data = (tmp1 < data);
                     }
 #endif
                     break;
                 case SalaObj::S_GEQ:
-                    data = evaluate(pointer, p_obj);
+                    data = evaluate(pointer, pObj);
 
                     // Quick mod - TV
 #if defined(_MSC_VER)
                     data = evaluate(pointer, p_obj) >= data; // revese order
 #else
                     {
-                        SalaObj tmp1 = evaluate(pointer, p_obj);
+                        SalaObj tmp1 = evaluate(pointer, pObj);
                         data = (tmp1 >= data);
                     }
 #endif
                     break;
                 case SalaObj::S_LEQ:
-                    data = evaluate(pointer, p_obj);
+                    data = evaluate(pointer, pObj);
 
                     // Quick mod - TV
 #if defined(_MSC_VER)
                     data = evaluate(pointer, p_obj) <= data; // revese order
 #else
                     {
-                        SalaObj tmp1 = evaluate(pointer, p_obj);
+                        SalaObj tmp1 = evaluate(pointer, pObj);
                         data = (tmp1 <= data);
                     }
 #endif
@@ -1357,11 +1357,11 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
             try {
                 switch (func) {
                 case SalaObj::S_LEN:
-                    data = evaluate(pointer, p_obj);
+                    data = evaluate(pointer, pObj);
                     data = SalaObj(data.length());
                     break;
                 case SalaObj::S_RANGE:
-                    data = evaluate(pointer, p_obj);
+                    data = evaluate(pointer, pObj);
                     {
                         int len = data.length();
                         if (len != 2 && len != 3) {
@@ -1385,36 +1385,36 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                     }
                     break;
                 case SalaObj::S_SQRT:
-                    data = sqrt(evaluate(pointer, p_obj).toDouble());
+                    data = sqrt(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_LOG:
-                    data = log10(evaluate(pointer, p_obj).toDouble());
+                    data = log10(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_LN:
-                    data = pafmath_ln(evaluate(pointer, p_obj).toDouble());
+                    data = pafmath_ln(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_RAND:
-                    data = evaluate(pointer, p_obj);
+                    data = evaluate(pointer, pObj);
                     data.ensureNone();
                     data = SalaObj(pafmath::prandom());
                     break;
                 case SalaObj::S_SIN:
-                    data = sin(evaluate(pointer, p_obj).toDouble());
+                    data = sin(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_COS:
-                    data = cos(evaluate(pointer, p_obj).toDouble());
+                    data = cos(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_TAN:
-                    data = tan(evaluate(pointer, p_obj).toDouble());
+                    data = tan(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_ASIN:
-                    data = asin(evaluate(pointer, p_obj).toDouble());
+                    data = asin(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_ACOS:
-                    data = acos(evaluate(pointer, p_obj).toDouble());
+                    data = acos(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_ATAN:
-                    data = atan(evaluate(pointer, p_obj).toDouble());
+                    data = atan(evaluate(pointer, pObj).toDouble());
                     break;
                 default:
                     break;
@@ -1433,8 +1433,8 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
             }
         } else if (group == SalaObj::S_MEMBER_FUNCS) {
             try {
-                SalaObj param = evaluate(pointer, p_obj);
-                SalaObj obj = evaluate(pointer, p_obj);
+                SalaObj param = evaluate(pointer, pObj);
+                SalaObj obj = evaluate(pointer, pObj);
                 switch (obj.m_type) {
                 case SalaObj::S_LIST:
                 case SalaObj::S_TUPLE:
@@ -1553,13 +1553,13 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
             }
         }
     } else if (data.m_type == SalaObj::S_THIS) {
-        p_obj = &(m_program->m_thisobj);
-        return *p_obj;
+        pObj = &(m_program->m_thisobj);
+        return *pObj;
     } else if (data.m_type & SalaObj::S_VAR) {
         // retrieve value from variable stack (keeping in a variable stack means it
         // can be reassigned dynamically)
-        p_obj = &(m_program->m_varStack[data.m_data.var]);
-        return *p_obj;
+        pObj = &(m_program->m_varStack[data.m_data.var]);
+        return *pObj;
     } else if (data.m_type & SalaObj::S_CONST_LIST) {
         // build an list from either a const tuple or const list:
         int x = data.m_data.count;
@@ -1567,10 +1567,10 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
             SalaObj((data.m_type == SalaObj::S_CONST_LIST) ? SalaObj::S_LIST : SalaObj::S_TUPLE, x);
         for (--x; x >= 0; x--) {
             data.m_data.list.list->at(x) =
-                evaluate(pointer, p_obj); // n.b., direct access to the list
+                evaluate(pointer, pObj); // n.b., direct access to the list
         }
     }
-    p_obj = nullptr;
+    pObj = nullptr;
     return data;
 }
 

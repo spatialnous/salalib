@@ -42,30 +42,30 @@ void AgentProgram::mutate() {
     }
 }
 
-AgentProgram crossover(const AgentProgram &prog_a, const AgentProgram &prog_b) {
+AgentProgram crossover(const AgentProgram &progA, const AgentProgram &progB) {
     AgentProgram child;
 
     // either one rule priority order or the other (don't try to mix!)
     if (pafmath::pafrand() % 2) {
         for (int i = 0; i < 4; i++) {
-            child.ruleOrder[i] = prog_a.ruleOrder[i];
+            child.ruleOrder[i] = progA.ruleOrder[i];
         }
     } else {
         for (int i = 0; i < 4; i++) {
-            child.ruleOrder[i] = prog_b.ruleOrder[i];
+            child.ruleOrder[i] = progB.ruleOrder[i];
         }
     }
     // for each rule, either one rule threshold / probability or the other:
     for (int i = 0; i < 4; i++) {
         if (pafmath::pafrand() % 2) {
-            child.ruleThreshold[i] = prog_a.ruleThreshold[i];
+            child.ruleThreshold[i] = progA.ruleThreshold[i];
         } else {
-            child.ruleThreshold[i] = prog_b.ruleThreshold[i];
+            child.ruleThreshold[i] = progB.ruleThreshold[i];
         }
         if (pafmath::pafrand() % 2) {
-            child.ruleProbability[i] = prog_a.ruleProbability[i];
+            child.ruleProbability[i] = progA.ruleProbability[i];
         } else {
-            child.ruleProbability[i] = prog_b.ruleProbability[i];
+            child.ruleProbability[i] = progB.ruleProbability[i];
         }
     }
 

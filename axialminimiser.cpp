@@ -17,11 +17,10 @@ static int compareValueTriplet(const void *p1, const void *p2) {
                                                                        : 0));
 }
 
-AxialMinimiser::AxialMinimiser(const ShapeGraph &alllinemap, int no_of_axsegcuts,
-                               int no_of_radialsegs)
-    : m_alllinemap((ShapeGraph *)&alllinemap), m_vps(new ValueTriplet[no_of_axsegcuts]),
-      m_removed(new bool[no_of_axsegcuts]), m_affected(new bool[no_of_axsegcuts]),
-      m_vital(new bool[no_of_axsegcuts]), m_radialsegcounts(new int[no_of_radialsegs]) {}
+AxialMinimiser::AxialMinimiser(const ShapeGraph &alllinemap, int noOfAxsegcuts, int noOfRadialsegs)
+    : m_alllinemap((ShapeGraph *)&alllinemap), m_vps(new ValueTriplet[noOfAxsegcuts]),
+      m_removed(new bool[noOfAxsegcuts]), m_affected(new bool[noOfAxsegcuts]),
+      m_vital(new bool[noOfAxsegcuts]), m_radialsegcounts(new int[noOfRadialsegs]) {}
 
 AxialMinimiser::~AxialMinimiser() {
     delete[] m_vital;
@@ -36,7 +35,7 @@ AxialMinimiser::~AxialMinimiser() {
 void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                                    std::map<RadialKey, RadialSegment> &radialsegs,
                                    std::map<RadialKey, std::set<int>> &rlds,
-                                   std::vector<RadialLine> &radial_lines,
+                                   std::vector<RadialLine> &radialLines,
                                    std::vector<std::vector<int>> &keyvertexconns,
                                    std::vector<int> &keyvertexcounts) {
     bool removedflag = true;
@@ -152,7 +151,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                 }
                 if (presumedvital) {
                     presumedvital =
-                        checkVital(removeindex, axSegCut, radialsegs, rlds, radial_lines);
+                        checkVital(removeindex, axSegCut, radialsegs, rlds, radialLines);
                 }
                 if (presumedvital) {
                     m_vital[removeindex] = true;
@@ -189,7 +188,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
 void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
                                    std::map<RadialKey, RadialSegment> &radialsegs,
                                    std::map<RadialKey, std::set<int>> &rlds,
-                                   std::vector<RadialLine> &radial_lines,
+                                   std::vector<RadialLine> &radialLines,
                                    std::vector<std::vector<int>> &keyvertexconns,
                                    std::vector<int> &keyvertexcounts) {
     // m_axialconns = m_alllinemap->m_connectors;
@@ -236,7 +235,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
             }
         }
         if (presumedvital) {
-            presumedvital = checkVital(j, axSegCut, radialsegs, rlds, radial_lines);
+            presumedvital = checkVital(j, axSegCut, radialsegs, rlds, radialLines);
         }
         if (!presumedvital) {
             // don't let anything this is connected to go down to zero connections
@@ -278,7 +277,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
 bool AxialMinimiser::checkVital(int checkindex, std::set<int> &axSegCut,
                                 std::map<RadialKey, RadialSegment> &radialsegs,
                                 std::map<RadialKey, std::set<int>> &rlds,
-                                std::vector<RadialLine> &radial_lines) {
+                                std::vector<RadialLine> &radialLines) {
     std::map<int, SalaShape> &axiallines = m_alllinemap->m_shapes;
 
     bool presumedvital = true;
@@ -294,14 +293,14 @@ bool AxialMinimiser::checkVital(int checkindex, std::set<int> &axSegCut,
             RadialSegment &seg = radialSegIter->second;
             std::set<int> &divisorsa = rlds.find(key)->second;
             std::set<int> &divisorsb = rlds.find(seg.radialB)->second;
-            auto iterKey = std::find(radial_lines.begin(), radial_lines.end(), key);
-            if (iterKey == radial_lines.end()) {
+            auto iterKey = std::find(radialLines.begin(), radialLines.end(), key);
+            if (iterKey == radialLines.end()) {
                 throw depthmapX::RuntimeException("Radial key not found in radial lines");
             }
             const RadialLine &rlinea = *iterKey;
 
-            auto iterSegB = std::find(radial_lines.begin(), radial_lines.end(), seg.radialB);
-            if (iterSegB == radial_lines.end()) {
+            auto iterSegB = std::find(radialLines.begin(), radialLines.end(), seg.radialB);
+            if (iterSegB == radialLines.end()) {
                 throw depthmapX::RuntimeException("Radial key not found in radial lines");
             }
             const RadialLine &rlineb = *iterSegB;

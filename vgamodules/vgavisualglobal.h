@@ -40,11 +40,11 @@ class VGAVisualGlobal : public IVGAVisual {
     }
 
   private:
-    std::vector<std::string> getColumns(bool simple_version) const;
+    std::vector<std::string> getColumns(bool simpleVersion) const;
 
   public:
-    VGAVisualGlobal(const PointMap &map, double radius, bool gates_only)
-        : IVGAVisual(map), m_radius(radius), m_gatesOnly(gates_only) {}
+    VGAVisualGlobal(const PointMap &map, double radius, bool gatesOnly)
+        : IVGAVisual(map), m_radius(radius), m_gatesOnly(gatesOnly) {}
     std::string getAnalysisName() const override { return "Global Visibility Analysis"; }
     AnalysisResult run(Communicator *comm) override;
 

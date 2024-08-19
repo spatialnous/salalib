@@ -9,20 +9,20 @@
 #include "genlib/containerutils.h"
 #include "genlib/readwritehelpers.h"
 
-void Node::make(const PixelRef pix, PixelRefVector *bins, float *bin_far_dists, int q_octants) {
+void Node::make(const PixelRef pix, PixelRefVector *bins, float *binFarDists, int qOctants) {
     m_pixel = pix;
 
     for (int i = 0; i < 32; i++) {
 
-        if (q_octants != 0x00FF) {
+        if (qOctants != 0x00FF) {
             // now, an octant filter has been used... note that the exact q-octants
             // that will have been processed rely on adjacenies in the q_octants...
-            if (!(q_octants & processoctant(i))) {
+            if (!(qOctants & processoctant(i))) {
                 continue;
             }
         }
 
-        m_bins[i].m_distance = bin_far_dists[i];
+        m_bins[i].m_distance = binFarDists[i];
 
         if (i == 4 || i == 20) {
             m_bins[i].make(bins[i], PixelRef::POSDIAGONAL);

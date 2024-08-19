@@ -16,6 +16,6 @@
 class IAxial {
   public:
     virtual std::string getAnalysisName() const = 0;
-    virtual AnalysisResult run(Communicator *comm, ShapeGraph &map, bool simple_version) = 0;
+    virtual AnalysisResult run(Communicator *comm, ShapeGraph &map, bool simpleVersion) = 0;
     virtual ~IAxial() {}
 };

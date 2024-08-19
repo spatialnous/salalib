@@ -158,18 +158,18 @@ class ShapeMap : public AttributeMap {
     void init(size_t size, const QtRegion &r);
     int getNextShapeKey();
     // convert a single point into a shape
-    int makePointShapeWithRef(const Point2f &point, int shape_ref, bool tempshape = false,
+    int makePointShapeWithRef(const Point2f &point, int shapeRef, bool tempshape = false,
                               const std::map<int, float> &extraAttributes = std::map<int, float>());
     int makePointShape(const Point2f &point, bool tempshape = false,
                        const std::map<int, float> &extraAttributes = std::map<int, float>());
     // or a single line into a shape
-    int makeLineShapeWithRef(const Line &line, int shape_ref, bool through_ui = false,
+    int makeLineShapeWithRef(const Line &line, int shapeRef, bool throughUi = false,
                              bool tempshape = false,
                              const std::map<int, float> &extraAttributes = std::map<int, float>());
-    int makeLineShape(const Line &line, bool through_ui = false, bool tempshape = false,
+    int makeLineShape(const Line &line, bool throughUi = false, bool tempshape = false,
                       const std::map<int, float> &extraAttributes = std::map<int, float>());
     // or a polygon into a shape
-    int makePolyShapeWithRef(const std::vector<Point2f> &points, bool open, int shape_ref,
+    int makePolyShapeWithRef(const std::vector<Point2f> &points, bool open, int shapeRef,
                              bool tempshape = false,
                              const std::map<int, float> &extraAttributes = std::map<int, float>());
     int makePolyShape(const std::vector<Point2f> &points, bool open, bool tempshape = false,
@@ -179,10 +179,10 @@ class ShapeMap : public AttributeMap {
 
   public:
     // or make a shape from a shape
-    int makeShape(const SalaShape &shape, int override_shape_ref = -1,
+    int makeShape(const SalaShape &shape, int overrideShapeRef = -1,
                   const std::map<int, float> &extraAttributes = std::map<int, float>());
     // convert points to polygons
-    bool convertPointsToPolys(double poly_radius,
+    bool convertPointsToPolys(double polyRadius,
                               std::optional<std::reference_wrapper<const std::set<int>>> selSet);
     // convert a selected pixels to a layer object (note, uses selection attribute on pixel, you
     // must select to make this work):
@@ -197,9 +197,9 @@ class ShapeMap : public AttributeMap {
     //
     // some UI polygon creation tools:
     int polyBegin(const Line &line);
-    bool polyAppend(int shape_ref, const Point2f &point);
-    bool polyClose(int shape_ref);
-    bool polyCancel(int shape_ref);
+    bool polyAppend(int shapeRef, const Point2f &point);
+    bool polyClose(int shapeRef);
+    bool polyCancel(int shapeRef);
     // some shape creation tools for the scripting language or DLL interface
   public:
     bool canUndo() const { return m_undobuffer.size() != 0; }
@@ -282,8 +282,8 @@ class ShapeMap : public AttributeMap {
     }
 
     // make a local copy of the display params for access speed:
-    void setDisplayParams(const DisplayParams &dp, size_t attributeIdx, bool apply_to_all = false) {
-        if (apply_to_all)
+    void setDisplayParams(const DisplayParams &dp, size_t attributeIdx, bool applyToAll = false) {
+        if (applyToAll)
             m_attributes->setDisplayParams(dp);
         else
             m_attributes->getColumn(attributeIdx).setDisplayParams(dp);
@@ -393,5 +393,5 @@ class ShapeMap : public AttributeMap {
     void copyMapInfoBaseData(const ShapeMap &sourceMap);
 
   private:
-    bool importData(const depthmapX::Table &data, std::vector<int> shape_refs);
+    bool importData(const depthmapX::Table &data, std::vector<int> shapeRefs);
 };

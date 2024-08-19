@@ -8,10 +8,10 @@
 
 #include "agentanalysis.h"
 
-Agent::Agent(AgentProgram *program, PointMap *pointmap, int output_mode)
-    : m_program(program), m_pointmap(pointmap), m_outputMode(output_mode), m_trailNum(-1) {}
+Agent::Agent(AgentProgram *program, PointMap *pointmap, int outputMode)
+    : m_program(program), m_pointmap(pointmap), m_outputMode(outputMode), m_trailNum(-1) {}
 
-void Agent::onInit(PixelRef node, int trail_num) {
+void Agent::onInit(PixelRef node, int trailNum) {
     m_node = node;
     m_loc = m_pointmap->depixelate(m_node);
     if (m_outputMode & OUTPUT_GATE_COUNTS) {
@@ -35,7 +35,7 @@ void Agent::onInit(PixelRef node, int trail_num) {
     m_atTarget = false;
     m_atDestination = false;
 
-    m_trailNum = trail_num;
+    m_trailNum = trailNum;
 
     m_vector = onLook(true);
 
@@ -456,7 +456,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
 
 // note: LOS look uses similar weighted choice mechanism
 
-Point2f Agent::onLoSLook(bool wholeisovist, int look_type) {
+Point2f Agent::onLoSLook(bool wholeisovist, int lookType) {
     int bbin = -1;
     if (m_program->destinationDirected) {
         Point2f vec2 = m_destination - m_loc;
@@ -478,7 +478,7 @@ Point2f Agent::onLoSLook(bool wholeisovist, int look_type) {
     }
     for (int i = 0; i < vbin; i++) {
         double los =
-            (look_type == AgentProgram::SEL_LOS)
+            (lookType == AgentProgram::SEL_LOS)
                 ? m_pointmap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
                 : m_pointmap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
         if (m_program->losSqrd) {
@@ -492,7 +492,7 @@ Point2f Agent::onLoSLook(bool wholeisovist, int look_type) {
     }
     if (weight == 0.0) {
         if (!wholeisovist) {
-            return onLoSLook(true, look_type);
+            return onLoSLook(true, lookType);
         } else {
             // oops!
             m_stuck = true;
@@ -513,7 +513,7 @@ Point2f Agent::onLoSLook(bool wholeisovist, int look_type) {
     return Point2f(cosf(angle), sinf(angle));
 }
 
-Point2f Agent::onDirectedLoSLook(bool wholeisovist, int look_type) {
+Point2f Agent::onDirectedLoSLook(bool wholeisovist, int lookType) {
     Point2f vec2 = m_destination - m_loc;
     vec2.normalise();
     int targetbin = -1;
@@ -531,7 +531,7 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int look_type) {
     }
     for (int i = 0; i < vbin; i++) {
         double los =
-            (look_type == AgentProgram::SEL_LOS)
+            (lookType == AgentProgram::SEL_LOS)
                 ? m_pointmap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
                 : m_pointmap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
         if (m_program->losSqrd) {
@@ -542,7 +542,7 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int look_type) {
     }
     if (weight == 0.0) {
         if (!wholeisovist) {
-            return onLoSLook(true, look_type);
+            return onLoSLook(true, lookType);
         } else {
             // oops!
             m_stuck = true;

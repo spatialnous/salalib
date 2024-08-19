@@ -10,7 +10,7 @@
 
 std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> radii,
                                                               std::string weightingColName,
-                                                              bool simple_version) {
+                                                              bool simpleVersion) {
     std::vector<std::string> newColumns;
     for (int radius : radii) {
         if (!m_forceLegacyColumnOrder) {
@@ -29,7 +29,7 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
                     Column::TOTAL, radius, weightingColName));
             }
 
-            if (!simple_version) {
+            if (!simpleVersion) {
                 // columns only when simple-version is not selected
                 newColumns.push_back(getFormattedColumn( //
                     Column::ENTROPY, radius));
@@ -65,7 +65,7 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
                 newColumns.push_back(getFormattedColumn( //
                     Column::TOTAL_DEPTH, radius));
 
-                if (!simple_version) {
+                if (!simpleVersion) {
                     newColumns.push_back(getFormattedColumn( //
                         Column::RA, radius, std::nullopt, Normalisation::PENN));
                     newColumns.push_back(getFormattedColumn( //
@@ -90,7 +90,7 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
                 }
             }
 
-            if (!simple_version) {
+            if (!simpleVersion) {
                 // columns only when simple-version is not selected
                 auto formattedCol = getFormattedColumn( //
                     Column::ENTROPY, radius);
@@ -102,7 +102,7 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
             newColumns.push_back(getFormattedColumn( //
                 Column::INTEGRATION, radius, std::nullopt, Normalisation::HH));
 
-            if (!simple_version) {
+            if (!simpleVersion) {
                 // columns only when simple-version is not selected
                 newColumns.push_back(getFormattedColumn( //
                     Column::INTEGRATION, radius, std::nullopt, Normalisation::PV));
@@ -120,7 +120,7 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
             newColumns.push_back(getFormattedColumn( //
                 Column::NODE_COUNT, radius));
 
-            if (!simple_version) {
+            if (!simpleVersion) {
                 // columns only when simple-version is not selected
                 newColumns.push_back(getFormattedColumn( //
                     Column::RELATIVISED_ENTROPY, radius));
@@ -134,14 +134,14 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
             }
 
             if (m_fulloutput) {
-                if (!simple_version) {
+                if (!simpleVersion) {
                     newColumns.push_back(getFormattedColumn( //
                         Column::RA, radius, std::nullopt, Normalisation::PENN));
                 }
                 newColumns.push_back(getFormattedColumn( //
                     Column::RA, radius));
 
-                if (!simple_version) {
+                if (!simpleVersion) {
                     newColumns.push_back(getFormattedColumn( //
                         Column::RRA, radius));
                 }
@@ -173,7 +173,7 @@ std::vector<int> AxialIntegration::getFormattedRadii(std::set<double> radiusSet)
     return radii;
 }
 
-AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simple_version) {
+AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool simpleVersion) {
     // note, from 10.0, Depthmap no longer includes *self* connections on axial lines
     // self connections are stripped out on loading graph files, as well as no longer made
 
@@ -200,7 +200,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
     }
 
     // first enter the required attribute columns:
-    auto newColumns = getRequiredColumns(radii, weightingColText, simple_version);
+    auto newColumns = getRequiredColumns(radii, weightingColText, simpleVersion);
     for (auto &col : newColumns) {
         attributes.insertOrResetColumn(col);
         result.addAttribute(col);
@@ -225,7 +225,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                     attributes, Column::CHOICE, radius, weightingColText, Normalisation::NORM));
             }
         }
-        if (!simple_version) {
+        if (!simpleVersion) {
             entropyCol.push_back(getFormattedColumnIdx( //
                 attributes, Column::ENTROPY, radius));
         }
@@ -233,7 +233,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         integDvCol.push_back(getFormattedColumnIdx( //
             attributes, Column::INTEGRATION, radius, std::nullopt, Normalisation::HH));
 
-        if (!simple_version) {
+        if (!simpleVersion) {
             integPvCol.push_back(getFormattedColumnIdx( //
                 attributes, Column::INTEGRATION, radius, std::nullopt, Normalisation::PV));
             integTkCol.push_back(getFormattedColumnIdx( //
@@ -249,7 +249,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         countCol.push_back(getFormattedColumnIdx( //
             attributes, Column::NODE_COUNT, radius));
 
-        if (!simple_version) {
+        if (!simpleVersion) {
             relEntropyCol.push_back(getFormattedColumnIdx( //
                 attributes, Column::RELATIVISED_ENTROPY, radius));
         }
@@ -264,7 +264,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
             raCol.push_back(getFormattedColumnIdx( //
                 attributes, Column::RA, radius, std::nullopt, std::nullopt));
 
-            if (!simple_version) {
+            if (!simpleVersion) {
                 pennNormCol.push_back(getFormattedColumnIdx( //
                     attributes, Column::RA, radius, std::nullopt, Normalisation::PENN));
                 rraCol.push_back(getFormattedColumnIdx( //
@@ -406,7 +406,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                     double integTk = pafmath::teklinteg(nodeCount, totalDepth);
                     row.setValue(integDvCol[r], float(1.0 / rraD));
 
-                    if (!simple_version) {
+                    if (!simpleVersion) {
                         row.setValue(integPvCol[r], float(1.0 / rraP));
                         if (totalDepth - nodeCount + 1 > 1) {
                             row.setValue(integTkCol[r], float(integTk));
@@ -418,12 +418,12 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                     if (m_fulloutput) {
                         row.setValue(raCol[r], float(ra));
 
-                        if (!simple_version) {
+                        if (!simpleVersion) {
                             row.setValue(rraCol[r], float(rraD));
                         }
                         row.setValue(tdCol[r], float(totalDepth));
 
-                        if (!simple_version) {
+                        if (!simpleVersion) {
                             // alan's palm-tree normalisation: palmtree
                             double dmin = nodeCount - 1;
                             double dmax = pafmath::palmtree(nodeCount, depth - 1);
@@ -436,26 +436,26 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 } else {
                     row.setValue(integDvCol[r], -1.0f);
 
-                    if (!simple_version) {
+                    if (!simpleVersion) {
                         row.setValue(integPvCol[r], -1.0f);
                         row.setValue(integTkCol[r], -1.0f);
                     }
                     if (m_fulloutput) {
                         row.setValue(raCol[r], -1.0f);
 
-                        if (!simple_version) {
+                        if (!simpleVersion) {
                             row.setValue(rraCol[r], -1.0f);
                         }
 
                         row.setValue(tdCol[r], -1.0f);
 
-                        if (!simple_version) {
+                        if (!simpleVersion) {
                             row.setValue(pennNormCol[r], -1.0f);
                         }
                     }
                 }
 
-                if (!simple_version) {
+                if (!simpleVersion) {
                     double entropy = 0.0, intensity = 0.0, relEntropy = 0.0, factorial = 1.0,
                            harmonic = 0.0;
                     for (size_t k = 0; k < depthcounts.size(); k++) {
@@ -488,7 +488,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 row.setValue(depthCol[r], -1.0f);
                 row.setValue(integDvCol[r], -1.0f);
 
-                if (!simple_version) {
+                if (!simpleVersion) {
                     row.setValue(integPvCol[r], -1.0f);
                     row.setValue(integTkCol[r], -1.0f);
                     row.setValue(entropyCol[r], -1.0f);

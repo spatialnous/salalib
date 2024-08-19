@@ -27,25 +27,24 @@ class AxialMinimiser {
     std::vector<Connector>
         m_axialconns; // <- uses a copy of axial lines as it will remove connections
   public:
-    AxialMinimiser(const ShapeGraph &alllinemap, int no_of_axsegcuts, int no_of_radialsegs);
+    AxialMinimiser(const ShapeGraph &alllinemap, int noOfAxsegcuts, int noOfRadialsegs);
     ~AxialMinimiser();
     void removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                        std::map<RadialKey, RadialSegment> &radialsegs,
                        std::map<RadialKey, std::set<int>> &rlds,
-                       std::vector<RadialLine> &radial_lines,
+                       std::vector<RadialLine> &radialLines,
                        std::vector<std::vector<int>> &keyvertexconns,
                        std::vector<int> &keyvertexcounts);
     void fewestLongest(std::map<int, std::set<int>> &axsegcuts,
                        std::map<RadialKey, RadialSegment> &radialsegs,
                        std::map<RadialKey, std::set<int>> &rlds,
-                       std::vector<RadialLine> &radial_lines,
+                       std::vector<RadialLine> &radialLines,
                        std::vector<std::vector<int>> &keyvertexconns,
                        std::vector<int> &keyvertexcounts);
     // advanced topological testing:
     bool checkVital(int checkindex, std::set<int> &axSegCut,
                     std::map<RadialKey, RadialSegment> &radialsegs,
-                    std::map<RadialKey, std::set<int>> &rlds,
-                    std::vector<RadialLine> &radial_lines);
+                    std::map<RadialKey, std::set<int>> &rlds, std::vector<RadialLine> &radialLines);
     //
     bool removed(int i) const { return m_removed[i]; }
 };

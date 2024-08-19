@@ -48,9 +48,9 @@ struct AxialVertex : public AxialVertexKey {
     bool convex;
     bool initialised;
     bool axial;
-    AxialVertex(const AxialVertexKey &vertex_key = NoVertex, const Point2f &p = Point2f(),
+    AxialVertex(const AxialVertexKey &vertexKey = NoVertex, const Point2f &p = Point2f(),
                 const Point2f &opsp = Point2f())
-        : AxialVertexKey(vertex_key), point(p), openspace(opsp), initialised(false), axial(false) {}
+        : AxialVertexKey(vertexKey), point(p), openspace(opsp), initialised(false), axial(false) {}
 };
 
 struct RadialKey {
@@ -136,8 +136,8 @@ class AxialPolygons : public SpacePixel {
     AxialVertexKey seedVertex(const Point2f &seed);
     // make axial lines from corner vertices, visible from openspace
     void makeAxialLines(std::set<AxialVertex> &openvertices, std::vector<Line> &lines,
-                        KeyVertices &keyvertices, std::vector<PolyConnector> &poly_connections,
-                        std::vector<RadialLine> &radial_lines);
+                        KeyVertices &keyvertices, std::vector<PolyConnector> &polyConnections,
+                        std::vector<RadialLine> &radialLines);
     // extra: make all the polygons possible from the set of m_vertex_possibles
     void makePolygons(std::vector<std::vector<Point2f>> &polygons);
 };

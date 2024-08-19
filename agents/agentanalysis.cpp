@@ -40,7 +40,7 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
                                    std::vector<PixelRef> &releaseLocations, Communicator *comm,
                                    PointMap *pointmap) {
 
-    if (agentProgram.m_sel_type == AgentProgram::SEL_LOS_OCC) {
+    if (m_agentProgram.selType == AgentProgram::SEL_LOS_OCC) {
         pointmap->requireIsovistAnalysis();
     }
 
@@ -66,9 +66,9 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
 
         auto recordTrailsLimit = m_recordTrails->limit;
         if (recordTrailsLimit.has_value()) {
-            agentProgram.m_trails = std::vector<std::vector<Event2f>>(*recordTrailsLimit);
+            m_agentProgram.trails = std::vector<std::vector<Event2f>>(*recordTrailsLimit);
         } else {
-            agentProgram.m_trails = std::vector<std::vector<Event2f>>(50);
+            m_agentProgram.trails = std::vector<std::vector<Event2f>>(50);
         }
 
         trailNum = 0;
@@ -86,7 +86,7 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
         auto length = agents.size();
         size_t k;
         for (k = 0; k < q; k++) {
-            agents.push_back(Agent(&(agentProgram), pointmap, outputMode));
+            agents.push_back(Agent(&(m_agentProgram), pointmap, outputMode));
         }
         for (k = 0; k < q; k++) {
             init(agents, releaseLocations, length + k, trailNum);
@@ -115,7 +115,7 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
 void AgentAnalysis::insertTrailsInMap(ShapeMap &trailsMap) {
     // there is currently only one AgentSet. If at any point there are more then
     // this could be amended to put the AgentSet id as a property of the trail
-    for (auto &trail : agentProgram.m_trails) {
+    for (auto &trail : m_agentProgram.trails) {
         std::vector<Point2f> trailGeometry(trail.begin(), trail.end());
         trailsMap.makePolyShape(trailGeometry, true, false);
     }
@@ -125,13 +125,13 @@ AnalysisResult AgentAnalysis::run(Communicator *comm) {
     AttributeTable &table = m_pointMap.getAttributeTable();
 
     if (m_agentFOV == 32) {
-        agentProgram.m_vbin = -1;
+        m_agentProgram.vbin = -1;
     } else {
-        agentProgram.m_vbin = (m_agentFOV - 1) / 2;
+        m_agentProgram.vbin = (m_agentFOV - 1) / 2;
     }
 
-    agentProgram.m_steps = m_agentStepsToDecision;
-    agentProgram.m_sel_type = m_agentAlgorithm;
+    m_agentProgram.steps = m_agentStepsToDecision;
+    m_agentProgram.selType = m_agentAlgorithm;
 
     std::vector<PixelRef> releaseLocations;
 

@@ -25,7 +25,7 @@ static int rankselect(int popsize) {
 
 // note: this is tested and right: higher fitness, lower rank (so population[0] is best)
 int progcompare(const void *a, const void *b) {
-    double test = (((AgentProgram *)a)->m_fitness - ((AgentProgram *)b)->m_fitness);
+    double test = (((AgentProgram *)a)->fitness - ((AgentProgram *)b)->fitness);
     if (test < 0.0) {
         return 1;
     } else if (test > 0.0) {

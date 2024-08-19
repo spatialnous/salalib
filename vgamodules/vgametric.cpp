@@ -45,21 +45,21 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
         }
 
         for (auto &ad2 : analysisData) {
-            ad2.m_visitedFromBin = 0;
-            ad2.m_dist = -1.0f;
-            ad2.m_cumAngle = 0.0f;
+            ad2.visitedFromBin = 0;
+            ad2.dist = -1.0f;
+            ad2.cumAngle = 0.0f;
         }
 
         auto [totalDepth, totalAngle, euclidDepth, totalNodes] =
             traverseSum(analysisData, graph, refs, m_radius, ad0);
 
-        result.setValue(ad0.m_attributeDataRow, mspaCol,                  //
+        result.setValue(ad0.attributeDataRow, mspaCol,                    //
                         float(double(totalAngle) / double(totalNodes)));  //
-        result.setValue(ad0.m_attributeDataRow, msplCol,                  //
+        result.setValue(ad0.attributeDataRow, msplCol,                    //
                         float(double(totalDepth) / double(totalNodes)));  //
-        result.setValue(ad0.m_attributeDataRow, distCol,                  //
+        result.setValue(ad0.attributeDataRow, distCol,                    //
                         float(double(euclidDepth) / double(totalNodes))); //
-        result.setValue(ad0.m_attributeDataRow, countCol,                 //
+        result.setValue(ad0.attributeDataRow, countCol,                   //
                         float(totalNodes));                               //
 
         count++; // <- increment count

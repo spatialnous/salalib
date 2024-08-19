@@ -67,13 +67,13 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
     size_t count = 0;
 
     for (auto &ad0 : analysisData) {
-        if ((ad0.m_point.contextfilled() && !ad0.m_ref.iseven()) || (m_gatesOnly)) {
+        if ((ad0.point.contextfilled() && !ad0.ref.iseven()) || (m_gatesOnly)) {
             count++;
             continue;
         }
         for (auto &ad2 : analysisData) {
-            ad2.m_visitedFromBin = 0;
-            ad2.m_diagonalExtent = ad2.m_ref;
+            ad2.visitedFromBin = 0;
+            ad2.diagonalExtent = ad2.ref;
         }
 
         auto [totalDepth, totalNodes, distribution] =
@@ -82,14 +82,14 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
         // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of
         // Space
         if (!m_simpleVersion) {
-            result.setValue(ad0.m_attributeDataRow, countCol.value(),
+            result.setValue(ad0.attributeDataRow, countCol.value(),
                             float(totalNodes)); // note: total nodes includes this one
         }
         // ERROR !!!!!!
         if (totalNodes > 1) {
             double meanDepth = double(totalDepth) / double(totalNodes - 1);
             if (!m_simpleVersion) {
-                result.setValue(ad0.m_attributeDataRow, depthCol.value(), float(meanDepth));
+                result.setValue(ad0.attributeDataRow, depthCol.value(), float(meanDepth));
             }
             // total nodes > 2 to avoid divide by 0 (was > 3)
             if (totalNodes > 2 && meanDepth > 1.0) {
@@ -99,24 +99,24 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
                 double rraD = ra / pafmath::dvalue(totalNodes);
                 double rraP = ra / pafmath::pvalue(totalNodes);
                 double integTk = pafmath::teklinteg(totalNodes, totalDepth);
-                result.setValue(ad0.m_attributeDataRow, integDvCol.value(), float(1.0 / rraD));
+                result.setValue(ad0.attributeDataRow, integDvCol.value(), float(1.0 / rraD));
                 if (!m_simpleVersion) {
-                    result.setValue(ad0.m_attributeDataRow, integPvCol.value(), float(1.0 / rraP));
+                    result.setValue(ad0.attributeDataRow, integPvCol.value(), float(1.0 / rraP));
                 }
                 if (totalDepth - totalNodes + 1 > 1) {
                     if (!m_simpleVersion) {
-                        result.setValue(ad0.m_attributeDataRow, integTkCol.value(), float(integTk));
+                        result.setValue(ad0.attributeDataRow, integTkCol.value(), float(integTk));
                     }
                 } else {
                     if (!m_simpleVersion) {
-                        result.setValue(ad0.m_attributeDataRow, integTkCol.value(), -1.0f);
+                        result.setValue(ad0.attributeDataRow, integTkCol.value(), -1.0f);
                     }
                 }
             } else {
-                result.setValue(ad0.m_attributeDataRow, integDvCol.value(), (float)-1);
+                result.setValue(ad0.attributeDataRow, integDvCol.value(), (float)-1);
                 if (!m_simpleVersion) {
-                    result.setValue(ad0.m_attributeDataRow, integPvCol.value(), (float)-1);
-                    result.setValue(ad0.m_attributeDataRow, integTkCol.value(), (float)-1);
+                    result.setValue(ad0.attributeDataRow, integPvCol.value(), (float)-1);
+                    result.setValue(ad0.attributeDataRow, integTkCol.value(), (float)-1);
                 }
             }
             double entropy = 0.0, relEntropy = 0.0, factorial = 1.0;
@@ -133,14 +133,14 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
                 }
             }
             if (!m_simpleVersion) {
-                result.setValue(ad0.m_attributeDataRow, entropyCol.value(), float(entropy));
-                result.setValue(ad0.m_attributeDataRow, relEntropyCol.value(), float(relEntropy));
+                result.setValue(ad0.attributeDataRow, entropyCol.value(), float(entropy));
+                result.setValue(ad0.attributeDataRow, relEntropyCol.value(), float(relEntropy));
             }
         } else {
             if (!m_simpleVersion) {
-                result.setValue(ad0.m_attributeDataRow, depthCol.value(), (float)-1);
-                result.setValue(ad0.m_attributeDataRow, entropyCol.value(), (float)-1);
-                result.setValue(ad0.m_attributeDataRow, relEntropyCol.value(), (float)-1);
+                result.setValue(ad0.attributeDataRow, depthCol.value(), (float)-1);
+                result.setValue(ad0.attributeDataRow, entropyCol.value(), (float)-1);
+                result.setValue(ad0.attributeDataRow, relEntropyCol.value(), (float)-1);
             }
         }
         count++; // <- increment count
@@ -157,8 +157,8 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
     if (m_legacyWriteMiscs) {
         // kept to achieve parity in binary comparison with old versions
         for (auto &ad2 : analysisData) {
-            ad2.m_point.dummyMisc = ad2.m_visitedFromBin;
-            ad2.m_point.dummyExtent = ad2.m_diagonalExtent;
+            ad2.point.dummyMisc = ad2.visitedFromBin;
+            ad2.point.dummyExtent = ad2.diagonalExtent;
         }
     }
 

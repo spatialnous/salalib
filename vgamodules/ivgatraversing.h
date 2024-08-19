@@ -23,9 +23,9 @@ class IVGATraversing : public IVGA {
         std::vector<ADRefVector<T>> graph;
         for (auto &ad : analysisData) {
             for (auto &ad2 : analysisData) {
-                ad2.m_diagonalExtent = ad2.m_ref;
+                ad2.diagonalExtent = ad2.ref;
             }
-            auto &point = ad.m_point;
+            auto &point = ad.point;
             graph.push_back(ADRefVector<T>());
             auto &conns = graph.back();
             for (int i = 0; i < 32; i++) {
@@ -39,9 +39,9 @@ class IVGATraversing : public IVGA {
                         // 10.2.02 revised --- diagonal was breaking this as it was extent in
                         // diagonal or horizontal
                         if (diagonalFix && !(bin.dir & PixelRef::DIAGONAL)) {
-                            if (ad3.m_diagonalExtent.col(bin.dir) >= pixVec.end().col(bin.dir))
+                            if (ad3.diagonalExtent.col(bin.dir) >= pixVec.end().col(bin.dir))
                                 break;
-                            ad3.m_diagonalExtent.col(bin.dir) = pixVec.end().col(bin.dir);
+                            ad3.diagonalExtent.col(bin.dir) = pixVec.end().col(bin.dir);
                         }
                         pix.move(bin.dir);
                     }

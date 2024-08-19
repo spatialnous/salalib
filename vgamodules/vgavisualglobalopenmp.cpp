@@ -137,8 +137,8 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
         if (m_legacyWriteMiscs) {
             // kept to achieve parity in binary comparison with old versions
-            ad0.m_point.dummyMisc = ad0.m_visitedFromBin;
-            ad0.m_point.dummyExtent = ad0.m_diagonalExtent;
+            ad0.point.dummyMisc = ad0.visitedFromBin;
+            ad0.point.dummyExtent = ad0.diagonalExtent;
         }
     }
 

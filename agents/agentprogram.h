@@ -36,26 +36,26 @@ struct AgentProgram {
         SEL_OCC_WEIGHT_DIST_ANG = 0x9007,
         SEL_OCC_MEMORY = 0x9008
     };
-    int m_sel_type;
-    int m_steps;
-    int m_vbin;
+    int selType;
+    int steps;
+    int vbin;
     // these three variables for evolved Gibsonian agents:
-    int m_rule_order[4];
-    float m_rule_threshold[4];
-    float m_rule_probability[4];
+    int ruleOrder[4];
+    float ruleThreshold[4];
+    float ruleProbability[4];
     // these are for optic flow 2 agents
-    int m_vahead;             // how wide your ahead vision is
-    float m_ahead_threshold;  // will turn if neg flow greater than this threshold (set in range
-                              // 1/100 to 1)
-    float m_feeler_threshold; // will turn if flow greater than this threshold (set in range 1 to 5)
-    float m_feeler_probability; // turn with this much probability if a feeler triggers
+    int vahead;              // how wide your ahead vision is
+    float aheadThreshold;    // will turn if neg flow greater than this threshold (set in range
+                             // 1/100 to 1)
+    float feelerThreshold;   // will turn if flow greater than this threshold (set in range 1 to 5)
+    float feelerProbability; // turn with this much probability if a feeler triggers
     //
     // simple long range destinations:
-    bool m_destination_directed;
-    bool m_los_sqrd;
+    bool destinationDirected;
+    bool losSqrd;
     //
     // if it is going to evolved, then have it remember its fitness:
-    double m_fitness;
+    double fitness;
     //
     AgentProgram();
     //
@@ -65,5 +65,5 @@ struct AgentProgram {
     // to reload later:
     void save(const std::string &filename);
     bool open(const std::string &filename);
-    std::vector<std::vector<Event2f>> m_trails;
+    std::vector<std::vector<Event2f>> trails;
 };

@@ -42,9 +42,9 @@ AnalysisResult VGAAngular::run(Communicator *comm) {
             continue;
         }
         for (auto &ad1 : analysisData) {
-            ad1.m_visitedFromBin = 0;
-            ad1.m_dist = 0.0f;
-            ad1.m_cumAngle = -1.0f;
+            ad1.visitedFromBin = 0;
+            ad1.dist = 0.0f;
+            ad1.cumAngle = -1.0f;
         }
 
         float totalAngle = 0.0f;
@@ -53,11 +53,11 @@ AnalysisResult VGAAngular::run(Communicator *comm) {
         std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
 
         if (totalNodes > 0) {
-            result.setValue(ad0.m_attributeDataRow, meanDepthCol,
+            result.setValue(ad0.attributeDataRow, meanDepthCol,
                             float(double(totalAngle) / double(totalNodes)));
         }
-        result.setValue(ad0.m_attributeDataRow, totalDepthCol, totalAngle);
-        result.setValue(ad0.m_attributeDataRow, countCol, float(totalNodes));
+        result.setValue(ad0.attributeDataRow, totalDepthCol, totalAngle);
+        result.setValue(ad0.attributeDataRow, countCol, float(totalNodes));
 
         count++; // <- increment count
 

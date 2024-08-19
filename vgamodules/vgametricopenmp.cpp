@@ -62,9 +62,9 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
         if (m_legacyWriteMiscs) {
             // kept to achieve parity in binary comparison with old versions
-            ad0.m_point.dummyMisc = ad0.m_visitedFromBin;
-            ad0.m_point.dummyDist = ad0.m_dist;
-            ad0.m_point.dummyCumangle = ad0.m_cumAngle;
+            ad0.point.dummyMisc = ad0.visitedFromBin;
+            ad0.point.dummyDist = ad0.dist;
+            ad0.point.dummyCumangle = ad0.cumAngle;
         }
 
         dp.m_mspa = float(double(totalAngle) / double(totalNodes));

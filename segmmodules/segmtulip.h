@@ -10,11 +10,11 @@
 
 class SegmentTulip : ISegment {
   private:
-    std::set<double> m_radius_set;
+    std::set<double> m_radiusSet;
     std::optional<const std::set<int>> m_selSet;
     int m_tulip_bins;
-    int m_weighted_measure_col;
-    int m_weighted_measure_col2;
+    int m_weightedMeasureCol;
+    int m_weightedMeasureCol2;
     int m_routeweight_col;
     RadiusType m_radius_type;
     bool m_choice;
@@ -86,13 +86,13 @@ class SegmentTulip : ISegment {
     std::vector<std::string> getRequiredColumns(ShapeGraph &map, std::vector<double> radii);
 
   public:
-    SegmentTulip(std::set<double> radius_set, std::optional<const std::set<int>> selSet,
-                 int tulip_bins, int weighted_measure_col, RadiusType radius_type, bool choice,
-                 bool interactive = false, int weighted_measure_col2 = -1, int routeweight_col = -1)
-        : m_radius_set(radius_set), m_selSet(selSet), m_tulip_bins(tulip_bins),
-          m_weighted_measure_col(weighted_measure_col),
-          m_weighted_measure_col2(weighted_measure_col2), m_routeweight_col(routeweight_col),
-          m_radius_type(radius_type), m_choice(choice), m_interactive(interactive) {}
+    SegmentTulip(std::set<double> radiusSet, std::optional<const std::set<int>> selSet,
+                 int tulip_bins, int weightedMeasureCol, RadiusType radius_type, bool choice,
+                 bool interactive = false, int weightedMeasureCol2 = -1, int routeweight_col = -1)
+        : m_radiusSet(radiusSet), m_selSet(selSet), m_tulip_bins(tulip_bins),
+          m_weightedMeasureCol(weightedMeasureCol), m_weightedMeasureCol2(weightedMeasureCol2),
+          m_routeweight_col(routeweight_col), m_radius_type(radius_type), m_choice(choice),
+          m_interactive(interactive) {}
     void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
         m_forceLegacyColumnOrder = forceLegacyColumnOrder;
     }

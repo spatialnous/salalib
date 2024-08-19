@@ -18,22 +18,22 @@ class IVGA : public IAnalysis {
 
   protected:
     struct AnalysisData {
-        const Point &m_point;
-        const PixelRef m_ref;
-        size_t m_attributeDataRow;
-        int m_visitedFromBin = 0;
+        const Point &point;
+        const PixelRef ref;
+        size_t attributeDataRow;
+        int visitedFromBin = 0;
 
         // used to speed up graph analysis (not sure whether or not it breaks it!)
-        PixelRef m_diagonalExtent;
+        PixelRef diagonalExtent;
 
-        float m_dist = 0.0f;
-        float m_cumAngle = 0.0f;
-        float m_linkCost = 0.0f;
+        float dist = 0.0f;
+        float cumAngle = 0.0f;
+        float linkCost = 0.0f;
         AnalysisData(const Point &point, const PixelRef ref, size_t attributeDataRow,
                      int visitedFromBin, PixelRef diagonalExtent, float dist, float cumAngle)
-            : m_point(point), m_ref(ref), m_attributeDataRow(attributeDataRow),
-              m_visitedFromBin(visitedFromBin), m_diagonalExtent(diagonalExtent), m_dist(dist),
-              m_cumAngle(cumAngle) {}
+            : point(point), ref(ref), attributeDataRow(attributeDataRow),
+              visitedFromBin(visitedFromBin), diagonalExtent(diagonalExtent), dist(dist),
+              cumAngle(cumAngle) {}
     };
 
   protected:
@@ -44,7 +44,7 @@ class IVGA : public IAnalysis {
         std::vector<PixelRef> refs;
         refs.reserve(analysisData.size());
         for (auto &ad : analysisData) {
-            refs.push_back(ad.m_ref);
+            refs.push_back(ad.ref);
         }
         return refs;
     }

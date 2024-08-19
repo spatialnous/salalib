@@ -46,16 +46,16 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
     int count = 0;
     for (auto &ad : analysisData) {
         std::vector<int> seengates;
-        auto &p = ad.m_point;
+        auto &p = ad.point;
         p.getNode().first();
         while (!p.getNode().is_tail()) {
             PixelRef x = p.getNode().cursor();
-            PixelRefVector pixels = m_map.quickPixelateLine(x, ad.m_ref);
+            PixelRefVector pixels = m_map.quickPixelateLine(x, ad.ref);
             for (size_t k = 1; k < pixels.size() - 1; k++) {
                 PixelRef key = pixels[k];
                 if (!m_map.getPoint(key).filled())
                     continue;
-                analysisData.at(getRefIdx(refs, key)).m_misc += 1;
+                analysisData.at(getRefIdx(refs, key)).misc += 1;
 
                 // TODO: Undocumented functionality. Shows how many times a gate is passed?
                 if (agentGateColIdx.has_value() && agentGateCountColIdx.has_value()) {
@@ -66,8 +66,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
                         if (gate != -1) {
                             auto gateIter = depthmapX::findBinary(seengates, gate);
                             if (gateIter == seengates.end()) {
-                                result.incrValue(ad.m_attributeDataRow,
-                                                 agentGateCountColIdx.value());
+                                result.incrValue(ad.attributeDataRow, agentGateCountColIdx.value());
                                 seengates.insert(gateIter, int(gate));
                             }
                         }
@@ -92,8 +91,8 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
     int col = result.getColumnIndex(Column::THROUGH_VISION);
 
     for (auto &ad : analysisData) {
-        auto &p = ad.m_point;
-        result.setValue(ad.m_attributeDataRow, col, static_cast<float>(ad.m_misc));
+        auto &p = ad.point;
+        result.setValue(ad.attributeDataRow, col, static_cast<float>(ad.misc));
         p.dummyMisc = 0;
     }
 

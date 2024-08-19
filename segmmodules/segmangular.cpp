@@ -26,7 +26,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
     // ...to ensure no mess ups, we'll re-sort here:
     bool radiusN = false;
     std::vector<double> radii;
-    for (double radius : m_radius_set) {
+    for (double radius : m_radiusSet) {
         if (radius < 0) {
             radiusN = true;
         } else {

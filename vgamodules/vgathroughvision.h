@@ -13,12 +13,12 @@
 class VGAThroughVision : public IVGA {
   protected:
     struct AnalysisData {
-        const Point &m_point;
-        const PixelRef m_ref;
-        size_t m_attributeDataRow;
-        int m_misc = 0;
+        const Point &point;
+        const PixelRef ref;
+        size_t attributeDataRow;
+        int misc = 0;
         AnalysisData(const Point &point, const PixelRef ref, size_t attributeDataRow, int misc = 0)
-            : m_point(point), m_ref(ref), m_attributeDataRow(attributeDataRow), m_misc(misc) {}
+            : point(point), ref(ref), attributeDataRow(attributeDataRow), misc(misc) {}
     };
 
   public:

@@ -23,7 +23,7 @@ class AgentAnalysis : public IAnalysis {
 
   private: // members
     PointMap &m_pointMap;
-    AgentProgram agentProgram;
+    AgentProgram m_agentProgram;
 
     size_t m_systemTimesteps;
     double m_releaseRate = 0.1;

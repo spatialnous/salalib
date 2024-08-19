@@ -284,7 +284,7 @@ void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {
     std::vector<std::pair<size_t, size_t>> intersections;
     PixelRef pix = pixelate(unlinkPoint);
     std::vector<ShapeRef> &pixShapes =
-        m_pixel_shapes(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
+        m_pixelShapes(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
     auto iter = pixShapes.begin();
     for (; iter != pixShapes.end(); ++iter) {
         for (auto jter = iter; jter != pixShapes.end(); ++jter) {
@@ -391,7 +391,7 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
         // throughout
         PixelRef pix1 = pixelate(lineA.t_start());
         std::vector<ShapeRef> &shapes1 =
-            m_pixel_shapes(static_cast<size_t>(pix1.y), static_cast<size_t>(pix1.x));
+            m_pixelShapes(static_cast<size_t>(pix1.y), static_cast<size_t>(pix1.x));
         for (auto &shape : shapes1) {
             auto lineConnectorB = lineConnectors.find(shape.shapeRef);
             if (lineConnectorB != lineConnectors.end() && idxA < lineConnectorB->second.index) {
@@ -420,7 +420,7 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
 
         PixelRef pix2 = pixelate(lineA.t_end());
         std::vector<ShapeRef> &shapes2 =
-            m_pixel_shapes(static_cast<size_t>(pix2.y), static_cast<size_t>(pix2.x));
+            m_pixelShapes(static_cast<size_t>(pix2.y), static_cast<size_t>(pix2.x));
         for (auto &shape : shapes2) {
             auto lineConnectorB = lineConnectors.find(shape.shapeRef);
             if (lineConnectorB != lineConnectors.end() && idxA < lineConnectorB->second.index) {

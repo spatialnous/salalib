@@ -10,7 +10,7 @@
 
 class SegmentAngular : ISegment {
   private:
-    std::set<double> m_radius_set;
+    std::set<double> m_radiusSet;
 
   public:
     struct Column {
@@ -30,5 +30,5 @@ class SegmentAngular : ISegment {
   public:
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool) override;
-    SegmentAngular(std::set<double> radius_set) : m_radius_set(radius_set) {}
+    SegmentAngular(std::set<double> radiusSet) : m_radiusSet(radiusSet) {}
 };

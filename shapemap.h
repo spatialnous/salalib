@@ -63,7 +63,7 @@ class ShapeMap : public AttributeMap {
     int m_objRef = -1;
     //
     // quick grab for shapes
-    depthmapX::ColumnMatrix<std::vector<ShapeRef>> m_pixel_shapes; // i rows of j columns
+    depthmapX::ColumnMatrix<std::vector<ShapeRef>> m_pixelShapes; // i rows of j columns
     //
     std::map<int, SalaShape> m_shapes;
     //
@@ -103,12 +103,12 @@ class ShapeMap : public AttributeMap {
     ShapeMap(ShapeMap &&other)
         : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
                        std::move(other.m_layers)),
-          m_name(std::move(other.m_name)), m_pixel_shapes(std::move(other.m_pixel_shapes)) {
+          m_name(std::move(other.m_name)), m_pixelShapes(std::move(other.m_pixelShapes)) {
         moveData(other);
     }
     ShapeMap &operator=(ShapeMap &&other) {
         m_name = std::move(other.m_name);
-        m_pixel_shapes = std::move(other.m_pixel_shapes);
+        m_pixelShapes = std::move(other.m_pixelShapes);
         m_attributes = std::move(other.m_attributes);
         m_attribHandle = std::move(other.m_attribHandle);
         m_layers = std::move(other.m_layers);

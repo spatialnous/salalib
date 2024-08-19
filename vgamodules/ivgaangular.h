@@ -32,37 +32,36 @@ class IVGAAngular : public IVGATraversing {
                           std::optional<PixelRef> lp = std::nullopt)
             : m_pixel(p), m_angle(a), m_lastpixel(lp) {}
         bool operator==(const AngularSearchData &mp2) const {
-            return (m_angle == mp2.m_angle && m_pixel.m_ref == mp2.m_pixel.m_ref);
+            return (m_angle == mp2.m_angle && m_pixel.ref == mp2.m_pixel.ref);
         }
         bool operator<(const AngularSearchData &mp2) const {
             return (m_angle < mp2.m_angle) ||
-                   (m_angle == mp2.m_angle && m_pixel.m_ref < mp2.m_pixel.m_ref);
+                   (m_angle == mp2.m_angle && m_pixel.ref < mp2.m_pixel.ref);
         }
         bool operator>(const AngularSearchData &mp2) const {
             return (m_angle > mp2.m_angle) ||
-                   (m_angle == mp2.m_angle && m_pixel.m_ref > mp2.m_pixel.m_ref);
+                   (m_angle == mp2.m_angle && m_pixel.ref > mp2.m_pixel.ref);
         }
         bool operator!=(const AngularSearchData &mp2) const {
-            return (m_angle != mp2.m_angle) || (m_pixel.m_ref != mp2.m_pixel.m_ref);
+            return (m_angle != mp2.m_angle) || (m_pixel.ref != mp2.m_pixel.ref);
         }
     };
 
     void extractAngular(const ADRefVector<AnalysisData> &conns, std::set<AngularSearchData> &pixels,
                         const PointMap &map, const AngularSearchData &curs) const {
-        if (curs.m_angle == 0.0f || curs.m_pixel.m_point.blocked() ||
-            map.blockedAdjacent(curs.m_pixel.m_ref)) {
+        if (curs.m_angle == 0.0f || curs.m_pixel.point.blocked() ||
+            map.blockedAdjacent(curs.m_pixel.ref)) {
             for (auto &conn : conns) {
                 auto &ad = std::get<0>(conn).get();
-                if (ad.m_visitedFromBin == 0) {
+                if (ad.visitedFromBin == 0) {
                     // n.b. dmap v4.06r now sets angle in range 0 to 4 (1 = 90 degrees)
-                    float ang =
-                        (!curs.m_lastpixel.has_value())
-                            ? 0.0f
-                            : (float)(angle(ad.m_ref, curs.m_pixel.m_ref, *curs.m_lastpixel) /
-                                      (M_PI * 0.5));
-                    if (ad.m_cumAngle == -1.0 || curs.m_angle + ang < ad.m_cumAngle) {
-                        ad.m_cumAngle = curs.m_pixel.m_cumAngle + ang;
-                        pixels.insert(AngularSearchData(ad, ad.m_cumAngle, curs.m_pixel.m_ref));
+                    float ang = (!curs.m_lastpixel.has_value())
+                                    ? 0.0f
+                                    : (float)(angle(ad.ref, curs.m_pixel.ref, *curs.m_lastpixel) /
+                                              (M_PI * 0.5));
+                    if (ad.cumAngle == -1.0 || curs.m_angle + ang < ad.cumAngle) {
+                        ad.cumAngle = curs.m_pixel.cumAngle + ang;
+                        pixels.insert(AngularSearchData(ad, ad.cumAngle, curs.m_pixel.ref));
                     }
                 }
             }
@@ -82,7 +81,7 @@ class IVGAAngular : public IVGATraversing {
         for (auto &sel : originRefs) {
             auto &ad = analysisData.at(getRefIdx(refs, sel));
             searchList.insert(AngularSearchData(ad, 0.0f, std::nullopt));
-            ad.m_cumAngle = 0.0f;
+            ad.cumAngle = 0.0f;
         }
 
         // note that m_misc is used in a different manner to analyseGraph / PointDepth
@@ -95,21 +94,21 @@ class IVGAAngular : public IVGATraversing {
             }
 
             auto &ad = here.m_pixel;
-            auto &p = ad.m_point;
+            auto &p = ad.point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
-            if (p.filled() && ad.m_visitedFromBin != ~0) {
-                extractAngular(graph.at(ad.m_attributeDataRow), searchList, m_map, here);
-                ad.m_visitedFromBin = ~0;
-                angularDepthCol.setValue(ad.m_attributeDataRow, float(ad.m_cumAngle), keepStats);
+            if (p.filled() && ad.visitedFromBin != ~0) {
+                extractAngular(graph.at(ad.attributeDataRow), searchList, m_map, here);
+                ad.visitedFromBin = ~0;
+                angularDepthCol.setValue(ad.attributeDataRow, float(ad.cumAngle), keepStats);
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
-                    if (ad2.m_visitedFromBin != ~0) {
-                        ad2.m_cumAngle = ad.m_cumAngle;
-                        angularDepthCol.setValue(ad2.m_attributeDataRow, float(ad2.m_cumAngle),
+                    if (ad2.visitedFromBin != ~0) {
+                        ad2.cumAngle = ad.cumAngle;
+                        angularDepthCol.setValue(ad2.attributeDataRow, float(ad2.cumAngle),
                                                  keepStats);
-                        extractAngular(graph.at(ad2.m_attributeDataRow), searchList, m_map,
+                        extractAngular(graph.at(ad2.attributeDataRow), searchList, m_map,
                                        AngularSearchData(ad2, here.m_angle, std::nullopt));
-                        ad2.m_visitedFromBin = ~0;
+                        ad2.visitedFromBin = ~0;
                     }
                 }
             }
@@ -127,7 +126,7 @@ class IVGAAngular : public IVGATraversing {
 
         std::set<AngularSearchData> searchList;
         searchList.insert(AngularSearchData(ad0, 0.0f, std::nullopt));
-        ad0.m_cumAngle = 0.0f;
+        ad0.cumAngle = 0.0f;
         while (searchList.size()) {
             auto internalNode = searchList.extract(searchList.begin());
             AngularSearchData here = std::move(internalNode.value());
@@ -136,22 +135,22 @@ class IVGAAngular : public IVGATraversing {
                 break;
             }
             auto &ad1 = here.m_pixel;
-            auto &p = ad1.m_point;
+            auto &p = ad1.point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps'
             // left in
-            if (p.filled() && ad1.m_visitedFromBin != ~0) {
-                extractAngular(graph.at(ad1.m_attributeDataRow), searchList, m_map, here);
-                ad1.m_visitedFromBin = ~0;
+            if (p.filled() && ad1.visitedFromBin != ~0) {
+                extractAngular(graph.at(ad1.attributeDataRow), searchList, m_map, here);
+                ad1.visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
-                    if (ad2.m_visitedFromBin != ~0) {
-                        ad2.m_cumAngle = ad1.m_cumAngle;
-                        extractAngular(graph.at(ad2.m_attributeDataRow), searchList, m_map,
+                    if (ad2.visitedFromBin != ~0) {
+                        ad2.cumAngle = ad1.cumAngle;
+                        extractAngular(graph.at(ad2.attributeDataRow), searchList, m_map,
                                        AngularSearchData(ad2, here.m_angle, std::nullopt));
-                        ad2.m_visitedFromBin = ~0;
+                        ad2.visitedFromBin = ~0;
                     }
                 }
-                totalAngle += ad1.m_cumAngle;
+                totalAngle += ad1.cumAngle;
                 totalNodes += 1;
             }
         }
@@ -170,7 +169,7 @@ class IVGAAngular : public IVGATraversing {
         for (const auto &sourceRef : sourceRefs) {
             auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
             searchList.insert(AngularSearchData(ad, 0.0f, std::nullopt));
-            ad.m_cumAngle = 0.0f;
+            ad.cumAngle = 0.0f;
         }
         // note that m_misc is used in a different manner to analyseGraph / PointDepth
         // here it marks the node as used in calculation only
@@ -181,34 +180,34 @@ class IVGAAngular : public IVGATraversing {
             auto here = std::move(internalNode.value());
 
             auto &ad = here.m_pixel;
-            auto &p = ad.m_point;
+            auto &p = ad.point;
             std::set<AngularSearchData> newPixels;
             std::set<AngularSearchData> mergePixels;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
-            if (p.filled() && ad.m_visitedFromBin != ~0) {
-                extractAngular(graph.at(ad.m_attributeDataRow), newPixels, m_map, here);
-                ad.m_visitedFromBin = ~0;
+            if (p.filled() && ad.visitedFromBin != ~0) {
+                extractAngular(graph.at(ad.attributeDataRow), newPixels, m_map, here);
+                ad.visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
-                    if (ad2.m_visitedFromBin != ~0) {
+                    if (ad2.visitedFromBin != ~0) {
                         auto newTripleIter =
                             newPixels.insert(AngularSearchData(ad2, here.m_angle, std::nullopt));
-                        ad2.m_cumAngle = ad.m_cumAngle;
-                        extractAngular(graph.at(ad2.m_attributeDataRow), mergePixels, m_map,
+                        ad2.cumAngle = ad.cumAngle;
+                        extractAngular(graph.at(ad2.attributeDataRow), mergePixels, m_map,
                                        *newTripleIter.first);
                         for (auto &pixel : mergePixels) {
-                            parents[pixel.m_pixel.m_ref] = p.getMergePixel();
+                            parents[pixel.m_pixel.ref] = p.getMergePixel();
                         }
-                        ad2.m_visitedFromBin = ~0;
+                        ad2.visitedFromBin = ~0;
                     }
                 }
             }
             for (auto &pixel : newPixels) {
-                parents[pixel.m_pixel.m_ref] = here.m_pixel.m_ref;
+                parents[pixel.m_pixel.ref] = here.m_pixel.ref;
             }
             newPixels.insert(mergePixels.begin(), mergePixels.end());
             for (auto &pixel : newPixels) {
-                if (pixel.m_pixel.m_ref == targetRef) {
+                if (pixel.m_pixel.ref == targetRef) {
                     pixelFound = true;
                 }
             }

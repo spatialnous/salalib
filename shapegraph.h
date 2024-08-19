@@ -101,6 +101,6 @@ class ShapeGraph : public ShapeMap {
     auto getKeyVertexCount() { return m_keyvertexcount; }
     auto &getKeyVertices() { return m_keyvertices; }
     auto getShapesAtPixel(PixelRef ref) {
-        return m_pixel_shapes(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x));
+        return m_pixelShapes(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x));
     }
 };

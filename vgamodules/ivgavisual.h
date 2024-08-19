@@ -28,9 +28,9 @@ class IVGAVisual : public IVGATraversing {
         for (auto &conn : conns) {
             auto &ad = std::get<0>(conn).get();
             int binI = std::get<1>(conn);
-            if (ad.m_visitedFromBin == 0) {
+            if (ad.visitedFromBin == 0) {
                 pixels.push_back(conn);
-                ad.m_visitedFromBin |= (1 << binI);
+                ad.visitedFromBin |= (1 << binI);
             }
         }
     }
@@ -57,24 +57,24 @@ class IVGAVisual : public IVGATraversing {
             for (auto currLvlIter = searchTreeAtLevel.rbegin();
                  currLvlIter != searchTreeAtLevel.rend(); currLvlIter++) {
                 auto &ad = std::get<0>(*currLvlIter).get();
-                auto &p = ad.m_point;
-                if (p.filled() && ad.m_visitedFromBin != ~0) {
-                    sd.setValue(ad.m_attributeDataRow, float(level), keepStats);
-                    if (!p.contextfilled() || ad.m_ref.iseven() || level == 0) {
-                        extractUnseen(graph.at(ad.m_attributeDataRow), searchTree[level + 1]);
-                        ad.m_visitedFromBin = ~0;
+                auto &p = ad.point;
+                if (p.filled() && ad.visitedFromBin != ~0) {
+                    sd.setValue(ad.attributeDataRow, float(level), keepStats);
+                    if (!p.contextfilled() || ad.ref.iseven() || level == 0) {
+                        extractUnseen(graph.at(ad.attributeDataRow), searchTree[level + 1]);
+                        ad.visitedFromBin = ~0;
                         if (!p.getMergePixel().empty()) {
                             auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
-                            int &p2misc = ad2.m_visitedFromBin;
+                            int &p2misc = ad2.visitedFromBin;
                             if (p2misc != ~0) {
-                                sd.setValue(ad2.m_attributeDataRow, float(level), keepStats);
-                                extractUnseen(graph.at(ad2.m_attributeDataRow),
+                                sd.setValue(ad2.attributeDataRow, float(level), keepStats);
+                                extractUnseen(graph.at(ad2.attributeDataRow),
                                               searchTree[level + 1]);
                                 p2misc = ~0;
                             }
                         }
                     } else {
-                        ad.m_visitedFromBin = ~0;
+                        ad.visitedFromBin = ~0;
                     }
                 }
             }
@@ -104,26 +104,26 @@ class IVGAVisual : public IVGATraversing {
             for (auto currLvlIter = searchTreeAtLevel.rbegin();
                  currLvlIter != searchTreeAtLevel.rend(); currLvlIter++) {
                 auto &ad3 = std::get<0>(*currLvlIter).get();
-                auto &p = ad3.m_point;
-                if (p.filled() && ad3.m_visitedFromBin != ~0) {
+                auto &p = ad3.point;
+                if (p.filled() && ad3.visitedFromBin != ~0) {
 
                     totalDepth += static_cast<int>(level);
                     totalNodes += 1;
                     distribution.back() += 1;
                     if ((int)radius == -1 || (level < static_cast<size_t>(radius) &&
-                                              (!p.contextfilled() || ad3.m_ref.iseven()))) {
-                        extractUnseen(graph.at(ad3.m_attributeDataRow), searchTree[level + 1]);
-                        ad3.m_visitedFromBin = ~0;
+                                              (!p.contextfilled() || ad3.ref.iseven()))) {
+                        extractUnseen(graph.at(ad3.attributeDataRow), searchTree[level + 1]);
+                        ad3.visitedFromBin = ~0;
                         if (!p.getMergePixel().empty()) {
                             auto &ad4 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
-                            if (ad4.m_visitedFromBin != ~0) {
-                                extractUnseen(graph.at(ad4.m_attributeDataRow),
+                            if (ad4.visitedFromBin != ~0) {
+                                extractUnseen(graph.at(ad4.attributeDataRow),
                                               searchTree[level + 1]);
-                                ad4.m_visitedFromBin = ~0;
+                                ad4.visitedFromBin = ~0;
                             }
                         }
                     } else {
-                        ad3.m_visitedFromBin = ~0;
+                        ad3.visitedFromBin = ~0;
                     }
                 }
                 searchTree[level].pop_back();
@@ -154,35 +154,35 @@ class IVGAVisual : public IVGATraversing {
                 auto &ad = std::get<0>(*iter).get();
                 ADRefVector<AnalysisData> newPixels;
                 ADRefVector<AnalysisData> mergePixels;
-                auto &p = ad.m_point;
-                if (p.filled() && ad.m_visitedFromBin != ~0) {
-                    if (!p.contextfilled() || ad.m_ref.iseven() || level == 0) {
-                        extractUnseen(graph.at(ad.m_attributeDataRow), newPixels);
-                        ad.m_visitedFromBin = ~0;
+                auto &p = ad.point;
+                if (p.filled() && ad.visitedFromBin != ~0) {
+                    if (!p.contextfilled() || ad.ref.iseven() || level == 0) {
+                        extractUnseen(graph.at(ad.attributeDataRow), newPixels);
+                        ad.visitedFromBin = ~0;
                         if (!p.getMergePixel().empty()) {
                             auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
-                            if (ad2.m_visitedFromBin != ~0) {
+                            if (ad2.visitedFromBin != ~0) {
                                 newPixels.push_back({ad2, 0});
-                                extractUnseen(graph.at(ad2.m_attributeDataRow), mergePixels);
+                                extractUnseen(graph.at(ad2.attributeDataRow), mergePixels);
                                 for (auto &pixel : mergePixels) {
-                                    parents[std::get<0>(pixel).get().m_ref] = p.getMergePixel();
+                                    parents[std::get<0>(pixel).get().ref] = p.getMergePixel();
                                 }
-                                ad2.m_visitedFromBin = ~0;
+                                ad2.visitedFromBin = ~0;
                             }
                         }
                     } else {
-                        ad.m_visitedFromBin = ~0;
+                        ad.visitedFromBin = ~0;
                     }
                 }
 
                 for (auto &pixel : newPixels) {
-                    parents[std::get<0>(pixel).get().m_ref] = ad.m_ref;
+                    parents[std::get<0>(pixel).get().ref] = ad.ref;
                 }
                 nextLevelPix.insert(nextLevelPix.end(), newPixels.begin(), newPixels.end());
                 nextLevelPix.insert(nextLevelPix.end(), mergePixels.begin(), mergePixels.end());
             }
             for (auto iter = nextLevelPix.rbegin(); iter != nextLevelPix.rend(); ++iter) {
-                if (std::get<0>(*iter).get().m_ref == targetRef) {
+                if (std::get<0>(*iter).get().ref == targetRef) {
                     pixelFound = true;
                 }
             }

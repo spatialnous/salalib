@@ -42,75 +42,75 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
     if (pixelToParent != parents.end()) {
 
         for (auto &adt : analysisData) {
-            adt.m_visitedFromBin = 0;
-            result.setValue(adt.m_attributeDataRow, distCol, adt.m_dist);
-            adt.m_dist = -1.0f;
+            adt.visitedFromBin = 0;
+            result.setValue(adt.attributeDataRow, distCol, adt.dist);
+            adt.dist = -1.0f;
         }
 
         int counter = 0;
 
         for (const PixelRef &pixelFrom : m_pixelsFrom) {
             auto adt = analysisData.at(getRefIdx(refs, pixelFrom));
-            result.setValue(adt.m_attributeDataRow, distCol, 0);
+            result.setValue(adt.attributeDataRow, distCol, 0);
         }
 
         auto *lad = &analysisData.at(getRefIdx(refs, m_pixelTo));
-        result.setValue(lad->m_attributeDataRow, orderCol, counter);
+        result.setValue(lad->attributeDataRow, orderCol, counter);
 
         counter++;
         auto currParent = pixelToParent;
         counter++;
         while (currParent != parents.end()) {
             auto &ad = analysisData.at(getRefIdx(refs, currParent->second));
-            auto &p = ad.m_point;
-            result.setValue(ad.m_attributeDataRow, orderCol, counter);
+            auto &p = ad.point;
+            result.setValue(ad.attributeDataRow, orderCol, counter);
 
             if (!p.getMergePixel().empty() && p.getMergePixel() == currParent->first) {
-                result.setValue(ad.m_attributeDataRow, linkedCol, 1);
-                result.setValue(lad->m_attributeDataRow, linkedCol, 1);
+                result.setValue(ad.attributeDataRow, linkedCol, 1);
+                result.setValue(lad->attributeDataRow, linkedCol, 1);
             } else {
                 // apparently we can't just have 1 number in the whole column
-                result.setValue(ad.m_attributeDataRow, linkedCol, 0);
+                result.setValue(ad.attributeDataRow, linkedCol, 0);
                 auto pixelated = m_map.quickPixelateLine(currParent->first, currParent->second);
                 for (auto &linePixel : pixelated) {
                     auto *linePixelRow = attributes.getRowPtr(AttributeKey(linePixel));
                     if (linePixelRow != 0) {
                         auto &lpad = analysisData.at(getRefIdx(refs, linePixel));
-                        result.setValue(lpad.m_attributeDataRow, pathCol, linePixelCounter++);
-                        result.setValue(lpad.m_attributeDataRow, visualZoneColIdx, 0);
-                        result.setValue(lpad.m_attributeDataRow, metricZoneColIdx, 0);
-                        result.setValue(lpad.m_attributeDataRow, invMetricZoneColIdx, 1);
+                        result.setValue(lpad.attributeDataRow, pathCol, linePixelCounter++);
+                        result.setValue(lpad.attributeDataRow, visualZoneColIdx, 0);
+                        result.setValue(lpad.attributeDataRow, metricZoneColIdx, 0);
+                        result.setValue(lpad.attributeDataRow, invMetricZoneColIdx, 1);
 
                         std::set<MetricSearchData> newPixels;
-                        extractMetric(graph.at(lpad.m_attributeDataRow), newPixels, m_map,
+                        extractMetric(graph.at(lpad.attributeDataRow), newPixels, m_map,
                                       MetricSearchData(lpad, 0.0f, std::nullopt));
                         for (auto &zonePixel : newPixels) {
-                            auto &zad = zonePixel.m_pixel;
-                            if (result.getValue(zad.m_attributeDataRow, visualZoneColIdx) == -1) {
-                                result.setValue(zad.m_attributeDataRow, visualZoneColIdx,
+                            auto &zad = zonePixel.ad;
+                            if (result.getValue(zad.attributeDataRow, visualZoneColIdx) == -1) {
+                                result.setValue(zad.attributeDataRow, visualZoneColIdx,
                                                 linePixelCounter);
                             }
 
-                            double zoneLineDist = dist(linePixel, zad.m_ref) * m_map.getSpacing();
+                            double zoneLineDist = dist(linePixel, zad.ref) * m_map.getSpacing();
                             {
                                 float currMetricZonePixelVal =
-                                    result.getValue(zad.m_attributeDataRow, metricZoneColIdx);
+                                    result.getValue(zad.attributeDataRow, metricZoneColIdx);
                                 if (currMetricZonePixelVal == -1 ||
                                     zoneLineDist < currMetricZonePixelVal) {
-                                    result.setValue(zad.m_attributeDataRow, metricZoneColIdx,
+                                    result.setValue(zad.attributeDataRow, metricZoneColIdx,
                                                     zoneLineDist);
                                 }
                             }
                             {
                                 float currInvMetricZonePixelVal =
-                                    result.getValue(zad.m_attributeDataRow, invMetricZoneColIdx);
+                                    result.getValue(zad.attributeDataRow, invMetricZoneColIdx);
                                 if (currInvMetricZonePixelVal == -1 ||
                                     1.0f / (zoneLineDist + 1) > currInvMetricZonePixelVal) {
-                                    result.setValue(zad.m_attributeDataRow, invMetricZoneColIdx,
+                                    result.setValue(zad.attributeDataRow, invMetricZoneColIdx,
                                                     1.0f / (zoneLineDist + 1));
                                 }
                             }
-                            zad.m_visitedFromBin = 0;
+                            zad.visitedFromBin = 0;
                         }
                     }
                 }

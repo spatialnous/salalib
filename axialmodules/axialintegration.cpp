@@ -22,7 +22,7 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
             newColumns.push_back(getFormattedColumn( //
                 Column::INTEGRATION, radius, std::nullopt, Normalisation::HH));
 
-            if (m_weighted_measure_col != -1) {
+            if (m_weightedMeasureCol != -1) {
                 newColumns.push_back(getFormattedColumn( //
                     Column::MEAN_DEPTH, radius, weightingColName));
                 newColumns.push_back(getFormattedColumn( //
@@ -51,7 +51,7 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
                     Column::CHOICE, radius));
                 newColumns.push_back(getFormattedColumn( //
                     Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
-                if (m_weighted_measure_col != -1) {
+                if (m_weightedMeasureCol != -1) {
                     newColumns.push_back(getFormattedColumn( //
                         Column::CHOICE, radius, weightingColName));
                     newColumns.push_back(getFormattedColumn( //
@@ -82,7 +82,7 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
                     Column::CHOICE, radius));
                 newColumns.push_back(getFormattedColumn( //
                     Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
-                if (m_weighted_measure_col != -1) {
+                if (m_weightedMeasureCol != -1) {
                     newColumns.push_back(getFormattedColumn( //
                         Column::CHOICE, radius, weightingColName));
                     newColumns.push_back(getFormattedColumn( //
@@ -126,7 +126,7 @@ std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> r
                     Column::RELATIVISED_ENTROPY, radius));
             }
 
-            if (m_weighted_measure_col != -1) {
+            if (m_weightedMeasureCol != -1) {
                 newColumns.push_back(getFormattedColumn( //
                     Column::MEAN_DEPTH, radius, weightingColName));
                 newColumns.push_back(getFormattedColumn( //
@@ -187,16 +187,15 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
 
     AttributeTable &attributes = map.getAttributeTable();
 
-    std::vector<int> radii = getFormattedRadii(m_radius_set);
+    std::vector<int> radii = getFormattedRadii(m_radiusSet);
 
     // retrieve weighted col data, as this may well be overwritten in the new analysis:
     std::vector<double> weights;
     std::string weightingColText;
-    if (m_weighted_measure_col != -1) {
-        weightingColText = attributes.getColumnName(m_weighted_measure_col);
+    if (m_weightedMeasureCol != -1) {
+        weightingColText = attributes.getColumnName(m_weightedMeasureCol);
         for (size_t i = 0; i < map.getShapeCount(); i++) {
-            weights.push_back(
-                map.getAttributeRowFromShapeIndex(i).getValue(m_weighted_measure_col));
+            weights.push_back(map.getAttributeRowFromShapeIndex(i).getValue(m_weightedMeasureCol));
         }
     }
 
@@ -219,7 +218,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 attributes, Column::CHOICE, radius));
             nChoiceCol.push_back(getFormattedColumnIdx( //
                 attributes, Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
-            if (m_weighted_measure_col != -1) {
+            if (m_weightedMeasureCol != -1) {
                 wChoiceCol.push_back(getFormattedColumnIdx( //
                     attributes, Column::CHOICE, radius, weightingColText));
                 nwChoiceCol.push_back(getFormattedColumnIdx( //
@@ -255,7 +254,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 attributes, Column::RELATIVISED_ENTROPY, radius));
         }
 
-        if (m_weighted_measure_col != -1) {
+        if (m_weightedMeasureCol != -1) {
             wDepthCol.push_back(getFormattedColumnIdx( //
                 attributes, Column::MEAN_DEPTH, radius, weightingColText, std::nullopt));
             totalWeightCol.push_back(getFormattedColumnIdx( //
@@ -315,7 +314,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         int totalDepth = 0, depth = 1, nodeCount = 1, pos = -1,
             previous = -1; // node_count includes this 1
         double weight = 0.0, rootweight = 0.0, totalWeight = 0.0, wTotalDepth = 0.0;
-        if (m_weighted_measure_col != -1) {
+        if (m_weightedMeasureCol != -1) {
             rootweight = weights[i];
             // include this line in total weights (as per nodecount)
             totalWeight += rootweight;
@@ -339,7 +338,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                     if (!covered[line.connections[k]]) {
                         covered[line.connections[k]] = true;
                         foundlist.b().push_back(std::pair<int, int>(line.connections[k], index));
-                        if (m_weighted_measure_col != -1) {
+                        if (m_weightedMeasureCol != -1) {
                             // the weight is taken from the discovered node:
                             weight = weights[line.connections[k]];
                             totalWeight += weight;
@@ -358,7 +357,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                                            .ref; // <- note, just using 0th position: radius for
                                                  // the previous doesn't matter in this analysis
                             }
-                            if (m_weighted_measure_col != -1) {
+                            if (m_weightedMeasureCol != -1) {
                                 // in weighted choice, root node and current node receive values:
                                 audittrail[i][r].weightedChoice += (weight * rootweight) * 0.5;
                                 audittrail[line.connections[k]][r].weightedChoice +=
@@ -385,7 +384,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
             }
             // set the attributes for this node:
             row.setValue(countCol[r], float(nodeCount));
-            if (m_weighted_measure_col != -1) {
+            if (m_weightedMeasureCol != -1) {
                 row.setValue(totalWeightCol[r], float(totalWeight));
             }
             // node count > 1 to avoid divide by zero (was > 2)
@@ -394,7 +393,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 // Space
                 double meanDepth = double(totalDepth) / double(nodeCount - 1);
                 row.setValue(depthCol[r], float(meanDepth));
-                if (m_weighted_measure_col != -1) {
+                if (m_weightedMeasureCol != -1) {
                     // weighted mean depth:
                     row.setValue(wDepthCol[r], float(wTotalDepth / totalWeight));
                 }
@@ -524,14 +523,14 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 // routes)
                 double nodeCount = row.getValue(countCol[r]);
                 double totalWeight = 0;
-                if (m_weighted_measure_col != -1) {
+                if (m_weightedMeasureCol != -1) {
                     totalWeight = row.getValue(totalWeightCol[r]);
                 }
                 if (nodeCount > 2) {
                     row.setValue(choiceCol[r], float(totalChoice));
                     row.setValue(nChoiceCol[r],
                                  float(2.0 * totalChoice / ((nodeCount - 1) * (nodeCount - 2))));
-                    if (m_weighted_measure_col != -1) {
+                    if (m_weightedMeasureCol != -1) {
                         row.setValue(wChoiceCol[r], float(wTotalChoice));
                         row.setValue(nwChoiceCol[r],
                                      float(2.0 * wTotalChoice / (totalWeight * totalWeight)));
@@ -539,7 +538,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 } else {
                     row.setValue(choiceCol[r], -1);
                     row.setValue(nChoiceCol[r], -1);
-                    if (m_weighted_measure_col != -1) {
+                    if (m_weightedMeasureCol != -1) {
                         row.setValue(wChoiceCol[r], -1);
                         row.setValue(nwChoiceCol[r], -1);
                     }

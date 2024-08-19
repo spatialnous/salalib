@@ -12,11 +12,11 @@
 #include <fstream>
 
 AgentProgram::AgentProgram() {
-    m_sel_type = SEL_LOS;
-    m_steps = 3;
-    m_vbin = 7;
-    m_destination_directed = false;
-    m_los_sqrd = false;
+    selType = SEL_LOS;
+    steps = 3;
+    vbin = 7;
+    destinationDirected = false;
+    losSqrd = false;
 }
 
 void AgentProgram::mutate() {
@@ -24,25 +24,25 @@ void AgentProgram::mutate() {
     if (pafmath::pafrand() % 20 == 0) {
         // rule order relies on putting rules into slots:
         for (int i = 0; i < 4; i++) {
-            m_rule_order[i] = -1;
+            ruleOrder[i] = -1;
         }
         for (int j = 0; j < 4; j++) {
             int choice = pafmath::pafrand() % (4 - j);
             for (int k = 0; k < choice + 1; k++) {
-                if (m_rule_order[k] != -1) {
+                if (ruleOrder[k] != -1) {
                     choice++;
                 }
             }
-            m_rule_order[choice] = j;
+            ruleOrder[choice] = j;
         }
     }
     // mutate the rule threshold / probabilities
     for (int i = 0; i < 4; i++) {
         if (pafmath::pafrand() % 20 == 0) { // 5% mutation rate
-            m_rule_threshold[i] = float(pafmath::prandom() * 100.0);
+            ruleThreshold[i] = float(pafmath::prandom() * 100.0);
         }
         if (pafmath::pafrand() % 20 == 0) { // 5% mutation rate
-            m_rule_probability[i] = float(pafmath::prandom());
+            ruleProbability[i] = float(pafmath::prandom());
         }
     }
 }
@@ -53,24 +53,24 @@ AgentProgram crossover(const AgentProgram &prog_a, const AgentProgram &prog_b) {
     // either one rule priority order or the other (don't try to mix!)
     if (pafmath::pafrand() % 2) {
         for (int i = 0; i < 4; i++) {
-            child.m_rule_order[i] = prog_a.m_rule_order[i];
+            child.ruleOrder[i] = prog_a.ruleOrder[i];
         }
     } else {
         for (int i = 0; i < 4; i++) {
-            child.m_rule_order[i] = prog_b.m_rule_order[i];
+            child.ruleOrder[i] = prog_b.ruleOrder[i];
         }
     }
     // for each rule, either one rule threshold / probability or the other:
     for (int i = 0; i < 4; i++) {
         if (pafmath::pafrand() % 2) {
-            child.m_rule_threshold[i] = prog_a.m_rule_threshold[i];
+            child.ruleThreshold[i] = prog_a.ruleThreshold[i];
         } else {
-            child.m_rule_threshold[i] = prog_b.m_rule_threshold[i];
+            child.ruleThreshold[i] = prog_b.ruleThreshold[i];
         }
         if (pafmath::pafrand() % 2) {
-            child.m_rule_probability[i] = prog_a.m_rule_probability[i];
+            child.ruleProbability[i] = prog_a.ruleProbability[i];
         } else {
-            child.m_rule_probability[i] = prog_b.m_rule_probability[i];
+            child.ruleProbability[i] = prog_b.ruleProbability[i];
         }
     }
 
@@ -83,7 +83,7 @@ void AgentProgram::save(const std::string &filename) {
     std::ofstream file(filename.c_str());
 
     file << "Destination selection: ";
-    switch (m_sel_type) {
+    switch (selType) {
     case SEL_STANDARD:
         file << "Standard" << std::endl;
         break;
@@ -103,18 +103,18 @@ void AgentProgram::save(const std::string &filename) {
         file << "Unknown" << std::endl;
     }
 
-    file << "Steps: " << m_steps << std::endl;
-    file << "Bins: " << ((m_vbin == -1) ? 32 : m_vbin * 2 + 1) << std::endl;
-    file << "Rule order: " << m_rule_order[0] << " " << m_rule_order[1] << " " << m_rule_order[2]
-         << " " << m_rule_order[3] << std::endl;
+    file << "Steps: " << steps << std::endl;
+    file << "Bins: " << ((vbin == -1) ? 32 : vbin * 2 + 1) << std::endl;
+    file << "Rule order: " << ruleOrder[0] << " " << ruleOrder[1] << " " << ruleOrder[2] << " "
+         << ruleOrder[3] << std::endl;
 
     for (int i = 0; i < 4; i++) {
         file << "Rule " << i << " (Bin -" << 1 + (i * 2) << "/+" << 1 + (i * 2) << ")" << std::endl;
-        file << "Threshold: " << m_rule_threshold[i] << std::endl;
-        file << "Turn Probability: " << m_rule_probability[i] << std::endl;
+        file << "Threshold: " << ruleThreshold[i] << std::endl;
+        file << "Turn Probability: " << ruleProbability[i] << std::endl;
     }
 
-    file << "Fitness: " << m_fitness << std::endl;
+    file << "Fitness: " << fitness << std::endl;
 }
 
 bool AgentProgram::open(const std::string &filename) {
@@ -132,15 +132,15 @@ bool AgentProgram::open(const std::string &filename) {
             dXstring::ltrim(method);
             if (!method.empty()) {
                 if (method == "standard") {
-                    m_sel_type = SEL_STANDARD;
+                    selType = SEL_STANDARD;
                 } else if (method == "gibsonian length") {
-                    m_sel_type = SEL_LENGTH;
+                    selType = SEL_LENGTH;
                 } else if (method == "gibsonian optic flow") {
-                    m_sel_type = SEL_OPTIC_FLOW;
+                    selType = SEL_OPTIC_FLOW;
                 } else if (method == "gibsonian comparative length") {
-                    m_sel_type = SEL_COMPARATIVE_LENGTH;
+                    selType = SEL_COMPARATIVE_LENGTH;
                 } else if (method == "gibsonian comparative optic flow") {
-                    m_sel_type = SEL_COMPARATIVE_OPTIC_FLOW;
+                    selType = SEL_COMPARATIVE_OPTIC_FLOW;
                 }
                 file >> line;
             } else {
@@ -159,7 +159,7 @@ bool AgentProgram::open(const std::string &filename) {
         if (line.substr(0, 6) == "steps:") {
             std::string steps = line.substr(6);
             dXstring::ltrim(steps);
-            m_steps = stoi(steps);
+            steps = stoi(steps);
             file >> line;
             foundsteps = true;
         }
@@ -174,16 +174,16 @@ bool AgentProgram::open(const std::string &filename) {
             dXstring::ltrim(bins);
             int binx = stoi(bins);
             if (binx == 32) {
-                m_vbin = -1;
+                vbin = -1;
             } else {
-                m_vbin = (atoi(bins.c_str()) - 1) / 2;
+                vbin = (atoi(bins.c_str()) - 1) / 2;
             }
             file >> line;
             foundbins = true;
         }
     }
 
-    if (m_sel_type == SEL_STANDARD) {
+    if (selType == SEL_STANDARD) {
         if (foundbins && foundsteps) {
             return true;
         } else {
@@ -201,7 +201,7 @@ bool AgentProgram::open(const std::string &filename) {
                 return false;
             }
             for (int i = 0; i < 4; i++) {
-                m_rule_order[i] = stoi(orders[i]);
+                ruleOrder[i] = stoi(orders[i]);
             }
             file >> line;
         } else {
@@ -220,7 +220,7 @@ bool AgentProgram::open(const std::string &filename) {
             if (line.substr(0, 10) == "threshold:") {
                 auto threshold = line.substr(10);
                 dXstring::ltrim(threshold);
-                m_rule_threshold[i] = stof(threshold);
+                ruleThreshold[i] = stof(threshold);
                 file >> line;
             } else {
                 return false;
@@ -229,7 +229,7 @@ bool AgentProgram::open(const std::string &filename) {
             if (line.substr(0, 17) == "turn probability:") {
                 auto prob = line.substr(17);
                 dXstring::ltrim(prob);
-                m_rule_probability[i] = stof(prob);
+                ruleProbability[i] = stof(prob);
                 file >> line;
             } else {
                 return false;

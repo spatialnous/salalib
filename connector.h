@@ -18,10 +18,7 @@ struct SegmentRef {
     char pad1 : 8;
     short pad2 : 16;
     int ref;
-    SegmentRef(char d = 0, int r = -1) : pad1(0), pad2(0) {
-        dir = d;
-        ref = r;
-    }
+    SegmentRef(char d = 0, int r = -1) : dir(d), pad1(0), pad2(0), ref(r) {}
 };
 // note, the dir is only a direction indicator, the ref should always be unique
 inline bool operator<(SegmentRef a, SegmentRef b) { return a.ref < b.ref; }
@@ -36,22 +33,14 @@ struct SegmentData : public SegmentRef {
     float metricdepth;
     unsigned int coverage;
     SegmentData(char d = 0, int r = -1, SegmentRef p = SegmentRef(), int sd = 0, float md = 0.0f,
-                unsigned int cv = 0xffffffff) {
+                unsigned int cv = 0xffffffff)
+        : previous(p), segdepth(sd), metricdepth(md), coverage(cv) {
         dir = d;
         ref = r;
-        previous = p;
-        segdepth = sd;
-        metricdepth = md;
-        coverage = cv;
     }
     SegmentData(SegmentRef ref, SegmentRef p = SegmentRef(), int sd = 0, float md = 0.0f,
                 unsigned int cv = 0xffffffff)
-        : SegmentRef(ref) {
-        previous = p;
-        segdepth = sd;
-        metricdepth = md;
-        coverage = cv;
-    }
+        : SegmentRef(ref), previous(p), segdepth(sd), metricdepth(md), coverage(cv) {}
     friend bool operator<(SegmentData a, SegmentData b);
     friend bool operator>(SegmentData a, SegmentData b);
     friend bool operator==(SegmentData a, SegmentData b);
@@ -77,7 +66,7 @@ struct Connector {
     std::map<SegmentRef, float> backSegconns;
     std::map<SegmentRef, float> forwardSegconns;
     //
-    Connector(int axialref = -1) { segmentAxialref = axialref; }
+    Connector(int axialref = -1) : segmentAxialref(axialref) {}
     void clear() {
         connections.clear();
         backSegconns.clear();

@@ -14,11 +14,8 @@ class VGAIsovistZone : public IAnalysis {
         float dist;
         PixelRef pixel;
         PixelRef lastpixel;
-        MetricTriple(float d = 0.0f, PixelRef p = NoPixel, PixelRef lp = NoPixel) {
-            dist = d;
-            pixel = p;
-            lastpixel = lp;
-        }
+        MetricTriple(float d = 0.0f, PixelRef p = NoPixel, PixelRef lp = NoPixel)
+            : dist(d), pixel(p), lastpixel(lp) {}
         inline bool operator==(const MetricTriple &mp2) const {
             return (dist == mp2.dist && pixel == mp2.pixel);
         }

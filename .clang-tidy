@@ -1,6 +1,6 @@
-Checks:                       'readability-identifier-naming'
+Checks:                       'readability-identifier-naming,clang-analyzer-*,modernize-use-override, cppcoreguidelines-prefer-member-initializer, -cppcoreguidelines-*, modernize-use-nullptr'
 WarningsAsErrors:             '*'
-HeaderFilterRegex:            ''
+HeaderFilterRegex:            '.*'
 CheckOptions:
   - key:             readability-identifier-naming.LocalVariableCase
     value:           'camelBack'

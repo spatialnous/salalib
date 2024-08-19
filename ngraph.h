@@ -42,12 +42,7 @@ class Bin {
   public:
     char dir;
     std::vector<PixelVec> pixelVecs;
-    Bin() {
-        dir = PixelRef::NODIR;
-        m_nodeCount = 0;
-        m_distance = 0.0f;
-        m_occDistance = 0.0f;
-    }
+    Bin() : m_nodeCount(0), m_distance(0.0f), m_occDistance(0.0f), dir(PixelRef::NODIR) {}
     //
     void make(const PixelRefVector &pixels, char onDir);
 
@@ -95,7 +90,7 @@ class Node {
     //
     void setPixel(const PixelRef &pixel) { m_pixel = pixel; }
     //
-    const Bin &bin(int i) const { return m_bins[i]; }
+    const Bin &bin(const int i) const { return m_bins[i]; }
     Bin &bin(int i) { return m_bins[i]; }
     //
     int count() {

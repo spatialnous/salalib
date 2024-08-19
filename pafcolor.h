@@ -36,17 +36,15 @@ struct PafColor {
     float redf() const { return float(redb()) / 255.0f; }
     float greenf() const { return float(greenb()) / 255.0f; }
     float bluef() const { return float(blueb()) / 255.0f; }
-    PafColor() { color = 0x00000000; }
-    PafColor(unsigned int rgb) // color in 0x00rrggbb format
-    {
-        color = 0xff000000 | rgb;
-    }
-    PafColor(double r, double g, double b, double a = 1.0) {
-        color = static_cast<unsigned int>(0x00000000 | (((unsigned char)(a * 255.0)) << 24) |
+    PafColor() : color(0x00000000) {}
+    PafColor(unsigned int rgb)
+        : color(0xff000000 | rgb) // color in 0x00rrggbb format
+    {}
+    PafColor(double r, double g, double b, double a = 1.0)
+        : color(static_cast<unsigned int>(0x00000000 | (((unsigned char)(a * 255.0)) << 24) |
                                           (((unsigned char)(r * 255.0)) << 16) |
                                           (((unsigned char)(g * 255.0)) << 8) |
-                                          (((unsigned char)(b * 255.0))));
-    }
+                                          (((unsigned char)(b * 255.0))))) {}
 
     PafColor(const Point2f &vec, double a = 1.0) {
         color = static_cast<unsigned int>(

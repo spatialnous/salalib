@@ -36,7 +36,7 @@ class TigerMap {
 
   public:
     std::map<std::string, TigerCategory> categories;
-    TigerMap() { m_init = false; }
+    TigerMap() : m_init(false) {}
 
     void parse(const std::vector<std::string> &fileset, Communicator *communicator);
 

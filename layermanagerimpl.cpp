@@ -67,12 +67,12 @@ void LayerManagerImpl::read(std::istream &stream) {
     m_layerLookup.clear();
     m_layers.clear();
     KeyType dummy;
-    stream.read((char *)&dummy, sizeof(dummy));
-    stream.read((char *)&m_visibleLayers, sizeof(m_visibleLayers));
+    stream.read(reinterpret_cast<char *>(&dummy), sizeof(dummy));
+    stream.read(reinterpret_cast<char *>(&m_visibleLayers), sizeof(m_visibleLayers));
     int count;
-    stream.read((char *)&count, sizeof(int));
+    stream.read(reinterpret_cast<char *>(&count), sizeof(int));
     for (int i = 0; i < count; ++i) {
-        stream.read((char *)&dummy, sizeof(dummy));
+        stream.read(reinterpret_cast<char *>(&dummy), sizeof(dummy));
         m_layers.push_back(dXstring::readString(stream));
         m_layerLookup[m_layers.back()] = i;
     }

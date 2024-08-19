@@ -18,15 +18,10 @@ static int compareValueTriplet(const void *p1, const void *p2) {
 }
 
 AxialMinimiser::AxialMinimiser(const ShapeGraph &alllinemap, int no_of_axsegcuts,
-                               int no_of_radialsegs) {
-    m_alllinemap = (ShapeGraph *)&alllinemap;
-
-    m_vps = new ValueTriplet[no_of_axsegcuts];
-    m_removed = new bool[no_of_axsegcuts];
-    m_affected = new bool[no_of_axsegcuts];
-    m_vital = new bool[no_of_axsegcuts];
-    m_radialsegcounts = new int[no_of_radialsegs];
-}
+                               int no_of_radialsegs)
+    : m_alllinemap((ShapeGraph *)&alllinemap), m_vps(new ValueTriplet[no_of_axsegcuts]),
+      m_removed(new bool[no_of_axsegcuts]), m_affected(new bool[no_of_axsegcuts]),
+      m_vital(new bool[no_of_axsegcuts]), m_radialsegcounts(new int[no_of_radialsegs]) {}
 
 AxialMinimiser::~AxialMinimiser() {
     delete[] m_vital;

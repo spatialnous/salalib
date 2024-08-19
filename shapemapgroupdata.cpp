@@ -12,7 +12,7 @@
 
 bool ShapeMapGroupData::readInNameAndRegion(std::istream &stream) {
     name = dXstring::readString(stream);
-    stream.read((char *)&region, sizeof(region));
+    stream.read(reinterpret_cast<char *>(&region), sizeof(region));
     if (name.empty()) {
         name = "<unknown>";
     }
@@ -24,7 +24,7 @@ ShapeMapGroupData::readSpacePixels(std::istream &stream) {
     std::vector<ShapeMap> spacePixels;
     std::vector<std::tuple<bool, bool, int>> displayData;
     int count;
-    stream.read((char *)&count, sizeof(count));
+    stream.read(reinterpret_cast<char *>(&count), sizeof(count));
     for (int i = 0; i < count; i++) {
         spacePixels.emplace_back();
         auto [completed, editable, shown, displayedAttribute] = spacePixels.back().read(stream);
@@ -35,6 +35,6 @@ ShapeMapGroupData::readSpacePixels(std::istream &stream) {
 
 bool ShapeMapGroupData::writeOutNameAndRegion(std::ostream &stream) const {
     dXstring::writeString(stream, name);
-    stream.write((char *)&region, sizeof(region));
+    stream.write(reinterpret_cast<const char *>(&region), sizeof(region));
     return true;
 }

@@ -375,12 +375,10 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
 
 ///////////////////////////////////////////////////////////////////////
 
-MapInfoData::MapInfoData() {
-    m_version = "Version 300";
-    m_charset = "Charset \"WindowsLatin1\"";
-    m_delimiter = ',';
-    m_index = "Index 1";
-    m_coordsys = "CoordSys NonEarth Units \"m\" ";
+MapInfoData::MapInfoData()
+    : m_version("Version 300"), m_charset("Charset \"WindowsLatin1\""), m_delimiter(','),
+      m_index("Index 1"), m_coordsys("CoordSys NonEarth Units \"m\" ") {
+
     // note: m_bounds is filled in later
 }
 
@@ -551,11 +549,11 @@ std::ostream &MapInfoData::write(std::ostream &stream) const {
     // No longer used as of VERSION_MAPINFO_SHAPES
     int columns = m_columnheads.size();
     int rows = m_table.size();
-    stream.write((char *)&columns, sizeof(columns));
+    stream.write(reinterpret_cast<const char *>(&columns), sizeof(columns));
     for (int i = 0; i < m_columnheads.size(); i++) {
        m_columnheads[i].write(stream);
     }
-    stream.write((char *)&rows, sizeof(rows));
+    stream.write(reinterpret_cast<const char *>(&rows), sizeof(rows));
     for (int j = 0; j < m_table.size(); j++) {
        m_table[j].write(stream);
     }

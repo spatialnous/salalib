@@ -118,7 +118,7 @@ class ShapeMap : public AttributeMap {
     ShapeMap(const ShapeMap &) = delete;
     ShapeMap &operator=(const ShapeMap &other) = delete;
 
-    virtual ~ShapeMap() = default;
+    ~ShapeMap() override = default;
 
     // TODO: These three functions should be refactored out of the code as much as possible
     // they are only left here because they're being used by various components that still
@@ -328,7 +328,7 @@ class ShapeMap : public AttributeMap {
     const std::map<int, SalaShape> &getAllShapes() const { return m_shapes; }
     std::map<int, SalaShape> &getAllShapes() { return m_shapes; }
     // required for PixelBase, have to implement your own version of pixelate
-    PixelRef pixelate(const Point2f &p, bool constrain = true, int = 1) const;
+    PixelRef pixelate(const Point2f &p, bool constrain = true, int = 1) const override;
     //
   public:
     // file

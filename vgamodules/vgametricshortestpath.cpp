@@ -74,7 +74,7 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
                 auto pixelated = m_map.quickPixelateLine(currParent->first, currParent->second);
                 for (auto &linePixel : pixelated) {
                     auto *linePixelRow = attributes.getRowPtr(AttributeKey(linePixel));
-                    if (linePixelRow != 0) {
+                    if (linePixelRow != nullptr) {
                         auto &lpad = analysisData.at(getRefIdx(refs, linePixel));
                         result.setValue(lpad.attributeDataRow, pathCol, linePixelCounter++);
                         result.setValue(lpad.attributeDataRow, visualZoneColIdx, 0);

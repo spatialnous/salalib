@@ -15,10 +15,10 @@ class BSPNodeTree {
     bool m_built = false;
 
   public:
-    BSPNodeTree() {
-        m_root = nullptr;
-        m_built = false;
-    };
+    BSPNodeTree()
+        : m_root(nullptr), m_built(false){
+
+                           };
     void resetBSPtree() { m_built = false; }
     void destroy() {
         if (m_root) {

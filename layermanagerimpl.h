@@ -14,18 +14,18 @@ class LayerManagerImpl : public LayerManager {
     // LayerManager interface
   public:
     LayerManagerImpl();
-    virtual size_t addLayer(const std::string &layerName);
-    virtual const std::string &getLayerName(size_t index) const;
-    virtual size_t getLayerIndex(const std::string &layerName) const;
-    virtual void setLayerVisible(size_t layerIndex, bool visible);
-    virtual bool isLayerVisible(size_t layerIndex) const;
-    virtual size_t getNumLayers() const { return m_layers.size(); }
+    size_t addLayer(const std::string &layerName) override;
+    const std::string &getLayerName(size_t index) const override;
+    size_t getLayerIndex(const std::string &layerName) const override;
+    void setLayerVisible(size_t layerIndex, bool visible) override;
+    bool isLayerVisible(size_t layerIndex) const override;
+    size_t getNumLayers() const override { return m_layers.size(); }
 
-    virtual KeyType getKey(size_t layerIndex) const;
-    virtual bool isVisible(const KeyType &key) const;
+    KeyType getKey(size_t layerIndex) const override;
+    bool isVisible(const KeyType &key) const override;
 
-    virtual void read(std::istream &stream);
-    virtual void write(std::ostream &stream) const;
+    void read(std::istream &stream) override;
+    void write(std::ostream &stream) const override;
 
   private:
     void checkIndex(size_t index) const;

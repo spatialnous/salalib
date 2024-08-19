@@ -24,22 +24,13 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 PointMap::PointMap(const QtRegion &parentRegion, const std::string &name)
-    : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())),
-      m_parentRegion(&parentRegion), m_points(0, 0) {
-    m_name = name;
+    : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())), m_name(name),
+      m_parentRegion(&parentRegion), m_points(0, 0), m_filledPointCount(0), m_spacing(0.0),
+      m_initialised(false), m_blockedlines(false), m_processed(false), m_boundarygraph(false),
+      m_undocounter(0) {
 
     m_cols = 0;
     m_rows = 0;
-    m_filledPointCount = 0;
-
-    m_spacing = 0.0;
-
-    m_initialised = false;
-    m_blockedlines = false;
-    m_processed = false;
-    m_boundarygraph = false;
-
-    m_undocounter = 0;
 }
 
 void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattributes) {
@@ -758,7 +749,7 @@ bool PointMap::blockedAdjacent(const PixelRef p) const {
 bool PointMap::readMetadata(std::istream &stream) {
     m_name = dXstring::readString(stream);
 
-    stream.read((char *)&m_spacing, sizeof(m_spacing));
+    stream.read(reinterpret_cast<char *>(&m_spacing), sizeof(m_spacing));
 
     int rows, cols;
     stream.read(reinterpret_cast<char *>(&rows), sizeof(rows));
@@ -766,9 +757,9 @@ bool PointMap::readMetadata(std::istream &stream) {
     m_rows = static_cast<size_t>(rows);
     m_cols = static_cast<size_t>(cols);
 
-    stream.read((char *)&m_filledPointCount, sizeof(m_filledPointCount));
+    stream.read(reinterpret_cast<char *>(&m_filledPointCount), sizeof(m_filledPointCount));
 
-    stream.read((char *)&m_bottomLeft, sizeof(m_bottomLeft));
+    stream.read(reinterpret_cast<char *>(&m_bottomLeft), sizeof(m_bottomLeft));
 
     m_region = QtRegion(Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
                         Point2f(m_bottomLeft.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
@@ -812,8 +803,8 @@ bool PointMap::readPointsAndAttributes(std::istream &stream) {
     m_initialised = true;
     m_blockedlines = false;
 
-    stream.read((char *)&m_processed, sizeof(m_processed));
-    stream.read((char *)&m_boundarygraph, sizeof(m_boundarygraph));
+    stream.read(reinterpret_cast<char *>(&m_processed), sizeof(m_processed));
+    stream.read(reinterpret_cast<char *>(&m_boundarygraph), sizeof(m_boundarygraph));
     return true;
 }
 
@@ -824,7 +815,7 @@ std::tuple<bool, int> PointMap::read(std::istream &stream) {
     // instead construct another read/write function for a GUI using
     // the functions above and below
     int displayedAttribute;
-    stream.read((char *)&displayedAttribute, sizeof(displayedAttribute));
+    stream.read(reinterpret_cast<char *>(&displayedAttribute), sizeof(displayedAttribute));
 
     read = read && readPointsAndAttributes(stream);
 
@@ -834,16 +825,16 @@ std::tuple<bool, int> PointMap::read(std::istream &stream) {
 bool PointMap::writeMetadata(std::ostream &stream) const {
     dXstring::writeString(stream, m_name);
 
-    stream.write((char *)&m_spacing, sizeof(m_spacing));
+    stream.write(reinterpret_cast<const char *>(&m_spacing), sizeof(m_spacing));
 
     int rows = static_cast<int>(m_rows);
     int cols = static_cast<int>(m_cols);
     stream.write(reinterpret_cast<char *>(&rows), sizeof(rows));
     stream.write(reinterpret_cast<char *>(&cols), sizeof(cols));
 
-    stream.write((char *)&m_filledPointCount, sizeof(m_filledPointCount));
+    stream.write(reinterpret_cast<const char *>(&m_filledPointCount), sizeof(m_filledPointCount));
 
-    stream.write((char *)&m_bottomLeft, sizeof(m_bottomLeft));
+    stream.write(reinterpret_cast<const char *>(&m_bottomLeft), sizeof(m_bottomLeft));
     return true;
 }
 
@@ -855,15 +846,15 @@ bool PointMap::writePointsAndAttributes(std::ostream &stream) const {
         point.write(stream);
     }
 
-    stream.write((char *)&m_processed, sizeof(m_processed));
-    stream.write((char *)&m_boundarygraph, sizeof(m_boundarygraph));
+    stream.write(reinterpret_cast<const char *>(&m_processed), sizeof(m_processed));
+    stream.write(reinterpret_cast<const char *>(&m_boundarygraph), sizeof(m_boundarygraph));
     return true;
 }
 
 bool PointMap::write(std::ostream &stream, int displayedAttribute) const {
     bool written = writeMetadata(stream);
 
-    stream.write((char *)&displayedAttribute, sizeof(displayedAttribute));
+    stream.write(reinterpret_cast<const char *>(&displayedAttribute), sizeof(displayedAttribute));
 
     written = written && writePointsAndAttributes(stream);
     return written;

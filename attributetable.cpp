@@ -57,18 +57,18 @@ void AttributeColumnImpl::setName(const std::string &name) { m_name = name; }
 size_t AttributeColumnImpl::read(std::istream &stream) {
     m_name = dXstring::readString(stream);
     float val;
-    stream.read((char *)&val, sizeof(float));
+    stream.read(reinterpret_cast<char *>(&val), sizeof(float));
     stats.min = val;
-    stream.read((char *)&val, sizeof(float));
+    stream.read(reinterpret_cast<char *>(&val), sizeof(float));
     stats.max = val;
-    stream.read((char *)&stats.total, sizeof(double));
+    stream.read(reinterpret_cast<char *>(&stats.total), sizeof(double));
     int physicalColumn;
-    stream.read((char *)&physicalColumn,
+    stream.read(reinterpret_cast<char *>(&physicalColumn),
                 sizeof(int)); // physical column is obsolete
-    stream.read((char *)&m_hidden, sizeof(bool));
-    stream.read((char *)&m_locked, sizeof(bool));
+    stream.read(reinterpret_cast<char *>(&m_hidden), sizeof(bool));
+    stream.read(reinterpret_cast<char *>(&m_locked), sizeof(bool));
 
-    stream.read((char *)&m_displayParams, sizeof(DisplayParams));
+    stream.read(reinterpret_cast<char *>(&m_displayParams), sizeof(DisplayParams));
     m_formula = dXstring::readString(stream);
     return static_cast<size_t>(physicalColumn);
 }
@@ -77,13 +77,13 @@ void AttributeColumnImpl::write(std::ostream &stream, int physicalCol) {
     dXstring::writeString(stream, m_name);
     float min = (float)stats.min;
     float max = (float)stats.max;
-    stream.write((char *)&min, sizeof(float));
-    stream.write((char *)&max, sizeof(float));
-    stream.write((char *)&stats.total, sizeof(stats.total));
-    stream.write((char *)&physicalCol, sizeof(int));
-    stream.write((char *)&m_hidden, sizeof(bool));
-    stream.write((char *)&m_locked, sizeof(bool));
-    stream.write((char *)&m_displayParams, sizeof(DisplayParams));
+    stream.write(reinterpret_cast<const char *>(&min), sizeof(float));
+    stream.write(reinterpret_cast<const char *>(&max), sizeof(float));
+    stream.write(reinterpret_cast<const char *>(&stats.total), sizeof(stats.total));
+    stream.write(reinterpret_cast<const char *>(&physicalCol), sizeof(int));
+    stream.write(reinterpret_cast<const char *>(&m_hidden), sizeof(bool));
+    stream.write(reinterpret_cast<const char *>(&m_locked), sizeof(bool));
+    stream.write(reinterpret_cast<const char *>(&m_displayParams), sizeof(DisplayParams));
     dXstring::writeString(stream, m_formula);
 }
 
@@ -131,12 +131,12 @@ void AttributeRowImpl::removeColumn(size_t index) {
 }
 
 void AttributeRowImpl::read(std::istream &stream) {
-    stream.read((char *)&m_layerKey, sizeof(m_layerKey));
+    stream.read(reinterpret_cast<char *>(&m_layerKey), sizeof(m_layerKey));
     dXreadwrite::readIntoVector(stream, m_data);
 }
 
 void AttributeRowImpl::write(std::ostream &stream) {
-    stream.write((char *)&m_layerKey, sizeof(m_layerKey));
+    stream.write(reinterpret_cast<const char *>(&m_layerKey), sizeof(m_layerKey));
     dXreadwrite::writeVector(stream, m_data);
 }
 
@@ -303,7 +303,7 @@ void AttributeTable::setDisplayParamsForAllAttributes(const DisplayParams &param
 void AttributeTable::read(std::istream &stream, LayerManager &layerManager) {
     layerManager.read(stream);
     int colcount;
-    stream.read((char *)&colcount, sizeof(colcount));
+    stream.read(reinterpret_cast<char *>(&colcount), sizeof(colcount));
     std::map<size_t, AttributeColumnImpl> tmp;
     for (int j = 0; j < colcount; j++) {
         AttributeColumnImpl col("");
@@ -316,22 +316,22 @@ void AttributeTable::read(std::istream &stream, LayerManager &layerManager) {
     }
 
     int rowcount, rowkey;
-    stream.read((char *)&rowcount, sizeof(rowcount));
+    stream.read(reinterpret_cast<char *>(&rowcount), sizeof(rowcount));
     for (int i = 0; i < rowcount; i++) {
-        stream.read((char *)&rowkey, sizeof(rowkey));
+        stream.read(reinterpret_cast<char *>(&rowkey), sizeof(rowkey));
         auto row = std::unique_ptr<AttributeRowImpl>(new AttributeRowImpl(*this));
         row->read(stream);
         m_rows.insert(std::make_pair(AttributeKey(rowkey), std::move(row)));
     }
 
     // ref column display params
-    stream.read((char *)&m_displayParams, sizeof(DisplayParams));
+    stream.read(reinterpret_cast<char *>(&m_displayParams), sizeof(DisplayParams));
 }
 
 void AttributeTable::write(std::ostream &stream, const LayerManager &layerManager) {
     layerManager.write(stream);
     int colCount = (int)m_columns.size();
-    stream.write((char *)&colCount, sizeof(int));
+    stream.write(reinterpret_cast<const char *>(&colCount), sizeof(int));
 
     // TODO: For binary compatibility write the columns in alphabetical order
     // but the physical columns in the order inserted
@@ -347,7 +347,7 @@ void AttributeTable::write(std::ostream &stream, const LayerManager &layerManage
     }
 
     int rowcount = (int)m_rows.size();
-    stream.write((char *)&rowcount, sizeof(int));
+    stream.write(reinterpret_cast<const char *>(&rowcount), sizeof(int));
     for (auto &kvp : m_rows) {
         kvp.first.write(stream);
         kvp.second->write(stream);

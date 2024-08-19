@@ -21,7 +21,7 @@ bool Connector::read(std::istream &stream) {
     // therefore we have to first read that vector and then convert
     dXreadwrite::readFromCastIntoVector<int>(stream, connections);
 
-    stream.read((char *)&segmentAxialref, sizeof(segmentAxialref));
+    stream.read(reinterpret_cast<char *>(&segmentAxialref), sizeof(segmentAxialref));
 
     dXreadwrite::readIntoMap(stream, forwardSegconns);
     dXreadwrite::readIntoMap(stream, backSegconns);
@@ -32,7 +32,7 @@ bool Connector::read(std::istream &stream) {
 bool Connector::write(std::ostream &stream) const {
     // n.b., must set displayed attribute as soon as loaded...
     dXreadwrite::writeCastVector<int>(stream, connections);
-    stream.write((char *)&segmentAxialref, sizeof(segmentAxialref));
+    stream.write(reinterpret_cast<const char *>(&segmentAxialref), sizeof(segmentAxialref));
 
     dXreadwrite::writeMap(stream, forwardSegconns);
     dXreadwrite::writeMap(stream, backSegconns);
@@ -67,8 +67,8 @@ int Connector::getConnectedRef(int cursor, int mode) const {
     if (cursor != -1) {
         switch (mode) {
         case CONN_ALL:
-            if (cursor < int(connections.size())) {
-                cur = connections[size_t(cursor)];
+            if (cursor < static_cast<int>(connections.size())) {
+                cur = static_cast<int>(connections[size_t(cursor)]);
             }
             break;
         case SEG_CONN_ALL:

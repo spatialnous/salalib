@@ -28,9 +28,7 @@ namespace depthmapX {
 
       public:
         PointMapException(PointMapExceptionType errorType, std::string message)
-            : depthmapX::RuntimeException(message) {
-            m_errorType = errorType;
-        }
+            : depthmapX::RuntimeException(message), m_errorType(errorType) {}
         PointMapExceptionType getErrorType() const { return m_errorType; }
     };
 } // namespace depthmapX
@@ -78,7 +76,7 @@ class PointMap : public AttributeMap {
 
   public: // ctors
     PointMap(const QtRegion &parentRegion, const std::string &name = std::string("VGA Map"));
-    virtual ~PointMap() {}
+    ~PointMap() override {}
     void copy(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
     const std::string &getName() const { return m_name; }
 
@@ -105,7 +103,7 @@ class PointMap : public AttributeMap {
   public: // methods
     void communicate(time_t &atime, Communicator *comm, size_t record);
     // constrain is constrain to existing rows / cols
-    PixelRef pixelate(const Point2f &p, bool constrain = true, int scalefactor = 1) const;
+    PixelRef pixelate(const Point2f &p, bool constrain = true, int scalefactor = 1) const override;
     Point2f depixelate(const PixelRef &p, double scalefactor = 1.0) const; // Inlined below
     QtRegion regionate(const PixelRef &p, double border) const;            // Inlined below
     void addPointsInRegionToSet(const QtRegion &r, std::set<PixelRef> &selSet);

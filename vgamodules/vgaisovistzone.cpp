@@ -39,7 +39,7 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
             extractMetric(lp.getNode(), newPixels, m_map, MetricTriple(0.0f, ref, NoPixel));
             for (auto &zonePixel : newPixels) {
                 auto *zonePixelRow = attributes.getRowPtr(AttributeKey(zonePixel.pixel));
-                if (zonePixelRow != 0) {
+                if (zonePixelRow != nullptr) {
                     double zoneLineDist = dist(ref, zonePixel.pixel) * m_map.getSpacing();
                     float currZonePixelVal = zonePixelRow->getValue(zoneColumnIndex);
                     if ((currZonePixelVal == -1 || zoneLineDist < currZonePixelVal) &&

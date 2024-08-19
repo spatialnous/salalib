@@ -142,7 +142,7 @@ class DxfVertex : public DxfEntity {
     friend bool operator!=(const DxfVertex &a, const DxfVertex &b);
 
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ class DxfRegion {
     DxfVertex m_max;
 
   public:
-    DxfRegion() { m_first = true; }
+    DxfRegion() : m_first(true) {}
     void add(const DxfVertex &v) {
         if (m_first) {
             m_min = v;
@@ -231,7 +231,7 @@ class DxfLine : public DxfEntity, public DxfRegion {
     }
     //
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 // PolyLine
@@ -273,7 +273,7 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
     }
     //
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 // LwPolyLine --- just inherit from DxfPolyLine
@@ -289,7 +289,7 @@ class DxfLwPolyLine : public DxfPolyLine {
     void clear(); // for reuse when parsing
                   //
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -340,7 +340,7 @@ class DxfArc : public DxfEntity, public DxfRegion {
     }
     //
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 class DxfEllipse : public DxfEntity, public DxfRegion {
@@ -392,7 +392,7 @@ class DxfEllipse : public DxfEntity, public DxfRegion {
     }
     //
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 class DxfCircle : public DxfEntity, public DxfRegion {
@@ -425,7 +425,7 @@ class DxfCircle : public DxfEntity, public DxfRegion {
     }
     //
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -473,7 +473,7 @@ class DxfSpline : public DxfEntity, public DxfRegion {
     }
 
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -495,7 +495,7 @@ class DxfInsert : public DxfEntity, public DxfRegion {
     void clear(); // for reuse when parsing
                   //
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -511,7 +511,7 @@ class DxfLineType : public DxfTableRow {
     DxfLineType(const std::string &name = "");
 
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 // Layers
@@ -558,7 +558,7 @@ class DxfLayer : public DxfTableRow, public DxfRegion {
     void insert(DxfInsert &insert, DxfParser *parser);
 
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 class DxfBlock : public DxfLayer {
@@ -572,7 +572,7 @@ class DxfBlock : public DxfLayer {
     DxfBlock(const std::string &name = "");
     //
   protected:
-    bool parse(const DxfToken &token, DxfParser *parser);
+    bool parse(const DxfToken &token, DxfParser *parser) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -620,7 +620,7 @@ class DxfParser {
     Communicator *m_communicator;
 
   public:
-    DxfParser(Communicator *comm = NULL);
+    DxfParser(Communicator *comm = nullptr);
     //
     std::istream &open(std::istream &stream);
     //
@@ -628,8 +628,8 @@ class DxfParser {
     void openTables(std::istream &stream);
     void openBlocks(std::istream &stream);
     void openEntities(std::istream &stream, DxfToken &token,
-                      DxfBlock *block = NULL); // cannot have a default token: it's a reference.
-                                               // Removed default to DxfToken() AT 29.04.11
+                      DxfBlock *block = nullptr); // cannot have a default token: it's a reference.
+                                                  // Removed default to DxfToken() AT 29.04.11
     //
     const DxfVertex &getExtMin() const;
     const DxfVertex &getExtMax() const;

@@ -18,9 +18,5 @@ struct DisplayParams {
     float blue;
     float red;
     int colorscale;
-    DisplayParams() {
-        blue = 0.0f;
-        red = 1.0f;
-        colorscale = 0;
-    }
+    DisplayParams() : blue(0.0f), red(1.0f), colorscale(0) {}
 };

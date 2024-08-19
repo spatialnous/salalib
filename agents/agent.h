@@ -56,11 +56,7 @@ class Agent {
     float m_currLos[9];
 
   public:
-    Agent() {
-        m_program = NULL;
-        m_pointmap = NULL;
-        m_outputMode = OUTPUT_NOTHING;
-    }
+    Agent() : m_program(nullptr), m_pointmap(nullptr), m_outputMode(OUTPUT_NOTHING) {}
     Agent(AgentProgram *program, PointMap *pointmap, int output_mode = OUTPUT_NOTHING);
     void onInit(PixelRef node, int trail_num = -1);
     void onClose();
@@ -114,10 +110,7 @@ inline int binsbetween(int bin1, int bin2) {
 struct wpair {
     double weight;
     int node;
-    wpair(double w = 0.0, int n = -1) {
-        weight = w;
-        node = n;
-    }
+    wpair(double w = 0.0, int n = -1) : weight(w), node(n) {}
 };
 
 // convert an x / y difference to it's corresponding connection direction

@@ -22,8 +22,9 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-ShapeGraph::ShapeGraph(const std::string &name, int type) : ShapeMap(name, type) {
-    m_keyvertexcount = 0;
+ShapeGraph::ShapeGraph(const std::string &name, int type)
+    : ShapeMap(name, type), m_keyvertexcount(0) {
+
     m_hasgraph = true;
 }
 
@@ -160,9 +161,9 @@ bool ShapeGraph::readShapeGraphData(std::istream &stream) {
 
     // note that keyvertexcount and keyvertices are different things! (length keyvertices not the
     // same as keyvertexcount!)
-    stream.read((char *)&m_keyvertexcount, sizeof(m_keyvertexcount));
+    stream.read(reinterpret_cast<char *>(&m_keyvertexcount), sizeof(m_keyvertexcount));
     int size;
-    stream.read((char *)&size, sizeof(size));
+    stream.read(reinterpret_cast<char *>(&size), sizeof(size));
     for (int i = 0; i < size; i++) {
         std::vector<int> tempVec;
         dXreadwrite::readIntoVector(stream, tempVec);
@@ -183,9 +184,9 @@ std::tuple<bool, bool, bool, int> ShapeGraph::read(std::istream &stream) {
 bool ShapeGraph::writeShapeGraphData(std::ostream &stream) const {
     // note keyvertexcount and keyvertices are different things!  (length keyvertices not the same
     // as keyvertexcount!)
-    stream.write((char *)&m_keyvertexcount, sizeof(m_keyvertexcount));
+    stream.write(reinterpret_cast<const char *>(&m_keyvertexcount), sizeof(m_keyvertexcount));
     auto size = m_keyvertices.size();
-    stream.write((char *)&size, sizeof(static_cast<int>(size)));
+    stream.write(reinterpret_cast<const char *>(&size), sizeof(static_cast<int>(size)));
     for (size_t i = 0; i < m_keyvertices.size(); i++) {
         dXreadwrite::writeVector(
             stream, std::vector<int>(m_keyvertices[i].begin(), m_keyvertices[i].end()));

@@ -280,20 +280,13 @@ PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) const {
     return list;
 }
 
-SpacePixel::SpacePixel(const std::string &name) : m_pixelLines(0, 0) {
-    m_name = name;
-    m_show = true;
-    m_edit = false;
+SpacePixel::SpacePixel(const std::string &name)
+    : m_newline(false), m_style(0), m_name(name), m_show(true), m_edit(false), m_pixelLines(0, 0),
+      m_ref(-1), m_test(0) {
 
     m_cols = 0;
     m_rows = 0;
 
-    m_ref = -1;
-    m_test = 0;
-
-    m_newline = false;
-
-    m_style = 0;
     m_color = 0;
 }
 
@@ -754,7 +747,7 @@ bool SpacePixel::read(std::istream &stream) {
     // read name:
 
     m_name = dXstring::readString(stream);
-    stream.read((char *)&m_show, sizeof(m_show));
+    stream.read(reinterpret_cast<char *>(&m_show), sizeof(m_show));
 
     if (m_name.empty()) {
         m_name = "<unknown>";
@@ -762,10 +755,10 @@ bool SpacePixel::read(std::istream &stream) {
 
     m_edit = false; // <- just default to not editable on read
 
-    stream.read((char *)&m_color, sizeof(m_color));
+    stream.read(reinterpret_cast<char *>(&m_color), sizeof(m_color));
 
     // read extents:
-    stream.read((char *)&m_region, sizeof(m_region));
+    stream.read(reinterpret_cast<char *>(&m_region), sizeof(m_region));
 
     // read rows / cols
     int rows, cols;
@@ -782,7 +775,7 @@ bool SpacePixel::read(std::istream &stream) {
     m_pixelLines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
                                                           static_cast<size_t>(m_cols));
 
-    stream.read((char *)&m_ref, sizeof(m_ref));
+    stream.read(reinterpret_cast<char *>(&m_ref), sizeof(m_ref));
     dXreadwrite::readIntoMap(stream, m_lines);
     // now load into structure:
     int n = -1;
@@ -804,11 +797,11 @@ bool SpacePixel::read(std::istream &stream) {
 bool SpacePixel::write(std::ofstream &stream) {
     // write name:
     dXstring::writeString(stream, m_name);
-    stream.write((char *)&m_show, sizeof(m_show));
-    stream.write((char *)&m_color, sizeof(m_color));
+    stream.write(reinterpret_cast<const char *>(&m_show), sizeof(m_show));
+    stream.write(reinterpret_cast<const char *>(&m_color), sizeof(m_color));
 
     // write extents:
-    stream.write((char *)&m_region, sizeof(m_region));
+    stream.write(reinterpret_cast<const char *>(&m_region), sizeof(m_region));
 
     // write rows / cols
     int rows = static_cast<int>(m_rows);
@@ -817,7 +810,7 @@ bool SpacePixel::write(std::ofstream &stream) {
     stream.write(reinterpret_cast<char *>(&cols), sizeof(cols));
 
     // write lines:
-    stream.write((char *)&m_ref, sizeof(m_ref));
+    stream.write(reinterpret_cast<const char *>(&m_ref), sizeof(m_ref));
 
     dXreadwrite::writeMap(stream, m_lines);
 

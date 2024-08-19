@@ -36,10 +36,7 @@ inline bool isalpha_(char c) {
 struct SalaError {
     int lineno;
     std::string message;
-    SalaError(const std::string &m = std::string(), int li = -1) {
-        message = m;
-        lineno = li;
-    }
+    SalaError(const std::string &m = std::string(), int li = -1) : lineno(li), message(m) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -211,11 +208,11 @@ class SalaObj {
     Type m_type;
 
   public:
-    SalaObj() { m_type = S_NONE; }
+    SalaObj() : m_type(S_NONE) {}
     // Two usages: (a) used for brackets (=groups of things, hence the count) and commas
     //             (b) used for lists
-    SalaObj(Type t) {
-        m_type = t;
+    SalaObj(Type t) : m_type(t) {
+
         if (t & S_LIST) {
             m_data.list.refcount = new int(1);
             m_data.list.list = new std::vector<SalaObj>;
@@ -225,8 +222,8 @@ class SalaObj {
     }
     // Two usages: (a) used to address variable or user function tables
     //             (b) used for lists
-    SalaObj(Type t, int v) {
-        m_type = t;
+    SalaObj(Type t, int v) : m_type(t) {
+
         if (t & S_LIST) {
             m_data.list.refcount = new int(1);
             m_data.list.list = new std::vector<SalaObj>(static_cast<size_t>(v)); // set blanks
@@ -235,33 +232,18 @@ class SalaObj {
         }
     }
     // other constructors
-    SalaObj(bool a) {
-        m_type = S_BOOL;
-        m_data.b = a;
-    }
-    SalaObj(int a) {
-        m_type = S_INT;
-        m_data.i = a;
-    }
-    SalaObj(double a) {
-        m_type = S_DOUBLE;
-        m_data.f = a;
-    }
-    SalaObj(Func f) {
-        m_type = S_FUNCTION;
-        m_data.func = f;
-    }
-    SalaObj(const std::string &a) {
-        m_type = S_STRING;
+    SalaObj(bool a) : m_type(S_BOOL) { m_data.b = a; }
+    SalaObj(int a) : m_type(S_INT) { m_data.i = a; }
+    SalaObj(double a) : m_type(S_DOUBLE) { m_data.f = a; }
+    SalaObj(Func f) : m_type(S_FUNCTION) { m_data.func = f; }
+    SalaObj(const std::string &a) : m_type(S_STRING) {
+
         m_data.str.refcount = new int(1);
         m_data.str.string = new std::string(a);
     }
     // note, type required here as sometimes this will be an axial map, sometimes segment map,
     // sometimes point map, also not fully filled in until runtime, but still required by parse
-    SalaObj(Type t, SalaGrf graph) {
-        m_type = t;
-        m_data.graph = graph;
-    }
+    SalaObj(Type t, SalaGrf graph) : m_type(t) { m_data.graph = graph; }
     //
     SalaObj(const SalaObj &obj);
     SalaObj &operator=(const SalaObj &obj);
@@ -357,12 +339,7 @@ class SalaCommand {
         m_lastString; // occassionally useful in debugging if the user does something unsyntactical
                       //
   public:
-    SalaCommand() {
-        m_program = NULL;
-        m_parent = NULL;
-        m_indent = 0;
-        m_command = SC_NONE;
-    }
+    SalaCommand() : m_program(nullptr), m_parent(nullptr), m_command(SC_NONE), m_indent(0) {}
     SalaCommand(SalaProgram *program, SalaCommand *parent, int indent, Command command = SC_NONE);
 
   protected:
@@ -405,8 +382,8 @@ class SalaProgram {
     std::string getLastErrorMessage() const;
 };
 
-inline SalaObj::SalaObj(const SalaObj &obj) {
-    m_type = obj.m_type;
+inline SalaObj::SalaObj(const SalaObj &obj) : m_type(obj.m_type) {
+
     switch (obj.m_type) {
     case S_FUNCTION:
         m_data.func = obj.m_data.func;
@@ -532,16 +509,16 @@ inline void SalaObj::reset() {
             delete m_data.str.refcount;
             delete m_data.str.string;
         }
-        m_data.str.refcount = NULL;
-        m_data.str.string = NULL;
+        m_data.str.refcount = nullptr;
+        m_data.str.string = nullptr;
     } else if (m_type & S_LIST) {
         *(m_data.list.refcount) -= 1;
         if (*(m_data.list.refcount) == 0) {
             delete m_data.str.refcount;
             delete m_data.list.list;
         }
-        m_data.str.refcount = NULL;
-        m_data.list.list = NULL;
+        m_data.str.refcount = nullptr;
+        m_data.list.list = nullptr;
     }
     m_type = S_NONE;
 }
@@ -966,10 +943,7 @@ inline bool operator!=(const SalaList &a, const SalaList &b) {
 struct SalaBuffer {
     int bufpos;
     char buffer[128];
-    SalaBuffer() {
-        bufpos = -1;
-        buffer[0] = '\0';
-    }
+    SalaBuffer() : bufpos(-1) { buffer[0] = '\0'; }
     void add(char c) {
         bufpos++;
         if (bufpos > 127)
@@ -998,19 +972,17 @@ struct SalaFuncLabel {
     std::string name;
     std::string desc;
     SalaFuncLabel(SalaObj::Func f = SalaObj::S_FNULL, const std::string &str = std::string(),
-                  const std::string &des = std::string()) {
-        func = f;
-        name = str;
-        desc = des;
-    }
+                  const std::string &des = std::string())
+        : func(f), name(str), desc(des) {}
 };
 
 struct SalaMemberFuncLabel : public SalaFuncLabel {
     SalaObj::Type type;
     SalaMemberFuncLabel(SalaObj::Type t = SalaObj::S_NONE, SalaObj::Func f = SalaObj::S_FNULL,
                         const std::string &str = std::string(),
-                        const std::string &des = std::string()) {
-        type = t;
+                        const std::string &des = std::string())
+        : type(t) {
+
         func = f;
         name = str;
         desc = des;

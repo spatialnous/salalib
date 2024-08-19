@@ -135,7 +135,7 @@ bool SalaProgram::parse(std::istream &program) {
     m_errorStack.clear();
 
     // this ensures wipe of any pre-existing variables in the global context:
-    m_rootCommand = SalaCommand(this, NULL, -1, SalaCommand::SC_ROOT);
+    m_rootCommand = SalaCommand(this, nullptr, -1, SalaCommand::SC_ROOT);
 
     int line = 0;
 
@@ -372,13 +372,8 @@ std::string SalaProgram::getLastErrorMessage() const {
 
 ////////////////////////////////////////////////////////////////////////////
 
-SalaCommand::SalaCommand(SalaProgram *program, SalaCommand *parent, int indent, Command command) {
-    m_program = program;
-    m_parent = parent;
-    m_indent = indent;
-    m_command = command;
-    m_line = 0;
-}
+SalaCommand::SalaCommand(SalaProgram *program, SalaCommand *parent, int indent, Command command)
+    : m_program(program), m_parent(parent), m_command(command), m_indent(indent), m_line(0) {}
 
 int SalaCommand::parse(std::istream &program, int line) {
     m_funcStack.clear();
@@ -449,7 +444,7 @@ int SalaCommand::parse(std::istream &program, int line) {
         case '=':
             if (!buffer.empty()) {
                 // n.b., this will catch '>=', '<=', '==' and '!='
-                if (strchr("><=!", cache) != NULL) {
+                if (strchr("><=!", cache) != nullptr) {
                     buffer.add(alpha);
                     last = decode(buffer);
                     buffer.clear();
@@ -868,11 +863,11 @@ int SalaCommand::decode(std::string string) // string copied as makelower applie
                 SalaCommand *parent = m_parent;
                 auto n = parent->m_varNames.end();
                 int x = -1;
-                while (parent != NULL) {
+                while (parent != nullptr) {
                     n = parent->m_varNames.find(string);
                     if (n != parent->m_varNames.end()) {
                         x = n->second;
-                        parent = NULL;
+                        parent = nullptr;
                     } else {
                         parent = parent->m_parent;
                     }
@@ -995,7 +990,7 @@ void SalaCommand::pushFunc(const SalaObj &func) {
 
 void SalaCommand::evaluate(SalaObj &obj, bool &ret, bool &ifhandled) {
     int begin = m_evalStack.size() - 1;
-    SalaObj *pObj = NULL;
+    SalaObj *pObj = nullptr;
     switch (m_command) {
     case SC_EXPR:
         obj = evaluate(begin, pObj);
@@ -1212,7 +1207,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                         return *p_obj;
                     } else if (data.m_type == SalaObj::S_STRING) {
                         // but n.b., strings cannot be modified, keep p_obj as null
-                        p_obj = NULL;
+                        p_obj = nullptr;
                         return data.char_at(x);
                     } else
                         throw SalaError("Cannot be applied to " + data.getTypeIndefArt() +
@@ -1575,7 +1570,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&p_obj) {
                 evaluate(pointer, p_obj); // n.b., direct access to the list
         }
     }
-    p_obj = NULL;
+    p_obj = nullptr;
     return data;
 }
 

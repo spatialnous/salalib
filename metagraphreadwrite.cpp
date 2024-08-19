@@ -79,7 +79,7 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromFile(const std::st
 
 QtRegion MetaGraphReadWrite::readRegion(std::istream &stream) {
     QtRegion region;
-    stream.read((char *)&region, sizeof(region));
+    stream.read(reinterpret_cast<char *>(&region), sizeof(region));
     return region;
 }
 
@@ -87,7 +87,7 @@ std::tuple<std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>>,
            std::vector<std::vector<std::tuple<bool, bool, int>>>>
 MetaGraphReadWrite::readDrawingFiles(std::istream &stream) {
     int count;
-    stream.read((char *)&count, sizeof(count));
+    stream.read(reinterpret_cast<char *>(&count), sizeof(count));
 
     std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> drawingFiles(count);
     std::vector<std::vector<std::tuple<bool, bool, int>>> displayData(count);
@@ -112,7 +112,7 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
         return mgd;
     }
 
-    stream.read((char *)&mgd.version, sizeof(mgd.version));
+    stream.read(reinterpret_cast<char *>(&mgd.version), sizeof(mgd.version));
     if (mgd.version > METAGRAPH_VERSION) {
         mgd.readStatus = ReadStatus::NEWER_VERSION;
         return mgd;
@@ -124,10 +124,13 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
 
     // have to use temporary state here as redraw attempt may come too early:
     int tempState = 0;
-    stream.read((char *)&tempState, sizeof(tempState));
-    stream.read((char *)&mgd.displayData.viewClass, sizeof(mgd.displayData.viewClass));
-    stream.read((char *)&mgd.displayData.showGrid, sizeof(mgd.displayData.showGrid));
-    stream.read((char *)&mgd.displayData.showText, sizeof(mgd.displayData.showText));
+    stream.read(reinterpret_cast<char *>(&tempState), sizeof(tempState));
+    stream.read(reinterpret_cast<char *>(&mgd.displayData.viewClass),
+                sizeof(mgd.displayData.viewClass));
+    stream.read(reinterpret_cast<char *>(&mgd.displayData.showGrid),
+                sizeof(mgd.displayData.showGrid));
+    stream.read(reinterpret_cast<char *>(&mgd.displayData.showText),
+                sizeof(mgd.displayData.showText));
 
     // type codes: x --- properties
     //             v --- virtual graph (from versions below 70)
@@ -250,13 +253,13 @@ int MetaGraphReadWrite::write(const std::string &filename, const MetaGraphData &
 std::streampos MetaGraphReadWrite::skipVirtualMem(std::istream &stream) {
     // it's graph virtual memory: skip it
     int nodes = -1;
-    stream.read((char *)&nodes, sizeof(nodes));
+    stream.read(reinterpret_cast<char *>(&nodes), sizeof(nodes));
 
     nodes *= 2;
 
     for (int i = 0; i < nodes; i++) {
         int connections;
-        stream.read((char *)&connections, sizeof(connections));
+        stream.read(reinterpret_cast<char *>(&connections), sizeof(connections));
         stream.seekg(stream.tellg() + std::streamoff(connections * sizeof(connections)));
     }
     return (stream.tellg());
@@ -265,11 +268,11 @@ std::streampos MetaGraphReadWrite::skipVirtualMem(std::istream &stream) {
 std::tuple<std::vector<PointMap>, std::vector<int>, unsigned int>
 MetaGraphReadWrite::readPointMaps(std::istream &stream, QtRegion defaultRegion) {
     unsigned int displayedMap;
-    stream.read((char *)&displayedMap, sizeof(displayedMap));
+    stream.read(reinterpret_cast<char *>(&displayedMap), sizeof(displayedMap));
     std::vector<PointMap> pointMaps;
     std::vector<int> displayAttributes;
     int count;
-    stream.read((char *)&count, sizeof(count));
+    stream.read(reinterpret_cast<char *>(&count), sizeof(count));
     for (int i = 0; i < count; i++) {
         pointMaps.push_back(PointMap(defaultRegion));
         auto [completed, displayedAttribute] = pointMaps.back().read(stream);
@@ -285,9 +288,9 @@ bool MetaGraphReadWrite::writePointMaps(std::ofstream &stream,
                                         const std::optional<unsigned int> displayedMap) {
     unsigned int displayedPointmap =
         displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
-    stream.write((char *)&displayedPointmap, sizeof(displayedPointmap));
+    stream.write(reinterpret_cast<const char *>(&displayedPointmap), sizeof(displayedPointmap));
     auto count = pointMaps.size();
-    stream.write((char *)&count, sizeof(static_cast<int>(count)));
+    stream.write(reinterpret_cast<const char *>(&count), sizeof(static_cast<int>(count)));
     auto it = displayData.begin();
     for (auto &pointMap : pointMaps) {
         getMapRef(std::forward<const PointMapOrRef>(pointMap),
@@ -305,12 +308,12 @@ MetaGraphReadWrite::readDataMaps(std::istream &stream) {
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
     unsigned int displayedMap;
-    stream.read((char *)&displayedMap, sizeof(displayedMap));
+    stream.read(reinterpret_cast<char *>(&displayedMap), sizeof(displayedMap));
     // read maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
     unsigned int count = 0;
-    stream.read((char *)&count, sizeof(count));
+    stream.read(reinterpret_cast<char *>(&count), sizeof(count));
 
     for (size_t j = 0; j < size_t(count); j++) {
         dataMaps.emplace_back();
@@ -329,12 +332,12 @@ bool MetaGraphReadWrite::writeDataMaps(std::ofstream &stream,
     // problems
     unsigned int displayedDataMap =
         displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
-    stream.write((char *)&displayedDataMap, sizeof(displayedDataMap));
+    stream.write(reinterpret_cast<const char *>(&displayedDataMap), sizeof(displayedDataMap));
     // write maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
     unsigned int count = (unsigned int)dataMaps.size();
-    stream.write((char *)&count, sizeof(count));
+    stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
     auto it = displayData.begin();
     for (auto &dataMap : dataMaps) {
         getMapRef(std::forward<const ShapeMapOrRef>(dataMap),
@@ -351,7 +354,7 @@ bool MetaGraphReadWrite::writeSpacePixels(
     const std::vector<std::tuple<bool, bool, int>> displayData) {
 
     int count = spacePixels.size();
-    stream.write((char *)&count, sizeof(count));
+    stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
     auto it = displayData.begin();
     for (auto &spacePixel : spacePixels) {
 
@@ -371,12 +374,12 @@ MetaGraphReadWrite::readShapeGraphs(std::istream &stream) {
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
     unsigned int displayedMap;
-    stream.read((char *)&displayedMap, sizeof(displayedMap));
+    stream.read(reinterpret_cast<char *>(&displayedMap), sizeof(displayedMap));
     // read maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
     unsigned int count = 0;
-    stream.read((char *)&count, sizeof(count));
+    stream.read(reinterpret_cast<char *>(&count), sizeof(count));
 
     for (size_t j = 0; j < size_t(count); j++) {
         shapeGraphs.emplace_back();
@@ -417,8 +420,8 @@ MetaGraphReadWrite::readShapeGraphs(std::istream &stream) {
         // n.b., do not change this to size_t as it will cause 32-bit to 64-bit
         // conversion problems
         unsigned int length;
-        stream.read((char *)&length, sizeof(unsigned int));
-        stream.read((char *)&length, sizeof(unsigned int));
+        stream.read(reinterpret_cast<char *>(&length), sizeof(unsigned int));
+        stream.read(reinterpret_cast<char *>(&length), sizeof(unsigned int));
     }
     return std::make_tuple(std::move(shapeGraphs), allLineMapData, std::move(displayData),
                            displayedMap);
@@ -434,12 +437,12 @@ bool MetaGraphReadWrite::writeShapeGraphs(
     // problems
     unsigned int displayedShapeGraph =
         displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
-    stream.write((char *)&displayedShapeGraph, sizeof(displayedShapeGraph));
+    stream.write(reinterpret_cast<const char *>(&displayedShapeGraph), sizeof(displayedShapeGraph));
     // write maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
     unsigned int count = (unsigned int)shapeGraphs.size();
-    stream.write((char *)&count, sizeof(count));
+    stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
     auto it = displayData.begin();
     for (auto &shapeGraphPtr : shapeGraphs) {
         getMapRef(std::forward<const ShapeGraphOrRef>(shapeGraphPtr),
@@ -452,8 +455,8 @@ bool MetaGraphReadWrite::writeShapeGraphs(
         // There's still a reference to this data in the metagraph,
         // even if no all-line map is present
         unsigned int length = 0;
-        stream.write((char *)&length, sizeof(length));
-        stream.write((char *)&length, sizeof(length));
+        stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
+        stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
     } else {
         dXreadwrite::writeVector(stream, allLineMapData->polyConnections);
         dXreadwrite::writeVector(stream, allLineMapData->radialLines);
@@ -514,13 +517,13 @@ int MetaGraphReadWrite::write(
         return DISK_ERROR;
     }
     stream.write("grf", 3);
-    stream.write((char *)&version, sizeof(version));
+    stream.write(reinterpret_cast<const char *>(&version), sizeof(version));
 
-    stream.write((char *)&state, sizeof(state));
-    stream.write((char *)&viewClass, sizeof(viewClass));
+    stream.write(reinterpret_cast<const char *>(&state), sizeof(state));
+    stream.write(reinterpret_cast<const char *>(&viewClass), sizeof(viewClass));
 
-    stream.write((char *)&showGrid, sizeof(showGrid));
-    stream.write((char *)&showText, sizeof(showText));
+    stream.write(reinterpret_cast<const char *>(&showGrid), sizeof(showGrid));
+    stream.write(reinterpret_cast<const char *>(&showText), sizeof(showText));
 
     type = 'x';
     stream.write(&type, 1);
@@ -530,10 +533,10 @@ int MetaGraphReadWrite::write(
         type = 'l';
         stream.write(&type, 1);
         dXstring::writeString(stream, name);
-        stream.write((char *)&region, sizeof(region));
+        stream.write(reinterpret_cast<const char *>(&region), sizeof(region));
 
         int count = static_cast<int>(drawingFiles.size());
-        stream.write((char *)&count, sizeof(count));
+        stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
         auto it = perDrawingMap.begin();
         for (auto &spacePixel : drawingFiles) {
             spacePixel.first.writeOutNameAndRegion(stream);

@@ -50,12 +50,7 @@ struct AxialVertex : public AxialVertexKey {
     bool axial;
     AxialVertex(const AxialVertexKey &vertex_key = NoVertex, const Point2f &p = Point2f(),
                 const Point2f &opsp = Point2f())
-        : AxialVertexKey(vertex_key) {
-        point = p;
-        openspace = opsp;
-        initialised = false;
-        axial = false;
-    }
+        : AxialVertexKey(vertex_key), point(p), openspace(opsp), initialised(false), axial(false) {}
 };
 
 struct RadialKey {
@@ -68,16 +63,9 @@ struct RadialKey {
     short pad2 : 16;
 
     RadialKey(const AxialVertexKey &v = NoVertex, float a = -1.0f, bool se = false)
-        : pad1(0), pad2(0) {
-        vertex = v;
-        ang = a;
-        segend = se;
-    }
-    RadialKey(const RadialKey &rk) : pad1(0), pad2(0) {
-        vertex = rk.vertex;
-        ang = rk.ang;
-        segend = rk.segend;
-    }
+        : vertex(v), ang(a), segend(se), pad1(0), pad2(0) {}
+    RadialKey(const RadialKey &rk)
+        : vertex(rk.vertex), ang(rk.ang), segend(rk.segend), pad1(0), pad2(0) {}
     RadialKey &operator=(const RadialKey &) = default;
 };
 inline bool operator<(const RadialKey &a, const RadialKey &b) {
@@ -98,19 +86,15 @@ struct RadialLine : public RadialKey {
     Point2f nextvertex;
     RadialLine(const RadialKey &rk = RadialKey()) : RadialKey(rk) { ; }
     RadialLine(const AxialVertexKey &v, bool se, const Point2f &o, const Point2f &k,
-               const Point2f &n) {
+               const Point2f &n)
+        : openspace(o), keyvertex(k), nextvertex(n) {
         vertex = v;
         ang = (float)angle(o, k, n);
         segend = se;
-        openspace = o;
-        keyvertex = k;
-        nextvertex = n;
     }
-    RadialLine(const RadialLine &rl) : RadialKey(rl) {
-        openspace = rl.openspace;
-        keyvertex = rl.keyvertex;
-        nextvertex = rl.nextvertex;
-    }
+    RadialLine(const RadialLine &rl)
+        : RadialKey(rl), openspace(rl.openspace), keyvertex(rl.keyvertex),
+          nextvertex(rl.nextvertex) {}
     bool cuts(const Line &l) const;
     RadialLine &operator=(const RadialLine &) = default;
 };
@@ -119,18 +103,15 @@ struct RadialSegment {
     std::set<int> indices;
     RadialKey radialB;
 
-    RadialSegment(RadialKey &rb) { radialB = rb; }
-    RadialSegment(const RadialKey &rb) { radialB = rb; }
+    RadialSegment(RadialKey &rb) : radialB(rb) {}
+    RadialSegment(const RadialKey &rb) : radialB(rb) {}
     RadialSegment() { radialB = RadialKey(); }
 };
 
 struct PolyConnector {
     Line line;
     RadialKey key;
-    PolyConnector(const Line &l = Line(), const RadialKey &k = RadialKey()) {
-        line = l;
-        key = k;
-    }
+    PolyConnector(const Line &l = Line(), const RadialKey &k = RadialKey()) : line(l), key(k) {}
 };
 
 class AxialPolygons : public SpacePixel {

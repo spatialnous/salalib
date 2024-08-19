@@ -10,6 +10,7 @@
 #include "attributetablehelpers.h"
 #include "parsers/mapinfodata.h" // for mapinfo interface
 #include "pointmap.h"
+#include "tolerances.h"
 
 #include "genlib/containerutils.h"
 #include "genlib/exceptions.h"
@@ -28,29 +29,20 @@
 #define _finite finite
 #endif
 
-static const double TOLERANCE_A = 1e-9;
-
-// import TOLERANCE_B from axial map...
-static const double TOLERANCE_B = 1e-12;
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // the replacement for datalayers
 
 ShapeMap::ShapeMap(const std::string &name, int type)
-    : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())), m_pixelShapes(0, 0) {
-    m_name = name;
-    m_mapType = type;
-    m_hasgraph = false;
+    : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())), m_name(name),
+      m_mapType(type), m_hasgraph(false), m_objRef(-1), m_pixelShapes(0, 0), m_tolerance(0.0),
+      m_hasMapInfoData(false) {
 
     // shape and object counters
-    m_objRef = -1;
 
     // data (MUST be set before use)
-    m_tolerance = 0.0;
 
     //
-    m_hasMapInfoData = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -2093,14 +2085,14 @@ bool ShapeMap::readNameType(std::istream &stream) {
     // name
     m_name = dXstring::readString(stream);
 
-    stream.read((char *)&m_mapType, sizeof(m_mapType));
+    stream.read(reinterpret_cast<char *>(&m_mapType), sizeof(m_mapType));
     return true;
 }
 
 bool ShapeMap::readPart2(std::istream &stream) {
     // PixelBase read
     // read extents:
-    stream.read((char *)&m_region, sizeof(m_region));
+    stream.read(reinterpret_cast<char *>(&m_region), sizeof(m_region));
     // read rows / cols
     int rows, cols;
     stream.read(reinterpret_cast<char *>(&rows), sizeof(rows));
@@ -2111,16 +2103,16 @@ bool ShapeMap::readPart2(std::istream &stream) {
     m_tolerance = __max(m_region.width(), m_region.height()) * TOLERANCE_A;
 
     // read next object ref to be used:
-    stream.read((char *)&m_objRef, sizeof(m_objRef));
+    stream.read(reinterpret_cast<char *>(&m_objRef), sizeof(m_objRef));
     int deprInt;
-    stream.read((char *)&deprInt, sizeof(deprInt));
+    stream.read(reinterpret_cast<char *>(&deprInt), sizeof(deprInt));
 
     // read shape data
     int count = 0;
-    stream.read((char *)&count, sizeof(count));
+    stream.read(reinterpret_cast<char *>(&count), sizeof(count));
     for (int j = 0; j < count; j++) {
         int key;
-        stream.read((char *)&key, sizeof(key));
+        stream.read(reinterpret_cast<char *>(&key), sizeof(key));
         auto iter = m_shapes.insert(std::make_pair(key, SalaShape())).first;
         iter->second.read(stream);
     }
@@ -2129,12 +2121,12 @@ bool ShapeMap::readPart2(std::istream &stream) {
     // PK: As the above comment (and others regarding the m_objects
     // functionality) suggest, these are no longer used so they can
     // just be skipped if ever found
-    stream.read((char *)&count, sizeof(count));
+    stream.read(reinterpret_cast<char *>(&count), sizeof(count));
     for (int k = 0; k < count; k++) {
         int key;
-        stream.read((char *)&key, sizeof(key));
+        stream.read(reinterpret_cast<char *>(&key), sizeof(key));
         unsigned int size;
-        stream.read((char *)&size, sizeof(size));
+        stream.read(reinterpret_cast<char *>(&size), sizeof(size));
         stream.ignore(sizeof(int) * std::streamsize(size));
     }
     // read attribute data
@@ -2155,7 +2147,7 @@ bool ShapeMap::readPart3(std::istream &stream) {
 
     // shape connections:
     int count = 0;
-    stream.read((char *)&count, sizeof(count));
+    stream.read(reinterpret_cast<char *>(&count), sizeof(count));
     for (int i = 0; i < count; i++) {
         m_connectors.push_back(Connector());
         m_connectors[size_t(i)].read(stream);
@@ -2182,8 +2174,8 @@ std::tuple<bool, bool, bool, int> ShapeMap::read(std::istream &stream) {
     // turn off selection / editable etc
     bool editable = false;
 
-    stream.read((char *)&show, sizeof(show));
-    stream.read((char *)&editable, sizeof(editable));
+    stream.read(reinterpret_cast<char *>(&show), sizeof(show));
+    stream.read(reinterpret_cast<char *>(&editable), sizeof(editable));
 
     read = read && readPart2(stream);
 
@@ -2192,7 +2184,7 @@ std::tuple<bool, bool, bool, int> ShapeMap::read(std::istream &stream) {
     // handling this int variable in order to get a depthmapX-like
     // experience (where the displayed attribute is in the file)
     int displayedAttribute;
-    stream.read((char *)&displayedAttribute, sizeof(displayedAttribute));
+    stream.read(reinterpret_cast<char *>(&displayedAttribute), sizeof(displayedAttribute));
 
     read = read && readPart3(stream);
 
@@ -2203,14 +2195,14 @@ bool ShapeMap::writeNameType(std::ostream &stream) const {
     // name
     dXstring::writeString(stream, m_name);
 
-    stream.write((char *)&m_mapType, sizeof(m_mapType));
+    stream.write(reinterpret_cast<const char *>(&m_mapType), sizeof(m_mapType));
     return true;
 }
 
 bool ShapeMap::writePart2(std::ostream &stream) const {
     // PixelBase write
     // write extents:
-    stream.write((char *)&m_region, sizeof(m_region));
+    stream.write(reinterpret_cast<const char *>(&m_region), sizeof(m_region));
     // write rows / cols
     int rows = static_cast<int>(m_rows);
     int cols = static_cast<int>(m_cols);
@@ -2218,24 +2210,24 @@ bool ShapeMap::writePart2(std::ostream &stream) const {
     stream.write(reinterpret_cast<char *>(&cols), sizeof(cols));
 
     // write next object ref to be used:
-    stream.write((char *)&m_objRef, sizeof(m_objRef));
+    stream.write(reinterpret_cast<const char *>(&m_objRef), sizeof(m_objRef));
 
     // left here for backwards-compatibility
     // TODO: Remove at next iteration of the .graph file format
     int largestShapeRef = m_shapes.empty() ? -1 : m_shapes.rbegin()->first;
-    stream.write((char *)&largestShapeRef, sizeof(largestShapeRef));
+    stream.write(reinterpret_cast<const char *>(&largestShapeRef), sizeof(largestShapeRef));
 
     // write shape data
     int count = m_shapes.size();
-    stream.write((char *)&count, sizeof(count));
+    stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
     for (const auto &shape : m_shapes) {
         int key = shape.first;
-        stream.write((char *)&key, sizeof(key));
+        stream.write(reinterpret_cast<const char *>(&key), sizeof(key));
         shape.second.write(stream);
     }
     // write object data (currently unused)
     count = 0;
-    stream.write((char *)&count, sizeof(count));
+    stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
 
     // write attribute data
     m_attributes->write(stream, m_layers);
@@ -2246,7 +2238,7 @@ bool ShapeMap::writePart3(std::ostream &stream) const {
 
     // write connections data
     int count = static_cast<int>(m_connectors.size());
-    stream.write((char *)&count, sizeof(count));
+    stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
 
     for (size_t i = 0; i < m_connectors.size(); i++) {
         m_connectors[i].write(stream);
@@ -2271,12 +2263,12 @@ bool ShapeMap::write(std::ostream &stream, const std::tuple<bool, bool, int> &di
 
     auto [editable, show, displayedAttribute] = displayData;
 
-    stream.write((char *)&show, sizeof(show));
-    stream.write((char *)&editable, sizeof(editable));
+    stream.write(reinterpret_cast<const char *>(&show), sizeof(show));
+    stream.write(reinterpret_cast<const char *>(&editable), sizeof(editable));
 
     written = written && writePart2(stream);
 
-    stream.write((char *)&displayedAttribute, sizeof(displayedAttribute));
+    stream.write(reinterpret_cast<const char *>(&displayedAttribute), sizeof(displayedAttribute));
 
     written = written && writePart3(stream);
     return written;

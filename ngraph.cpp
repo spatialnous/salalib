@@ -286,11 +286,11 @@ PixelRef Bin::cursor() const { return (int)m_curpix; }
 ///////////////////////////////////////////////////////////////////////////////////////
 
 std::istream &Bin::read(std::istream &stream) {
-    stream.read((char *)&dir, sizeof(dir));
-    stream.read((char *)&m_nodeCount, sizeof(m_nodeCount));
+    stream.read(reinterpret_cast<char *>(&dir), sizeof(dir));
+    stream.read(reinterpret_cast<char *>(&m_nodeCount), sizeof(m_nodeCount));
 
-    stream.read((char *)&m_distance, sizeof(m_distance));
-    stream.read((char *)&m_occDistance, sizeof(m_occDistance));
+    stream.read(reinterpret_cast<char *>(&m_distance), sizeof(m_distance));
+    stream.read(reinterpret_cast<char *>(&m_occDistance), sizeof(m_occDistance));
 
     if (m_nodeCount) {
         if (dir & PixelRef::DIAGONAL) {
@@ -298,7 +298,7 @@ std::istream &Bin::read(std::istream &stream) {
             pixelVecs[0].read(stream, dir);
         } else {
             unsigned short length;
-            stream.read((char *)&length, sizeof(length));
+            stream.read(reinterpret_cast<char *>(&length), sizeof(length));
             pixelVecs = std::vector<PixelVec>(length);
             pixelVecs[0].read(stream, dir);
             for (int i = 1; i < length; i++) {
@@ -311,11 +311,11 @@ std::istream &Bin::read(std::istream &stream) {
 }
 
 std::ostream &Bin::write(std::ostream &stream) {
-    stream.write((char *)&dir, sizeof(dir));
-    stream.write((char *)&m_nodeCount, sizeof(m_nodeCount));
+    stream.write(reinterpret_cast<const char *>(&dir), sizeof(dir));
+    stream.write(reinterpret_cast<const char *>(&m_nodeCount), sizeof(m_nodeCount));
 
-    stream.write((char *)&m_distance, sizeof(m_distance));
-    stream.write((char *)&m_occDistance, sizeof(m_occDistance));
+    stream.write(reinterpret_cast<const char *>(&m_distance), sizeof(m_distance));
+    stream.write(reinterpret_cast<const char *>(&m_occDistance), sizeof(m_occDistance));
 
     if (m_nodeCount) {
 
@@ -324,7 +324,7 @@ std::ostream &Bin::write(std::ostream &stream) {
         } else {
             // TODO: Remove this limitation in the next version of the .graph format
             auto length = static_cast<unsigned short>(pixelVecs.size());
-            stream.write((char *)&length, sizeof(length));
+            stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
             pixelVecs[0].write(stream, dir);
             for (size_t i = 1; i < length; i++) {
                 pixelVecs[i].write(stream, dir, pixelVecs[i - 1]);
@@ -353,8 +353,8 @@ std::ostream &operator<<(std::ostream &stream, const Bin &bin) {
 
 std::istream &PixelVec::read(std::istream &stream, const char dir) {
     unsigned short runlength;
-    stream.read((char *)&m_start, sizeof(m_start));
-    stream.read((char *)&runlength, sizeof(runlength));
+    stream.read(reinterpret_cast<char *>(&m_start), sizeof(m_start));
+    stream.read(reinterpret_cast<char *>(&runlength), sizeof(runlength));
     switch (dir) {
     case PixelRef::POSDIAGONAL:
         m_end.x = m_start.x + static_cast<short>(runlength);
@@ -377,7 +377,7 @@ std::istream &PixelVec::read(std::istream &stream, const char dir) {
 }
 
 std::ostream &PixelVec::write(std::ostream &stream, const char dir) {
-    stream.write((char *)&m_start, sizeof(m_start));
+    stream.write(reinterpret_cast<const char *>(&m_start), sizeof(m_start));
     unsigned short runlength;
     switch (dir) {
     case PixelRef::HORIZONTAL:
@@ -389,7 +389,7 @@ std::ostream &PixelVec::write(std::ostream &stream, const char dir) {
         runlength = static_cast<unsigned short>(m_end.y - m_start.y);
         break;
     }
-    stream.write((char *)&runlength, sizeof(runlength));
+    stream.write(reinterpret_cast<const char *>(&runlength), sizeof(runlength));
 
     return stream;
 }
@@ -402,8 +402,8 @@ struct ShiftLength {
 std::istream &PixelVec::read(std::istream &stream, const char dir, const PixelVec &context) {
     short primary;
     ShiftLength shiftlength;
-    stream.read((char *)&primary, sizeof(primary));
-    stream.read((char *)&shiftlength, sizeof(shiftlength));
+    stream.read(reinterpret_cast<char *>(&primary), sizeof(primary));
+    stream.read(reinterpret_cast<char *>(&shiftlength), sizeof(shiftlength));
     switch (dir) {
     case PixelRef::HORIZONTAL:
         m_start.x = primary;
@@ -426,17 +426,17 @@ std::ostream &PixelVec::write(std::ostream &stream, const char dir, const PixelV
     ShiftLength shiftlength;
     switch (dir) {
     case PixelRef::HORIZONTAL:
-        stream.write((char *)&(m_start.x), sizeof(m_start.x));
+        stream.write(reinterpret_cast<const char *>(&(m_start.x)), sizeof(m_start.x));
         shiftlength.runlength = static_cast<unsigned short>(m_end.x - m_start.x);
         shiftlength.shift = static_cast<unsigned short>(m_start.y - context.m_start.y);
         break;
     case PixelRef::VERTICAL:
-        stream.write((char *)&(m_start.y), sizeof(m_start.y));
+        stream.write(reinterpret_cast<const char *>(&(m_start.y)), sizeof(m_start.y));
         shiftlength.runlength = static_cast<unsigned short>(m_end.y - m_start.y);
         shiftlength.shift = static_cast<unsigned short>(m_start.x - context.m_start.x);
         break;
     }
-    stream.write((char *)&shiftlength, sizeof(shiftlength));
+    stream.write(reinterpret_cast<const char *>(&shiftlength), sizeof(shiftlength));
 
     return stream;
 }

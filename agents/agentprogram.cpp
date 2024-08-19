@@ -11,13 +11,8 @@
 
 #include <fstream>
 
-AgentProgram::AgentProgram() {
-    selType = SEL_LOS;
-    steps = 3;
-    vbin = 7;
-    destinationDirected = false;
-    losSqrd = false;
-}
+AgentProgram::AgentProgram()
+    : selType(SEL_LOS), steps(3), vbin(7), destinationDirected(false), losSqrd(false) {}
 
 void AgentProgram::mutate() {
     // do mutate rule order occassionally:

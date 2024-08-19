@@ -26,14 +26,11 @@ struct AnalysisInfo {
     double choice;
     double weightedChoice;
     double weightedChoice2; // EFEF
-    AnalysisInfo() {
-        choicecovered = false;
-        leaf = true;
+    AnalysisInfo()
+        : leaf(true), choicecovered(false), depth(0), choice(0.0), weightedChoice(0.0),
+          weightedChoice2(0.0) {
+
         previous = SegmentRef();
-        depth = 0;
-        choice = 0.0;
-        weightedChoice = 0.0;
-        weightedChoice2 = 0.0;
     }
     void clearLine() {
         choicecovered = false;
@@ -77,7 +74,7 @@ class ShapeGraph : public ShapeMap {
 
     void initialiseAttributesAxial();
     void makeConnections(const KeyVertices &keyvertices = KeyVertices());
-    bool stepdepth(Communicator *comm = NULL);
+    bool stepdepth(Communicator *comm = nullptr);
     // lineset and connectionset are filled in by segment map
     void makeNewSegMap(Communicator *comm);
     void makeSegmentMap(std::vector<Line> &lines, std::vector<Connector> &connectors,
@@ -87,10 +84,11 @@ class ShapeGraph : public ShapeMap {
     void pushAxialValues(ShapeGraph &axialmap);
 
     bool readShapeGraphData(std::istream &stream);
-    virtual std::tuple<bool, bool, bool, int> read(std::istream &stream) override;
+    std::tuple<bool, bool, bool, int> read(std::istream &stream) override;
     bool writeShapeGraphData(std::ostream &stream) const;
-    virtual bool write(std::ostream &stream, const std::tuple<bool, bool, int> &displayData =
-                                                 std::make_tuple(true, false, -1)) const override;
+    bool write(std::ostream &stream,
+               const std::tuple<bool, bool, int> &displayData = std::make_tuple(true, false,
+                                                                                -1)) const override;
     void writeAxialConnectionsAsDotGraph(std::ostream &stream);
     void writeAxialConnectionsAsPairsCSV(std::ostream &stream);
     void writeSegmentConnectionsAsPairsCSV(std::ostream &stream);

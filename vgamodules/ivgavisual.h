@@ -35,11 +35,11 @@ class IVGAVisual : public IVGATraversing {
         }
     }
 
-    virtual std::vector<AnalysisColumn>
-    traverse(std::vector<AnalysisData> &analysisData,
-             const std::vector<ADRefVector<AnalysisData>> &graph, const std::vector<PixelRef> &refs,
-             const double, const std::set<PixelRef> &originRefs,
-             const bool keepStats = false) const override {
+    std::vector<AnalysisColumn> traverse(std::vector<AnalysisData> &analysisData,
+                                         const std::vector<ADRefVector<AnalysisData>> &graph,
+                                         const std::vector<PixelRef> &refs, const double,
+                                         const std::set<PixelRef> &originRefs,
+                                         const bool keepStats = false) const override {
 
         AnalysisColumn sd(analysisData.size());
 

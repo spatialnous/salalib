@@ -16,7 +16,7 @@ struct ShapeMapGroupData {
     std::string name; // <- file name
     QtRegion region;
 
-    ShapeMapGroupData(const std::string &name = std::string()) { this->name = name; };
+    ShapeMapGroupData(const std::string &name = std::string()) : name(name){};
 
     bool readInNameAndRegion(std::istream &stream);
     bool writeOutNameAndRegion(std::ostream &stream) const;

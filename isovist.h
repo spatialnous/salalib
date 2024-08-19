@@ -19,22 +19,11 @@ struct IsoSeg {
     Point2f endpoint;
     char quadrant;
     int tag;
-    IsoSeg(double start = 0.0, double end = 0.0, char q = 0, int t = -1) {
-        startangle = start;
-        endangle = end;
-        tagdelete = false;
-        quadrant = q;
-        tag = t;
-    }
-    IsoSeg(double start, double end, const Point2f &pstart, Point2f &pend, int t = -1) {
-        startangle = start;
-        endangle = end;
-        startpoint = pstart;
-        endpoint = pend;
-        tagdelete = false;
-        quadrant = 0;
-        tag = t;
-    }
+    IsoSeg(double start = 0.0, double end = 0.0, char q = 0, int t = -1)
+        : tagdelete(false), startangle(start), endangle(end), quadrant(q), tag(t) {}
+    IsoSeg(double start, double end, const Point2f &pstart, Point2f &pend, int t = -1)
+        : tagdelete(false), startangle(start), endangle(end), startpoint(pstart), endpoint(pend),
+          quadrant(0), tag(t) {}
     friend bool operator==(const IsoSeg &b1, const IsoSeg &b2);
     friend bool operator>(const IsoSeg &b1, const IsoSeg &b2);
     friend bool operator<(const IsoSeg &b1, const IsoSeg &b2);
@@ -56,10 +45,7 @@ class AttributeTable;
 struct PointDist {
     Point2f point;
     double dist;
-    PointDist(const Point2f &p = Point2f(), double d = 0.0) {
-        point = p;
-        dist = d;
-    }
+    PointDist(const Point2f &p = Point2f(), double d = 0.0) : point(p), dist(d) {}
 };
 
 class Isovist {

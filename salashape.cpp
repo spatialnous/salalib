@@ -12,14 +12,14 @@ bool SalaShape::read(std::istream &stream) {
     // defaults
     m_draworder = -1;
 
-    stream.read((char *)&m_type, sizeof(m_type));
+    stream.read(reinterpret_cast<char *>(&m_type), sizeof(m_type));
 
-    stream.read((char *)&m_region, sizeof(m_region));
+    stream.read(reinterpret_cast<char *>(&m_region), sizeof(m_region));
 
-    stream.read((char *)&m_centroid, sizeof(m_centroid));
+    stream.read(reinterpret_cast<char *>(&m_centroid), sizeof(m_centroid));
 
-    stream.read((char *)&m_area, sizeof(m_area));
-    stream.read((char *)&m_perimeter, sizeof(m_perimeter));
+    stream.read(reinterpret_cast<char *>(&m_area), sizeof(m_area));
+    stream.read(reinterpret_cast<char *>(&m_perimeter), sizeof(m_perimeter));
 
     dXreadwrite::readIntoVector(stream, points);
 
@@ -27,11 +27,11 @@ bool SalaShape::read(std::istream &stream) {
 }
 
 bool SalaShape::write(std::ostream &stream) const {
-    stream.write((char *)&m_type, sizeof(m_type));
-    stream.write((char *)&m_region, sizeof(m_region));
-    stream.write((char *)&m_centroid, sizeof(m_centroid));
-    stream.write((char *)&m_area, sizeof(m_area));
-    stream.write((char *)&m_perimeter, sizeof(m_perimeter));
+    stream.write(reinterpret_cast<const char *>(&m_type), sizeof(m_type));
+    stream.write(reinterpret_cast<const char *>(&m_region), sizeof(m_region));
+    stream.write(reinterpret_cast<const char *>(&m_centroid), sizeof(m_centroid));
+    stream.write(reinterpret_cast<const char *>(&m_area), sizeof(m_area));
+    stream.write(reinterpret_cast<const char *>(&m_perimeter), sizeof(m_perimeter));
     dXreadwrite::writeVector(stream, points);
     return true;
 }

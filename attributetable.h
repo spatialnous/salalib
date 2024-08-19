@@ -37,7 +37,7 @@ class AttributeRow : public LayerAware {
     virtual AttributeRow &incrValue(size_t index, float value = 1.0f) = 0;
     virtual AttributeRow &incrValue(const std::string &colName, float value = 1.0f) = 0;
 
-    virtual ~AttributeRow() {}
+    ~AttributeRow() override {}
 };
 
 ///
@@ -94,8 +94,10 @@ class AttributeColumnManager {
   public:
     virtual size_t getNumColumns() const = 0;
     virtual size_t getColumnIndex(const std::string &name) const = 0;
+    virtual std::optional<size_t> getColumnIndexOptional(const std::string &name) const = 0;
     virtual const AttributeColumn &getColumn(size_t index) const = 0;
     virtual const std::string &getColumnName(size_t index) const = 0;
+    virtual bool hasColumn(const std::string &name) const = 0;
 };
 
 // Implementation of AttributeColumn
@@ -107,21 +109,19 @@ class AttributeColumnImpl : public AttributeColumn, AttributeColumnStats {
         : m_name(name), m_locked(false), m_hidden(false), m_formula(formula) {}
 
     AttributeColumnImpl() : m_locked(false), m_hidden(false) {}
-    virtual const std::string &getName() const override;
-    virtual bool isLocked() const override;
-    virtual void setLock(bool lock) override;
-    virtual bool isHidden() const override;
-    virtual void setHidden(bool hidden) override;
-    virtual const std::string &getFormula() const override;
-    virtual void setFormula(std::string newFormula) override;
-    virtual const AttributeColumnStats &getStats() const override;
-    virtual void setDisplayParams(const DisplayParams &params) override {
-        m_displayParams = params;
-    }
-    virtual const DisplayParams &getDisplayParams() const override { return m_displayParams; }
+    const std::string &getName() const override;
+    bool isLocked() const override;
+    void setLock(bool lock) override;
+    bool isHidden() const override;
+    void setHidden(bool hidden) override;
+    const std::string &getFormula() const override;
+    void setFormula(std::string newFormula) override;
+    const AttributeColumnStats &getStats() const override;
+    void setDisplayParams(const DisplayParams &params) override { m_displayParams = params; }
+    const DisplayParams &getDisplayParams() const override { return m_displayParams; }
 
-    virtual void updateStats(float val, float oldVal = 0.0f) const override;
-    virtual void setStats(const AttributeColumnStats &stats) const override;
+    void updateStats(float val, float oldVal = 0.0f) const override;
+    void setStats(const AttributeColumnStats &stats) const override;
 
   public:
     // stats are mutable - we need to be able to update them all the time,
@@ -158,13 +158,13 @@ class AttributeRowImpl : public AttributeRow {
 
     // AttributeRow interface
   public:
-    virtual float getValue(const std::string &column) const;
-    virtual float getValue(size_t index) const;
-    virtual float getNormalisedValue(size_t index) const;
-    virtual AttributeRow &setValue(const std::string &column, float value);
-    virtual AttributeRow &setValue(size_t index, float value);
-    virtual AttributeRow &incrValue(const std::string &column, float value);
-    virtual AttributeRow &incrValue(size_t index, float value);
+    float getValue(const std::string &column) const override;
+    float getValue(size_t index) const override;
+    float getNormalisedValue(size_t index) const override;
+    AttributeRow &setValue(const std::string &column, float value) override;
+    AttributeRow &setValue(size_t index, float value) override;
+    AttributeRow &incrValue(const std::string &column, float value) override;
+    AttributeRow &incrValue(size_t index, float value) override;
 
     void addColumn();
     void removeColumn(size_t index);
@@ -191,9 +191,11 @@ struct AttributeKey {
 
     bool operator<(const AttributeKey &other) const { return value < other.value; }
 
-    void write(std::ostream &stream) const { stream.write((char *)&value, sizeof(int)); }
+    void write(std::ostream &stream) const {
+        stream.write(reinterpret_cast<const char *>(&value), sizeof(int));
+    }
 
-    void read(std::istream &stream) { stream.read((char *)&value, sizeof(int)); }
+    void read(std::istream &stream) { stream.read(reinterpret_cast<char *>(&value), sizeof(int)); }
 };
 
 ///
@@ -274,12 +276,12 @@ class AttributeTable : public AttributeColumnManager {
 
     // interface AttributeColumnManager
   public:
-    virtual size_t getColumnIndex(const std::string &name) const;
-    virtual std::optional<size_t> getColumnIndexOptional(const std::string &name) const;
-    virtual const AttributeColumn &getColumn(size_t index) const;
-    virtual const std::string &getColumnName(size_t index) const;
-    virtual size_t getNumColumns() const;
-    virtual bool hasColumn(const std::string &name) const;
+    size_t getColumnIndex(const std::string &name) const override;
+    std::optional<size_t> getColumnIndexOptional(const std::string &name) const override;
+    const AttributeColumn &getColumn(size_t index) const override;
+    const std::string &getColumnName(size_t index) const override;
+    size_t getNumColumns() const override;
+    bool hasColumn(const std::string &name) const override;
 
     // TODO: Compatibility. Very inefficient method to retreive a column's index
     // if the set of columns was sorted
@@ -332,11 +334,11 @@ class AttributeTable : public AttributeColumnManager {
             return *this;
         }
 
-        const AttributeKey &getKey() const { return iter->first; }
+        const AttributeKey &getKey() const override { return iter->first; }
 
-        const AttributeRow &getRow() const { return *iter->second; }
+        const AttributeRow &getRow() const override { return *iter->second; }
 
-        AttributeRow &getRow() { return *iter->second; }
+        AttributeRow &getRow() override { return *iter->second; }
 
         void forward() const { ++iter; }
 

@@ -19,11 +19,7 @@ class sparkSieve2 {
         double start;
         double end;
         bool remove;
-        sparkZone2(double s = 0.0, double e = 0.0) {
-            start = s;
-            end = e;
-            remove = false;
-        }
+        sparkZone2(double s = 0.0, double e = 0.0) : start(s), end(e), remove(false) {}
         // to allow ordered lists:
         friend bool operator==(const sparkZone2 &a, const sparkZone2 &b);
         friend bool operator!=(const sparkZone2 &a, const sparkZone2 &b);

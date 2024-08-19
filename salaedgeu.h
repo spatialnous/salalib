@@ -13,12 +13,6 @@
 struct SalaEdgeU : public EdgeU {
     int index;
     bool entry; // or exit
-    SalaEdgeU() : EdgeU() {
-        index = -1;
-        entry = false;
-    }
-    SalaEdgeU(int i, bool e, const EdgeU &eu) : EdgeU(eu) {
-        index = i;
-        entry = e;
-    }
+    SalaEdgeU() : EdgeU(), index(-1), entry(false) {}
+    SalaEdgeU(int i, bool e, const EdgeU &eu) : EdgeU(eu), index(i), entry(e) {}
 };

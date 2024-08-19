@@ -10,16 +10,11 @@
 
 class PixelRef {
   public:
-    short x;
-    short y;
-    PixelRef(short ax = -1, short ay = -1) {
-        x = ax;
-        y = ay;
-    }
-    PixelRef(int i) {
-        x = short(i >> 16);
-        y = short(i & 0xffff);
-    }
+    short x = -1;
+    short y = -1;
+    PixelRef(short ax = -1, short ay = -1) : x(ax), y(ay) {}
+    PixelRef(int i) : x(short(i >> 16)), y(short(i & 0xffff)) {}
+
     bool empty() { return x == -1 && y == -1; }
     PixelRef up() const { return PixelRef(x, y + 1); }
     PixelRef left() const { return PixelRef(x - 1, y); }
@@ -83,7 +78,15 @@ class PixelRef {
     friend PixelRef operator/(const PixelRef a, const int factor);
     friend double dist(const PixelRef a, const PixelRef b);
     friend double angle(const PixelRef a, const PixelRef b, const PixelRef c);
-    operator int() const { return (x < 0 || y < 0) ? -1 : ((int(x) << 16) + (int(y) & 0xffff)); }
+
+    // NOLINTBEGIN(clang-analyzer-core)
+    operator int() const {
+        return (x < 0 || y < 0 || x >= std::numeric_limits<short>::max() ||
+                y >= std::numeric_limits<short>::max())
+                   ? -1
+                   : ((int(x) << 16) + (int(y) & 0xffff)); // NOLINT
+    }
+    // NOLINTEND(clang-analyzer-core)
 };
 
 const PixelRef NoPixel(-1, -1);
@@ -131,10 +134,8 @@ typedef std::vector<PixelRef> PixelRefVector;
 struct PixelRefPair {
     PixelRef a;
     PixelRef b;
-    PixelRefPair(const PixelRef x = NoPixel, const PixelRef y = NoPixel) {
-        a = x < y ? x : y;
-        b = x < y ? y : x;
-    }
+    PixelRefPair(const PixelRef x = NoPixel, const PixelRef y = NoPixel)
+        : a(x < y ? x : y), b(x < y ? y : x) {}
     friend bool operator==(const PixelRefPair &x, const PixelRefPair &y);
     friend bool operator!=(const PixelRefPair &x, const PixelRefPair &y);
     friend bool operator<(const PixelRefPair &x, const PixelRefPair &y);
@@ -152,7 +153,7 @@ inline bool operator<(const PixelRefPair &x, const PixelRefPair &y) {
     return ((x.a == y.a) ? x.b < y.b : x.a < y.a);
 }
 inline bool operator>(const PixelRefPair &x, const PixelRefPair &y) {
-    return ((x.a == y.a) ? x.b > y.b : x.a > y.a);
+    return ((x.a == y.a) ? (x.b > y.b) : (x.a > y.a));
 }
 
 struct hashPixelRef {

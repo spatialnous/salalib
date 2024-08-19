@@ -36,10 +36,7 @@ class NtfLayer {
   public:
     int pad1 : 32;
     std::vector<NtfGeometry> geometries;
-    NtfLayer(const std::string &name = std::string()) {
-        m_name = name;
-        m_lineCount = 0;
-    }
+    NtfLayer(const std::string &name = std::string()) : m_name(name), m_lineCount(0) {}
     size_t getLineCount() { return m_lineCount; }
     std::string getName() { return m_name; }
 };

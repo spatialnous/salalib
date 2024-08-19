@@ -17,8 +17,8 @@ std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
     }
 
     std::optional<std::string> routeweightColText = std::nullopt;
-    if (m_routeweight_col != -1) {
-        routeweightColText = map.getAttributeTable().getColumnName(m_routeweight_col);
+    if (m_routeweightCol != -1) {
+        routeweightColText = map.getAttributeTable().getColumnName(m_routeweightCol);
     }
 
     std::optional<std::string> weightingColText = std::nullopt;
@@ -29,18 +29,18 @@ std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
         if (!m_forceLegacyColumnOrder) {
             if (m_choice) {
                 // EF routeweight *
-                if (m_routeweight_col != -1) {
+                if (m_routeweightCol != -1) {
                     newColumns.push_back(getFormattedColumn( //
-                        Column::CHOICE, m_tulip_bins, m_radius_type, radius, routeweightColText));
+                        Column::CHOICE, m_tulipBins, m_radiusType, radius, routeweightColText));
                     if (m_weightedMeasureCol != -1) {
                         newColumns.push_back(getFormattedColumn( //
-                            Column::CHOICE, m_tulip_bins, m_radius_type, radius, routeweightColText,
+                            Column::CHOICE, m_tulipBins, m_radiusType, radius, routeweightColText,
                             weightingColText));
                     }
                     // EFEF*
                     if (m_weightedMeasureCol2 != -1) {
                         newColumns.push_back(getFormattedColumn( //
-                            Column::CHOICE, m_tulip_bins, m_radius_type, radius, routeweightColText,
+                            Column::CHOICE, m_tulipBins, m_radiusType, radius, routeweightColText,
                             weightingColText, weightingColText2));
                     }
                     //*EFEF
@@ -48,16 +48,16 @@ std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
                 //*EF routeweight
                 else {                                       // Normal run // TV
                     newColumns.push_back(getFormattedColumn( //
-                        Column::CHOICE, m_tulip_bins, m_radius_type, radius));
+                        Column::CHOICE, m_tulipBins, m_radiusType, radius));
                     if (m_weightedMeasureCol != -1) {
                         newColumns.push_back(getFormattedColumn( //
-                            Column::CHOICE, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                            Column::CHOICE, m_tulipBins, m_radiusType, radius, std::nullopt,
                             weightingColText));
                     }
                     // EFEF*
                     if (m_weightedMeasureCol2 != -1) {
                         newColumns.push_back(getFormattedColumn( //
-                            Column::CHOICE, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                            Column::CHOICE, m_tulipBins, m_radiusType, radius, std::nullopt,
                             weightingColText, weightingColText2));
                     }
                     //*EFEF
@@ -65,29 +65,29 @@ std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
             }
 
             // EF routeweight *
-            if (m_routeweight_col != -1) {
+            if (m_routeweightCol != -1) {
                 newColumns.push_back(getFormattedColumn( //
-                    Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
+                    Column::INTEGRATION, m_tulipBins, m_radiusType, radius,
                     routeweightColText)); // <- note, the fact this is a tulip is unnecessary
 
                 newColumns.push_back(getFormattedColumn( //
-                    Column::NODE_COUNT, m_tulip_bins, m_radius_type, radius,
+                    Column::NODE_COUNT, m_tulipBins, m_radiusType, radius,
                     routeweightColText)); // <- note, the fact this is a tulip is unnecessary
                 newColumns.push_back(getFormattedColumn( //
-                    Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
+                    Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius,
                     routeweightColText)); // <- note, the fact this is a tulip is unnecessary
 
                 newColumns.push_back(getFormattedColumn( //
-                    Column::TOTAL, m_tulip_bins, m_radius_type, radius, routeweightColText));
+                    Column::TOTAL, m_tulipBins, m_radiusType, radius, routeweightColText));
 
                 if (m_weightedMeasureCol != -1) {
                     newColumns.push_back(getFormattedColumn( //
-                        Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
-                        routeweightColText, weightingColText));
+                        Column::INTEGRATION, m_tulipBins, m_radiusType, radius, routeweightColText,
+                        weightingColText));
                     // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
                     newColumns.push_back(getFormattedColumn( //
-                        Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
-                        routeweightColText, weightingColText));
+                        Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius, routeweightColText,
+                        weightingColText));
                 }
 
             }
@@ -95,26 +95,26 @@ std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
             else { // Normal run // TV
 
                 newColumns.push_back(getFormattedColumn( //
-                    Column::INTEGRATION, m_tulip_bins, m_radius_type,
+                    Column::INTEGRATION, m_tulipBins, m_radiusType,
                     radius)); // <- note, the fact this is a tulip is unnecessary
 
                 newColumns.push_back(getFormattedColumn( //
-                    Column::NODE_COUNT, m_tulip_bins, m_radius_type,
+                    Column::NODE_COUNT, m_tulipBins, m_radiusType,
                     radius)); // <- note, the fact this is a tulip is unnecessary
                 newColumns.push_back(getFormattedColumn( //
-                    Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type,
+                    Column::TOTAL_DEPTH, m_tulipBins, m_radiusType,
                     radius)); // <- note, the fact this is a tulip is unnecessary
 
                 if (m_weightedMeasureCol != -1) {
                     newColumns.push_back(getFormattedColumn( //
-                        Column::INTEGRATION, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                        Column::INTEGRATION, m_tulipBins, m_radiusType, radius, std::nullopt,
                         weightingColText)); // <- note, the fact this is a tulip is unnecessary
                     // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
                     newColumns.push_back(getFormattedColumn( //
-                        Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                        Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius, std::nullopt,
                         weightingColText));
                     newColumns.push_back(getFormattedColumn( //
-                        Column::TOTAL, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                        Column::TOTAL, m_tulipBins, m_radiusType, radius, std::nullopt,
                         weightingColText));
                 }
             }
@@ -122,18 +122,18 @@ std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
 
             if (m_choice) {
                 // EF routeweight *
-                if (m_routeweight_col != -1) {
+                if (m_routeweightCol != -1) {
                     newColumns.push_back(getFormattedColumn( //
-                        Column::CHOICE, m_tulip_bins, m_radius_type, radius, routeweightColText));
+                        Column::CHOICE, m_tulipBins, m_radiusType, radius, routeweightColText));
                     if (m_weightedMeasureCol != -1) {
                         newColumns.push_back(getFormattedColumn( //
-                            Column::CHOICE, m_tulip_bins, m_radius_type, radius, routeweightColText,
+                            Column::CHOICE, m_tulipBins, m_radiusType, radius, routeweightColText,
                             weightingColText));
                     }
                     // EFEF*
                     if (m_weightedMeasureCol2 != -1) {
                         newColumns.push_back(getFormattedColumn( //
-                            Column::CHOICE, m_tulip_bins, m_radius_type, radius, routeweightColText,
+                            Column::CHOICE, m_tulipBins, m_radiusType, radius, routeweightColText,
                             weightingColText, weightingColText2));
                     }
                     //*EFEF
@@ -141,16 +141,16 @@ std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
                 //*EF routeweight
                 else {                                       // Normal run // TV
                     newColumns.push_back(getFormattedColumn( //
-                        Column::CHOICE, m_tulip_bins, m_radius_type, radius));
+                        Column::CHOICE, m_tulipBins, m_radiusType, radius));
                     if (m_weightedMeasureCol != -1) {
                         newColumns.push_back(getFormattedColumn( //
-                            Column::CHOICE, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                            Column::CHOICE, m_tulipBins, m_radiusType, radius, std::nullopt,
                             weightingColText));
                     }
                     // EFEF*
                     if (m_weightedMeasureCol2 != -1) {
                         newColumns.push_back(getFormattedColumn( //
-                            Column::CHOICE, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                            Column::CHOICE, m_tulipBins, m_radiusType, radius, std::nullopt,
                             weightingColText, weightingColText2));
                     }
                     //*EFEF
@@ -158,53 +158,53 @@ std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
             }
 
             // EF routeweight *
-            if (m_routeweight_col != -1) {
+            if (m_routeweightCol != -1) {
                 newColumns.push_back(getFormattedColumn( //
-                    Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
+                    Column::INTEGRATION, m_tulipBins, m_radiusType, radius,
                     routeweightColText)); // <- note, the fact this is a tulip is unnecessary
                 newColumns.push_back(getFormattedColumn( //
-                    Column::INTEGRATION, m_tulip_bins, m_radius_type, radius, routeweightColText,
+                    Column::INTEGRATION, m_tulipBins, m_radiusType, radius, routeweightColText,
                     weightingColText));
 
                 newColumns.push_back(getFormattedColumn( //
-                    Column::NODE_COUNT, m_tulip_bins, m_radius_type, radius,
+                    Column::NODE_COUNT, m_tulipBins, m_radiusType, radius,
                     routeweightColText)); // <- note, the fact this is a tulip is unnecessary
                 newColumns.push_back(getFormattedColumn( //
-                    Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
+                    Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius,
                     routeweightColText)); // <- note, the fact this is a tulip is unnecessary
 
                 // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
                 newColumns.push_back(getFormattedColumn( //
-                    Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius, routeweightColText,
+                    Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius, routeweightColText,
                     weightingColText));
                 newColumns.push_back(getFormattedColumn( //
-                    Column::TOTAL, m_tulip_bins, m_radius_type, radius, routeweightColText));
+                    Column::TOTAL, m_tulipBins, m_radiusType, radius, routeweightColText));
 
             }
             //*EF routeweight
             else { // Normal run // TV
 
                 newColumns.push_back(getFormattedColumn( //
-                    Column::INTEGRATION, m_tulip_bins, m_radius_type,
+                    Column::INTEGRATION, m_tulipBins, m_radiusType,
                     radius)); // <- note, the fact this is a tulip is unnecessary
 
                 newColumns.push_back(getFormattedColumn( //
-                    Column::NODE_COUNT, m_tulip_bins, m_radius_type,
+                    Column::NODE_COUNT, m_tulipBins, m_radiusType,
                     radius)); // <- note, the fact this is a tulip is unnecessary
                 newColumns.push_back(getFormattedColumn( //
-                    Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type,
+                    Column::TOTAL_DEPTH, m_tulipBins, m_radiusType,
                     radius)); // <- note, the fact this is a tulip is unnecessary
 
                 if (m_weightedMeasureCol != -1) {
                     newColumns.push_back(getFormattedColumn( //
-                        Column::INTEGRATION, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                        Column::INTEGRATION, m_tulipBins, m_radiusType, radius, std::nullopt,
                         weightingColText)); // <- note, the fact this is a tulip is unnecessary
                     // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
                     newColumns.push_back(getFormattedColumn( //
-                        Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                        Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius, std::nullopt,
                         weightingColText));
                     newColumns.push_back(getFormattedColumn( //
-                        Column::TOTAL, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                        Column::TOTAL, m_tulipBins, m_radiusType, radius, std::nullopt,
                         weightingColText));
                 }
             }
@@ -223,7 +223,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
     // TODO: Understand what these parameters do. They were never truly provided in the original
     // function
     int weightingCol2 = m_weightedMeasureCol2;
-    int routeweightCol = m_routeweight_col;
+    int routeweightCol = m_routeweightCol;
     bool interactive = m_interactive;
 
     AttributeTable &attributes = map.getAttributeTable();
@@ -260,7 +260,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
     std::vector<float> routeweights; // EF
     std::string weightingColText;
 
-    int tulipBins = m_tulip_bins;
+    int tulipBins = m_tulipBins;
 
     if (m_weightedMeasureCol != -1) {
         weightingColText = attributes.getColumnName(m_weightedMeasureCol);
@@ -319,22 +319,22 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
         wTdCol, totalWeightCol;
     // then look them up! eek....
     for (auto radius : radiusUnconverted) {
-        std::string radiusText = makeRadiusText(m_radius_type, radius);
+        std::string radiusText = makeRadiusText(m_radiusType, radius);
         if (m_choice) {
             // EF routeweight *
             if (routeweightCol != -1) {
                 choiceCol.push_back(getFormattedColumnIdx( //
-                    attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
+                    attributes, Column::CHOICE, m_tulipBins, m_radiusType, radius,
                     routeweightColText));
                 if (m_weightedMeasureCol != -1) {
                     wChoiceCol.push_back(getFormattedColumnIdx( //
-                        attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
+                        attributes, Column::CHOICE, m_tulipBins, m_radiusType, radius,
                         routeweightColText, weightingColText));
                 }
                 // EFEF*
                 if (weightingCol2 != -1) {
                     wChoiceCol2.push_back(getFormattedColumnIdx( //
-                        attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
+                        attributes, Column::CHOICE, m_tulipBins, m_radiusType, radius,
                         routeweightColText, weightingColText, weightingColText2));
                 }
                 //*EFEF
@@ -343,17 +343,17 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
             else { // Normal run // TV
 
                 choiceCol.push_back(getFormattedColumnIdx( //
-                    attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius));
+                    attributes, Column::CHOICE, m_tulipBins, m_radiusType, radius));
                 if (m_weightedMeasureCol != -1) {
                     wChoiceCol.push_back(getFormattedColumnIdx( //
-                        attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
-                        std::nullopt, weightingColText));
+                        attributes, Column::CHOICE, m_tulipBins, m_radiusType, radius, std::nullopt,
+                        weightingColText));
                 }
                 // EFEF*
                 if (weightingCol2 != -1) {
                     wChoiceCol2.push_back(getFormattedColumnIdx( //
-                        attributes, Column::CHOICE, m_tulip_bins, m_radius_type, radius,
-                        std::nullopt, weightingColText, weightingColText2));
+                        attributes, Column::CHOICE, m_tulipBins, m_radiusType, radius, std::nullopt,
+                        weightingColText, weightingColText2));
                 }
                 //*EFEF
             }
@@ -362,45 +362,45 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
         if (routeweightCol != -1) {
 
             integCol.push_back(getFormattedColumnIdx( //
-                attributes, Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
+                attributes, Column::INTEGRATION, m_tulipBins, m_radiusType, radius,
                 routeweightColText));
             countCol.push_back(getFormattedColumnIdx( //
-                attributes, Column::NODE_COUNT, m_tulip_bins, m_radius_type, radius,
+                attributes, Column::NODE_COUNT, m_tulipBins, m_radiusType, radius,
                 routeweightColText));
             tdCol.push_back(getFormattedColumnIdx( //
-                attributes, Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
+                attributes, Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius,
                 routeweightColText));
             if (m_weightedMeasureCol != -1) {
                 // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
                 wIntegCol.push_back(getFormattedColumnIdx( //
-                    attributes, Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
+                    attributes, Column::INTEGRATION, m_tulipBins, m_radiusType, radius,
                     routeweightColText, weightingColText));
                 wTdCol.push_back(getFormattedColumnIdx( //
-                    attributes, Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
+                    attributes, Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius,
                     routeweightColText, weightingColText));
                 totalWeightCol.push_back(getFormattedColumnIdx( //
-                    attributes, Column::TOTAL, m_tulip_bins, m_radius_type, radius,
+                    attributes, Column::TOTAL, m_tulipBins, m_radiusType, radius,
                     routeweightColText));
             }
         }
         //* EF routeweight
         else {                                        // Normal run // TV
             integCol.push_back(getFormattedColumnIdx( //
-                attributes, Column::INTEGRATION, m_tulip_bins, m_radius_type, radius));
+                attributes, Column::INTEGRATION, m_tulipBins, m_radiusType, radius));
             countCol.push_back(getFormattedColumnIdx( //
-                attributes, Column::NODE_COUNT, m_tulip_bins, m_radius_type, radius));
+                attributes, Column::NODE_COUNT, m_tulipBins, m_radiusType, radius));
             tdCol.push_back(getFormattedColumnIdx( //
-                attributes, Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius));
+                attributes, Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius));
             if (m_weightedMeasureCol != -1) {
                 // '[' comes after 'R' in ASCII, so this column will come after Mean Depth R...
                 wIntegCol.push_back(getFormattedColumnIdx( //
-                    attributes, Column::INTEGRATION, m_tulip_bins, m_radius_type, radius,
+                    attributes, Column::INTEGRATION, m_tulipBins, m_radiusType, radius,
                     std::nullopt, weightingColText));
                 wTdCol.push_back(getFormattedColumnIdx( //
-                    attributes, Column::TOTAL_DEPTH, m_tulip_bins, m_radius_type, radius,
+                    attributes, Column::TOTAL_DEPTH, m_tulipBins, m_radiusType, radius,
                     std::nullopt, weightingColText));
                 totalWeightCol.push_back(getFormattedColumnIdx( //
-                    attributes, Column::TOTAL, m_tulip_bins, m_radius_type, radius, std::nullopt,
+                    attributes, Column::TOTAL, m_tulipBins, m_radiusType, radius, std::nullopt,
                     weightingColText));
             }
         }
@@ -426,7 +426,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
     std::vector<double> radius;
 
     for (auto uradius : radiusUnconverted) {
-        if (m_radius_type == RadiusType::ANGULAR && uradius != -1) {
+        if (m_radiusType == RadiusType::ANGULAR && uradius != -1) {
             radius.push_back(floor(uradius * tulipBins * 0.5));
         } else {
             radius.push_back(uradius);
@@ -548,7 +548,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                                 extradepth = (int)floor(segconn.second * tulipBins * 0.5);
                             }
                             seglength = lengths[conn.ref];
-                            switch (m_radius_type) {
+                            switch (m_radiusType) {
                             case RadiusType::ANGULAR:
                                 while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        depthlevel + extradepth > (int)radius[rbin]) {
@@ -601,7 +601,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                                 extradepth = (int)floor(segconn.second * tulipBins * 0.5);
                             }
                             seglength = lengths[conn.ref];
-                            switch (m_radius_type) {
+                            switch (m_radiusType) {
                             case RadiusType::ANGULAR:
                                 while (rbin != static_cast<int>(radiussize) && radius[rbin] != -1 &&
                                        depthlevel + extradepth > (int)radius[rbin]) {

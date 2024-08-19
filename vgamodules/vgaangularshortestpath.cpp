@@ -75,7 +75,7 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
                         extractAngular(graph.at(lpad.attributeDataRow), newPixels, m_map,
                                        AngularSearchData(lpad, 0.0f, std::nullopt));
                         for (auto &zonePixel : newPixels) {
-                            auto &zad = zonePixel.m_pixel;
+                            auto &zad = zonePixel.ad;
                             if (result.getValue(zad.attributeDataRow, visualZoneColIdx) == -1) {
                                 result.setValue(zad.attributeDataRow, visualZoneColIdx,
                                                 linePixelCounter);

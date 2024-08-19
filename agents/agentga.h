@@ -19,7 +19,7 @@ const int TIMESTEPS = 1600;
 
 struct ProgramPopulation {
   public:
-    AgentProgram m_population[POPSIZE];
+    AgentProgram population[POPSIZE];
 
   public:
     ProgramPopulation() {}

@@ -18,7 +18,7 @@ class VGAVisualLocalAdjMatrix : public IAnalysis {
     bool m_forceCommUpdatesMasterThread = false;
 
     struct DataPoint {
-        float m_cluster, m_control, m_controllability;
+        float cluster, control, controllability;
     };
     void dumpNeighbourhood(Node &node, std::set<PixelRef> &hood) const;
 

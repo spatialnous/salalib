@@ -11,25 +11,25 @@
 
 class VGAIsovistZone : public IAnalysis {
     struct MetricTriple {
-        float m_dist;
-        PixelRef m_pixel;
-        PixelRef m_lastpixel;
+        float dist;
+        PixelRef pixel;
+        PixelRef lastpixel;
         MetricTriple(float d = 0.0f, PixelRef p = NoPixel, PixelRef lp = NoPixel) {
-            m_dist = d;
-            m_pixel = p;
-            m_lastpixel = lp;
+            dist = d;
+            pixel = p;
+            lastpixel = lp;
         }
         inline bool operator==(const MetricTriple &mp2) const {
-            return (m_dist == mp2.m_dist && m_pixel == mp2.m_pixel);
+            return (dist == mp2.dist && pixel == mp2.pixel);
         }
         inline bool operator<(const MetricTriple &mp2) const {
-            return (m_dist < mp2.m_dist) || (m_dist == mp2.m_dist && m_pixel < mp2.m_pixel);
+            return (dist < mp2.dist) || (dist == mp2.dist && pixel < mp2.pixel);
         }
         inline bool operator>(const MetricTriple &mp2) const {
-            return (m_dist > mp2.m_dist) || (m_dist == mp2.m_dist && m_pixel > mp2.m_pixel);
+            return (dist > mp2.dist) || (dist == mp2.dist && pixel > mp2.pixel);
         }
         inline bool operator!=(const MetricTriple &mp2) const {
-            return (m_dist != mp2.m_dist) || (m_pixel != mp2.m_pixel);
+            return (dist != mp2.dist) || (pixel != mp2.pixel);
         }
     };
 
@@ -39,7 +39,7 @@ class VGAIsovistZone : public IAnalysis {
     float m_restrictDistance;
 
     struct MetricPoint {
-        Point *m_point = nullptr;
+        Point *point = nullptr;
     };
     MetricPoint &getMetricPoint(depthmapX::ColumnMatrix<MetricPoint> &metricPoints, PixelRef ref) {
         return (metricPoints(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x)));

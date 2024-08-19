@@ -9,7 +9,7 @@
 #include "salalib/isegment.h"
 
 class SegmentTulipDepth : ISegment {
-    int m_tulip_bins = 1024;
+    int m_tulipBins = 1024;
 
     std::set<int> &m_originRefs;
 
@@ -21,7 +21,7 @@ class SegmentTulipDepth : ISegment {
 
   public:
     SegmentTulipDepth(int tulip_bins, std::set<int> &originRefs)
-        : m_tulip_bins(tulip_bins), m_originRefs(originRefs) {}
+        : m_tulipBins(tulip_bins), m_originRefs(originRefs) {}
     std::string getAnalysisName() const override { return "Tulip Analysis"; }
     AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
 };

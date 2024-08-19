@@ -25,43 +25,40 @@ class IVGAAngular : public IVGATraversing {
     }
 
     struct AngularSearchData {
-        AnalysisData &m_pixel;
-        float m_angle;
-        std::optional<PixelRef> m_lastpixel;
+        AnalysisData &ad;
+        float angle;
+        std::optional<PixelRef> lastPixel;
         AngularSearchData(AnalysisData &p, float a = 0.0f,
                           std::optional<PixelRef> lp = std::nullopt)
-            : m_pixel(p), m_angle(a), m_lastpixel(lp) {}
+            : ad(p), angle(a), lastPixel(lp) {}
         bool operator==(const AngularSearchData &mp2) const {
-            return (m_angle == mp2.m_angle && m_pixel.ref == mp2.m_pixel.ref);
+            return (angle == mp2.angle && ad.ref == mp2.ad.ref);
         }
         bool operator<(const AngularSearchData &mp2) const {
-            return (m_angle < mp2.m_angle) ||
-                   (m_angle == mp2.m_angle && m_pixel.ref < mp2.m_pixel.ref);
+            return (angle < mp2.angle) || (angle == mp2.angle && ad.ref < mp2.ad.ref);
         }
         bool operator>(const AngularSearchData &mp2) const {
-            return (m_angle > mp2.m_angle) ||
-                   (m_angle == mp2.m_angle && m_pixel.ref > mp2.m_pixel.ref);
+            return (angle > mp2.angle) || (angle == mp2.angle && ad.ref > mp2.ad.ref);
         }
         bool operator!=(const AngularSearchData &mp2) const {
-            return (m_angle != mp2.m_angle) || (m_pixel.ref != mp2.m_pixel.ref);
+            return (angle != mp2.angle) || (ad.ref != mp2.ad.ref);
         }
     };
 
     void extractAngular(const ADRefVector<AnalysisData> &conns, std::set<AngularSearchData> &pixels,
                         const PointMap &map, const AngularSearchData &curs) const {
-        if (curs.m_angle == 0.0f || curs.m_pixel.point.blocked() ||
-            map.blockedAdjacent(curs.m_pixel.ref)) {
+        if (curs.angle == 0.0f || curs.ad.point.blocked() || map.blockedAdjacent(curs.ad.ref)) {
             for (auto &conn : conns) {
                 auto &ad = std::get<0>(conn).get();
                 if (ad.visitedFromBin == 0) {
                     // n.b. dmap v4.06r now sets angle in range 0 to 4 (1 = 90 degrees)
-                    float ang = (!curs.m_lastpixel.has_value())
-                                    ? 0.0f
-                                    : (float)(angle(ad.ref, curs.m_pixel.ref, *curs.m_lastpixel) /
-                                              (M_PI * 0.5));
-                    if (ad.cumAngle == -1.0 || curs.m_angle + ang < ad.cumAngle) {
-                        ad.cumAngle = curs.m_pixel.cumAngle + ang;
-                        pixels.insert(AngularSearchData(ad, ad.cumAngle, curs.m_pixel.ref));
+                    float ang =
+                        (!curs.lastPixel.has_value())
+                            ? 0.0f
+                            : (float)(angle(ad.ref, curs.ad.ref, *curs.lastPixel) / (M_PI * 0.5));
+                    if (ad.cumAngle == -1.0 || curs.angle + ang < ad.cumAngle) {
+                        ad.cumAngle = curs.ad.cumAngle + ang;
+                        pixels.insert(AngularSearchData(ad, ad.cumAngle, curs.ad.ref));
                     }
                 }
             }
@@ -89,11 +86,11 @@ class IVGAAngular : public IVGATraversing {
         while (searchList.size()) {
             auto internalNode = searchList.extract(searchList.begin());
             AngularSearchData here = std::move(internalNode.value());
-            if (radius != -1.0 && here.m_angle > radius) {
+            if (radius != -1.0 && here.angle > radius) {
                 break;
             }
 
-            auto &ad = here.m_pixel;
+            auto &ad = here.ad;
             auto &p = ad.point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
             if (p.filled() && ad.visitedFromBin != ~0) {
@@ -107,7 +104,7 @@ class IVGAAngular : public IVGATraversing {
                         angularDepthCol.setValue(ad2.attributeDataRow, float(ad2.cumAngle),
                                                  keepStats);
                         extractAngular(graph.at(ad2.attributeDataRow), searchList, m_map,
-                                       AngularSearchData(ad2, here.m_angle, std::nullopt));
+                                       AngularSearchData(ad2, here.angle, std::nullopt));
                         ad2.visitedFromBin = ~0;
                     }
                 }
@@ -131,10 +128,10 @@ class IVGAAngular : public IVGATraversing {
             auto internalNode = searchList.extract(searchList.begin());
             AngularSearchData here = std::move(internalNode.value());
 
-            if (radius != -1.0 && here.m_angle > radius) {
+            if (radius != -1.0 && here.angle > radius) {
                 break;
             }
-            auto &ad1 = here.m_pixel;
+            auto &ad1 = here.ad;
             auto &p = ad1.point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps'
             // left in
@@ -146,7 +143,7 @@ class IVGAAngular : public IVGATraversing {
                     if (ad2.visitedFromBin != ~0) {
                         ad2.cumAngle = ad1.cumAngle;
                         extractAngular(graph.at(ad2.attributeDataRow), searchList, m_map,
-                                       AngularSearchData(ad2, here.m_angle, std::nullopt));
+                                       AngularSearchData(ad2, here.angle, std::nullopt));
                         ad2.visitedFromBin = ~0;
                     }
                 }
@@ -179,7 +176,7 @@ class IVGAAngular : public IVGATraversing {
             auto internalNode = searchList.extract(searchList.begin());
             auto here = std::move(internalNode.value());
 
-            auto &ad = here.m_pixel;
+            auto &ad = here.ad;
             auto &p = ad.point;
             std::set<AngularSearchData> newPixels;
             std::set<AngularSearchData> mergePixels;
@@ -191,23 +188,23 @@ class IVGAAngular : public IVGATraversing {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0) {
                         auto newTripleIter =
-                            newPixels.insert(AngularSearchData(ad2, here.m_angle, std::nullopt));
+                            newPixels.insert(AngularSearchData(ad2, here.angle, std::nullopt));
                         ad2.cumAngle = ad.cumAngle;
                         extractAngular(graph.at(ad2.attributeDataRow), mergePixels, m_map,
                                        *newTripleIter.first);
                         for (auto &pixel : mergePixels) {
-                            parents[pixel.m_pixel.ref] = p.getMergePixel();
+                            parents[pixel.ad.ref] = p.getMergePixel();
                         }
                         ad2.visitedFromBin = ~0;
                     }
                 }
             }
             for (auto &pixel : newPixels) {
-                parents[pixel.m_pixel.ref] = here.m_pixel.ref;
+                parents[pixel.ad.ref] = here.ad.ref;
             }
             newPixels.insert(mergePixels.begin(), mergePixels.end());
             for (auto &pixel : newPixels) {
-                if (pixel.m_pixel.ref == targetRef) {
+                if (pixel.ad.ref == targetRef) {
                     pixelFound = true;
                 }
             }

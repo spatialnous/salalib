@@ -23,7 +23,7 @@ class VGAAngularOpenMP : public IVGAAngular {
     bool m_legacyWriteMiscs = false;
 
     struct DataPoint {
-        float m_totalDepth, m_meanDepth, m_count;
+        float totalDepth, meanDepth, count;
     };
 
   public:

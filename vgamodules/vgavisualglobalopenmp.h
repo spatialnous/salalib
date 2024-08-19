@@ -26,8 +26,8 @@ class VGAVisualGlobalOpenMP : public IVGAVisual {
     bool m_legacyWriteMiscs = false;
 
     struct DataPoint {
-        float m_count, m_depth, m_integDv, m_integPv;
-        float m_integTk, m_entropy, m_relEntropy;
+        float count, depth, integDv, integPv;
+        float integTk, entropy, relEntropy;
     };
 
   public:

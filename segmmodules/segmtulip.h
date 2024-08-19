@@ -12,11 +12,11 @@ class SegmentTulip : ISegment {
   private:
     std::set<double> m_radiusSet;
     std::optional<const std::set<int>> m_selSet;
-    int m_tulip_bins;
+    int m_tulipBins;
     int m_weightedMeasureCol;
     int m_weightedMeasureCol2;
-    int m_routeweight_col;
-    RadiusType m_radius_type;
+    int m_routeweightCol;
+    RadiusType m_radiusType;
     bool m_choice;
     bool m_interactive;
     bool m_forceLegacyColumnOrder = false;
@@ -89,9 +89,9 @@ class SegmentTulip : ISegment {
     SegmentTulip(std::set<double> radiusSet, std::optional<const std::set<int>> selSet,
                  int tulip_bins, int weightedMeasureCol, RadiusType radius_type, bool choice,
                  bool interactive = false, int weightedMeasureCol2 = -1, int routeweight_col = -1)
-        : m_radiusSet(radiusSet), m_selSet(selSet), m_tulip_bins(tulip_bins),
+        : m_radiusSet(radiusSet), m_selSet(selSet), m_tulipBins(tulip_bins),
           m_weightedMeasureCol(weightedMeasureCol), m_weightedMeasureCol2(weightedMeasureCol2),
-          m_routeweight_col(routeweight_col), m_radius_type(radius_type), m_choice(choice),
+          m_routeweightCol(routeweight_col), m_radiusType(radius_type), m_choice(choice),
           m_interactive(interactive) {}
     void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
         m_forceLegacyColumnOrder = forceLegacyColumnOrder;

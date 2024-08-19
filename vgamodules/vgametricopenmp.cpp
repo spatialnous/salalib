@@ -67,10 +67,10 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
             ad0.point.dummyCumangle = ad0.cumAngle;
         }
 
-        dp.m_mspa = float(double(totalAngle) / double(totalNodes));
-        dp.m_mspl = float(double(totalDepth) / double(totalNodes));
-        dp.m_dist = float(double(euclidDepth) / double(totalNodes));
-        dp.m_count = float(totalNodes);
+        dp.mspa = float(double(totalAngle) / double(totalNodes));
+        dp.mspl = float(double(totalDepth) / double(totalNodes));
+        dp.dist = float(double(euclidDepth) / double(totalNodes));
+        dp.count = float(totalNodes);
 
 #if defined(_OPENMP)
 #pragma omp atomic
@@ -110,10 +110,10 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
     auto dataIter = colData.begin();
     for (size_t i = 0; i < attributes.getNumRows(); i++) {
-        result.setValue(i, mspaCol, dataIter->m_mspa);
-        result.setValue(i, msplCol, dataIter->m_mspl);
-        result.setValue(i, distCol, dataIter->m_dist);
-        result.setValue(i, countCol, dataIter->m_count);
+        result.setValue(i, mspaCol, dataIter->mspa);
+        result.setValue(i, msplCol, dataIter->mspl);
+        result.setValue(i, distCol, dataIter->dist);
+        result.setValue(i, countCol, dataIter->count);
         dataIter++;
     }
 

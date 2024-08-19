@@ -39,11 +39,11 @@ AgentProgram *ProgramPopulation::makeChild() {
     int b = rankselect(POPSIZE);
     while (a == b)
         b = rankselect(POPSIZE);
-    m_population[POPSIZE - 1] = crossover(m_population[a], m_population[b]);
-    m_population[POPSIZE - 1].mutate();
+    population[POPSIZE - 1] = crossover(population[a], population[b]);
+    population[POPSIZE - 1].mutate();
 
-    return &(m_population[POPSIZE - 1]);
+    return &(population[POPSIZE - 1]);
 }
 
 // note: this is correct -- do not use &m_population!
-void ProgramPopulation::sort() { qsort(m_population, POPSIZE, sizeof(AgentProgram), progcompare); }
+void ProgramPopulation::sort() { qsort(population, POPSIZE, sizeof(AgentProgram), progcompare); }

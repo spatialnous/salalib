@@ -22,7 +22,7 @@ class VGAMetricOpenMP : public IVGAMetric {
     bool m_legacyWriteMiscs = false;
 
     struct DataPoint {
-        float m_mspa, m_mspl, m_dist, m_count;
+        float mspa, mspl, dist, count;
     };
 
   public:

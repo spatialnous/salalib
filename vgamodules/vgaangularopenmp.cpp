@@ -82,10 +82,10 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
 
         if (totalNodes > 0) {
-            dp.m_meanDepth = float(double(totalAngle) / double(totalNodes));
+            dp.meanDepth = float(double(totalAngle) / double(totalNodes));
         }
-        dp.m_totalDepth = totalAngle;
-        dp.m_count = float(totalNodes);
+        dp.totalDepth = totalAngle;
+        dp.count = float(totalNodes);
 
 #if defined(_OPENMP)
 #pragma omp atomic
@@ -129,9 +129,9 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
     auto dataIter = colData.begin();
     for (size_t i = 0; i < attributes.getNumRows(); i++) {
-        result.setValue(i, meanDepthCol, dataIter->m_meanDepth);
-        result.setValue(i, totalDepthCol, dataIter->m_totalDepth);
-        result.setValue(i, countCol, dataIter->m_count);
+        result.setValue(i, meanDepthCol, dataIter->meanDepth);
+        result.setValue(i, totalDepthCol, dataIter->totalDepth);
+        result.setValue(i, countCol, dataIter->count);
         dataIter++;
     }
 

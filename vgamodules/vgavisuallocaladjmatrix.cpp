@@ -118,13 +118,13 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 #endif
         {
             if (hoodSize > 1) {
-                dp.m_cluster = float(cluster / double(hoodSize * (hoodSize - 1.0)));
-                dp.m_control = float(control);
-                dp.m_controllability = float(double(hoodSize) / double(totalReach));
+                dp.cluster = float(cluster / double(hoodSize * (hoodSize - 1.0)));
+                dp.control = float(control);
+                dp.controllability = float(double(hoodSize) / double(totalReach));
             } else {
-                dp.m_cluster = -1.0f;
-                dp.m_control = -1.0f;
-                dp.m_controllability = -1;
+                dp.cluster = -1.0f;
+                dp.control = -1.0f;
+                dp.controllability = -1;
             }
         }
 
@@ -161,9 +161,9 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 
     auto dataIter = colData.begin();
     for (auto row : rows) {
-        row->setValue(clusterCol, dataIter->m_cluster);
-        row->setValue(controlCol, dataIter->m_control);
-        row->setValue(controllabilityCol, dataIter->m_controllability);
+        row->setValue(clusterCol, dataIter->cluster);
+        row->setValue(controlCol, dataIter->control);
+        row->setValue(controllabilityCol, dataIter->controllability);
         dataIter++;
     }
 

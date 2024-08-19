@@ -1,6 +1,6 @@
-Checks:          'readability-identifier-naming'
-WarningsAsErrors: true
-AnalyzeTemporaryDtors: false
+Checks:                       'readability-identifier-naming'
+WarningsAsErrors:             '*'
+HeaderFilterRegex:            ''
 CheckOptions:
   - key:             readability-identifier-naming.LocalVariableCase
     value:           'camelBack'

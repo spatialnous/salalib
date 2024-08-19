@@ -207,9 +207,9 @@ class Event2f : public Point2f {
   public:
     double t; // time in seconds
     Event2f() : Point2f(), t(0.0) {}
-    Event2f(double _x, double _y, double _t) : Point2f(_x, _y), t(_t) {}
-    Event2f(Point2f &_p) : Point2f(_p), t(0.0) {}
-    Event2f(Point2f &_p, double _t) : Point2f(_p), t(_t) {}
+    Event2f(double x, double y, double t) : Point2f(x, y), t(t) {}
+    Event2f(Point2f &p) : Point2f(p), t(0.0) {}
+    Event2f(Point2f &p, double t) : Point2f(p), t(t) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -269,7 +269,7 @@ inline Point3f cross(const Point3f &a, const Point3f &b) {
 struct EdgeU {
     int edge;
     double u;
-    EdgeU(int e = -1, double _u = 0.0) : edge(e), u(_u) {}
+    EdgeU(int e = -1, double u = 0.0) : edge(e), u(u) {}
     EdgeU(const EdgeU &eu) : edge(eu.edge), u(eu.u) {}
     friend bool ccwEdgeU(const EdgeU &a, const EdgeU &b, const EdgeU &c);
 };

@@ -702,7 +702,7 @@ void Poly::add_line_segment(const Line &l) {
     m_lineSegments++;
     RegionTreeLeaf *leaf = new RegionTreeLeaf(l);
 
-    if (m_pRoot == NULL) {
+    if (m_pRoot == nullptr) {
         // first ever node
 
         m_pRoot = (RegionTree *)leaf;
@@ -755,7 +755,7 @@ void Poly::add_line_segment(const Line &l) {
 
 RegionTree *Poly::copy_region_tree(const RegionTree *tree) {
     if (!tree) {
-        return NULL;
+        return nullptr;
     }
 
     RegionTree *newtree;
@@ -838,7 +838,7 @@ void Poly::destroy_region_tree() {
                 }
             }
         } else {
-            if (currentNode->m_pRight == NULL) {
+            if (currentNode->m_pRight == nullptr) {
                 currentNode->m_pRight = currentNode;
             } else if (currentNode->m_pRight != currentNode) {
                 delNodeList.push_back(currentNode->m_pRight);
@@ -850,7 +850,7 @@ void Poly::destroy_region_tree() {
         }
     } while (delNodeList.size() > 0);
 
-    m_pRoot = NULL;
+    m_pRoot = nullptr;
 }
 
 // contains? intersects??

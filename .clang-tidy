@@ -20,3 +20,5 @@ CheckOptions:
     value:           'camelBack'
   - key:             readability-identifier-naming.PublicMemberPrefix
     value:           ''
+  - key:             readability-identifier-naming.ParameterCase
+    value:           'camelBack'

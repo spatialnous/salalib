@@ -55,7 +55,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
     for (i = 0; i < n; i++) {
         if (m_gatesOnly) {
 #if defined(_OPENMP)
-#pragma omp critical
+#pragma omp atomic
 #endif
             count++;
             continue;

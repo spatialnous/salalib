@@ -51,7 +51,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
     for (i = 0; i < n; i++) {
         if ((m_map.getPoint(refs[i]).contextfilled() && !refs[i].iseven()) || (m_gatesOnly)) {
 #if defined(_OPENMP)
-#pragma omp critical
+#pragma omp atomic
 #endif
             count++;
             continue;

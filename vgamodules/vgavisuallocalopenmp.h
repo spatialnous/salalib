@@ -20,7 +20,7 @@ class VGAVisualLocalOpenMP : public IAnalysis {
         float cluster, control, controllability;
     };
 
-    void dumpNeighbourhood(Node &node, std::set<PixelRef> &hood) const;
+    std::set<PixelRef> getNeighbourhood(const Node &node) const;
 
   public:
     struct Column {

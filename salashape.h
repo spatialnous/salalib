@@ -35,8 +35,8 @@ class SalaShape {
     double m_perimeter;
     // these are all temporary data which are recalculated on reload
     //    mutable bool m_selected;
-    mutable float m_color;
-    mutable int m_draworder;
+    mutable float m_color = 0;
+    mutable int m_draworder = -1;
 
   public:
     SalaShape(unsigned char type = 0)

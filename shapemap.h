@@ -358,6 +358,7 @@ class ShapeMap : public AttributeMap {
     bool linkShapes(size_t index1, size_t index2);
     bool linkShapes(size_t id1, int dir1, size_t id2, int dir2, float weight);
     bool unlinkShapes(const Point2f &p, PixelRef p2);
+    bool unlinkShapes(const Point2f &p1, const Point2f &p2);
     bool unlinkShapesFromRefs(int index1, int index2);
     bool unlinkShapes(size_t index1, size_t index2);
     bool unlinkShapesByKey(int key1, int key2);

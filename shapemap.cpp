@@ -2638,6 +2638,29 @@ bool ShapeMap::unlinkShapes(const Point2f &p, PixelRef p2) {
     return true;
 }
 
+bool ShapeMap::unlinkShapes(const Point2f &p1, const Point2f &p2) {
+    int index1 = pointInPoly(p1);
+    if (index1 == -1) {
+        // try looking for a polyline instead
+        index1 = getClosestOpenGeom(p1);
+    }
+    if (index1 == -1) {
+        return false;
+    }
+    int index2 = pointInPoly(p2);
+    if (index2 == -1) {
+        // try looking for a polyline instead
+        index2 = getClosestOpenGeom(p2);
+    }
+    if (index2 == -1) {
+        return false;
+    }
+
+    unlinkShapes(index1, index2);
+
+    return true;
+}
+
 bool ShapeMap::unlinkShapesFromRefs(int ref1, int ref2) {
     int index1 = depthmapX::findIndexFromKey(m_shapes, ref1);
     int index2 = depthmapX::findIndexFromKey(m_shapes, ref2);

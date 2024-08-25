@@ -17,7 +17,7 @@ class AgentAnalysis : public IAnalysis {
 
   public: // publicly accessible struct
     struct TrailRecordOptions {
-        std::optional<size_t> limit;
+        std::optional<size_t> limit = std::nullopt;
         std::reference_wrapper<ShapeMap> map;
     };
 

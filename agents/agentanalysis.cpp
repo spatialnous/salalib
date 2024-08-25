@@ -78,8 +78,9 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
 
     agents.clear();
 
-    int maxValue =
-        m_recordTrails->limit.has_value() ? static_cast<int>(*m_recordTrails->limit) : -1;
+    int maxValue = m_recordTrails.has_value() && m_recordTrails->limit.has_value()
+                       ? static_cast<int>(*(m_recordTrails->limit))
+                       : -1;
 
     for (size_t i = 0; i < m_systemTimesteps; i++) {
         auto q = static_cast<size_t>(pafmath::invcumpoisson(pafmath::prandomr(), m_releaseRate));

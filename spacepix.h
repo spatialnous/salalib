@@ -26,7 +26,8 @@ class PixelBase {
     QtRegion m_region;
 
   public:
-    PixelBase() { ; }
+    PixelBase() {}
+    virtual ~PixelBase() {}
     // constrain is constrain to bounding box (i.e., in row / col bounds)
     virtual PixelRef pixelate(const Point2f &, bool constrain = true,
                               int scalefactor = 1) const = 0;

@@ -28,7 +28,7 @@ class SalaShape {
     friend class ShapeMap;
 
   protected:
-    unsigned char m_type;
+    uint8_t m_type;
     Point2f m_centroid; // centre of mass, but also used as for point if object is a point
     Line m_region;      // bounding box, but also used as a line if object is a line, hence type
     double m_area;
@@ -39,8 +39,7 @@ class SalaShape {
     mutable int m_draworder = -1;
 
   public:
-    SalaShape(unsigned char type = 0)
-        : m_type(type), m_area(0.0), m_perimeter(0.0), m_draworder(-1) {}
+    SalaShape(uint8_t type = 0) : m_type(type), m_area(0.0), m_perimeter(0.0), m_draworder(-1) {}
     SalaShape(const Point2f &point)
         : m_type(SHAPE_POINT), m_centroid(point), m_area(0.0), m_perimeter(0.0), m_draworder(-1) {
         m_region = Line(point, point);
@@ -59,7 +58,7 @@ class SalaShape {
             m_area == other.getArea() &&           //
             m_perimeter == other.getPerimeter();
     }
-    unsigned char getType() const { return m_type; }
+    uint8_t getType() const { return m_type; }
     int getDrawOrder() const { return m_draworder; }
 
     bool isOpen() const { return (m_type & SHAPE_CLOSED) == 0; }

@@ -17,9 +17,9 @@ struct IsoSeg {
     double endangle;
     Point2f startpoint;
     Point2f endpoint;
-    char quadrant;
+    int8_t quadrant;
     int tag;
-    IsoSeg(double start = 0.0, double end = 0.0, char q = 0, int t = -1)
+    IsoSeg(double start = 0.0, double end = 0.0, int8_t q = 0, int t = -1)
         : tagdelete(false), startangle(start), endangle(end), quadrant(q), tag(t) {}
     IsoSeg(double start, double end, const Point2f &pstart, Point2f &pend, int t = -1)
         : tagdelete(false), startangle(start), endangle(end), startpoint(pstart), endpoint(pend),

@@ -20,10 +20,10 @@ struct PixelVec {
     PixelRef end() const { return m_end; } //
     void setStart(PixelRef start) { m_start = start; }
     void setEnd(PixelRef end) { m_end = end; } //
-    std::istream &read(std::istream &stream, const char dir);
-    std::istream &read(std::istream &stream, const char dir, const PixelVec &context);
-    std::ostream &write(std::ostream &stream, const char dir);
-    std::ostream &write(std::ostream &stream, const char dir, const PixelVec &context);
+    std::istream &read(std::istream &stream, const int8_t dir);
+    std::istream &read(std::istream &stream, const int8_t dir, const PixelVec &context);
+    std::ostream &write(std::ostream &stream, const int8_t dir);
+    std::ostream &write(std::ostream &stream, const int8_t dir, const PixelVec &context);
 
   private:
     PixelRef m_start;
@@ -40,11 +40,11 @@ class Bin {
     float m_occDistance;
 
   public:
-    char dir;
+    int8_t dir;
     std::vector<PixelVec> pixelVecs;
     Bin() : m_nodeCount(0), m_distance(0.0f), m_occDistance(0.0f), dir(PixelRef::NODIR) {}
     //
-    void make(const PixelRefVector &pixels, char onDir);
+    void make(const PixelRefVector &pixels, int8_t onDir);
 
     int count() const { return m_nodeCount; }
     float distance() const { return m_distance; }

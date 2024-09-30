@@ -8,16 +8,18 @@
 
 #include "genlib/p2dpoly.h"
 
+#include <cstdint>
+
 // For my colour scheme... some parameters to pass, and my own colour class
 
 // Converts everything to safe HTML colours
 
 struct PafColor {
     unsigned int color;
-    unsigned char redb() const { return (unsigned char)(color >> 16); }
-    unsigned char greenb() const { return (unsigned char)(color >> 8); }
-    unsigned char blueb() const { return (unsigned char)(color); }
-    unsigned char alphab() const { return (unsigned char)(color >> 24); }
+    uint8_t redb() const { return (uint8_t)(color >> 16); }
+    uint8_t greenb() const { return (uint8_t)(color >> 8); }
+    uint8_t blueb() const { return (uint8_t)(color); }
+    uint8_t alphab() const { return (uint8_t)(color >> 24); }
     // Quick mod - TV
     void setr(unsigned char r) {
         color &= 0xff00ffff;

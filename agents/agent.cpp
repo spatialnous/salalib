@@ -674,7 +674,7 @@ Point2f Agent::onGibsonianLook2(bool wholeisovist) {
     }
     */
     // second action, apply feeler rule:
-    char dir = 0x00;
+    int8_t dir = 0x00;
     if ((m_currLos[1] - m_lastLos[1]) / m_currLos[1] > m_program->feelerThreshold) {
         dir |= 0x01;
     }

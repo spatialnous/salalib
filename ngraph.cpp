@@ -172,7 +172,7 @@ std::ostream &operator<<(std::ostream &stream, const Node &node) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void Bin::make(const PixelRefVector &pixels, char onDir) {
+void Bin::make(const PixelRefVector &pixels, int8_t onDir) {
     pixelVecs.clear();
     m_nodeCount = 0;
 
@@ -351,7 +351,7 @@ std::ostream &operator<<(std::ostream &stream, const Bin &bin) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-std::istream &PixelVec::read(std::istream &stream, const char dir) {
+std::istream &PixelVec::read(std::istream &stream, const int8_t dir) {
     unsigned short runlength;
     stream.read(reinterpret_cast<char *>(&m_start), sizeof(m_start));
     stream.read(reinterpret_cast<char *>(&runlength), sizeof(runlength));
@@ -376,7 +376,7 @@ std::istream &PixelVec::read(std::istream &stream, const char dir) {
     return stream;
 }
 
-std::ostream &PixelVec::write(std::ostream &stream, const char dir) {
+std::ostream &PixelVec::write(std::ostream &stream, const int8_t dir) {
     stream.write(reinterpret_cast<const char *>(&m_start), sizeof(m_start));
     unsigned short runlength;
     switch (dir) {
@@ -399,7 +399,7 @@ struct ShiftLength {
     unsigned short runlength : 12;
 };
 
-std::istream &PixelVec::read(std::istream &stream, const char dir, const PixelVec &context) {
+std::istream &PixelVec::read(std::istream &stream, const int8_t dir, const PixelVec &context) {
     short primary;
     ShiftLength shiftlength;
     stream.read(reinterpret_cast<char *>(&primary), sizeof(primary));
@@ -422,7 +422,7 @@ std::istream &PixelVec::read(std::istream &stream, const char dir, const PixelVe
     return stream;
 }
 
-std::ostream &PixelVec::write(std::ostream &stream, const char dir, const PixelVec &context) {
+std::ostream &PixelVec::write(std::ostream &stream, const int8_t dir, const PixelVec &context) {
     ShiftLength shiftlength;
     switch (dir) {
     case PixelRef::HORIZONTAL:

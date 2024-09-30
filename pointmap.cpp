@@ -1388,7 +1388,7 @@ void PointMap::addGridConnections() {
                 }
                 bin.next();
             }
-            char dir = PixelRef::NODIR;
+            int8_t dir = PixelRef::NODIR;
             if (i == 0) {
                 dir = PixelRef::VERTICAL;
             } else if (i == 4 || i == 8) {

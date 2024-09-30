@@ -59,7 +59,7 @@ struct RadialKey {
     bool segend;
     // padding the remaining three bytes behind the bool - don't use int : 24 as this will grab the
     // next 4 byte block
-    char pad1 : 8;
+    int8_t pad1 : 8;
     short pad2 : 16;
 
     RadialKey(const AxialVertexKey &v = NoVertex, float a = -1.0f, bool se = false)

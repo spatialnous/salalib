@@ -38,11 +38,11 @@ class PixelRef {
         NEGHORIZONTAL = 0x10,
         NEGVERTICAL = 0x20
     };
-    short &row(char dir) { return (dir & VERTICAL) ? x : y; }
-    short &col(char dir) { return (dir & VERTICAL) ? y : x; }
-    const short &row(char dir) const { return (dir & VERTICAL) ? x : y; }
-    const short &col(char dir) const { return (dir & VERTICAL) ? y : x; }
-    PixelRef &move(char dir) {
+    short &row(int8_t dir) { return (dir & VERTICAL) ? x : y; }
+    short &col(int8_t dir) { return (dir & VERTICAL) ? y : x; }
+    const short &row(int8_t dir) const { return (dir & VERTICAL) ? x : y; }
+    const short &col(int8_t dir) const { return (dir & VERTICAL) ? y : x; }
+    PixelRef &move(int8_t dir) {
         switch (dir) {
         case POSDIAGONAL:
             x++;

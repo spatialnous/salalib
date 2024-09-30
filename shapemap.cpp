@@ -1002,7 +1002,7 @@ void ShapeMap::makePolyPixels(int polyref) {
             const auto iter = depthmapX::findBinary(pixShapes, shapeRef);
             if (iter == pixShapes.end())
                 throw new depthmapX::RuntimeException("Poly reference not found");
-            unsigned char &tags = iter->tags;
+            uint8_t &tags = iter->tags;
             if (tags == 0x00) {
                 tags |= ShapeRef::SHAPE_INTERNAL_EDGE;
             }

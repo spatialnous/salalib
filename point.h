@@ -64,7 +64,7 @@ class Point {
   protected:
     int m_block; // not used, unlikely to be used, but kept for time being
     int m_state;
-    char m_gridConnections;       // this is a standard set of grid connections, with bits set for
+    int8_t m_gridConnections;     // this is a standard set of grid connections, with bits set for
                                   // E,NE,N,NW,W,SW,S,SE
     std::unique_ptr<Node> m_node; // graph links
     Point2f m_location; // note: this is large, but it helps allow loading of non-standard grid
@@ -167,7 +167,7 @@ class Point {
     Node &getNode() { return *m_node; }
     Node &getNode() const { return *m_node; }
     bool hasNode() const { return m_node != nullptr; }
-    char getGridConnections() const { return m_gridConnections; }
+    int8_t getGridConnections() const { return m_gridConnections; }
     float getBinDistance(int i);
     const Point2f &getLocation() const { return m_location; }
 

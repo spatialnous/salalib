@@ -15,10 +15,10 @@
 struct SegmentRef {
     int8_t dir;
     // padding the remaining three bytes behind the char
-    char pad1 : 8;
+    int8_t pad1 : 8;
     short pad2 : 16;
     int ref;
-    SegmentRef(char d = 0, int r = -1) : dir(d), pad1(0), pad2(0), ref(r) {}
+    SegmentRef(int8_t d = 0, int r = -1) : dir(d), pad1(0), pad2(0), ref(r) {}
 };
 // note, the dir is only a direction indicator, the ref should always be unique
 inline bool operator<(SegmentRef a, SegmentRef b) { return a.ref < b.ref; }
@@ -32,7 +32,7 @@ struct SegmentData : public SegmentRef {
     int segdepth;
     float metricdepth;
     unsigned int coverage;
-    SegmentData(char d = 0, int r = -1, SegmentRef p = SegmentRef(), int sd = 0, float md = 0.0f,
+    SegmentData(int8_t d = 0, int r = -1, SegmentRef p = SegmentRef(), int sd = 0, float md = 0.0f,
                 unsigned int cv = 0xffffffff)
         : previous(p), segdepth(sd), metricdepth(md), coverage(cv) {
         dir = d;

@@ -10,6 +10,7 @@
 
 #include "genlib/p2dpoly.h"
 
+#include <cstdint>
 #include <istream>
 #include <vector>
 

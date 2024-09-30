@@ -8,11 +8,8 @@
 
 #include "ivgavisual.h"
 
-#include "genlib/stringutils.h"
-#include "salalib/pixelref.h"
-#include "salalib/pointmap.h"
-
-#include "genlib/simplematrix.h"
+#include "../genlib/stringutils.h"
+#include "../pointmap.h"
 
 class VGAVisualGlobalOpenMP : public IVGAVisual {
   private:

@@ -9,7 +9,7 @@
 #include "ivgaangular.h"
 #include "salalib/pointmap.h"
 
-#include "genlib/stringutils.h"
+#include "../genlib/stringutils.h"
 
 class VGAAngular : public IVGAAngular {
   private:

@@ -6,7 +6,7 @@
 
 #include "axialintegration.h"
 
-#include "genlib/pflipper.h"
+#include "../genlib/pflipper.h"
 
 std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> radii,
                                                               std::string weightingColName,

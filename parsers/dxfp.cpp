@@ -4,8 +4,8 @@
 
 #include "dxfp.h"
 
-#include "genlib/comm.h" // for communicator
-#include "genlib/stringutils.h"
+#include "../genlib/comm.h" // for communicator
+#include "../genlib/stringutils.h"
 
 #include <algorithm>
 #include <fstream>

@@ -6,8 +6,8 @@
 
 #include "agentprogram.h"
 
-#include "genlib/pafmath.h"
-#include "genlib/stringutils.h"
+#include "../genlib/pafmath.h"
+#include "../genlib/stringutils.h"
 
 #include <fstream>
 

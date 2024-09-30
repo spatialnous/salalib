@@ -7,10 +7,10 @@
 
 #include "ntfp.h"
 
-#include "genlib/comm.h" // for communicator
-#include "genlib/containerutils.h"
-#include "genlib/p2dpoly.h"
-#include "genlib/stringutils.h"
+#include "../genlib/comm.h" // for communicator
+#include "../genlib/containerutils.h"
+#include "../genlib/p2dpoly.h"
+#include "../genlib/stringutils.h"
 
 #include <fstream>
 #include <iostream>

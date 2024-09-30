@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "genlib/stringutils.h"
+#include "../genlib/stringutils.h"
+#include "../pointmap.h"
 #include "ivgametric.h"
-#include "salalib/pointmap.h"
 
 class VGAMetricOpenMP : public IVGAMetric {
   private:

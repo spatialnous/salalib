@@ -6,7 +6,7 @@
 
 #include "agentga.h"
 
-#include "genlib/pafmath.h"
+#include "../genlib/pafmath.h"
 
 int thisrun = 0;
 

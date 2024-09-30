@@ -9,7 +9,7 @@
 #include "ivgametric.h"
 #include "salalib/pointmap.h"
 
-#include "genlib/stringutils.h"
+#include "../genlib/stringutils.h"
 
 class VGAMetric : public IVGAMetric {
   private:

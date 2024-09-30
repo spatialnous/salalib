@@ -6,7 +6,7 @@
 
 #include "segmtulip.h"
 
-#include "genlib/stringutils.h"
+#include "../genlib/stringutils.h"
 
 std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
                                                           std::vector<double> radii) {

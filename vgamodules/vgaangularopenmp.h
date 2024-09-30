@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "genlib/stringutils.h"
+#include "../genlib/stringutils.h"
 #include "ivgaangular.h"
 #include "salalib/pointmap.h"
 

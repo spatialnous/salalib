@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "genlib/p2dpoly.h"
+#include "../genlib/p2dpoly.h"
 
 #include <string>
 #include <vector>

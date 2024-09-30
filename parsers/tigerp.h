@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "genlib/comm.h"
-#include "genlib/p2dpoly.h"
+#include "../genlib/comm.h"
+#include "../genlib/p2dpoly.h"
 
 #include <map>
 #include <string>

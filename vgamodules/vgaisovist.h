@@ -8,10 +8,10 @@
 
 #include "ivga.h"
 
-#include "salalib/isovist.h"
-#include "salalib/pointmap.h"
+#include "../isovist.h"
+#include "../pointmap.h"
 
-#include "genlib/bsptree.h"
+#include "../genlib/bsptree.h"
 
 class VGAIsovist : public IVGA {
     const std::vector<SalaShape> &m_boundaryShapes;

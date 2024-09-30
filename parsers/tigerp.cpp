@@ -9,7 +9,7 @@
 
 #include "tigerp.h"
 
-#include "genlib/comm.h"
+#include "../genlib/comm.h"
 
 #include <fstream>
 #include <iostream>

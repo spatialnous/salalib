@@ -7,7 +7,7 @@
 #include "salalib/pointmap.h"
 #include "salalib/shapemap.h"
 
-#include "genlib/stringutils.h"
+#include "../genlib/stringutils.h"
 
 #include <numeric>
 

@@ -8,11 +8,11 @@
 
 #include "agentprogram.h"
 
-#include "salalib/pixelref.h"
-#include "salalib/pointmap.h"
+#include "../pixelref.h"
+#include "../pointmap.h"
 
-#include "genlib/p2dpoly.h"
-#include "genlib/pflipper.h"
+#include "../genlib/p2dpoly.h"
+#include "../genlib/pflipper.h"
 
 class Agent {
   public:

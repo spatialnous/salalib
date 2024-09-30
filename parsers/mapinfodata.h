@@ -7,7 +7,7 @@
 #include "salalib/attributetable.h"
 #include "salalib/layermanagerimpl.h"
 
-#include "genlib/p2dpoly.h"
+#include "salalib/genlib/p2dpoly.h"
 
 #include <istream>
 #include <ostream>

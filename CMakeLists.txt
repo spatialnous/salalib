@@ -124,6 +124,7 @@ if (NOT DISABLE_OPENMP)
     endif()
 endif()
 
+add_subdirectory(genlib)
 add_subdirectory(vgamodules)
 add_subdirectory(axialmodules)
 add_subdirectory(segmmodules)

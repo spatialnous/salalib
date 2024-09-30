@@ -1,8 +1,0 @@
-Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: genlib
-Upstream-Contact: Petros Koutsolampros <commits@pklampros.io>
-Source: https://github.com/spatialnous/genlib
-
-Files: README.md .gitignore .clang-format .clang-tidy
-Copyright: Petros Koutsolampros <commits@pklampros.io>
-License: GPL-3.0-or-later

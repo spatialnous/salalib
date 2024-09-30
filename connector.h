@@ -13,7 +13,7 @@
 // Additional for segment analysis
 
 struct SegmentRef {
-    char dir;
+    int8_t dir;
     // padding the remaining three bytes behind the char
     char pad1 : 8;
     short pad2 : 16;

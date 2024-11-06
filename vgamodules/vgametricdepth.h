@@ -7,7 +7,8 @@
 #pragma once
 
 #include "ivgametric.h"
-#include "salalib/pointmap.h"
+
+#include "../pointmap.h"
 
 class VGAMetricDepth : public IVGAMetric {
 

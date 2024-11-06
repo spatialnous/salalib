@@ -6,9 +6,10 @@
 
 #pragma once
 
+#include "../pixelref.h"
+#include "../pointmap.h"
+
 #include "ivgametric.h"
-#include "salalib/pixelref.h"
-#include "salalib/pointmap.h"
 
 class VGAMetricShortestPathToMany : public IVGAMetric {
   private:

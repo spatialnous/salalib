@@ -6,8 +6,8 @@
 
 // Interface to handle different kinds of Axial analysis
 
-#include "salalib/analysisresult.h"
-#include "salalib/shapegraph.h"
+#include "analysisresult.h"
+#include "shapegraph.h"
 
 #include "genlib/comm.h"
 

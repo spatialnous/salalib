@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "salalib/pointmap.h"
-#include "salalib/shapegraph.h"
-#include "salalib/shapemap.h"
+#include "pointmap.h"
+#include "shapegraph.h"
+#include "shapemap.h"
 
 namespace PushValues {
     enum class Func {

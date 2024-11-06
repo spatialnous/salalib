@@ -6,7 +6,7 @@
 
 #include "pushvalues.h"
 
-#include "salalib/attributetable.h"
+#include "attributetable.h"
 
 void PushValues::pushValue(double &val, int &count, double thisval, Func pushFunc) {
     if (thisval != -1) {

@@ -7,9 +7,9 @@
 #pragma once
 
 #include "ivgaangular.h"
-#include "salalib/pointmap.h"
 
 #include "../genlib/stringutils.h"
+#include "../pointmap.h"
 
 class VGAAngular : public IVGAAngular {
   private:

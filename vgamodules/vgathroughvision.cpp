@@ -6,7 +6,7 @@
 
 #include "vgathroughvision.h"
 
-#include "salalib/agents/agentanalysis.h"
+#include "../agents/agentanalysis.h"
 
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes

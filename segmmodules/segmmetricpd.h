@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "salalib/isegment.h"
+#include "../isegment.h"
 
 class SegmentMetricPD : ISegment {
 

@@ -6,9 +6,9 @@
 
 #include "genlib/simplematrix.h"
 
-#include "salalib/pointmap.h"
-#include "salalib/shapegraph.h"
-#include "salalib/shapemap.h"
+#include "pointmap.h"
+#include "shapegraph.h"
+#include "shapemap.h"
 
 #include <algorithm>
 #include <string>

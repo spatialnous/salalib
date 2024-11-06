@@ -7,8 +7,9 @@
 #pragma once
 
 #include "ivgavisual.h"
-#include "salalib/pixelref.h"
-#include "salalib/pointmap.h"
+
+#include "../pixelref.h"
+#include "../pointmap.h"
 
 class VGAVisualGlobalDepth : public IVGAVisual {
 

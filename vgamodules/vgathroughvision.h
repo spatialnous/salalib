@@ -8,7 +8,7 @@
 
 #include "ivga.h"
 
-#include "salalib/pointmap.h"
+#include "../pointmap.h"
 
 class VGAThroughVision : public IVGA {
   protected:

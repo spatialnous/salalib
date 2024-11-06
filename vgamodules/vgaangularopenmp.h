@@ -6,9 +6,10 @@
 
 #pragma once
 
-#include "../genlib/stringutils.h"
 #include "ivgaangular.h"
-#include "salalib/pointmap.h"
+
+#include "../genlib/stringutils.h"
+#include "../pointmap.h"
 
 class VGAAngularOpenMP : public IVGAAngular {
 

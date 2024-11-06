@@ -6,8 +6,8 @@
 
 // Interface to handle different kinds of VGA analysis
 
-#include "salalib/ianalysis.h"
-#include "salalib/pointmap.h"
+#include "../ianalysis.h"
+#include "../pointmap.h"
 
 #include <numeric>
 #include <string>

@@ -6,14 +6,14 @@
 
 #pragma once
 
-#include "salalib/alllinemap.h"
-#include "salalib/fileproperties.h"
-#include "salalib/metagraph.h"
-#include "salalib/pointmap.h"
-#include "salalib/shapegraph.h"
+#include "alllinemap.h"
+#include "fileproperties.h"
+#include "metagraph.h"
+#include "pointmap.h"
+#include "shapegraph.h"
 
 #include "genlib/exceptions.h"
-#include "salalib/shapemapgroupdata.h"
+#include "shapemapgroupdata.h"
 
 #include <istream>
 
@@ -160,4 +160,4 @@ namespace MetaGraphReadWrite {
         const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
 }; // namespace MetaGraphReadWrite
 
-//#include "metagraphreadwrite_impl.h"
+// #include "metagraphreadwrite_impl.h"

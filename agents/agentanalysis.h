@@ -8,9 +8,9 @@
 
 #include "agentprogram.h"
 
-#include "salalib/agents/agent.h"
-#include "salalib/ianalysis.h"
-#include "salalib/pointmap.h"
+#include "../ianalysis.h"
+#include "../pointmap.h"
+#include "agent.h"
 #include <bitset>
 
 class AgentAnalysis : public IAnalysis {

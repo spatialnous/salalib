@@ -4,9 +4,7 @@
 
 #include "vgaisovistzone.h"
 
-#include "salalib/salaprogram.h"
-
-#include <iomanip>
+#include "../salaprogram.h"
 
 AnalysisResult VGAIsovistZone::run(Communicator *) {
 

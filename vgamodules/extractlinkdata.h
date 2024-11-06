@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "salalib/ianalysis.h"
-#include "salalib/pointmap.h"
+#include "../ianalysis.h"
+#include "../pointmap.h"
 
 class ExtractLinkData : public IAnalysis {
   private:

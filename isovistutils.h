@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "salalib/bspnodetree.h"
-#include "salalib/isovist.h"
-#include "salalib/shapemap.h"
+#include "bspnodetree.h"
+#include "isovist.h"
+#include "shapemap.h"
 
 namespace IsovistUtils {
 

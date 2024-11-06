@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "salalib/connector.h"
-#include "salalib/shapegraph.h"
-#include "salalib/spacepix.h"
+#include "connector.h"
+#include "shapegraph.h"
+#include "spacepix.h"
 
 #include "genlib/p2dpoly.h"
 #include "genlib/simplematrix.h"

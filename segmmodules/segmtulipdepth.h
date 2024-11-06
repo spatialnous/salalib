@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "salalib/isegment.h"
+#include "../isegment.h"
 
 class SegmentTulipDepth : ISegment {
     int m_tulipBins = 1024;

@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "salalib/attributetable.h"
-#include "salalib/attributetableview.h"
-#include "salalib/layermanagerimpl.h"
-#include "salalib/spacepix.h"
+#include "attributetable.h"
+#include "attributetableview.h"
+#include "layermanagerimpl.h"
+#include "spacepix.h"
 
 class AttributeMap : public PixelBase {
 

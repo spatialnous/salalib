@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "salalib/ianalysis.h"
-#include "salalib/pixelref.h"
-#include "salalib/pointmap.h"
+#include "../ianalysis.h"
+#include "../pixelref.h"
+#include "../pointmap.h"
 
 class VGAVisualLocalOpenMP : public IAnalysis {
   private:

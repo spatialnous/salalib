@@ -6,7 +6,7 @@
 
 #include "vgaisovist.h"
 
-#include "salalib/isovist.h"
+#include "../isovist.h"
 
 AnalysisResult VGAIsovist::run(Communicator *comm) {
 

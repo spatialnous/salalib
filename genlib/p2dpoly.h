@@ -15,6 +15,7 @@
 #include "pafmath.h"
 
 #include <algorithm>
+#include <cstdint>
 
 // Note: code depends on XAXIS being 0 and YAXIS being 1 --- do not change
 enum { NOAXIS = -1, XAXIS = 0, YAXIS = 1 };

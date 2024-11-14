@@ -8,6 +8,7 @@
 
 #include "pixelref.h"
 
+#include <cstdint>
 #include <iostream>
 #include <set>
 

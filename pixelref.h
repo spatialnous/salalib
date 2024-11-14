@@ -7,6 +7,7 @@
 #include "genlib/p2dpoly.h"
 
 #include <vector>
+#include <cstdint>
 
 class PixelRef {
   public:

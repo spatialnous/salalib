@@ -20,15 +20,14 @@
 // User defined functions are not included yet, but should be fairly easy using
 // a global function stack alongside the global variable stack
 
-#include "salalib/salaprogram.h"
-#include "salalib/connector.h"
-#include "salalib/ngraph.h"
-#include "salalib/pointmap.h"
-#include "salalib/shapemap.h"
+#include "salaprogram.h"
+#include "connector.h"
+#include "ngraph.h"
+#include "pointmap.h"
+#include "shapemap.h"
 
 #include <cmath>
 #include <cstring>
-#include <float.h>
 #include <time.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "salalib/iaxial.h"
+#include "../iaxial.h"
 
 class AxialLocal : IAxial {
   public:

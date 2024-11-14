@@ -6,14 +6,14 @@
 
 #pragma once
 
-#include "salalib/alllinemap.h"
-#include "salalib/fileproperties.h"
-#include "salalib/metagraph.h"
-#include "salalib/pointmap.h"
-#include "salalib/shapegraph.h"
+#include "alllinemap.h"
+#include "fileproperties.h"
+#include "metagraph.h"
+#include "pointmap.h"
+#include "shapegraph.h"
 
 #include "genlib/exceptions.h"
-#include "salalib/shapemapgroupdata.h"
+#include "shapemapgroupdata.h"
 
 #include <istream>
 
@@ -81,7 +81,7 @@ namespace MetaGraphReadWrite {
     readShapeGraphs(std::istream &stream);
 
     template <typename ShapeGraphOrRef>
-    bool writeShapeGraphs(std::ofstream &stream, const std::vector<ShapeGraphOrRef> &shapeGraphs,
+    bool writeShapeGraphs(std::ostream &stream, const std::vector<ShapeGraphOrRef> &shapeGraphs,
                           const std::optional<AllLine::MapData> allLineMapData,
                           const std::vector<std::tuple<bool, bool, int>> perShapeGraph,
                           const std::optional<unsigned int> displayedMap);
@@ -91,7 +91,7 @@ namespace MetaGraphReadWrite {
 
     template <typename ShapeMapOrRef>
     bool writeDataMaps(
-        std::ofstream &stream, const std::vector<ShapeMapOrRef> &dataMaps,
+        std::ostream &stream, const std::vector<ShapeMapOrRef> &dataMaps,
         const std::vector<ShapeMapDisplayData> displayData = std::vector<ShapeMapDisplayData>(),
         const std::optional<unsigned int> displayedMap = 0);
 
@@ -99,7 +99,7 @@ namespace MetaGraphReadWrite {
     readPointMaps(std::istream &stream, QtRegion defaultRegion);
 
     template <typename PointMapOrRef>
-    bool writePointMaps(std::ofstream &stream, const std::vector<PointMapOrRef> &pointMaps,
+    bool writePointMaps(std::ostream &stream, const std::vector<PointMapOrRef> &pointMaps,
                         const std::vector<int> displayData = std::vector<int>(),
                         const std::optional<unsigned int> displayedMap = 0);
 
@@ -110,11 +110,36 @@ namespace MetaGraphReadWrite {
 
     MetaGraphData readFromFile(const std::string &filename);
     MetaGraphData readFromStream(std::istream &stream);
-    int write(const std::string &filename, const MetaGraphData &mgd);
+
+    int writeToFile(const std::string &filename, const MetaGraphData &mgd);
 
     template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
-    int write(
+    int writeToFile(
         const std::string &filename,
+        // MetaGraph Data
+        const int version, const std::string &name, const QtRegion &region,
+        const FileProperties &fileProperties,
+        const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
+        const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
+        const std::vector<ShapeGraphOrRef> &shapeGraphs,
+        const std::optional<AllLine::MapData> allLineMapData,
+        // display data
+        const int state = 0, const int viewClass = 0, const bool showGrid = true,
+        const bool showText = true,
+        const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap =
+            std::vector<std::vector<ShapeMapDisplayData>>(),
+        const std::optional<unsigned int> displayedPointMap = std::nullopt,
+        const std::vector<int> perPointMap = std::vector<int>(),
+        const std::optional<unsigned int> displayedDataMap = std::nullopt,
+        const std::vector<ShapeMapDisplayData> perDataMap = std::vector<ShapeMapDisplayData>(),
+        const std::optional<unsigned int> displayedShapeGraph = std::nullopt,
+        const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
+
+    int writeToStream(std::ostream &stream, const MetaGraphData &mgd);
+
+    template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
+    int writeToStream(
+        std::ostream &stream,
         // MetaGraph Data
         const int version, const std::string &name, const QtRegion &region,
         const FileProperties &fileProperties,
@@ -135,4 +160,4 @@ namespace MetaGraphReadWrite {
         const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
 }; // namespace MetaGraphReadWrite
 
-//#include "metagraphreadwrite_impl.h"
+// #include "metagraphreadwrite_impl.h"

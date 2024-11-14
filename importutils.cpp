@@ -5,8 +5,8 @@
 #include "importutils.h"
 
 #include "genlib/stringutils.h"
-#include "salalib/parsers/ntfp.h"
-#include "salalib/parsers/tigerp.h"
+#include "parsers/ntfp.h"
+#include "parsers/tigerp.h"
 
 #include <sstream>
 

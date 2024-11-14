@@ -6,9 +6,9 @@
 
 #include "agentanalysis.h"
 
-#include "salalib/agents/agent.h"
+#include "agent.h"
 
-#include "salalib/pushvalues.h"
+#include "../pushvalues.h"
 
 void AgentAnalysis::init(std::vector<Agent> &agents, std::vector<PixelRef> &releaseLocations,
                          size_t agent, int trailNum) {

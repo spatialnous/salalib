@@ -7,8 +7,9 @@
 #pragma once
 
 #include "ivgaangular.h"
-#include "salalib/pixelref.h"
-#include "salalib/pointmap.h"
+
+#include "../pixelref.h"
+#include "../pointmap.h"
 
 class VGAAngularShortestPath : public IVGAAngular {
   private:

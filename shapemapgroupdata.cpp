@@ -6,7 +6,7 @@
 
 #include "shapemapgroupdata.h"
 
-#include "salalib/shapemap.h"
+#include "shapemap.h"
 
 #include "genlib/stringutils.h"
 

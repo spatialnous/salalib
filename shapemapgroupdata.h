@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "salalib/shapemap.h"
+#include "shapemap.h"
 
 #include "genlib/p2dpoly.h"
 

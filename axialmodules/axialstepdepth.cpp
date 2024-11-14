@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "salalib/axialmodules/axialstepdepth.h"
+#include "axialstepdepth.h"
 
 #include "../genlib/pflipper.h"
 

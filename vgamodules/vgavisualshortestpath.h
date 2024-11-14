@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "ivgavisual.h"
-#include "salalib/pixelref.h"
-#include "salalib/pointmap.h"
+#include "../pixelref.h"
+#include "../pointmap.h"
 
+#include "ivgavisual.h"
 class VGAVisualShortestPath : public IVGAVisual {
   private:
     PixelRef m_pixelFrom, m_pixelTo;

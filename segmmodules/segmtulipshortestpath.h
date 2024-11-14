@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "salalib/ianalysis.h"
-#include "salalib/shapegraph.h"
+#include "../ianalysis.h"
+#include "../shapegraph.h"
 
 class SegmentTulipShortestPath : public IAnalysis {
   private:

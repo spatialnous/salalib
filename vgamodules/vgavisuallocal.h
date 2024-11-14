@@ -7,7 +7,8 @@
 #pragma once
 
 #include "ivga.h"
-#include "salalib/pointmap.h"
+
+#include "../pointmap.h"
 
 class VGAVisualLocal : public IVGA {
   private:

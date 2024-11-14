@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "salalib/attributetable.h"
-#include "salalib/layermanagerimpl.h"
+#include "../attributetable.h"
+#include "../layermanagerimpl.h"
 
-#include "salalib/genlib/p2dpoly.h"
+#include "../genlib/p2dpoly.h"
 
 #include <istream>
 #include <ostream>

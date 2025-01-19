@@ -55,10 +55,14 @@ void SalaShape::setCentroidAreaPerim() {
     if (pafmath::sgn(m_area) == 1) {
         m_type |= SHAPE_CCW;
     }
-    m_centroid.scale(2.0 / m_area); // note, *not* fabs(m_area) as it is then
-                                    // confused by clockwise ordered shapes
+    if (m_area == 0) {
+        m_centroid.scale(0);
+    } else {
+        m_centroid.scale(2.0 / m_area); // note, *not* fabs(m_area) as it is then
+                                        // confused by clockwise ordered shapes
+    }
     m_area = fabs(m_area);
-    if (isOpen()) {
+    if (isOpen() && points.size() > 1) {
         // take off the automatically collected final side
         Point2f side = points.back() - points.front();
         m_perimeter -= side.length();

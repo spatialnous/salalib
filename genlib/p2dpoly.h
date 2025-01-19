@@ -228,8 +228,8 @@ class Point3f {
         return (x >= bl.x && y >= bl.y && z >= bl.z && x <= tr.x && y <= tr.y && z <= tr.z);
     }
     operator Point2f() {
-        return Point2f(x, z);
-    }                                      // Note! not x, -z (due to an inconsistency earlier...)
+        return Point2f(x, z); // Note! not x, -z (due to an inconsistency earlier...)
+    }
     Point2f xy() { return Point2f(x, y); } // From the x, y plane
     // A few simple vector ops:
     double length() const { return (double)sqrt(x * x + y * y + z * z); }
@@ -475,7 +475,19 @@ class Line : public QtRegion {
         return (axis == YAXIS) ? sign() * height() / width() : sign() * width() / height();
     }
     double constant(int axis) const {
-        return (axis == YAXIS) ? ay() - grad(axis) * ax() : ax() - grad(axis) * ay();
+        // Using long doubles here to force higher accuracy of calculations
+        // and thus parity of the x86 and arm64 results
+        if (axis == YAXIS) {
+            long double gaxis = grad(axis);
+            long double axv = ax();
+            long double ayv = ay();
+            return static_cast<double>(ayv - (gaxis * axv));
+        } else {
+            long double gaxis = grad(axis);
+            long double axv = ax();
+            long double ayv = ay();
+            return static_cast<double>(axv - (gaxis * ayv));
+        }
     }
     //
     double length() const {

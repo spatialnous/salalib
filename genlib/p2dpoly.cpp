@@ -433,9 +433,11 @@ double Line::intersection_point(const Line &l, int axis, double tolerance) const
         if (l.width() == 0.0) {
             loc = l.bottomLeft.x;
         } else {
-            double lg = l.grad(YAXIS);
-            double g = grad(YAXIS);
-            if (fabs(lg - g) <= tolerance) {
+            // Using long doubles here to force higher accuracy of calculations
+            // and thus parity of the x86 and arm64 results
+            long double lg = l.grad(YAXIS);
+            long double g = grad(YAXIS);
+            if (fabs(static_cast<double>(lg - g)) <= tolerance) {
                 // these have almost the same gradient, so it's impossible to tell where they
                 // intersect: going for midpoint
                 Point2f p = l.midpoint();
@@ -443,16 +445,24 @@ double Line::intersection_point(const Line &l, int axis, double tolerance) const
             } else {
                 // this is the same as: constant(YAXIS) - l.constant(YAXIS)) / (l.grad(YAXIS) -
                 // grad(YAXIS));
-                loc = ((ay() - g * ax()) - (l.ay() - lg * l.ax())) / (lg - g);
+                // Using long doubles here to force higher accuracy of calculations
+                // and thus parity of the x86 and arm64 results
+                long double laxv = l.ax();
+                long double layv = l.ay();
+                long double axv = ax();
+                long double ayv = ay();
+                loc = static_cast<double>(((ayv - (g * axv)) - (layv - lg * laxv)) / (lg - g));
             }
         }
     } else {
         if (l.height() == 0.0) {
             loc = l.bottomLeft.y;
         } else {
-            double lg = l.grad(XAXIS);
-            double g = grad(XAXIS);
-            if (fabs(lg - g) <= tolerance) {
+            // Using long doubles here to force higher accuracy of calculations
+            // and thus parity of the x86 and arm64 results
+            long double lg = l.grad(XAXIS);
+            long double g = grad(XAXIS);
+            if (fabs(static_cast<double>(lg - g)) <= tolerance) {
                 // these have almost the same gradient, so it's impossible to tell where they
                 // intersect: going for midpoint
                 Point2f p = l.midpoint();
@@ -460,7 +470,13 @@ double Line::intersection_point(const Line &l, int axis, double tolerance) const
             } else {
                 // this is the same as: constant(XAXIS) - l.constant(XAXIS)) / (l.grad(XAXIS) -
                 // grad(XAXIS));
-                loc = ((ax() - g * ay()) - (l.ax() - lg * l.ay())) / (lg - g);
+                // Using long doubles here to force higher accuracy of calculations
+                // and thus parity of the x86 and arm64 results
+                long double laxv = l.ax();
+                long double layv = l.ay();
+                long double axv = ax();
+                long double ayv = ay();
+                loc = static_cast<double>(((axv - (g * ayv)) - (laxv - (lg * layv))) / (lg - g));
             }
         }
     }

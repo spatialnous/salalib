@@ -46,7 +46,7 @@ class SalaShape {
         m_region = Line(point, point);
     }
     SalaShape(const Line &line)
-        : m_type(SHAPE_LINE), m_region(line), m_area(0.0), m_perimeter(m_region.length()),
+        : m_type(SHAPE_LINE), m_region(line), m_area(0.0), m_perimeter(line.length()),
           m_draworder(-1) {
         m_centroid = m_region.getCentre();
     }

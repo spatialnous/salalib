@@ -585,7 +585,7 @@ int MetaGraphReadWrite::writeToStream(
     stream.write(&type, 1);
     fileProperties.write(stream);
 
-    if (state & LINEDATA) {
+    if (!drawingFiles.empty()) {
         type = 'l';
         stream.write(&type, 1);
         dXstring::writeString(stream, name);
@@ -593,27 +593,66 @@ int MetaGraphReadWrite::writeToStream(
 
         int count = static_cast<int>(drawingFiles.size());
         stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
-        auto it = perDrawingMap.begin();
-        for (auto &spacePixel : drawingFiles) {
-            spacePixel.first.writeOutNameAndRegion(stream);
-            writeSpacePixels(stream, spacePixel.second, *it);
-            it++;
+        if (perDrawingMap.empty()) {
+            for (auto &spacePixel : drawingFiles) {
+                spacePixel.first.writeOutNameAndRegion(stream);
+                std::vector<ShapeMapDisplayData> displayData(spacePixel.second.size());
+                for (auto &dd : displayData) {
+                    std::get<0>(dd) = true;
+                    std::get<1>(dd) = true;
+                    std::get<2>(dd) = -1;
+                }
+                writeSpacePixels(stream, spacePixel.second, displayData);
+            }
+        } else {
+            auto it = perDrawingMap.begin();
+            for (auto &spacePixel : drawingFiles) {
+                spacePixel.first.writeOutNameAndRegion(stream);
+                writeSpacePixels(stream, spacePixel.second, *it);
+                it++;
+            }
         }
     }
-    if (state & POINTMAPS) {
+    if (!pointMaps.empty()) {
         type = 'p';
         stream.write(&type, 1);
-        writePointMaps(stream, pointMaps, perPointMap, displayedPointMap);
+        if (perPointMap.empty()) {
+            std::vector<int> displayData(pointMaps.size(), -1);
+            writePointMaps(stream, pointMaps, displayData, displayedPointMap);
+        } else {
+            writePointMaps(stream, pointMaps, perPointMap, displayedPointMap);
+        }
     }
-    if (state & SHAPEGRAPHS) {
+    if (!shapeGraphs.empty()) {
         type = 'x';
         stream.write(&type, 1);
-        writeShapeGraphs(stream, shapeGraphs, allLineMapData, perShapeGraph, displayedShapeGraph);
+        if (perShapeGraph.empty()) {
+            std::vector<ShapeMapDisplayData> displayData(shapeGraphs.size());
+            for (auto &dd : displayData) {
+                std::get<0>(dd) = true;
+                std::get<1>(dd) = true;
+                std::get<2>(dd) = -1;
+            }
+            writeShapeGraphs(stream, shapeGraphs, allLineMapData, displayData, displayedShapeGraph);
+        } else {
+            writeShapeGraphs(stream, shapeGraphs, allLineMapData, perShapeGraph,
+                             displayedShapeGraph);
+        }
     }
-    if (state & DATAMAPS) {
+    if (!dataMaps.empty()) {
         type = 's';
         stream.write(&type, 1);
-        writeDataMaps(stream, dataMaps, perDataMap, displayedDataMap);
+        if (perDataMap.empty()) {
+            std::vector<ShapeMapDisplayData> displayData(dataMaps.size());
+            for (auto &dd : displayData) {
+                std::get<0>(dd) = true;
+                std::get<1>(dd) = true;
+                std::get<2>(dd) = -1;
+            }
+            writeDataMaps(stream, dataMaps, displayData, std::nullopt);
+        } else {
+            writeDataMaps(stream, dataMaps, perDataMap, displayedDataMap);
+        }
     }
 
     return OK;

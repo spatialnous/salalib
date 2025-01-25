@@ -10,11 +10,14 @@
 static int compareValueTriplet(const void *p1, const void *p2) {
     ValueTriplet *vp1 = (ValueTriplet *)p1;
     ValueTriplet *vp2 = (ValueTriplet *)p2;
-    return (vp1->value1 > vp2->value1   ? 1
-            : vp1->value1 < vp2->value1 ? -1
-                                        : (vp1->value2 > vp2->value2   ? 1
-                                           : vp1->value2 < vp2->value2 ? -1
-                                                                       : 0));
+    return (vp1->value1 > vp2->value1 ? 1
+            : vp1->value1 < vp2->value1
+                ? -1
+                : (vp1->value2 > vp2->value2   ? 1
+                   : vp1->value2 < vp2->value2 ? -1
+                                               : (vp1->index > vp2->index   ? 1
+                                                  : vp1->index < vp2->index ? -1
+                                                                            : 0)));
 }
 
 AxialMinimiser::AxialMinimiser(const ShapeGraph &alllinemap, int noOfAxsegcuts, int noOfRadialsegs)

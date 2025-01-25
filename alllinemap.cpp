@@ -325,12 +325,12 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
         comm->CommPostMessage(Communicator::NUM_RECORDS, polyconnections.size());
     }
 
+    long double tolerance = sqrt(TOLERANCE_A); // * polyconnections[i].line.length();
     for (size_t i = 0; i < polyconnections.size(); i++) {
         PixelRefVector pixels = map.pixelateLine(polyconnections[i].line);
         std::vector<size_t> testedshapes;
         auto connIter = radialdivisions.find(polyconnections[i].key);
         size_t connindex = std::distance(radialdivisions.begin(), connIter);
-        double tolerance = sqrt(TOLERANCE_A); // * polyconnections[i].line.length();
         for (size_t j = 0; j < pixels.size(); j++) {
             PixelRef pix = pixels[j];
             const auto &shapes = map.getShapesAtPixel(pix);

@@ -346,11 +346,23 @@ double dot(const Line &a, const Line &b) {
 bool intersect_line(const Line &a, const Line &b, double tolerance) {
     g_count++;
 
-    if (((a.ay() - a.by()) * (b.ax() - a.ax()) + (a.bx() - a.ax()) * (b.ay() - a.ay())) *
-                ((a.ay() - a.by()) * (b.bx() - a.ax()) + (a.bx() - a.ax()) * (b.by() - a.ay())) <=
+    // Using long doubles here to force higher accuracy of calculations
+    // and thus parity of the x86 and arm64 results
+
+    long double aax = a.ax();
+    long double aay = a.ay();
+    long double abx = a.bx();
+    long double aby = a.by();
+    long double bax = b.ax();
+    long double bay = b.ay();
+    long double bbx = b.bx();
+    long double bby = b.by();
+
+    if (((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay)) *
+                ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay)) <=
             tolerance &&
-        ((b.ay() - b.by()) * (a.ax() - b.ax()) + (b.bx() - b.ax()) * (a.ay() - b.ay())) *
-                ((b.ay() - b.by()) * (a.bx() - b.ax()) + (b.bx() - b.ax()) * (a.by() - b.ay())) <=
+        ((bay - bby) * (aax - bax) + (bbx - bax) * (aay - bay)) *
+                ((bay - bby) * (abx - bax) + (bbx - bax) * (aby - bay)) <=
             tolerance) {
         return true;
     }
@@ -364,11 +376,23 @@ bool intersect_line(const Line &a, const Line &b, double tolerance) {
 bool intersect_line_no_touch(const Line &a, const Line &b, double tolerance) {
     g_count++;
 
-    if (((a.ay() - a.by()) * (b.ax() - a.ax()) + (a.bx() - a.ax()) * (b.ay() - a.ay())) *
-                ((a.ay() - a.by()) * (b.bx() - a.ax()) + (a.bx() - a.ax()) * (b.by() - a.ay())) <
+    // Using long doubles here to force higher accuracy of calculations
+    // and thus parity of the x86 and arm64 results
+
+    long double aax = a.ax();
+    long double aay = a.ay();
+    long double abx = a.bx();
+    long double aby = a.by();
+    long double bax = b.ax();
+    long double bay = b.ay();
+    long double bbx = b.bx();
+    long double bby = b.by();
+
+    if (((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay)) *
+                ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay)) <
             -tolerance &&
-        ((b.ay() - b.by()) * (a.ax() - b.ax()) + (b.bx() - b.ax()) * (a.ay() - b.ay())) *
-                ((b.ay() - b.by()) * (a.bx() - b.ax()) + (b.bx() - b.ax()) * (a.by() - b.ay())) <
+        ((bay - bby) * (aax - bax) + (bbx - bax) * (aay - bay)) *
+                ((bay - bby) * (abx - bax) + (bbx - bax) * (aby - bay)) <
             -tolerance) {
         return true;
     }
@@ -380,11 +404,23 @@ bool intersect_line_no_touch(const Line &a, const Line &b, double tolerance) {
 int intersect_line_distinguish(const Line &a, const Line &b, double tolerance) {
     g_count++;
 
-    double alpha = ((a.ay() - a.by()) * (b.ax() - a.ax()) + (a.bx() - a.ax()) * (b.ay() - a.ay())) *
-                   ((a.ay() - a.by()) * (b.bx() - a.ax()) + (a.bx() - a.ax()) * (b.by() - a.ay()));
+    // Using long doubles here to force higher accuracy of calculations
+    // and thus parity of the x86 and arm64 results
 
-    double beta = ((b.ay() - b.by()) * (a.ax() - b.ax()) + (b.bx() - b.ax()) * (a.ay() - b.ay())) *
-                  ((b.ay() - b.by()) * (a.bx() - b.ax()) + (b.bx() - b.ax()) * (a.by() - b.ay()));
+    long double aax = a.ax();
+    long double aay = a.ay();
+    long double abx = a.bx();
+    long double aby = a.by();
+    long double bax = b.ax();
+    long double bay = b.ay();
+    long double bbx = b.bx();
+    long double bby = b.by();
+
+    long double alpha = ((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay)) *
+                        ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay));
+
+    long double beta = ((bay - bby) * (aax - bax) + (bbx - bax) * (aay - bay)) *
+                       ((bay - bby) * (abx - bax) + (bbx - bax) * (aby - bay));
 
     if (alpha <= tolerance && beta <= tolerance) {
         if (alpha < -tolerance && beta < -tolerance) {
@@ -403,12 +439,24 @@ int intersect_line_distinguish(const Line &a, const Line &b, double tolerance) {
 int intersect_line_b(const Line &a, const Line &b, double tolerance) {
     g_count++;
 
-    double alpha = ((a.ay() - a.by()) * (b.ax() - a.ax()) + (a.bx() - a.ax()) * (b.ay() - a.ay()));
+    // Using long doubles here to force higher accuracy of calculations
+    // and thus parity of the x86 and arm64 results
 
-    double beta = ((a.ay() - a.by()) * (b.bx() - a.ax()) + (a.bx() - a.ax()) * (b.by() - a.ay()));
+    long double aax = a.ax();
+    long double aay = a.ay();
+    long double abx = a.bx();
+    long double aby = a.by();
+    long double bax = b.ax();
+    long double bay = b.ay();
+    long double bbx = b.bx();
+    long double bby = b.by();
 
-    double gamma = ((b.ay() - b.by()) * (a.ax() - b.ax()) + (b.bx() - b.ax()) * (a.ay() - b.ay())) *
-                   ((b.ay() - b.by()) * (a.bx() - b.ax()) + (b.bx() - b.ax()) * (a.by() - b.ay()));
+    long double alpha = ((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay));
+
+    long double beta = ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay));
+
+    long double gamma = ((bay - bby) * (aax - bax) + (bbx - bax) * (aay - bay)) *
+                        ((bay - bby) * (abx - bax) + (bbx - bax) * (aby - bay));
 
     if (alpha * beta <= tolerance && gamma <= tolerance) {
         if (alpha * beta < -tolerance && gamma < -tolerance) {
@@ -417,7 +465,7 @@ int intersect_line_b(const Line &a, const Line &b, double tolerance) {
             // this function is only used for poly contains point,
             // the throw is defined if the point is *on* the polygon edge
             // (within the tolerance)
-            if (fabs(alpha) <= tolerance) {
+            if (fabs(static_cast<double>(alpha)) <= tolerance) {
                 throw 1;
             }
             return 1;

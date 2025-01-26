@@ -51,7 +51,7 @@ struct PointDist {
 class Isovist {
   protected:
     Point2f m_centre;
-    std::set<IsoSeg> m_blocks;
+    std::vector<IsoSeg> m_blocks;
     std::set<IsoSeg> m_gaps;
     std::vector<Point2f> m_poly;
     std::vector<PointDist> m_occlusionPoints;

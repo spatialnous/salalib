@@ -239,7 +239,7 @@ void Isovist::addBlock(const Line &li, int tag, double startangle, double endang
             }
             Point2f pa = intersection_point(li, Line(m_centre, m_centre + pointfromangle(a)));
             Point2f pb = intersection_point(li, Line(m_centre, m_centre + pointfromangle(b)));
-            m_blocks.insert(IsoSeg(a, b, pa, pb, tag));
+            m_blocks.push_back(IsoSeg(a, b, pa, pb, tag));
         } else {
             finished = true;
         }
@@ -247,6 +247,7 @@ void Isovist::addBlock(const Line &li, int tag, double startangle, double endang
             break;
         gap++;
     }
+    std::sort(m_blocks.begin(), m_blocks.end());
 }
 
 std::pair<Point2f, double> Isovist::getCentroidArea() {

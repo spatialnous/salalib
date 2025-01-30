@@ -159,14 +159,30 @@ void Isovist::make(BSPNode *here) {
 void Isovist::drawnode(const Line &li, int tag) {
     long double pipi = 2.0 * M_PI;
 
-    Point2f p1 = li.start() - m_centre;
-    p1.normalise();
+    long double lsx = li.start().x;
+    long double lsy = li.start().y;
+    long double lex = li.end().x;
+    long double ley = li.end().y;
+    long double cx = m_centre.x;
+    long double cy = m_centre.y;
+
+    long double p1x = lsx - cx;
+    long double p1y = lsy - cy;
+
+    long double il1 = sqrt(p1x * p1x + p1y * p1y);
+    p1x /= il1;
     // Using acosl (with long double) to achieve parity between macos and linux
-    double angle1 = static_cast<double>((p1.y < 0) ? (pipi - acosl(p1.x)) : acosl(p1.x));
-    Point2f p2 = li.end() - m_centre;
-    p2.normalise();
+    long double acos1x = acosl(p1x);
+    long double angle1 = (p1y < 0) ? (pipi - acos1x) : acos1x;
+
+    long double p2x = lex - cx;
+    long double p2y = ley - cy;
+
+    long double il2 = sqrt(p2x * p2x + p2y * p2y);
+    p2x /= il2;
     // Using acosl (with long double) to achieve parity between macos and linux
-    double angle2 = static_cast<double>((p2.y < 0) ? (pipi - acosl(p2.x)) : acosl(p2.x));
+    long double acos2x = acosl(p2x);
+    long double angle2 = (p2y < 0) ? (pipi - acos2x) : acos2x;
 
     if (angle2 > angle1) {
         if (angle2 - angle1 >= M_PI) {

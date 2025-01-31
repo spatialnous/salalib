@@ -77,8 +77,8 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromFile(const std::st
     return result;
 }
 
-QtRegion MetaGraphReadWrite::readRegion(std::istream &stream) {
-    QtRegion region;
+Region4f MetaGraphReadWrite::readRegion(std::istream &stream) {
+    Region4f region;
     stream.read(reinterpret_cast<char *>(&region), sizeof(region));
     return region;
 }
@@ -279,7 +279,7 @@ std::streampos MetaGraphReadWrite::skipVirtualMem(std::istream &stream) {
 }
 
 std::tuple<std::vector<PointMap>, std::vector<int>, unsigned int>
-MetaGraphReadWrite::readPointMaps(std::istream &stream, QtRegion defaultRegion) {
+MetaGraphReadWrite::readPointMaps(std::istream &stream, Region4f defaultRegion) {
     unsigned int displayedMap;
     stream.read(reinterpret_cast<char *>(&displayedMap), sizeof(displayedMap));
     std::vector<PointMap> pointMaps;
@@ -481,7 +481,7 @@ template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrR
 int MetaGraphReadWrite::writeToFile(
     const std::string &filename,
     // MetaGraph Data
-    const int version, const std::string &name, const QtRegion &region,
+    const int version, const std::string &name, const Region4f &region,
     const FileProperties &fileProperties,
     const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
     const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
@@ -534,7 +534,7 @@ template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrR
 int MetaGraphReadWrite::writeToStream(
     std::ostream &stream,
     // MetaGraph Data
-    const int version, const std::string &name, const QtRegion &region,
+    const int version, const std::string &name, const Region4f &region,
     const FileProperties &fileProperties,
     const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
     const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
@@ -663,7 +663,7 @@ int MetaGraphReadWrite::writeToStream(
 template int MetaGraphReadWrite::writeToFile<PointMap, ShapeMap, ShapeGraph>(
     const std::string &filename,
     // MetaGraph Data
-    const int version, const std::string &name, const QtRegion &region,
+    const int version, const std::string &name, const Region4f &region,
     const FileProperties &fileProperties,
     const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> &drawingFiles,
     const std::vector<PointMap> &pointMaps, const std::vector<ShapeMap> &dataMaps,
@@ -683,7 +683,7 @@ MetaGraphReadWrite::writeToFile<std::reference_wrapper<PointMap>, std::reference
                                 std::reference_wrapper<ShapeGraph>>(
     const std::string &filename,
     // MetaGraph Data
-    const int version, const std::string &name, const QtRegion &region,
+    const int version, const std::string &name, const Region4f &region,
     const FileProperties &fileProperties,
     const std::vector<std::pair<ShapeMapGroupData, std::vector<std::reference_wrapper<ShapeMap>>>>
         &drawingFiles,
@@ -703,7 +703,7 @@ MetaGraphReadWrite::writeToFile<std::reference_wrapper<PointMap>, std::reference
 template int MetaGraphReadWrite::writeToStream<PointMap, ShapeMap, ShapeGraph>(
     std::ostream &stream,
     // MetaGraph Data
-    const int version, const std::string &name, const QtRegion &region,
+    const int version, const std::string &name, const Region4f &region,
     const FileProperties &fileProperties,
     const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> &drawingFiles,
     const std::vector<PointMap> &pointMaps, const std::vector<ShapeMap> &dataMaps,
@@ -723,7 +723,7 @@ template int MetaGraphReadWrite::writeToStream<std::reference_wrapper<PointMap>,
                                                std::reference_wrapper<ShapeGraph>>(
     std::ostream &stream,
     // MetaGraph Data
-    const int version, const std::string &name, const QtRegion &region,
+    const int version, const std::string &name, const Region4f &region,
     const FileProperties &fileProperties,
     const std::vector<std::pair<ShapeMapGroupData, std::vector<std::reference_wrapper<ShapeMap>>>>
         &drawingFiles,

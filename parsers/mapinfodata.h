@@ -7,7 +7,7 @@
 #include "../attributetable.h"
 #include "../layermanagerimpl.h"
 
-#include "../genlib/p2dpoly.h"
+#include "../genlib/region4f.h"
 
 #include <istream>
 #include <ostream>
@@ -49,7 +49,7 @@ class MapInfoData {
     bool exportFile(std::ostream &miffile, std::ostream &midfile, const PointMap &points);
     bool exportFile(std::ostream &miffile, std::ostream &midfile, const ShapeMap &map);
     bool exportPolygons(std::ostream &miffile, std::ostream &midfile,
-                        const std::vector<std::vector<Point2f>> &polygons, const QtRegion &region);
+                        const std::vector<std::vector<Point2f>> &polygons, const Region4f &region);
     //
     bool readheader(std::istream &miffile);
     bool readcolumnheaders(std::istream &miffile, std::vector<std::string> &columnheads);

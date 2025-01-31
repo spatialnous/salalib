@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../genlib/comm.h"
-#include "../genlib/p2dpoly.h"
+#include "../genlib/line4f.h"
 
 #include <map>
 #include <string>
@@ -19,7 +19,7 @@
 
 class TigerChain {
   public:
-    std::vector<Line> lines;
+    std::vector<Line4f> lines;
     TigerChain() { ; }
 };
 
@@ -31,7 +31,7 @@ class TigerCategory {
 
 class TigerMap {
   protected:
-    QtRegion m_region;
+    Region4f m_region;
     bool m_init;
 
   public:
@@ -42,5 +42,5 @@ class TigerMap {
 
     Point2f getBottomLeft() { return m_region.bottomLeft; }
     Point2f getTopRight() { return m_region.topRight; }
-    QtRegion getRegion() { return m_region; }
+    Region4f getRegion() { return m_region; }
 };

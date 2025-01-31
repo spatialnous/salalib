@@ -7,7 +7,6 @@
 #include "pointmap.h"
 
 #include "genlib/exceptions.h"
-#include "genlib/p2dpoly.h"
 
 #include <vector>
 
@@ -17,7 +16,7 @@ namespace depthmapX {
       public:
         InvalidLinkException(std::string message) : depthmapX::BaseException(message) {}
     };
-    std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line> &mergeLines,
+    std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line4f> &mergeLines,
                                                  PointMap &currentMap);
     void mergePixelPairs(const std::vector<PixelRefPair> &links, PointMap &currentMap);
     void unmergePixelPairs(const std::vector<PixelRefPair> &links, PointMap &currentMap);

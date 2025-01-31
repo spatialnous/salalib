@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "genlib/p2dpoly.h"
+#include "genlib/point2f.h"
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 
 class PixelRef {
   public:
@@ -21,7 +21,7 @@ class PixelRef {
     PixelRef left() const { return PixelRef(x - 1, y); }
     PixelRef right() const { return PixelRef(x + 1, y); }
     PixelRef down() const { return PixelRef(x, y - 1); }
-    short &operator[](int i) { return (i == XAXIS) ? x : y; }
+    short &operator[](int i) { return (i == static_cast<int>(LineAxis::XAXIS)) ? x : y; }
     bool within(const PixelRef bl, const PixelRef tr) const {
         return (x >= bl.x && x <= tr.x && y >= bl.y && y <= tr.y);
     }

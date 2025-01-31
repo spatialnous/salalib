@@ -24,8 +24,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToAxial(
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
     }
 
-    QtRegion region;
-    std::map<int, std::pair<Line, int>>
+    Region4f region;
+    std::map<int, std::pair<Line4f, int>>
         lines; // map required for tidy lines, otherwise acts like vector
     // this is used to say which layer it originated from
 
@@ -38,11 +38,12 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToAxial(
         if (region.atZero()) {
             region = mapLayer.first.get().getRegion();
         } else {
-            region = runion(region, mapLayer.first.get().getRegion());
+            region = region.runion(mapLayer.first.get().getRegion());
         }
         std::vector<SimpleLine> newLines = mapLayer.first.get().getAllShapesAsSimpleLines();
         for (const auto &line : newLines) {
-            lines.insert(std::make_pair(count, std::make_pair(Line(line.start(), line.end()), j)));
+            lines.insert(
+                std::make_pair(count, std::make_pair(Line4f(line.start(), line.end()), j)));
             count++;
         }
         if (j > 0) {
@@ -103,10 +104,10 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
 
     // add all visible layers to the set of polygon lines...
 
-    std::map<int, std::pair<Line, int>> lines;
+    std::map<int, std::pair<Line4f, int>> lines;
 
     // m_region = shapemap.getRegion();
-    QtRegion region = shapemap.getRegion();
+    Region4f region = shapemap.getRegion();
 
     // add all visible layers to the set of polygon lines...
 
@@ -114,8 +115,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
     for (const auto &shape : shapemap.getAllShapes()) {
         int key = shape.first;
 
-        std::vector<Line> shapeLines = shape.second.getAsLines();
-        for (Line line : shapeLines) {
+        std::vector<Line4f> shapeLines = shape.second.getAsLines();
+        for (Line4f line : shapeLines) {
             lines.insert(std::make_pair(count, std::make_pair(line, key)));
             count++;
         }
@@ -288,11 +289,11 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToSegment(
 
     // second number in internal pair is used to say which layer it originated
     // from
-    std::map<int, std::pair<Line, int>> lines;
+    std::map<int, std::pair<Line4f, int>> lines;
 
     bool recordlayer = false;
 
-    QtRegion region;
+    Region4f region;
 
     // add all visible layers to the set of polygon lines...
     int count = 0;
@@ -301,11 +302,12 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToSegment(
         if (region.atZero()) {
             region = mapLayer.first.get().getRegion();
         } else {
-            region = runion(region, mapLayer.first.get().getRegion());
+            region = region.runion(mapLayer.first.get().getRegion());
         }
         std::vector<SimpleLine> newLines = mapLayer.first.get().getAllShapesAsSimpleLines();
         for (const auto &line : newLines) {
-            lines.insert(std::make_pair(count, std::make_pair(Line(line.start(), line.end()), j)));
+            lines.insert(
+                std::make_pair(count, std::make_pair(Line4f(line.start(), line.end()), j)));
             count++;
         }
         if (j > 0) {
@@ -363,19 +365,19 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
     }
 
-    std::map<int, std::pair<Line, int>> lines;
+    std::map<int, std::pair<Line4f, int>> lines;
 
     // no longer requires m_region
     // m_region = shapemap.getRegion();
-    QtRegion region = shapemap.getRegion();
+    Region4f region = shapemap.getRegion();
 
     // add all visible layers to the set of polygon lines...
 
     int count = 0;
     for (const auto &shape : shapemap.getAllShapes()) {
         int key = shape.first;
-        std::vector<Line> shapeLines = shape.second.getAsLines();
-        for (Line line : shapeLines) {
+        std::vector<Line4f> shapeLines = shape.second.getAsLines();
+        for (Line4f line : shapeLines) {
             lines.insert(std::make_pair(count, std::make_pair(line, key)));
             count++;
         }
@@ -473,7 +475,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
 std::unique_ptr<ShapeGraph>
 MapConverter::convertAxialToSegment(Communicator *, ShapeGraph &axialMap, const std::string &name,
                                     bool keeporiginal, bool copydata, double stubremoval) {
-    std::vector<Line> lines;
+    std::vector<Line4f> lines;
     std::vector<Connector> connectionset;
 
     axialMap.makeSegmentMap(lines, connectionset, stubremoval);

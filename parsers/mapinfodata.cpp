@@ -132,7 +132,7 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
     size_t nextduplicate = 0;
     AttributeRow *lastrow = nullptr;
 
-    QtRegion region(pointsets[0][0], pointsets[0][0]);
+    Region4f region(pointsets[0][0], pointsets[0][0]);
     for (size_t i = 0; i < pointsets.size(); i++) {
         for (size_t j = 0; j < pointsets[i].size(); j++) {
             region.encompass(pointsets[i][j]);
@@ -330,7 +330,7 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
 
 bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
                                  const std::vector<std::vector<Point2f>> &polygons,
-                                 const QtRegion &region) {
+                                 const Region4f &region) {
     // if bounds has not been filled in, fill it in
     if (m_bounds.empty()) {
         char bounds[256];

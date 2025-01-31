@@ -7,7 +7,7 @@
 #include "ngraph.h"
 #include "pixelref.h"
 
-#include "genlib/p2dpoly.h"
+#include "genlib/line4f.h"
 
 #include <map>
 #include <memory>
@@ -76,7 +76,7 @@ class Point {
     // every line that goes through the gridsquare -- memory intensive I know, but what can you
     // do: accuracy is imperative here!  Calculated pre-fillpoints / pre-makegraph, and
     // (importantly) it works.
-    std::vector<Line> m_lines;
+    std::vector<Line4f> m_lines;
     int m_processflag;
 
   public:

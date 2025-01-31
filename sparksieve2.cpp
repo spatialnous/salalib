@@ -10,6 +10,7 @@
 
 #include "sparksieve2.h"
 
+#include <algorithm>
 #include <cmath>
 
 sparkSieve2::sparkSieve2(const Point2f &centre, double maxdist)
@@ -20,9 +21,9 @@ sparkSieve2::sparkSieve2(const Point2f &centre, double maxdist)
 
 sparkSieve2::~sparkSieve2() {}
 
-bool sparkSieve2::testblock(const Point2f &point, const std::vector<Line> &lines,
+bool sparkSieve2::testblock(const Point2f &point, const std::vector<Line4f> &lines,
                             double tolerance) {
-    Line l(m_centre, point);
+    Line4f l(m_centre, point);
 
     // maxdist is to construct graphs with a maximum visible distance: (-1.0 is
     // infinite)
@@ -33,7 +34,7 @@ bool sparkSieve2::testblock(const Point2f &point, const std::vector<Line> &lines
     for (const auto &line : lines) {
         // Note: must check regions intersect before using this intersect_line test
         // -- see notes on intersect_line
-        if (intersect_region(l, line, tolerance) && intersect_line(l, line, tolerance)) {
+        if (l.Region4f::intersects(line, tolerance) && l.Line4f::intersects(line, tolerance)) {
             return true;
         }
     }
@@ -43,7 +44,7 @@ bool sparkSieve2::testblock(const Point2f &point, const std::vector<Line> &lines
 
 //
 
-void sparkSieve2::block(const std::vector<Line> &lines, int q) {
+void sparkSieve2::block(const std::vector<Line4f> &lines, int q) {
     for (const auto &line : lines) {
         double a = tanify(line.start(), q);
         double b = tanify(line.end(), q);

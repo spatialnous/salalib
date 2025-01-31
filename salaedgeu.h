@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "genlib/p2dpoly.h"
+#include "genlib/edgeu.h"
 
 // this is a helper for cutting polygons to fit a viewport / cropping frame
 

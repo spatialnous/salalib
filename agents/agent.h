@@ -11,7 +11,6 @@
 #include "../pixelref.h"
 #include "../pointmap.h"
 
-#include "../genlib/p2dpoly.h"
 #include "../genlib/pflipper.h"
 
 class Agent {

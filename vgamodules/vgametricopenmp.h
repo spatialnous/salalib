@@ -33,7 +33,7 @@ class VGAMetricOpenMP : public IVGAMetric {
             METRIC_MEAN_STRAIGHT_LINE_DISTANCE = "Metric Mean Straight-Line Distance", //
             METRIC_NODE_COUNT = "Metric Node Count";                                   //
     };
-    static std::string getColumnWithRadius(std::string column, double radius, QtRegion mapRegion) {
+    static std::string getColumnWithRadius(std::string column, double radius, Region4f mapRegion) {
         if (radius != -1.0) {
             if (radius > 100.0) {
                 return column + " R" + dXstring::formatString(radius, "%.f");

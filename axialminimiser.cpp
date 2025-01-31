@@ -320,8 +320,8 @@ bool AxialMinimiser::checkVital(int checkindex, std::set<int> &axSegCut,
                         connections.end()) {
                         // as a further challenge, they must link within in the zone of
                         // interest, not on the far side of it... arg!
-                        Point2f p = intersection_point(axiallines[diva].getLine(),
-                                                       axiallines[divb].getLine(), TOLERANCE_A);
+                        Point2f p = axiallines[diva].getLine().intersection_point(
+                            axiallines[divb].getLine(), TOLERANCE_A);
                         if (p.insegment(rlinea.keyvertex, rlinea.openspace, rlineb.openspace,
                                         TOLERANCE_A)) {
                             nonvitalseg = true;

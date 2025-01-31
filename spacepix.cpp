@@ -44,7 +44,7 @@
    }
 */
 
-PixelRefVector PixelBase::pixelateLine(Line l, int scalefactor) const {
+PixelRefVector PixelBase::pixelateLine(Line4f l, int scalefactor) const {
     PixelRefVector pixelList;
 
     // this is *not* correct for lines that are off the edge...
@@ -142,7 +142,7 @@ PixelRefVector PixelBase::pixelateLine(Line l, int scalefactor) const {
 // this version includes all pixels through which the line passes with touching
 // counting as both pixels.
 
-PixelRefVector PixelBase::pixelateLineTouching(Line l, double tolerance) const {
+PixelRefVector PixelBase::pixelateLineTouching(Line4f l, double tolerance) const {
     PixelRefVector pixelList;
 
     // now assume that scaling to region then scaling up is going to give
@@ -151,25 +151,25 @@ PixelRefVector PixelBase::pixelateLineTouching(Line l, double tolerance) const {
     l.scale(Point2f(static_cast<double>(m_cols), static_cast<double>(m_rows)));
 
     // but it does give us a nice line...
-    int dir;
+    LineAxis dir;
     double grad, constant;
 
     if (l.width() > l.height()) {
-        dir = XAXIS;
-        grad = l.grad(YAXIS);
-        constant = l.constant(YAXIS);
+        dir = LineAxis::XAXIS;
+        grad = l.grad(LineAxis::YAXIS);
+        constant = l.constant(LineAxis::YAXIS);
     } else if (l.width() == 0 && l.height() == 0) {
-        dir = YAXIS;
+        dir = LineAxis::YAXIS;
         grad = 0;
         constant = 0;
     } else {
-        dir = YAXIS;
-        grad = l.grad(XAXIS);
-        constant = l.constant(XAXIS);
+        dir = LineAxis::YAXIS;
+        grad = l.grad(LineAxis::XAXIS);
+        constant = l.constant(LineAxis::XAXIS);
     }
     PixelRef bounds(static_cast<short>(m_cols), static_cast<short>(m_rows));
 
-    if (dir == XAXIS) {
+    if (dir == LineAxis::XAXIS) {
         int first = (int)floor(l.ax() - tolerance);
         int last = (int)floor(l.bx() + tolerance);
         for (int i = first; i <= last; i++) {
@@ -336,7 +336,7 @@ PixelRef SpacePixel::pixelate(const Point2f &p, bool constrain, int) const {
     PixelRef r;
 
     Point2f p1 = p;
-    p1.normalScale(m_region);
+    p1.normalScale(m_region.bottomLeft, m_region.width(), m_region.height());
 
     r.x = short(p1.x * double(static_cast<double>(m_cols) - 1e-9));
     if (constrain) {
@@ -356,7 +356,7 @@ PixelRef SpacePixel::pixelate(const Point2f &p, bool constrain, int) const {
     return r;
 }
 
-void SpacePixel::makeViewportLines(const QtRegion &viewport) const {
+void SpacePixel::makeViewportLines(const Region4f &viewport) const {
     if (m_displayLines.empty() || m_newline) {
         m_displayLines = std::vector<int>(m_lines.size());
         m_newline = false;
@@ -367,7 +367,7 @@ void SpacePixel::makeViewportLines(const QtRegion &viewport) const {
 
     /*
     // Fixing bounding rectangle: normalisation removed
-    QtRegion r_viewport = viewport;
+    Region4f r_viewport = viewport;
 
     r_viewport.normalScale( m_region );
     */
@@ -406,7 +406,7 @@ bool SpacePixel::findNextLine(bool &nextlayer) const {
     }
 }
 
-const Line &SpacePixel::getNextLine() const {
+const Line4f &SpacePixel::getNextLine() const {
     m_displayLines[static_cast<size_t>(m_current)] = 0; // You've drawn it
     /*
     // Fixing: removed rectangle scaling
@@ -422,7 +422,7 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
     m_test = 0;
 
     // work out extents...
-    m_region = QtRegion(min, max);
+    m_region = Region4f(min, max);
 
     double whRatio = m_region.width() / m_region.height();
     double hwRatio = m_region.height() / m_region.width();
@@ -479,7 +479,7 @@ void SpacePixel::reinitLines(double density) {
 
 // Add line: pixelate the line
 
-void SpacePixel::addLine(const Line &line) {
+void SpacePixel::addLine(const Line4f &line) {
     // Fairly simple: just pixelates the line!
     m_ref++; // need unique keys for the lines so they can be added / removed at
              // any time
@@ -495,7 +495,7 @@ void SpacePixel::addLine(const Line &line) {
     }
 }
 
-int SpacePixel::addLineDynamic(const Line &line) {
+int SpacePixel::addLineDynamic(const Line4f &line) {
     m_ref++; // need unique keys for the lines so they can be added / removed at
              // any time
     m_lines.insert(std::make_pair(m_ref, LineTest(line, 0)));
@@ -532,7 +532,7 @@ void SpacePixel::sortPixelLines() {
     }
 }
 
-bool SpacePixel::intersect(const Line &l, double tolerance) {
+bool SpacePixel::intersect(const Line4f &l, double tolerance) {
     m_test++; // note loops! (but vary rarely: inevitabley, lines will have been
               // marked before it loops)
 
@@ -544,8 +544,8 @@ bool SpacePixel::intersect(const Line &l, double tolerance) {
         for (int lineref : pixelLines) {
             LineTest &linetest = m_lines.find(lineref)->second;
             if (linetest.test != m_test) {
-                if (intersect_region(linetest.line, l)) {
-                    if (intersect_line(linetest.line, l, tolerance)) {
+                if (linetest.line.Region4f::intersects(l, tolerance)) {
+                    if (linetest.line.Line4f::intersects(l, tolerance)) {
                         return true;
                     }
                 }
@@ -557,7 +557,7 @@ bool SpacePixel::intersect(const Line &l, double tolerance) {
     return false;
 }
 
-bool SpacePixel::intersect_exclude(const Line &l, double tolerance) {
+bool SpacePixel::intersect_exclude(const Line4f &l, double tolerance) {
     m_test++; // note loops! (but vary rarely: inevitabley, lines will have been
               // marked before it loops)
 
@@ -569,8 +569,8 @@ bool SpacePixel::intersect_exclude(const Line &l, double tolerance) {
         for (int lineref : pixelLines) {
             LineTest &linetest = m_lines.find(lineref)->second;
             if (linetest.test != m_test) {
-                if (intersect_region(linetest.line, l)) {
-                    if (intersect_line(linetest.line, l, tolerance)) {
+                if (linetest.line.Region4f::intersects(l, tolerance)) {
+                    if (linetest.line.Line4f::intersects(l, tolerance)) {
                         if (linetest.line.start() != l.start() &&
                             linetest.line.start() != l.end() && linetest.line.end() != l.start() &&
                             linetest.line.end() != l.end()) {
@@ -586,7 +586,7 @@ bool SpacePixel::intersect_exclude(const Line &l, double tolerance) {
     return false;
 }
 
-void SpacePixel::cutLine(Line &l, short dir) {
+void SpacePixel::cutLine(Line4f &l, short dir) {
     m_test++;
 
     double tolerance = l.length() * 1e-9;
@@ -594,17 +594,17 @@ void SpacePixel::cutLine(Line &l, short dir) {
     std::set<double> loc;
     PixelRefVector vec = pixelateLine(l);
 
-    int axis;
+    LineAxis axis;
     if (l.width() >= l.height()) {
-        axis = XAXIS;
+        axis = LineAxis::XAXIS;
     } else {
-        axis = YAXIS;
+        axis = LineAxis::YAXIS;
     }
     Point2f truestart = (dir == l.direction()) ? l.start() : l.end();
     Point2f trueend = (dir == l.direction()) ? l.end() : l.start();
 
     bool found = false;
-    std::vector<Line> touchingLines;
+    std::vector<Line4f> touchingLines;
 
     for (size_t i = 0; i < vec.size() && !found; i++) {
         // depending on direction of line either move head to tail or tail to head
@@ -614,9 +614,9 @@ void SpacePixel::cutLine(Line &l, short dir) {
             // try {
             LineTest &linetest = m_lines.find(lineref)->second;
             if (linetest.test != m_test) {
-                if (intersect_region(linetest.line, l, tolerance * linetest.line.length())) {
-                    switch (intersect_line_distinguish(linetest.line, l,
-                                                       tolerance * linetest.line.length())) {
+                if (linetest.line.Region4f::intersects(l, tolerance * linetest.line.length())) {
+                    switch (linetest.line.Line4f::intersects_distinguish(
+                        l, tolerance * linetest.line.length())) {
                     case 0:
                         break;
                     case 2: {
@@ -645,8 +645,8 @@ void SpacePixel::cutLine(Line &l, short dir) {
                                     if (pair != -1) {
                                         b = touchingLines[pair].end() - touchingLines[pair].start();
                                         Point2f p = trueend - truestart;
-                                        double oa = det(p, a);
-                                        double ob = det(p, b);
+                                        double oa = p.det(a);
+                                        double ob = p.det(b);
                                         if (pafmath::sgn(oa) != pafmath::sgn(ob) ||
                                             fabs(oa) < tolerance * linetest.line.length() ||
                                             fabs(ob) < tolerance * linetest.line.length()) {
@@ -691,8 +691,8 @@ void SpacePixel::cutLine(Line &l, short dir) {
         if (loc.size()) {
             // there's no guarantee the loc actually happened in this pixel...
             // check the first loc actually occurred in this pixel...
-            if ((dir == l.direction() && (axis == XAXIS || l.sign() == 1)) ||
-                (dir != l.direction() && (axis == YAXIS && l.sign() == -1))) {
+            if ((dir == l.direction() && (axis == LineAxis::XAXIS || l.sign() == 1)) ||
+                (dir != l.direction() && (axis == LineAxis::YAXIS && l.sign() == -1))) {
                 if (pix == pixelate(l.point_on_line(*loc.begin(), axis))) {
                     found = true;
                 }
@@ -708,7 +708,7 @@ void SpacePixel::cutLine(Line &l, short dir) {
         // it intersected...
         double pos;
         if (dir == l.direction()) {
-            if (axis == XAXIS) {
+            if (axis == LineAxis::XAXIS) {
                 pos = *loc.begin();
                 l.by() = l.ay() + l.sign() * l.height() * (pos - l.ax()) / l.width();
                 l.bx() = pos;
@@ -722,7 +722,7 @@ void SpacePixel::cutLine(Line &l, short dir) {
                 l.by() = pos;
             }
         } else {
-            if (axis == XAXIS) {
+            if (axis == LineAxis::XAXIS) {
                 pos = *loc.rbegin();
                 l.ay() = l.by() - l.sign() * l.height() * (l.bx() - pos) / l.width();
                 l.ax() = pos;

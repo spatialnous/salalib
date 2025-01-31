@@ -62,7 +62,7 @@ namespace IsovistUtils {
         return newColumns;
     }
 
-    void createIsovistInMap(BSPNodeTree &bspNodeTree, const QtRegion &bounds, ShapeMap &map,
+    void createIsovistInMap(BSPNodeTree &bspNodeTree, const Region4f &bounds, ShapeMap &map,
                             const Point2f &p, double startangle, double endangle) {
 
         Isovist iso;
@@ -75,8 +75,8 @@ namespace IsovistUtils {
         setIsovistData(iso, table, row);
     }
 
-    void createIsovistInMap(Communicator *comm, const std::vector<Line> &lines,
-                            const QtRegion &bounds, ShapeMap &map, const Point2f &p,
+    void createIsovistInMap(Communicator *comm, const std::vector<Line4f> &lines,
+                            const Region4f &bounds, ShapeMap &map, const Point2f &p,
                             double startangle, double endangle) {
         BSPNodeTree bspNodeTree;
         bspNodeTree.makeNewRoot(false);

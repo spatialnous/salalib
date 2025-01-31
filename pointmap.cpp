@@ -23,7 +23,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 
-PointMap::PointMap(const QtRegion &parentRegion, const std::string &name)
+PointMap::PointMap(const Region4f &parentRegion, const std::string &name)
     : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())), m_name(name),
       m_parentRegion(&parentRegion), m_points(0, 0), m_filledPointCount(0), m_spacing(0.0),
       m_initialised(false), m_blockedlines(false), m_processed(false), m_boundarygraph(false),
@@ -127,7 +127,7 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
     m_bottomLeft = Point2f(m_parentRegion->bottomLeft.x + m_offset.x,
                            m_parentRegion->bottomLeft.y + m_offset.y);
 
-    m_region = QtRegion(Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
+    m_region = Region4f(Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
                         Point2f(m_bottomLeft.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
                                 m_bottomLeft.y + double(m_rows - 1) * m_spacing + m_spacing / 2.0));
 
@@ -244,12 +244,12 @@ PixelRef PointMap::pixelate(const Point2f &p, bool constrain, int scalefactor) c
     return ref;
 }
 
-void PointMap::addPointsInRegionToSet(const QtRegion &r, std::set<PixelRef> &selSet) {
+void PointMap::addPointsInRegionToSet(const Region4f &r, std::set<PixelRef> &selSet) {
     auto newSet = getPointsInRegion(r);
     selSet.insert(newSet.begin(), newSet.end());
 }
 
-std::set<PixelRef> PointMap::getPointsInRegion(const QtRegion &r) const {
+std::set<PixelRef> PointMap::getPointsInRegion(const Region4f &r) const {
     std::set<PixelRef> selSet;
     auto sBl = pixelate(r.bottomLeft, true);
     auto sTr = pixelate(r.topRight, true);
@@ -268,7 +268,7 @@ std::set<PixelRef> PointMap::getPointsInRegion(const QtRegion &r) const {
     return selSet;
 }
 
-void PointMap::fillLine(const Line &li) {
+void PointMap::fillLine(const Line4f &li) {
     PixelRefVector pixels = pixelateLine(li, 1);
     for (size_t j = 0; j < pixels.size(); j++) {
         if (getPoint(pixels[j]).empty()) {
@@ -278,7 +278,7 @@ void PointMap::fillLine(const Line &li) {
     }
 }
 
-bool PointMap::blockLines(std::vector<Line> &lines) {
+bool PointMap::blockLines(std::vector<Line4f> &lines) {
     if (!m_initialised || m_points.size() == 0) {
         return false;
     }
@@ -294,15 +294,15 @@ bool PointMap::blockLines(std::vector<Line> &lines) {
     // shaperef, so just switched to an integer key:
 
     for (const auto &line : lines) {
-        blockLine(Line(line.start(), line.end()));
+        blockLine(Line4f(line.start(), line.end()));
     }
 
     for (size_t i = 0; i < m_cols; i++) {
         for (size_t j = 0; j < m_rows; j++) {
             PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
             Point &pt = getPoint(curs);
-            QtRegion viewport = regionate(curs, 1e-10);
-            std::vector<Line>::iterator iter = pt.m_lines.begin(), end = pt.m_lines.end();
+            Region4f viewport = regionate(curs, 1e-10);
+            std::vector<Line4f>::iterator iter = pt.m_lines.begin(), end = pt.m_lines.end();
             for (; iter != end;) {
                 if (!iter->crop(viewport)) {
                     // the pixelation is fairly rough to make sure that no point is
@@ -321,7 +321,7 @@ bool PointMap::blockLines(std::vector<Line> &lines) {
     return true;
 }
 
-void PointMap::blockLine(const Line &li) {
+void PointMap::blockLine(const Line4f &li) {
     std::vector<PixelRef> pixels = pixelateLineTouching(li, 1e-10);
     // touching is generally better for ensuring lines pixelated completely,
     // although it may catch extra points...
@@ -390,9 +390,9 @@ bool PointMap::makePoints(const Point2f &seed, int fillType, Communicator *comm)
     }
 
     // check if seed point is actually visible from the centre of the cell
-    std::vector<Line> &linesTouching = getPoint(seedref).m_lines;
+    std::vector<Line4f> &linesTouching = getPoint(seedref).m_lines;
     for (const auto &line : linesTouching) {
-        if (intersect_line_no_touch(line, Line(seed, getPoint(seedref).m_location))) {
+        if (line.intersects_no_touch(Line4f(seed, getPoint(seedref).m_location))) {
             return false;
         }
     }
@@ -464,17 +464,17 @@ int PointMap::expand(const PixelRef p1, const PixelRef p2, PixelRefVector &list,
         // 2 = already filled
         return 2;
     }
-    Line l(depixelate(p1), depixelate(p2));
+    Line4f l(depixelate(p1), depixelate(p2));
     for (auto &line : getPoint(p1).m_lines) {
-        if (intersect_region(l, line, m_spacing * 1e-10) &&
-            intersect_line(l, line, m_spacing * 1e-10)) {
+        if (l.Region4f::intersects(line, m_spacing * 1e-10) &&
+            l.Line4f::intersects(line, m_spacing * 1e-10)) {
             // 4 = blocked
             return 4;
         }
     }
     for (auto &line : getPoint(p2).m_lines) {
-        if (intersect_region(l, line, m_spacing * 1e-10) &&
-            intersect_line(l, line, m_spacing * 1e-10)) {
+        if (l.Region4f::intersects(line, m_spacing * 1e-10) &&
+            l.Line4f::intersects(line, m_spacing * 1e-10)) {
             // 4 = blocked
             return 4;
         }
@@ -511,7 +511,7 @@ void PointMap::outputMergeLines(std::ostream &stream, char delim) {
     stream.precision(12);
     for (size_t i = 0; i < m_mergeLines.size(); i++) {
 
-        Line li(depixelate(m_mergeLines[i].a), depixelate(m_mergeLines[i].b));
+        Line4f li(depixelate(m_mergeLines[i].a), depixelate(m_mergeLines[i].b));
 
         stream << li.start().x << delim << li.start().y << delim << li.end().x << delim
                << li.end().y << std::endl;
@@ -761,7 +761,7 @@ bool PointMap::readMetadata(std::istream &stream) {
 
     stream.read(reinterpret_cast<char *>(&m_bottomLeft), sizeof(m_bottomLeft));
 
-    m_region = QtRegion(Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
+    m_region = Region4f(Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
                         Point2f(m_bottomLeft.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
                                 m_bottomLeft.y + double(m_rows - 1) * m_spacing + m_spacing / 2.0));
     return true;
@@ -1070,7 +1070,7 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
         // note regionate border must be greater than tolerance squared used in
         // interection testing later
         double border = m_spacing * 1e-10;
-        QtRegion viewport0 = regionate(curs, 1e-10);
+        Region4f viewport0 = regionate(curs, 1e-10);
         switch (q) {
         case 0:
             viewport0.topRight.x = centre0.x;
@@ -1105,9 +1105,9 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
             viewport0.topRight.y = centre0.y;
             break;
         }
-        std::vector<Line> lines0;
-        for (const Line &line : getPoint(curs).m_lines) {
-            Line l = line;
+        std::vector<Line4f> lines0;
+        for (const Line4f &line : getPoint(curs).m_lines) {
+            Line4f l = line;
             if (l.crop(viewport0)) {
                 lines0.push_back(l);
             }
@@ -1254,7 +1254,7 @@ bool PointMap::binDisplay(Communicator *, std::set<int> &selSet) {
     return true;
 }
 
-bool PointMap::mergePoints(const Point2f &p, QtRegion &firstPointsBounds,
+bool PointMap::mergePoints(const Point2f &p, Region4f &firstPointsBounds,
                            std::set<int> &firstPoints) {
 
     // note that in a multiple selection, the point p is adjusted by the selection

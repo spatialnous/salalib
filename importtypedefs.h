@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "genlib/p2dpoly.h"
+#include "genlib/region4f.h"
 
 #include <map>
 #include <string>
@@ -14,7 +14,7 @@ namespace depthmapX {
     typedef std::vector<std::string> ColumnData;
     typedef std::map<std::string, ColumnData> Table;
 
-    class Polyline : public QtRegion {
+    class Polyline : public Region4f {
       public:
         std::vector<Point2f> vertices;
         bool closed = false;

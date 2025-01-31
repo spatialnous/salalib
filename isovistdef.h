@@ -4,7 +4,9 @@
 
 #pragma once
 
-#include "genlib/p2dpoly.h"
+#include "genlib/point2f.h"
+
+#include <cmath>
 
 class IsovistDefinition {
   public:

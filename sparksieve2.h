@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "genlib/p2dpoly.h"
+#include "genlib/line4f.h"
 
 #include <float.h>
 #include <list>
@@ -39,8 +39,8 @@ class sparkSieve2 {
   public:
     sparkSieve2(const Point2f &centre, double maxdist = -1.0);
     ~sparkSieve2();
-    bool testblock(const Point2f &point, const std::vector<Line> &lines, double tolerance);
-    void block(const std::vector<Line> &lines, int q);
+    bool testblock(const Point2f &point, const std::vector<Line4f> &lines, double tolerance);
+    void block(const std::vector<Line4f> &lines, int q);
     void collectgarbage();
     double tanify(const Point2f &point, int q);
     //

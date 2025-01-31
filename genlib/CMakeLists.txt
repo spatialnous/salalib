@@ -9,7 +9,15 @@ target_sources(salalib
         comm.h
         containerutils.h
         exceptions.h
-        p2dpoly.h
+        point2f.h
+        point3f.h
+        edgeu.h
+        event2f.h
+        region4f.h
+        line4f.h
+        simpleline.h
+        regiontree.h
+        poly.h
         pafmath.h
         pflipper.h
         readwritehelpers.h
@@ -18,7 +26,12 @@ target_sources(salalib
         xmlparse.h
     PUBLIC
         bsptree.cpp
-        p2dpoly.cpp
+        point2f.cpp
+        edgeu.cpp
+        region4f.cpp
+        line4f.cpp
+        regiontree.cpp
+        poly.cpp
         pafmath.cpp
         stringutils.cpp
         xmlparse.cpp

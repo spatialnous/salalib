@@ -20,7 +20,7 @@
 #include "spacepix.h"
 
 #include "genlib/containerutils.h"
-#include "genlib/p2dpoly.h"
+#include "genlib/simpleline.h"
 
 #include <map>
 #include <optional>
@@ -155,7 +155,7 @@ class ShapeMap : public AttributeMap {
     void removePolyPixels(int shaperef);
     //
     //
-    void init(size_t size, const QtRegion &r);
+    void init(size_t size, const Region4f &r);
     int getNextShapeKey();
     // convert a single point into a shape
     int makePointShapeWithRef(const Point2f &point, int shapeRef, bool tempshape = false,
@@ -163,10 +163,10 @@ class ShapeMap : public AttributeMap {
     int makePointShape(const Point2f &point, bool tempshape = false,
                        const std::map<int, float> &extraAttributes = std::map<int, float>());
     // or a single line into a shape
-    int makeLineShapeWithRef(const Line &line, int shapeRef, bool throughUi = false,
+    int makeLineShapeWithRef(const Line4f &line, int shapeRef, bool throughUi = false,
                              bool tempshape = false,
                              const std::map<int, float> &extraAttributes = std::map<int, float>());
-    int makeLineShape(const Line &line, bool throughUi = false, bool tempshape = false,
+    int makeLineShape(const Line4f &line, bool throughUi = false, bool tempshape = false,
                       const std::map<int, float> &extraAttributes = std::map<int, float>());
     // or a polygon into a shape
     int makePolyShapeWithRef(const std::vector<Point2f> &points, bool open, int shapeRef,
@@ -189,14 +189,14 @@ class ShapeMap : public AttributeMap {
     int makeShapeFromPointSet(const PointMap &pointmap, const std::set<int> &selSet);
     //
     // move a shape (currently only a line shape) -- in the future should use SalaShape
-    bool moveShape(int shaperef, const Line &line, bool undoing = false);
+    bool moveShape(int shaperef, const Line4f &line, bool undoing = false);
     // delete a shape
     void removeShape(int shaperef, bool undoing = false);
     //
     void setShapeAttributes(int rowid, const SalaShape &shape);
     //
     // some UI polygon creation tools:
-    int polyBegin(const Line &line);
+    int polyBegin(const Line4f &line);
     bool polyAppend(int shapeRef, const Point2f &point);
     bool polyClose(int shapeRef);
     bool polyCancel(int shapeRef);
@@ -218,7 +218,8 @@ class ShapeMap : public AttributeMap {
     // retrieve lists of polys point intersects:
     std::vector<size_t> pointInPolyList(const Point2f &p) const;
     // TODO: Fix casting -1 to size_t
-    std::vector<size_t> lineInPolyList(const Line &li, std::optional<size_t> lineref = std::nullopt,
+    std::vector<size_t> lineInPolyList(const Line4f &li,
+                                       std::optional<size_t> lineref = std::nullopt,
                                        double tolerance = 0.0) const;
     std::vector<size_t> polyInPolyList(int polyref, double tolerance = 0.0) const;
     std::vector<size_t> shapeInPolyList(const SalaShape &shape);
@@ -295,7 +296,7 @@ class ShapeMap : public AttributeMap {
                static_cast<double>(m_attributes->getNumRows());
     }
 
-    const std::map<int, SalaShape> getShapesInRegion(const QtRegion &r) const;
+    const std::map<int, SalaShape> getShapesInRegion(const Region4f &r) const;
 
   protected:
     bool m_hasMapInfoData = false;
@@ -309,7 +310,7 @@ class ShapeMap : public AttributeMap {
 
   public:
     // Screen
-    std::vector<size_t> makeViewportShapes(const QtRegion &viewport) const;
+    std::vector<size_t> makeViewportShapes(const Region4f &viewport) const;
     //
     double getLocationValue(const Point2f &point, std::optional<size_t> attributeIdx) const;
 
@@ -367,7 +368,7 @@ class ShapeMap : public AttributeMap {
   public:
     // generic for all types of graphs
     bool findNextLinkLine() const;
-    Line getNextLinkLine() const;
+    Line4f getNextLinkLine() const;
     std::vector<SimpleLine> getAllLinkLines();
 
     const std::vector<OrderedSizeTPair> &getLinks() const { return m_links; }
@@ -376,15 +377,15 @@ class ShapeMap : public AttributeMap {
     void outputUnlinkPoints(std::ofstream &stream, char delim);
 
   public:
-    std::vector<Line> getAllShapesAsLines() const;
+    std::vector<Line4f> getAllShapesAsLines() const;
     std::vector<SimpleLine> getAllShapesAsSimpleLines() const;
     std::vector<std::pair<SimpleLine, PafColor>>
     getAllSimpleLinesWithColour(const std::set<int> &selSet);
     std::vector<std::pair<std::vector<Point2f>, PafColor>>
     getAllPolygonsWithColour(const std::set<int> &selSet);
     std::vector<std::pair<Point2f, PafColor>> getAllPointsWithColour(const std::set<int> &selSet);
-    bool importLines(const std::vector<Line> &lines, const depthmapX::Table &data);
-    bool importLinesWithRefs(const std::map<int, Line> &lines, const depthmapX::Table &data);
+    bool importLines(const std::vector<Line4f> &lines, const depthmapX::Table &data);
+    bool importLinesWithRefs(const std::map<int, Line4f> &lines, const depthmapX::Table &data);
     bool importPoints(const std::vector<Point2f> &points, const depthmapX::Table &data);
     bool importPointsWithRefs(const std::map<int, Point2f> &points, const depthmapX::Table &data);
     bool importPolylines(const std::vector<depthmapX::Polyline> &lines,

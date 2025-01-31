@@ -76,7 +76,7 @@ void SalaShape::setCentroid(const Point2f &p) { m_centroid = p; }
 double SalaShape::getAngDev() const {
     double dev = 0.0;
     for (size_t i = 1; i < points.size() - 1; i++) {
-        double ang = angle(points[i - 1], points[i], points[i + 1]);
+        double ang = points[i - 1].angle(points[i], points[i + 1]);
 
         // Quick mod - TV
 #if defined(_MSC_VER)
@@ -90,7 +90,7 @@ double SalaShape::getAngDev() const {
     return dev;
 }
 
-std::vector<SalaEdgeU> SalaShape::getClippingSet(QtRegion &clipframe) const {
+std::vector<SalaEdgeU> SalaShape::getClippingSet(Region4f &clipframe) const {
     std::vector<SalaEdgeU> edgeset;
     bool lastInside = (clipframe.contains_touch(points[0])) ? true : false;
     bool foundInside = lastInside;

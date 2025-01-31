@@ -131,7 +131,7 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
         } else if (shape.second.isPolyLine()) {
             std::set<PixelRef> polylinePixels;
             for (size_t i = 1; i < shape.second.points.size(); i++) {
-                Line li(shape.second.points[i - 1], shape.second.points[i]);
+                Line4f li(shape.second.points[i - 1], shape.second.points[i]);
                 PixelRefVector linePixels = destMap.pixelateLine(li);
                 polylinePixels.insert(linePixels.begin(), linePixels.end());
             }

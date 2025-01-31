@@ -131,10 +131,10 @@ std::set<std::string> VGAIsovist::setData(Isovist &isovist, size_t &index, Analy
 
 BSPNode VGAIsovist::makeBSPtree(Communicator *communicator,
                                 const std::vector<SalaShape> &boundaryShapes) const {
-    std::vector<Line> partitionlines;
+    std::vector<Line4f> partitionlines;
     for (const auto &shape : boundaryShapes) {
-        std::vector<Line> newLines = shape.getAsLines();
-        for (const Line &line : newLines) {
+        std::vector<Line4f> newLines = shape.getAsLines();
+        for (const Line4f &line : newLines) {
             if (line.length() > 0.0) {
                 partitionlines.push_back(line);
             }

@@ -53,7 +53,7 @@ class PointMap : public AttributeMap {
 
   protected: // members
     std::string m_name;
-    const QtRegion *m_parentRegion;
+    const Region4f *m_parentRegion;
     depthmapX::ColumnMatrix<Point> m_points; // will contain the graph reference when created
     int m_filledPointCount;
     double m_spacing;
@@ -75,7 +75,7 @@ class PointMap : public AttributeMap {
     };
 
   public: // ctors
-    PointMap(const QtRegion &parentRegion, const std::string &name = std::string("VGA Map"));
+    PointMap(const Region4f &parentRegion, const std::string &name = std::string("VGA Map"));
     ~PointMap() override {}
     void copy(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
     const std::string &getName() const { return m_name; }
@@ -105,9 +105,9 @@ class PointMap : public AttributeMap {
     // constrain is constrain to existing rows / cols
     PixelRef pixelate(const Point2f &p, bool constrain = true, int scalefactor = 1) const override;
     Point2f depixelate(const PixelRef &p, double scalefactor = 1.0) const; // Inlined below
-    QtRegion regionate(const PixelRef &p, double border) const;            // Inlined below
-    void addPointsInRegionToSet(const QtRegion &r, std::set<PixelRef> &selSet);
-    std::set<PixelRef> getPointsInRegion(const QtRegion &r) const;
+    Region4f regionate(const PixelRef &p, double border) const;            // Inlined below
+    void addPointsInRegionToSet(const Region4f &r, std::set<PixelRef> &selSet);
+    std::set<PixelRef> getPointsInRegion(const Region4f &r) const;
     bool setGrid(double spacing, const Point2f &offset = Point2f());
     std::vector<std::pair<PixelRef, PixelRef>> getMergedPixelPairs() {
         // unnecessary converter until the m_merge_lines variable is
@@ -121,9 +121,9 @@ class PointMap : public AttributeMap {
     const std::vector<PixelRefPair> &getMergeLines() const { return m_mergeLines; }
 
     bool isProcessed() const { return m_processed; }
-    void fillLine(const Line &li);
-    bool blockLines(std::vector<Line> &lines);
-    void blockLine(const Line &li);
+    void fillLine(const Line4f &li);
+    bool blockLines(std::vector<Line4f> &lines);
+    void blockLine(const Line4f &li);
     void unblockLines(bool clearblockedflag = true);
     bool fillPoint(const Point2f &p, bool add = true); // use add = false for remove point
     // bool blockPoint(const Point2f& p, bool add = true); // no longer used
@@ -146,7 +146,7 @@ class PointMap : public AttributeMap {
     // bool makeGraph( Graph& graph, int optimization_level = 0, Communicator *comm = NULL);
     //
     bool binDisplay(Communicator *, std::set<int> &selSet);
-    bool mergePoints(const Point2f &p, QtRegion &firstPointsBounds, std::set<int> &firstPoints);
+    bool mergePoints(const Point2f &p, Region4f &firstPointsBounds, std::set<int> &firstPoints);
     bool unmergePoints(std::set<int> &firstPoints);
     bool unmergePixel(PixelRef a);
     bool mergePixels(PixelRef a, PixelRef b);
@@ -224,8 +224,8 @@ inline Point2f PointMap::depixelate(const PixelRef &p, double scalefactor) const
                    m_bottomLeft.y + m_spacing * scalefactor * double(p.y));
 }
 
-inline QtRegion PointMap::regionate(const PixelRef &p, double border) const {
-    return QtRegion(Point2f(m_bottomLeft.x + m_spacing * (double(p.x) - 0.5 - border),
+inline Region4f PointMap::regionate(const PixelRef &p, double border) const {
+    return Region4f(Point2f(m_bottomLeft.x + m_spacing * (double(p.x) - 0.5 - border),
                             m_bottomLeft.y + m_spacing * (double(p.y) - 0.5 - border)),
                     Point2f(m_bottomLeft.x + m_spacing * (double(p.x) + 0.5 + border),
                             m_bottomLeft.y + m_spacing * (double(p.y) + 0.5 + border)));

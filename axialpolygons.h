@@ -9,7 +9,6 @@
 #include "shapegraph.h"
 #include "spacepix.h"
 
-#include "genlib/p2dpoly.h"
 #include "genlib/simplematrix.h"
 
 struct AxialVertexKey {
@@ -89,13 +88,13 @@ struct RadialLine : public RadialKey {
                const Point2f &n)
         : openspace(o), keyvertex(k), nextvertex(n) {
         vertex = v;
-        ang = (float)angle(o, k, n);
+        ang = (float)o.angle(k, n);
         segend = se;
     }
     RadialLine(const RadialLine &rl)
         : RadialKey(rl), openspace(rl.openspace), keyvertex(rl.keyvertex),
           nextvertex(rl.nextvertex) {}
-    bool cuts(const Line &l) const;
+    bool cuts(const Line4f &l) const;
     RadialLine &operator=(const RadialLine &) = default;
 };
 
@@ -109,9 +108,9 @@ struct RadialSegment {
 };
 
 struct PolyConnector {
-    Line line;
+    Line4f line;
     RadialKey key;
-    PolyConnector(const Line &l = Line(), const RadialKey &k = RadialKey()) : line(l), key(k) {}
+    PolyConnector(const Line4f &l = Line4f(), const RadialKey &k = RadialKey()) : line(l), key(k) {}
 };
 
 class AxialPolygons : public SpacePixel {
@@ -126,8 +125,8 @@ class AxialPolygons : public SpacePixel {
     std::set<AxialVertex> handledList;
     std::map<Point2f, std::vector<Point2f>> vertexPossibles;
     void clear();
-    void init(std::vector<Line> &lines, const QtRegion &region);
-    void makeVertexPossibles(const std::vector<Line> &lines,
+    void init(std::vector<Line4f> &lines, const Region4f &region);
+    void makeVertexPossibles(const std::vector<Line4f> &lines,
                              const std::vector<Connector> &connectionset);
     void makePixelPolys();
     //
@@ -135,7 +134,7 @@ class AxialPolygons : public SpacePixel {
     // find a polygon corner visible from seed:
     AxialVertexKey seedVertex(const Point2f &seed);
     // make axial lines from corner vertices, visible from openspace
-    void makeAxialLines(std::set<AxialVertex> &openvertices, std::vector<Line> &lines,
+    void makeAxialLines(std::set<AxialVertex> &openvertices, std::vector<Line4f> &lines,
                         KeyVertices &keyvertices, std::vector<PolyConnector> &polyConnections,
                         std::vector<RadialLine> &radialLines);
     // extra: make all the polygons possible from the set of m_vertex_possibles

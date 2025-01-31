@@ -8,7 +8,7 @@
 
 #include "salaedgeu.h"
 
-#include "genlib/p2dpoly.h"
+#include "genlib/line4f.h"
 
 #include <cstdint>
 #include <istream>
@@ -31,7 +31,7 @@ class SalaShape {
   protected:
     uint8_t m_type;
     Point2f m_centroid; // centre of mass, but also used as for point if object is a point
-    Line m_region;      // bounding box, but also used as a line if object is a line, hence type
+    Line4f m_region;    // bounding box, but also used as a line if object is a line, hence type
     double m_area;
     double m_perimeter;
     // these are all temporary data which are recalculated on reload
@@ -43,9 +43,9 @@ class SalaShape {
     SalaShape(uint8_t type = 0) : m_type(type), m_area(0.0), m_perimeter(0.0), m_draworder(-1) {}
     SalaShape(const Point2f &point)
         : m_type(SHAPE_POINT), m_centroid(point), m_area(0.0), m_perimeter(0.0), m_draworder(-1) {
-        m_region = Line(point, point);
+        m_region = Line4f(point, point);
     }
-    SalaShape(const Line &line)
+    SalaShape(const Line4f &line)
         : m_type(SHAPE_LINE), m_region(line), m_area(0.0), m_perimeter(line.length()),
           m_draworder(-1) {
         m_centroid = m_region.getCentre();
@@ -73,8 +73,8 @@ class SalaShape {
     bool isCCW() const { return (m_type & SHAPE_CCW) == SHAPE_CCW; }
     //
     const Point2f &getPoint() const { return m_centroid; }
-    const Line &getLine() const { return m_region; }
-    const QtRegion &getBoundingBox() const { return m_region; }
+    const Line4f &getLine() const { return m_region; }
+    const Region4f &getBoundingBox() const { return m_region; }
     //
     double getArea() const { return m_area; }
     double getPerimeter() const { return m_perimeter; }
@@ -90,21 +90,21 @@ class SalaShape {
     //    bool isSelected() const { return m_selected; }
     //    void setSelected(bool selected) { m_selected = selected; }
     //
-    std::vector<SalaEdgeU> getClippingSet(QtRegion &clipframe) const;
+    std::vector<SalaEdgeU> getClippingSet(Region4f &clipframe) const;
     //
     bool read(std::istream &stream);
     bool write(std::ostream &stream) const;
 
-    std::vector<Line> getAsLines() const {
-        std::vector<Line> lines;
+    std::vector<Line4f> getAsLines() const {
+        std::vector<Line4f> lines;
         if (isLine()) {
             lines.push_back(getLine());
         } else if (isPolyLine() || isPolygon()) {
             for (size_t j = 0; j < points.size() - 1; j++) {
-                lines.push_back(Line(points[j], points[j + 1]));
+                lines.push_back(Line4f(points[j], points[j + 1]));
             }
             if (isClosed()) {
-                lines.push_back(Line(points[points.size() - 1], points[0]));
+                lines.push_back(Line4f(points[points.size() - 1], points[0]));
             }
         }
         return lines;

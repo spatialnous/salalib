@@ -77,7 +77,7 @@ class ShapeGraph : public ShapeMap {
     bool stepdepth(Communicator *comm = nullptr);
     // lineset and connectionset are filled in by segment map
     void makeNewSegMap(Communicator *comm);
-    void makeSegmentMap(std::vector<Line> &lines, std::vector<Connector> &connectors,
+    void makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connector> &connectors,
                         double stubremoval);
     void initialiseAttributesSegment();
     void makeSegmentConnections(std::vector<Connector> &connectionset);

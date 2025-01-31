@@ -27,7 +27,7 @@ AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Poi
     // double equality...
     std::map<double, int> anglemap;
     for (size_t i = 0; i < pointlist.size(); ++i) {
-        anglemap.insert(std::make_pair(angle(openspace, av.point, pointlist[i]), i));
+        anglemap.insert(std::make_pair(openspace.angle(av.point, pointlist[i]), i));
     }
 
     av.refA = anglemap.begin()->second;
@@ -40,9 +40,9 @@ AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Poi
     a.normalise();
     b.normalise();
 
-    double oa = det(o, a);
-    double ob = det(o, b);
-    double ab = det(a, b);
+    double oa = o.det(a);
+    double ob = o.det(b);
+    double ab = a.det(b);
 
     // can't handle these cases
     if (fabs(oa) < TOLERANCE_A || fabs(ob) < TOLERANCE_A || fabs(ab) < TOLERANCE_A) {
@@ -54,7 +54,7 @@ AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Poi
     // ADDED 4-Nov-04 -- In order to stop too many lines being generated, don't
     // include points that do not change surface direction:  -- notice: will
     // create problems with circles
-    if (fabs(dot(a, b)) > 0.999) {
+    if (fabs(a.dot(b)) > 0.999) {
         return av;
     }
 
@@ -97,7 +97,7 @@ void AxialPolygons::clear() {
     m_pixelPolys.reset(0, 0);
 }
 
-void AxialPolygons::init(std::vector<Line> &lines, const QtRegion &region) {
+void AxialPolygons::init(std::vector<Line4f> &lines, const Region4f &region) {
     // init pixelbase members
     m_region = region;
 
@@ -132,13 +132,13 @@ void AxialPolygons::init(std::vector<Line> &lines, const QtRegion &region) {
     // now also add lines
     for (auto &vertexPoss : vertexPossibles) {
         for (auto poss : vertexPoss.second) {
-            addLine(Line(vertexPoss.first, poss));
+            addLine(Line4f(vertexPoss.first, poss));
         }
     }
     sortPixelLines();
 }
 
-void AxialPolygons::makeVertexPossibles(const std::vector<Line> &lines,
+void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
                                         const std::vector<Connector> &connectionset) {
     vertexPossibles.clear();
     m_vertexPolys.clear();
@@ -258,7 +258,7 @@ AxialVertexKey AxialPolygons::seedVertex(const Point2f &seed) {
         for (int vertexref :
              m_pixelPolys(static_cast<size_t>(seedref.y), static_cast<size_t>(seedref.x))) {
             const Point2f &trialpoint = depthmapX::getMapAtIndex(vertexPossibles, vertexref)->first;
-            if (!intersect_exclude(Line(seed, trialpoint))) {
+            if (!intersect_exclude(Line4f(seed, trialpoint))) {
                 // yay... ...but wait... we need to see if it's a proper polygon vertex
                 // first...
                 seedvertex = vertexref;
@@ -319,7 +319,7 @@ AxialVertexKey AxialPolygons::seedVertex(const Point2f &seed) {
 // visible vertices it finds to the openvertices list axial lines themselves are
 // added to the lines list - the axial line is only there to record the key
 // vertices that comprise the line
-void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vector<Line> &lines,
+void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vector<Line4f> &lines,
                                    KeyVertices &keyvertices,
                                    std::vector<PolyConnector> &polyConnections,
                                    std::vector<RadialLine> &radialLines) {
@@ -338,19 +338,19 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
         bool possible = false, stubpossible = false;
         Point2f p = vertPoss.first - vertex.point;
         if (vertex.convex) {
-            if (det(vertex.a, p) > 0 && det(vertex.b, p) > 0) {
+            if (vertex.a.det(p) > 0 && vertex.b.det(p) > 0) {
                 possible = true;
             }
         } else {
             // left of b and right of a or left of a and right of b
-            if (det(p, vertex.a) * det(p, vertex.b) < 0) {
+            if (p.det(vertex.a) * p.det(vertex.b) < 0) {
                 possible = true;
-            } else if (det(p, vertex.a) < TOLERANCE_A && det(p, vertex.b) < TOLERANCE_A) {
+            } else if (p.det(vertex.a) < TOLERANCE_A && p.det(vertex.b) < TOLERANCE_A) {
                 stubpossible = true;
             }
         }
         if (possible || stubpossible) {
-            Line line(vertPoss.first, vertex.point);
+            Line4f line(vertPoss.first, vertex.point);
             if (!intersect_exclude(line)) {
                 AxialVertex nextVertex = makeVertex(AxialVertexKey(i), vertex.point);
                 if (nextVertex.initialised && std::find(handledList.begin(), handledList.end(),
@@ -359,14 +359,14 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                                                      // vertex tends to be added multiple times
                                                      // before this vertex is handled itself)
                     bool shortlineSegend = false;
-                    Line shortline = line;
+                    Line4f shortline = line;
                     if (!vertex.convex && possible) {
-                        Line ext(line.t_end(), line.t_end() + (line.t_end() - line.t_start()));
+                        Line4f ext(line.t_end(), line.t_end() + (line.t_end() - line.t_start()));
                         ext.ray(1, m_region);
                         cutLine(ext, 1);
-                        line = Line(line.t_start(), ext.t_end());
+                        line = Line4f(line.t_start(), ext.t_end());
                         // for radial line segend calc:
-                        if (det(-p, vertex.b) < 0) {
+                        if ((-p).det(vertex.b) < 0) {
                             shortlineSegend = true;
                         }
                     }
@@ -379,7 +379,7 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                         polyConnections.push_back(PolyConnector(shortline, (RadialKey)radialshort));
                         radialLines.push_back(radialshort);
                         if (!vertex.convex && possible) {
-                            Line longline = Line(vertPoss.first, line.t_end());
+                            Line4f longline = Line4f(vertPoss.first, line.t_end());
                             RadialLine radiallong(radialshort);
                             radiallong.segend = shortlineSegend ? 0 : 1;
                             polyConnections.push_back(
@@ -389,12 +389,13 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                     }
                     shortlineSegend = false;
                     if (!nextVertex.convex && nextVertex.axial) {
-                        Line ext(line.t_start() - (line.t_end() - line.t_start()), line.t_start());
+                        Line4f ext(line.t_start() - (line.t_end() - line.t_start()),
+                                   line.t_start());
                         ext.ray(0, m_region);
                         cutLine(ext, 0);
-                        line = Line(ext.t_start(), line.t_end());
+                        line = Line4f(ext.t_start(), line.t_end());
                         // for radial line segend calc:
-                        if (det(p, nextVertex.b) < 0) {
+                        if (p.det(nextVertex.b) < 0) {
                             shortlineSegend = true;
                         }
                     }
@@ -407,7 +408,7 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                         polyConnections.push_back(PolyConnector(shortline, (RadialKey)radialshort));
                         radialLines.push_back(radialshort);
                         if (!nextVertex.convex && nextVertex.axial) {
-                            Line longline = Line(line.t_start(), vertex.point);
+                            Line4f longline = Line4f(line.t_start(), vertex.point);
                             RadialLine radiallong(radialshort);
                             radiallong.segend = shortlineSegend ? 0 : 1;
                             polyConnections.push_back(
@@ -471,7 +472,7 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                 for (size_t k = 0; k < vertPossIter->second.size(); k++) {
                     Point2f next = vertPossIter->second.at(k);
                     if (last != next) {
-                        double thisangle = angle(last, curr, next);
+                        double thisangle = last.angle(curr, next);
                         if (thisangle < minangle) {
                             // check not going to a dead end:
                             if (vertexPossibles.find(vertPossIter->second.at(k))->second.size() >
@@ -500,8 +501,8 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-bool RadialLine::cuts(const Line &l) const {
-    if (fabs(det(l.end() - keyvertex, l.end() - l.start())) < TOLERANCE_A) {
+bool RadialLine::cuts(const Line4f &l) const {
+    if (fabs((l.end() - keyvertex).det(l.end() - l.start())) < TOLERANCE_A) {
         // point on line, check that openspace and next vertex are on opposite sides
         // of the line
         Point2f x = l.end() - keyvertex;
@@ -510,7 +511,7 @@ bool RadialLine::cuts(const Line &l) const {
         x.normalise();
         y.normalise();
         z.normalise();
-        if (pafmath::sgn(det(x, y)) == pafmath::sgn(det(x, z)) && fabs(det(x, z)) > TOLERANCE_A) {
+        if (pafmath::sgn(x.det(y)) == pafmath::sgn(x.det(z)) && fabs(x.det(z)) > TOLERANCE_A) {
             return false;
         }
     }

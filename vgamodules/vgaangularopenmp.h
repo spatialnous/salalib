@@ -34,7 +34,7 @@ class VGAAngularOpenMP : public IVGAAngular {
             ANGULAR_TOTAL_DEPTH = "Angular Total Depth", //
             ANGULAR_NODE_COUNT = "Angular Node Count";   //
     };
-    static std::string getColumnWithRadius(std::string column, double radius, QtRegion mapRegion) {
+    static std::string getColumnWithRadius(std::string column, double radius, Region4f mapRegion) {
         if (radius != -1.0) {
             if (radius > 100.0) {
                 return column + " R" + dXstring::formatString(radius, "%.f");

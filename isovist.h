@@ -66,11 +66,11 @@ class Isovist {
     const std::vector<PointDist> &getOcclusionPoints() const { return m_occlusionPoints; }
     const Point2f &getCentre() const { return m_centre; }
     //
-    void makeit(BSPNode *root, const Point2f &p, const QtRegion &region, double startangle = 0.0,
+    void makeit(BSPNode *root, const Point2f &p, const Region4f &region, double startangle = 0.0,
                 double endangle = 0.0);
     void make(BSPNode *here);
-    void drawnode(const Line &li, int tag);
-    void addBlock(const Line &li, int tag, double startangle, double endangle);
+    void drawnode(const Line4f &li, int tag);
+    void addBlock(const Line4f &li, int tag, double startangle, double endangle);
     std::pair<Point2f, double> getCentroidArea();
     std::pair<double, double> getDriftData();
     double getPerimeter() { return m_perimeter; }

@@ -9,7 +9,6 @@
 
 #include "../genlib/comm.h" // for communicator
 #include "../genlib/containerutils.h"
-#include "../genlib/p2dpoly.h"
 #include "../genlib/stringutils.h"
 
 #include <fstream>
@@ -49,11 +48,11 @@ int NtfPoint::parse(const std::string &token, bool secondhalf /* = false */) {
     return 2;
 }
 
-void NtfMap::fitBounds(const Line &li) {
+void NtfMap::fitBounds(const Line4f &li) {
     if (m_region.atZero()) {
         m_region = li;
     } else {
-        m_region = runion(m_region, li);
+        m_region = m_region.runion(li);
     }
 }
 
@@ -69,9 +68,9 @@ void NtfMap::addGeom(size_t layerIdx, NtfGeometry &geom) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Line NtfMap::makeLine(const NtfPoint &a, const NtfPoint &b) {
+Line4f NtfMap::makeLine(const NtfPoint &a, const NtfPoint &b) {
     // In future requires offset
-    return Line(
+    return Line4f(
         Point2f(double(m_offset.a) + double(a.a) / 100.0, double(m_offset.b) + double(a.b) / 100.0),
         Point2f(double(m_offset.a) + double(b.a) / 100.0,
                 double(m_offset.b) + double(b.b) / 100.0));
@@ -219,7 +218,7 @@ void NtfMap::open(const std::vector<std::string> &fileset, Communicator *comm) {
                 if (parsing > 1) {
                     if (parsing == 2) { // hanging half point:
                         currpoint.parse(tokens[0], true);
-                        Line li = makeLine(lastpoint, currpoint);
+                        Line4f li = makeLine(lastpoint, currpoint);
                         geom.lines.push_back(li);
                         lastpoint = currpoint;
                         currtoken = 1;
@@ -227,7 +226,7 @@ void NtfMap::open(const std::vector<std::string> &fileset, Communicator *comm) {
                     for (size_t i = currtoken; i < tokens.size(); i++) {
                         int numbersparsed = currpoint.parse(tokens[i]);
                         if (numbersparsed == 2) {
-                            Line li = makeLine(lastpoint, currpoint);
+                            Line4f li = makeLine(lastpoint, currpoint);
                             geom.lines.push_back(li);
                             lastpoint = currpoint;
                         } else if (numbersparsed == 1) {

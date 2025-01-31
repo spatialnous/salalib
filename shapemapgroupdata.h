@@ -8,13 +8,11 @@
 
 #include "shapemap.h"
 
-#include "genlib/p2dpoly.h"
-
 #include <string>
 
 struct ShapeMapGroupData {
     std::string name; // <- file name
-    QtRegion region;
+    Region4f region;
 
     ShapeMapGroupData(const std::string &name = std::string()) : name(name){};
 

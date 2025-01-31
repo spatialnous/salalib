@@ -6,13 +6,13 @@
 #include <sstream>
 
 namespace depthmapX {
-    std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line> &mergeLines,
+    std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line4f> &mergeLines,
                                                  PointMap &currentMap) {
         std::vector<PixelRefPair> mergePixelPairs;
 
-        std::vector<Line>::const_iterator iter = mergeLines.begin(), end = mergeLines.end();
+        std::vector<Line4f>::const_iterator iter = mergeLines.begin(), end = mergeLines.end();
         for (; iter != end; ++iter) {
-            const Line &mergeLine = *iter;
+            const Line4f &mergeLine = *iter;
             const PixelRef &a = currentMap.pixelate(mergeLine.start(), false);
             const PixelRef &b = currentMap.pixelate(mergeLine.end(), false);
 

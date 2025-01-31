@@ -42,14 +42,14 @@ void TigerMap::parse(const std::vector<std::string> &fileset, Communicator *comm
                     int lat2 = stoi(line.substr(219, 9));
                     Point2f p1(double(long1) / 1e6, double(lat1) / 1e6);
                     Point2f p2(double(long2) / 1e6, double(lat2) / 1e6);
-                    Line li(p1, p2);
+                    Line4f li(p1, p2);
                     iter->second.chains.push_back(TigerChain());
                     iter->second.chains.back().lines.push_back(li);
                     if (!m_init) {
                         m_region = li;
                         m_init = true;
                     } else {
-                        m_region = runion(m_region, li);
+                        m_region = m_region.runion(li);
                     }
                 }
             }

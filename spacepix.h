@@ -10,7 +10,7 @@
 #include "pafcolor.h"
 #include "pixelref.h"
 
-#include "genlib/p2dpoly.h"
+#include "genlib/line4f.h"
 #include "genlib/simplematrix.h"
 
 #include <deque>
@@ -23,7 +23,7 @@ class PixelBase {
   protected:
     size_t m_rows;
     size_t m_cols;
-    QtRegion m_region;
+    Region4f m_region;
 
   public:
     PixelBase() {}
@@ -31,8 +31,8 @@ class PixelBase {
     // constrain is constrain to bounding box (i.e., in row / col bounds)
     virtual PixelRef pixelate(const Point2f &, bool constrain = true,
                               int scalefactor = 1) const = 0;
-    PixelRefVector pixelateLine(Line l, int scalefactor = 1) const;
-    PixelRefVector pixelateLineTouching(Line l, double tolerance) const;
+    PixelRefVector pixelateLine(Line4f l, int scalefactor = 1) const;
+    PixelRefVector pixelateLineTouching(Line4f l, double tolerance) const;
     PixelRefVector quickPixelateLine(PixelRef p, PixelRef q) const;
     bool includes(const PixelRef pix) const {
         return (pix.x >= 0 && pix.x < static_cast<short>(m_cols) && pix.y >= 0 &&
@@ -40,7 +40,7 @@ class PixelBase {
     }
     size_t getCols() const { return m_cols; }
     size_t getRows() const { return m_rows; }
-    const QtRegion &getRegion() const { return m_region; }
+    const Region4f &getRegion() const { return m_region; }
 };
 
 /////////////////////////////////////////////
@@ -48,9 +48,9 @@ class PixelBase {
 // couple of quick helpers
 
 struct LineTest {
-    Line line;
+    Line4f line;
     unsigned int test;
-    LineTest(const Line &l = Line(), int t = -1) : line(l), test(static_cast<unsigned int>(t)) {
+    LineTest(const Line4f &l = Line4f(), int t = -1) : line(l), test(static_cast<unsigned int>(t)) {
 
         // TODO: Shouldn't be casting an int with a known
         // default value of -1
@@ -115,23 +115,23 @@ class SpacePixel : public PixelBase {
     void reinitLines(double density); // just reinitialises pixel lines, keeps lines, current ref
                                       // and test setting
     //
-    void addLine(const Line &l);
+    void addLine(const Line4f &l);
     void sortPixelLines();
     //
-    int addLineDynamic(const Line &l);
+    int addLineDynamic(const Line4f &l);
 
-    virtual void makeViewportLines(const QtRegion &viewport) const;
+    virtual void makeViewportLines(const Region4f &viewport) const;
     virtual bool findNextLine(bool &) const;
-    virtual const Line &getNextLine() const;
+    virtual const Line4f &getNextLine() const;
     //
-    bool intersect(const Line &l, double tolerance = 0.0);
-    bool intersect_exclude(const Line &l, double tolerance = 0.0);
+    bool intersect(const Line4f &l, double tolerance = 0.0);
+    bool intersect_exclude(const Line4f &l, double tolerance = 0.0);
 
-    void cutLine(Line &l, short dir);
+    void cutLine(Line4f &l, short dir);
 
-    QtRegion &getRegion() const { return (QtRegion &)m_region; }
+    Region4f &getRegion() const { return (Region4f &)m_region; }
 
-    void setRegion(QtRegion &region) { m_region = region; }
+    void setRegion(Region4f &region) { m_region = region; }
     //
     const std::map<int, LineTest> &
     getAllLines() const // Danger! Use solely to look at the raw line data

@@ -47,11 +47,11 @@ void Agent::onInit(PixelRef node, int trailNum) {
 void Agent::onMove() {
     m_atTarget = false;
     m_frame++;
-    if (m_program->destinationDirected && dist(m_loc, m_destination) < 10.0) {
+    if (m_program->destinationDirected && m_loc.dist(m_destination) < 10.0) {
         // reached final destination
         onDestination();
     } else if ((m_program->selType & AgentProgram::SEL_TARGETTED) &&
-               dist(m_loc, m_target) < m_pointmap->getSpacing()) {
+               m_loc.dist(m_target) < m_pointmap->getSpacing()) {
         // reached target (intermediate destination)
         m_step = 0;
         onTarget();
@@ -110,7 +110,7 @@ void Agent::onStep() {
     m_stopped = false;
     m_step++;
     //
-    Point2f nextloc = m_loc + (m_pointmap->getSpacing() * m_vector);
+    Point2f nextloc = m_loc + (m_vector * m_pointmap->getSpacing());
     // note: false returns unconstrained pixel: goodStep must check it is in bounds using
     // m_pointmap->includes
     PixelRef nextnode = m_pointmap->pixelate(nextloc, false);
@@ -135,14 +135,14 @@ void Agent::onStep() {
 bool Agent::diagonalStep() {
     Point2f vector1 = m_vector;
     vector1.rotate(M_PI / 4.0);
-    Point2f nextloc1 = m_loc + (m_pointmap->getSpacing() * vector1);
+    Point2f nextloc1 = m_loc + (vector1 * m_pointmap->getSpacing());
     // note: "false" does not constrain to bounds: must be checked using m_pointmap->includes before
     // getPoint is used
     PixelRef nextnode1 = m_pointmap->pixelate(nextloc1, false);
 
     Point2f vector2 = m_vector;
     vector2.rotate(-M_PI / 4.0);
-    Point2f nextloc2 = m_loc + (m_pointmap->getSpacing() * vector2);
+    Point2f nextloc2 = m_loc + (vector2 * m_pointmap->getSpacing());
     // note: "false" does not constrain to bounds: must be checked using m_pointmap->includes before
     // getPoint is used
     int nextnode2 = m_pointmap->pixelate(nextloc2, false);

@@ -11,15 +11,13 @@
 #include "fileproperties.h"
 #include "shapemap.h"
 
-#include "genlib/p2dpoly.h"
-
 #include <memory>
 #include <mutex>
 #include <optional>
 #include <vector>
 
 struct MetaGraph {
-    QtRegion region;
+    Region4f region;
     std::string name = "";
     FileProperties fileProperties;
     int version = -1;

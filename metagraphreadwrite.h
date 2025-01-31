@@ -70,7 +70,7 @@ namespace MetaGraphReadWrite {
         } displayData;
     };
 
-    QtRegion readRegion(std::istream &stream);
+    Region4f readRegion(std::istream &stream);
 
     std::tuple<std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>>,
                std::vector<std::vector<std::tuple<bool, bool, int>>>>
@@ -96,7 +96,7 @@ namespace MetaGraphReadWrite {
         const std::optional<unsigned int> displayedMap = 0);
 
     std::tuple<std::vector<PointMap>, std::vector<int>, unsigned int>
-    readPointMaps(std::istream &stream, QtRegion defaultRegion);
+    readPointMaps(std::istream &stream, Region4f defaultRegion);
 
     template <typename PointMapOrRef>
     bool writePointMaps(std::ostream &stream, const std::vector<PointMapOrRef> &pointMaps,
@@ -117,7 +117,7 @@ namespace MetaGraphReadWrite {
     int writeToFile(
         const std::string &filename,
         // MetaGraph Data
-        const int version, const std::string &name, const QtRegion &region,
+        const int version, const std::string &name, const Region4f &region,
         const FileProperties &fileProperties,
         const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
         const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
@@ -141,7 +141,7 @@ namespace MetaGraphReadWrite {
     int writeToStream(
         std::ostream &stream,
         // MetaGraph Data
-        const int version, const std::string &name, const QtRegion &region,
+        const int version, const std::string &name, const Region4f &region,
         const FileProperties &fileProperties,
         const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
         const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,

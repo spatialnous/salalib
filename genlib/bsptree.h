@@ -6,7 +6,7 @@
 #pragma once
 
 #include "comm.h"
-#include "p2dpoly.h"
+#include "line4f.h"
 
 #include <memory>
 
@@ -15,7 +15,7 @@
 struct BSPNode {
 
   private:
-    Line m_line;
+    Line4f m_line;
     int m_tag = -1;
 
   public:
@@ -31,24 +31,24 @@ struct BSPNode {
         v0.normalise();
         Point2f v1 = p - m_line.start();
         v1.normalise();
-        if (det(v0, v1) >= 0) {
+        if (v0.det(v1) >= 0) {
             return BSPLEFT;
         } else {
             return BSPRIGHT;
         }
     }
-    const Line &getLine() const { return m_line; }
-    void setLine(const Line &line) { m_line = line; }
+    const Line4f &getLine() const { return m_line; }
+    void setLine(const Line4f &line) { m_line = line; }
     int getTag() const { return m_tag; }
     void setTag(const int tag) { m_tag = tag; }
 };
 
 namespace BSPTree {
-    void make(Communicator *communicator, time_t atime, const std::vector<Line> &lines,
+    void make(Communicator *communicator, time_t atime, const std::vector<Line4f> &lines,
               BSPNode *root);
-    int pickMidpointLine(const std::vector<Line> &lines, BSPNode *par);
-    std::pair<std::vector<Line>, std::vector<Line>> makeLines(Communicator *communicator,
-                                                              time_t atime,
-                                                              const std::vector<Line> &lines,
-                                                              BSPNode *base);
+    int pickMidpointLine(const std::vector<Line4f> &lines, BSPNode *par);
+    std::pair<std::vector<Line4f>, std::vector<Line4f>> makeLines(Communicator *communicator,
+                                                                  time_t atime,
+                                                                  const std::vector<Line4f> &lines,
+                                                                  BSPNode *base);
 } // namespace BSPTree

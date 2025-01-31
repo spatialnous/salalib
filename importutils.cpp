@@ -193,7 +193,7 @@ namespace depthmapX {
                                                           ? ShapeMap::DATAMAP
                                                           : ShapeMap::DRAWINGMAP);
 
-        shapeMap.init(numlines, QtRegion(minPoint, maxPoint));
+        shapeMap.init(numlines, Region4f(minPoint, maxPoint));
 
         // in MSVC 6, ios::eof remains set and it needs to be cleared.
         // in MSVC 8 it's even worse: it won't even seekg until eof flag has been
@@ -224,7 +224,7 @@ namespace depthmapX {
                             shapeMap.makePolyShape(points, true);
                         }
                     } else if (points.size() == 2) {
-                        shapeMap.makeLineShape(Line(points[0], points[1]));
+                        shapeMap.makeLineShape(Line4f(points[0], points[1]));
                     }
                     points.clear();
                     parsing = 0;
@@ -318,13 +318,13 @@ namespace depthmapX {
             table.erase(table.find(columns[ycol]));
             table.erase(table.find(columns[refcol]));
 
-            QtRegion region;
+            Region4f region;
 
             for (auto &point : points) {
                 if (region.atZero()) {
                     region = point.second;
                 } else {
-                    region = runion(region, point.second);
+                    region = region.runion(point.second);
                 }
             }
 
@@ -336,13 +336,13 @@ namespace depthmapX {
             table.erase(table.find(columns[xcol]));
             table.erase(table.find(columns[ycol]));
 
-            QtRegion region;
+            Region4f region;
 
             for (auto &point : points) {
                 if (region.atZero()) {
                     region = point;
                 } else {
-                    region = runion(region, point);
+                    region = region.runion(point);
                 }
             }
 
@@ -350,7 +350,7 @@ namespace depthmapX {
             shapeMap.importPoints(points, table);
 
         } else if (x1col != -1 && y1col != -1 && x2col != -1 && y2col != -1 && refcol != -1) {
-            std::map<int, Line> lines = extractLinesWithRef(
+            std::map<int, Line4f> lines = extractLinesWithRef(
                 table[columns[x1col]], table[columns[y1col]], table[columns[x2col]],
                 table[columns[y2col]], table[columns[refcol]]);
             table.erase(table.find(columns[x1col]));
@@ -359,13 +359,13 @@ namespace depthmapX {
             table.erase(table.find(columns[y2col]));
             table.erase(table.find(columns[refcol]));
 
-            QtRegion region;
+            Region4f region;
 
             for (auto &line : lines) {
                 if (region.atZero()) {
                     region = line.second;
                 } else {
-                    region = runion(region, line.second);
+                    region = region.runion(line.second);
                 }
             }
 
@@ -373,20 +373,20 @@ namespace depthmapX {
             shapeMap.importLinesWithRefs(lines, table);
 
         } else if (x1col != -1 && y1col != -1 && x2col != -1 && y2col != -1) {
-            std::vector<Line> lines = extractLines(table[columns[x1col]], table[columns[y1col]],
-                                                   table[columns[x2col]], table[columns[y2col]]);
+            std::vector<Line4f> lines = extractLines(table[columns[x1col]], table[columns[y1col]],
+                                                     table[columns[x2col]], table[columns[y2col]]);
             table.erase(table.find(columns[x1col]));
             table.erase(table.find(columns[y1col]));
             table.erase(table.find(columns[x2col]));
             table.erase(table.find(columns[y2col]));
 
-            QtRegion region;
+            Region4f region;
 
             for (auto &line : lines) {
                 if (region.atZero()) {
                     region = line;
                 } else {
-                    region = runion(region, line);
+                    region = region.runion(line);
                 }
             }
 
@@ -441,29 +441,30 @@ namespace depthmapX {
         return table;
     }
 
-    std::vector<Line> extractLines(ColumnData &x1col, ColumnData &y1col, ColumnData &x2col,
-                                   ColumnData &y2col) {
-        std::vector<Line> lines;
+    std::vector<Line4f> extractLines(ColumnData &x1col, ColumnData &y1col, ColumnData &x2col,
+                                     ColumnData &y2col) {
+        std::vector<Line4f> lines;
         for (size_t i = 0; i < x1col.size(); i++) {
             double x1 = stod(x1col[i]);
             double y1 = stod(y1col[i]);
             double x2 = stod(x2col[i]);
             double y2 = stod(y2col[i]);
-            lines.push_back(Line(Point2f(x1, y1), Point2f(x2, y2)));
+            lines.push_back(Line4f(Point2f(x1, y1), Point2f(x2, y2)));
         }
         return lines;
     }
 
-    std::map<int, Line> extractLinesWithRef(ColumnData &x1col, ColumnData &y1col, ColumnData &x2col,
-                                            ColumnData &y2col, ColumnData &refcol) {
-        std::map<int, Line> lines;
+    std::map<int, Line4f> extractLinesWithRef(ColumnData &x1col, ColumnData &y1col,
+                                              ColumnData &x2col, ColumnData &y2col,
+                                              ColumnData &refcol) {
+        std::map<int, Line4f> lines;
         for (size_t i = 0; i < x1col.size(); i++) {
             double x1 = stod(x1col[i]);
             double y1 = stod(y1col[i]);
             double x2 = stod(x2col[i]);
             double y2 = stod(y2col[i]);
             int ref = stoi(refcol[i]);
-            lines.insert(std::make_pair(ref, Line(Point2f(x1, y1), Point2f(x2, y2))));
+            lines.insert(std::make_pair(ref, Line4f(Point2f(x1, y1), Point2f(x2, y2))));
         }
         return lines;
     }
@@ -484,7 +485,7 @@ namespace depthmapX {
 
     bool importDxfLayer(const DxfLayer &dxfLayer, ShapeMap &shapeMap) {
         std::vector<Point2f> points;
-        std::vector<Line> lines;
+        std::vector<Line4f> lines;
         std::vector<Polyline> polylines;
 
         for (size_t jp = 0; jp < dxfLayer.numPoints(); jp++) {
@@ -494,8 +495,8 @@ namespace depthmapX {
 
         for (size_t j = 0; j < dxfLayer.numLines(); j++) {
             const DxfLine &dxfLine = dxfLayer.getLine(j);
-            Line line = Line(Point2f(dxfLine.getStart().x, dxfLine.getStart().y),
-                             Point2f(dxfLine.getEnd().x, dxfLine.getEnd().y));
+            Line4f line = Line4f(Point2f(dxfLine.getStart().x, dxfLine.getStart().y),
+                                 Point2f(dxfLine.getEnd().x, dxfLine.getEnd().y));
             lines.push_back(line);
         }
 
@@ -559,8 +560,8 @@ namespace depthmapX {
         DxfVertex layerMin = dxfLayer.getExtMin();
         DxfVertex layerMax = dxfLayer.getExtMax();
 
-        QtRegion region =
-            QtRegion(Point2f(layerMin.x, layerMin.y), Point2f(layerMax.x, layerMax.y));
+        Region4f region =
+            Region4f(Point2f(layerMin.x, layerMin.y), Point2f(layerMax.x, layerMax.y));
 
         shapeMap.init(points.size() + lines.size() + polylines.size(), region);
         // parameters could be passed in the Table here such as the

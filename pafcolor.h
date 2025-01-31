@@ -6,7 +6,7 @@
 
 #include "displayparams.h"
 
-#include "genlib/p2dpoly.h"
+#include "genlib/point2f.h"
 
 #include <cstdint>
 
@@ -51,10 +51,10 @@ struct PafColor {
     PafColor(const Point2f &vec, double a = 1.0) {
         color = static_cast<unsigned int>(
             0x00000000 | (((unsigned char)(a * 255.0)) << 24) |
-            (((unsigned char)(dot(vec, Point2f(1.0, 0.0)) * 255.0)) << 16) |
-            (((unsigned char)(dot(vec, Point2f(-0.5, 0.86602540378443864676372317075294)) * 255.0))
+            (((unsigned char)(vec.dot(Point2f(1.0, 0.0)) * 255.0)) << 16) |
+            (((unsigned char)(vec.dot(Point2f(-0.5, 0.86602540378443864676372317075294)) * 255.0))
              << 8) |
-            (((unsigned char)(dot(vec, Point2f(-0.5, -0.86602540378443864676372317075294)) *
+            (((unsigned char)(vec.dot(Point2f(-0.5, -0.86602540378443864676372317075294)) *
                               255.0))));
     }
 

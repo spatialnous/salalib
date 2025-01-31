@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "genlib/p2dpoly.h"
+#include "genlib/simpleline.h"
 
 #include <vector>
 

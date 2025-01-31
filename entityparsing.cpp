@@ -6,15 +6,16 @@
 
 #include "genlib/stringutils.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <exception>
 #include <sstream>
 
 namespace EntityParsing {
 
-    std::vector<Line> parseLines(std::istream &stream, char delimiter = '\t') {
+    std::vector<Line4f> parseLines(std::istream &stream, char delimiter = '\t') {
 
-        std::vector<Line> lines;
+        std::vector<Line4f> lines;
 
         std::string inputline;
         std::getline(stream, inputline);
@@ -76,7 +77,7 @@ namespace EntityParsing {
                         p2.y = std::atof(strings[i].c_str());
                     }
                 }
-                lines.push_back(Line(p1, p2));
+                lines.push_back(Line4f(p1, p2));
             }
         }
         return lines;

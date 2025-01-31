@@ -7,7 +7,7 @@
 #include "isovistdef.h"
 
 #include "genlib/exceptions.h"
-#include "genlib/p2dpoly.h"
+#include "genlib/line4f.h"
 
 #include <iostream>
 #include <string>
@@ -21,7 +21,7 @@ namespace EntityParsing {
     };
 
     std::vector<std::string> split(const std::string &s, char delim);
-    std::vector<Line> parseLines(std::istream &stream, char delimiter);
+    std::vector<Line4f> parseLines(std::istream &stream, char delimiter);
     std::vector<Point2f> parsePoints(std::istream &stream, char delimiter);
     Point2f parsePoint(const std::string &point, char delimiter = ',');
     std::vector<IsovistDefinition> parseIsovists(std::istream &stream, char delimiter);

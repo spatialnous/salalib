@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../genlib/comm.h"
-#include "../genlib/p2dpoly.h"
+#include "../genlib/line4f.h"
 
 #include <string>
 #include <vector>
@@ -22,7 +22,7 @@ struct NtfPoint {
 
 class NtfGeometry {
   public:
-    std::vector<Line> lines;
+    std::vector<Line4f> lines;
     NtfGeometry() { ; }
 };
 
@@ -48,18 +48,18 @@ class NtfMap {
 
   protected:
     NtfPoint m_offset; // note: in metres
-    QtRegion m_region; // made in metres, although points are in cm
+    Region4f m_region; // made in metres, although points are in cm
     int m_lineCount;
 
   public:
     NtfMap() { ; }
-    Line makeLine(const NtfPoint &a, const NtfPoint &b);
+    Line4f makeLine(const NtfPoint &a, const NtfPoint &b);
 
     void open(const std::vector<std::string> &fileset, Communicator *comm);
-    const QtRegion &getRegion() const { return m_region; }
+    const Region4f &getRegion() const { return m_region; }
     int getLineCount() const { return m_lineCount; }
 
   protected:
-    void fitBounds(const Line &li);
+    void fitBounds(const Line4f &li);
     void addGeom(size_t layerIdx, NtfGeometry &geom);
 };

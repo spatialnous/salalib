@@ -27,33 +27,33 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, MapData &mapData,
                        const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,
                        const Point2f &seed) {
 
-    std::vector<Line> lines;
-    QtRegion region;
+    std::vector<Line4f> lines;
+    Region4f region;
 
     // add all visible layers to the set of polygon lines...
     for (auto map : drawingLayers) {
         if (region.atZero()) {
             region = map.get().getRegion();
         } else {
-            region = runion(region, map.get().getRegion());
+            region = region.runion(map.get().getRegion());
         }
         std::vector<SimpleLine> newLines = map.get().getAllShapesAsSimpleLines();
         for (const auto &line : newLines) {
-            lines.push_back(Line(line.start(), line.end()));
+            lines.push_back(Line4f(line.start(), line.end()));
         }
     }
     generate(comm, map, mapData, lines, region, seed);
 }
 
-AllLine::MapData AllLine::generate(Communicator *comm, ShapeGraph &map, std::vector<Line> &lines,
-                                   QtRegion &region, const Point2f &seed) {
+AllLine::MapData AllLine::generate(Communicator *comm, ShapeGraph &map, std::vector<Line4f> &lines,
+                                   Region4f &region, const Point2f &seed) {
     MapData mapData;
     generate(comm, map, mapData, lines, region, seed);
     return mapData;
 }
 
 void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &mapData,
-                       std::vector<Line> &lines, QtRegion &region, const Point2f &seed) {
+                       std::vector<Line4f> &lines, Region4f &region, const Point2f &seed) {
     if (comm) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 3);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
@@ -83,7 +83,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     // okay, we've got as far as finding a seed corner, now the real fun begins...
     // test outwards from corner, add other corners to
     // test set...
-    std::vector<Line> axiallines;
+    std::vector<Line4f> axiallines;
     KeyVertices preaxialdata;
     // also poly_connections used in fewest line axial map construction:
     mapData.polyConnections.clear();
@@ -129,8 +129,8 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     for (size_t j = 0; j < axiallines.size(); j++) {
         for (size_t k = axiallines.size() - 1; k > j; k--) {
             double maxdim = __max(region.width(), region.height());
-            if (approxeq(axiallines[j].start(), axiallines[k].start(), maxdim * TOLERANCE_B) &&
-                approxeq(axiallines[j].end(), axiallines[k].end(), maxdim * TOLERANCE_B)) {
+            if (axiallines[j].start().approxeq(axiallines[k].start(), maxdim * TOLERANCE_B) &&
+                axiallines[j].end().approxeq(axiallines[k].end(), maxdim * TOLERANCE_B)) {
                 for (int preaxiali : preaxialdata[k]) {
                     preaxialdata[j].insert(preaxiali);
                 }
@@ -266,7 +266,7 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
 
     AxialMinimiser minimiser(map, axSegCuts.size(), radialsegs.size());
 
-    std::vector<Line> linesS, linesM;
+    std::vector<Line4f> linesS, linesM;
 
     minimiser.removeSubsets(axSegCuts, radialsegs, radialdivisions, mapData.radialLines,
                             keyvertexconns, keyvertexcounts);
@@ -340,11 +340,11 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                     continue;
                 }
                 testedshapes.insert(iter, int(shape.shapeRef));
-                const Line &line = map.getAllShapes().find(shape.shapeRef)->second.getLine();
+                const Line4f &line = map.getAllShapes().find(shape.shapeRef)->second.getLine();
                 //
-                if (intersect_region(line, polyconnections[i].line, tolerance * line.length())) {
-                    switch (intersect_line_distinguish(line, polyconnections[i].line,
-                                                       tolerance * line.length())) {
+                if (line.Region4f::intersects(polyconnections[i].line, tolerance * line.length())) {
+                    switch (line.intersects_distinguish(polyconnections[i].line,
+                                                        tolerance * line.length())) {
                     case 0:
                         break;
                     case 2: {

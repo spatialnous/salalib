@@ -60,12 +60,12 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
 
     int trailNum = -1;
     if (m_recordTrails.has_value()) {
-        if (m_recordTrails->limit < 1) {
-            m_recordTrails->limit = 1;
-        }
 
         auto recordTrailsLimit = m_recordTrails->limit;
         if (recordTrailsLimit.has_value()) {
+            if (recordTrailsLimit < 1) {
+                recordTrailsLimit = 1;
+            }
             m_agentProgram.trails = std::vector<std::vector<Event2f>>(*recordTrailsLimit);
         } else {
             m_agentProgram.trails = std::vector<std::vector<Event2f>>(50);

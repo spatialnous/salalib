@@ -60,17 +60,6 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
 
     int trailNum = -1;
     if (m_recordTrails.has_value()) {
-
-        auto recordTrailsLimit = m_recordTrails->limit;
-        if (recordTrailsLimit.has_value()) {
-            if (recordTrailsLimit < 1) {
-                recordTrailsLimit = 1;
-            }
-            m_agentProgram.trails = std::vector<std::vector<Event2f>>(*recordTrailsLimit);
-        } else {
-            m_agentProgram.trails = std::vector<std::vector<Event2f>>(50);
-        }
-
         trailNum = 0;
     }
 
@@ -78,9 +67,9 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
 
     agents.clear();
 
-    int maxValue = m_recordTrails.has_value() && m_recordTrails->limit.has_value()
-                       ? static_cast<int>(*(m_recordTrails->limit))
-                       : -1;
+    int maxNumTrails = m_recordTrails.has_value() && m_recordTrails->limit.has_value()
+                           ? static_cast<int>(*(m_recordTrails->limit))
+                           : -1;
 
     for (size_t i = 0; i < m_systemTimesteps; i++) {
         auto q = static_cast<size_t>(pafmath::invcumpoisson(pafmath::prandomr(), m_releaseRate));
@@ -94,8 +83,10 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
             if (trailNum != -1) {
                 trailNum++;
                 // after trail count, stop recording:
-                if (maxValue > 0 && trailNum == maxValue) {
+                if (maxNumTrails > 0 && trailNum == maxNumTrails) {
                     trailNum = -1;
+                } else {
+                    m_agentProgram.trails.emplace_back();
                 }
             }
         }

@@ -352,8 +352,8 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
         const Line4f &line;
         Connector &connector;
         int index;
-        LineConnector(const Line4f &line, Connector &connector, int index)
-            : line(line), connector(connector), index(index) {}
+        LineConnector(const Line4f &lineIn, Connector &connectorIn, int indexIn)
+            : line(lineIn), connector(connectorIn), index(indexIn) {}
     };
 
     std::vector<Connector> connectionset;

@@ -22,7 +22,7 @@ struct MetaGraph {
     FileProperties fileProperties;
     int version = -1;
 
-    MetaGraph(std::string name = "") : name(name), version(-1) {
+    MetaGraph(std::string nameIn = "") : name(nameIn), version(-1) {
 
         // <- if unsaved, file version is -1
     }

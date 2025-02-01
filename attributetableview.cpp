@@ -4,8 +4,8 @@
 
 #include "attributetableview.h"
 
-AttributeTableView::AttributeTableView(const AttributeTable &table)
-    : table(table), m_displayColumn(-1) {}
+AttributeTableView::AttributeTableView(const AttributeTable &tableIn)
+    : table(tableIn), m_displayColumn(-1) {}
 
 void AttributeTableView::setDisplayColIndex(int columnIndex) {
     if (columnIndex < -1) {

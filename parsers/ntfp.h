@@ -15,8 +15,8 @@ struct NtfPoint {
     int chars;
     int a = 0;
     int b = 0;
-    NtfPoint(int chars = 10) // apparently 10 is NTF default
-        : chars(chars) {}
+    NtfPoint(int charsIn = 10) // apparently 10 is NTF default
+        : chars(charsIn) {}
     int parse(const std::string &token, bool secondhalf = false);
 };
 

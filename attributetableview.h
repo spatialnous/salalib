@@ -34,8 +34,8 @@ class AttributeTableView {
 
 class AttributeTableHandle : public AttributeTableView {
   public:
-    AttributeTableHandle(AttributeTable &table)
-        : AttributeTableView(table), m_mutableTable(table) {}
+    AttributeTableHandle(AttributeTable &tablIn)
+        : AttributeTableView(tablIn), m_mutableTable(tablIn) {}
     virtual ~AttributeTableHandle() {}
     typedef std::vector<AttributeIndexItem> Index;
     const Index &getTableIndex() const { return m_mutableIndex; }
@@ -48,7 +48,7 @@ class AttributeTableHandle : public AttributeTableView {
 };
 
 struct index_item_key : public std::function<bool(AttributeKey)> {
-    explicit index_item_key(const AttributeKey &baseline) : baseline(baseline) {}
+    explicit index_item_key(const AttributeKey &baselineIn) : baseline(baselineIn) {}
     bool operator()(const AttributeIndexItem &arg) { return arg.key.value == baseline.value; }
     const AttributeKey &baseline;
 };

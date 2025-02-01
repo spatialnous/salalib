@@ -103,7 +103,7 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
         double value = -1;
         int count = 0;
         AttributeRow &row;
-        ValueCountRow(AttributeRow &row) : row(row) {}
+        ValueCountRow(AttributeRow &rowIn) : row(rowIn) {}
     };
 
     // prepare a temporary value table to store counts and values

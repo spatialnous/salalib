@@ -29,11 +29,12 @@ class IVGA : public IAnalysis {
         float dist = 0.0f;
         float cumAngle = 0.0f;
         float linkCost = 0.0f;
-        AnalysisData(const Point &point, const PixelRef ref, size_t attributeDataRow,
-                     int visitedFromBin, PixelRef diagonalExtent, float dist, float cumAngle)
-            : point(point), ref(ref), attributeDataRow(attributeDataRow),
-              visitedFromBin(visitedFromBin), diagonalExtent(diagonalExtent), dist(dist),
-              cumAngle(cumAngle) {}
+        AnalysisData(const Point &pointIn, const PixelRef refIn, size_t attributeDataRowIn,
+                     int visitedFromBinIn, PixelRef diagonalExtentIn, float distIn,
+                     float cumAngleIn)
+            : point(pointIn), ref(refIn), attributeDataRow(attributeDataRowIn),
+              visitedFromBin(visitedFromBinIn), diagonalExtent(diagonalExtentIn), dist(distIn),
+              cumAngle(cumAngleIn) {}
     };
 
   protected:

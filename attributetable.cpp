@@ -75,10 +75,10 @@ size_t AttributeColumnImpl::read(std::istream &stream) {
 
 void AttributeColumnImpl::write(std::ostream &stream, int physicalCol) {
     dXstring::writeString(stream, m_name);
-    float min = (float)stats.min;
-    float max = (float)stats.max;
-    stream.write(reinterpret_cast<const char *>(&min), sizeof(float));
-    stream.write(reinterpret_cast<const char *>(&max), sizeof(float));
+    float smin = (float)stats.min;
+    float smax = (float)stats.max;
+    stream.write(reinterpret_cast<const char *>(&smin), sizeof(float));
+    stream.write(reinterpret_cast<const char *>(&smax), sizeof(float));
     stream.write(reinterpret_cast<const char *>(&stats.total), sizeof(stats.total));
     stream.write(reinterpret_cast<const char *>(&physicalCol), sizeof(int));
     stream.write(reinterpret_cast<const char *>(&m_hidden), sizeof(bool));

@@ -4,11 +4,11 @@
 
 #pragma once
 
+#include <cstdint>
 #include <istream>
 #include <map>
 #include <ostream>
 #include <vector>
-#include <cstdint>
 /////////////////////////////////////////////////////////////////////////////
 
 // Additional for segment analysis
@@ -39,9 +39,9 @@ struct SegmentData : public SegmentRef {
         dir = d;
         ref = r;
     }
-    SegmentData(SegmentRef ref, SegmentRef p = SegmentRef(), int sd = 0, float md = 0.0f,
+    SegmentData(SegmentRef sref, SegmentRef p = SegmentRef(), int sd = 0, float md = 0.0f,
                 unsigned int cv = 0xffffffff)
-        : SegmentRef(ref), previous(p), segdepth(sd), metricdepth(md), coverage(cv) {}
+        : SegmentRef(sref), previous(p), segdepth(sd), metricdepth(md), coverage(cv) {}
     friend bool operator<(SegmentData a, SegmentData b);
     friend bool operator>(SegmentData a, SegmentData b);
     friend bool operator==(SegmentData a, SegmentData b);

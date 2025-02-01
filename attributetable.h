@@ -324,7 +324,7 @@ class AttributeTable : public AttributeColumnManager {
     // iterator
     template <typename iterator_type> class iterator_item_impl : public iterator_item {
       public:
-        iterator_item_impl(const iterator_type &iter) : iter(iter) {}
+        iterator_item_impl(const iterator_type &iter_tp) : iter(iter_tp) {}
         template <typename other_type>
         iterator_item_impl(const iterator_item_impl<other_type> &other) : iter(other.iter) {}
 

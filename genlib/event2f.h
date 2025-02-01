@@ -12,7 +12,7 @@ class Event2f : public Point2f {
   public:
     double t; // time in seconds
     Event2f() : Point2f(), t(0.0) {}
-    Event2f(double x, double y, double t) : Point2f(x, y), t(t) {}
+    Event2f(double xIn, double yIn, double tIn) : Point2f(xIn, yIn), t(tIn) {}
     Event2f(Point2f &p) : Point2f(p), t(0.0) {}
-    Event2f(Point2f &p, double t) : Point2f(p), t(t) {}
+    Event2f(Point2f &p, double tIn) : Point2f(p), t(tIn) {}
 };

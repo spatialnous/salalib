@@ -17,8 +17,9 @@ class VGAThroughVision : public IVGA {
         const PixelRef ref;
         size_t attributeDataRow;
         int misc = 0;
-        AnalysisData(const Point &point, const PixelRef ref, size_t attributeDataRow, int misc = 0)
-            : point(point), ref(ref), attributeDataRow(attributeDataRow), misc(misc) {}
+        AnalysisData(const Point &pointIn, const PixelRef refIn, size_t attributeDataRowIn,
+                     int miscIn = 0)
+            : point(pointIn), ref(refIn), attributeDataRow(attributeDataRowIn), misc(miscIn) {}
     };
 
   public:

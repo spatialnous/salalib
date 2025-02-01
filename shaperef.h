@@ -18,8 +18,8 @@ struct ShapeRef {
     uint8_t tags;
     unsigned int shapeRef;
     std::vector<short> polyrefs;
-    ShapeRef(unsigned int sref = SHAPE_REF_NULL, uint8_t tags = 0x00)
-        : tags(tags), shapeRef(sref) {}
+    ShapeRef(unsigned int sref = SHAPE_REF_NULL, uint8_t tagsIn = 0x00)
+        : tags(tagsIn), shapeRef(sref) {}
     friend bool operator==(const ShapeRef &a, const ShapeRef &b);
     friend bool operator!=(const ShapeRef &a, const ShapeRef &b);
     friend bool operator<(const ShapeRef &a, const ShapeRef &b);

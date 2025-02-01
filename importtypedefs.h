@@ -18,7 +18,8 @@ namespace depthmapX {
       public:
         std::vector<Point2f> vertices;
         bool closed = false;
-        Polyline(std::vector<Point2f> vertices, bool closed) : vertices(vertices), closed(closed) {}
+        Polyline(std::vector<Point2f> verticesIn, bool isClosed)
+            : vertices(verticesIn), closed(isClosed) {}
     };
 
     enum ImportType { DRAWINGMAP, DATAMAP };

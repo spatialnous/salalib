@@ -89,9 +89,9 @@ Point2f Point2f::gps2os() const {
 
     double nu = a / sqrt(1.0 - eSq * pafmath::sqr(sin(phi)));
 
-    double x = nu * cos(phi) * cos(lambda);
-    double y = nu * cos(phi) * sin(lambda);
-    double z = (1 - eSq) * nu * sin(phi);
+    double lx = nu * cos(phi) * cos(lambda);
+    double ly = nu * cos(phi) * sin(lambda);
+    double lz = (1 - eSq) * nu * sin(phi);
 
     // Now we have the ETRS89 location, convert it to a rough OSGB36 location:
 
@@ -105,11 +105,11 @@ Point2f Point2f::gps2os() const {
     double rY = -1.1974897923405539041670878328241e-6;
     double rZ = -4.0826160086234026020206666559563e-6;
 
-    x = -446.448 + (1.0 + 2.04894e-5) * x - rZ * y + rY * z;
-    y = +125.157 + rZ * x + (1.0 + 2.04894e-5) * y - rX * z;
-    z = -542.060 - rY * x + rX * y + (1.0 + 2.04894e-5) * z;
+    lx = -446.448 + (1.0 + 2.04894e-5) * lx - rZ * ly + rY * lz;
+    ly = +125.157 + rZ * lx + (1.0 + 2.04894e-5) * ly - rX * lz;
+    lz = -542.060 - rY * lx + rX * ly + (1.0 + 2.04894e-5) * lz;
 
-    double p = sqrt(pafmath::sqr(x) + pafmath::sqr(y));
+    double p = sqrt(pafmath::sqr(lx) + pafmath::sqr(y));
 
     // now place it back in long lat on the OSGB36 ellipsoid:
 
@@ -118,13 +118,13 @@ Point2f Point2f::gps2os() const {
     b = 6356256.910;
     eSq = (pafmath::sqr(a) - pafmath::sqr(b)) / pafmath::sqr(a);
 
-    lambda = atan(y / x);
-    phi = atan(z / (p * (1.0 - eSq)));
+    lambda = atan(ly / lx);
+    phi = atan(lz / (p * (1.0 - eSq)));
     double lastphi = phi;
 
     nu = a / sqrt(1.0 - eSq * pafmath::sqr(sin(phi)));
     do {
-        phi = atan((z + eSq * nu * sin(phi)) / p);
+        phi = atan((lz + eSq * nu * sin(phi)) / p);
     } while (fabs(lastphi - phi) > 1e-6);
 
     // now, it's on the ellipsoid, project it onto the OSGB36 grid:

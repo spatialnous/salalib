@@ -114,19 +114,19 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
     auto refToParent = parents.find(m_refTo);
     int counter = 0;
     while (refToParent != parents.end()) {
-        AttributeRow &row = m_map.getAttributeRowFromShapeIndex(refToParent->first);
-        row.setValue(pathCol, counter);
+        AttributeRow &attrRow = m_map.getAttributeRowFromShapeIndex(refToParent->first);
+        attrRow.setValue(pathCol, counter);
         counter++;
         refToParent = parents.find(refToParent->second);
     }
     m_map.getAttributeRowFromShapeIndex(m_refFrom).setValue(pathCol, counter);
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
-        AttributeRow &row = iter->getRow();
-        if (row.getValue(pathCol) < 0) {
-            row.setValue(angleCol, -1);
+        AttributeRow &attrRow = iter->getRow();
+        if (attrRow.getValue(pathCol) < 0) {
+            attrRow.setValue(angleCol, -1);
         } else {
-            row.setValue(pathCol, counter - row.getValue(pathCol));
+            attrRow.setValue(pathCol, counter - attrRow.getValue(pathCol));
         }
     }
 

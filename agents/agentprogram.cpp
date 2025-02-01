@@ -152,9 +152,9 @@ bool AgentProgram::open(const std::string &filename) {
     if (!line.empty()) {
         dXstring::toLower(line);
         if (line.substr(0, 6) == "steps:") {
-            std::string steps = line.substr(6);
-            dXstring::ltrim(steps);
-            steps = stoi(steps);
+            std::string inputSteps = line.substr(6);
+            dXstring::ltrim(inputSteps);
+            inputSteps = stoi(inputSteps);
             file >> line;
             foundsteps = true;
         }

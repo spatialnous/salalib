@@ -546,10 +546,10 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
             }
             i++;
         }
-        for (size_t i = 0; i < map.getShapeCount(); i++) {
+        for (size_t j = 0; j < map.getShapeCount(); j++) {
             // TODO: At this moment, GCC triggers a warning here. Find
             // a better solution rather than disabling the warnind
-            delete[] audittrail[i];
+            delete[] audittrail[j];
         }
         delete[] audittrail;
     }

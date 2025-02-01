@@ -66,12 +66,12 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         std::vector<AnalysisData> analysisData;
         analysisData.reserve(m_map.getAttributeTable().getNumRows());
 
-        size_t rowCounter = 0;
+        size_t localRowCounter = 0;
         for (auto &attRow : attributes) {
             auto &point = m_map.getPoint(attRow.getKey().value);
-            analysisData.push_back(AnalysisData(point, attRow.getKey().value, rowCounter, 0,
+            analysisData.push_back(AnalysisData(point, attRow.getKey().value, localRowCounter, 0,
                                                 attRow.getKey().value, 0.0f, -1.0f));
-            rowCounter++;
+            localRowCounter++;
         }
 
         float totalAngle = 0.0f;
@@ -128,10 +128,10 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
     int countCol = result.getColumnIndex(countColText.c_str());
 
     auto dataIter = colData.begin();
-    for (size_t i = 0; i < attributes.getNumRows(); i++) {
-        result.setValue(i, meanDepthCol, dataIter->meanDepth);
-        result.setValue(i, totalDepthCol, dataIter->totalDepth);
-        result.setValue(i, countCol, dataIter->count);
+    for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {
+        result.setValue(ridx, meanDepthCol, dataIter->meanDepth);
+        result.setValue(ridx, totalDepthCol, dataIter->totalDepth);
+        result.setValue(ridx, countCol, dataIter->count);
         dataIter++;
     }
 

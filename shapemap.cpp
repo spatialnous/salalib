@@ -677,10 +677,10 @@ int ShapeMap::polyBegin(const Line4f &line) {
 
 bool ShapeMap::polyAppend(int shapeRef, const Point2f &point) {
     // don't do anything too complex:
-    SalaShape &shape = m_shapes.rbegin()->second;
+    SalaShape &firstShape = m_shapes.rbegin()->second;
 
     // check you can actually do this first
-    if (!(shape.isLine() || shape.isPolyLine())) {
+    if (!(firstShape.isLine() || firstShape.isPolyLine())) {
         return false;
     }
 
@@ -693,14 +693,14 @@ bool ShapeMap::polyAppend(int shapeRef, const Point2f &point) {
         init(m_shapes.size(), Region4f(point, point));
     }
 
-    if (shape.m_type == SalaShape::SHAPE_LINE) {
+    if (firstShape.m_type == SalaShape::SHAPE_LINE) {
         // convert it to a poly line:
-        shape.m_type = SalaShape::SHAPE_POLY;
-        shape.points.push_back(shape.m_region.t_start());
-        shape.points.push_back(shape.m_region.t_end());
+        firstShape.m_type = SalaShape::SHAPE_POLY;
+        firstShape.points.push_back(firstShape.m_region.t_start());
+        firstShape.points.push_back(firstShape.m_region.t_end());
     }
     // add new point:
-    shape.points.push_back(point);
+    firstShape.points.push_back(point);
 
     if (boundsGood) {
         // note: also sets polygon bounding box:
@@ -712,7 +712,7 @@ bool ShapeMap::polyAppend(int shapeRef, const Point2f &point) {
         }
     }
 
-    shape.setCentroidAreaPerim();
+    firstShape.setCentroidAreaPerim();
 
     return true;
 }
@@ -898,8 +898,7 @@ void ShapeMap::undo() {
             for (auto connection : connections) {
                 if (connection != rowid) { // <- exclude self!
                     depthmapX::insert_sorted(m_connectors[connection].connections, rowid);
-                    auto &row = getAttributeRowFromShapeIndex(connection);
-                    row.incrValue(connCol);
+                    getAttributeRowFromShapeIndex(connection).incrValue(connCol);
                 }
             }
         }
@@ -1388,11 +1387,11 @@ std::vector<size_t> ShapeMap::lineInPolyList(const Line4f &liOrig, std::optional
 
 std::vector<size_t> ShapeMap::polyInPolyList(int polyref, double tolerance) const {
     std::vector<size_t> shapeindexlist;
-    auto shapeIter = m_shapes.find(polyref);
-    if (shapeIter == m_shapes.end()) {
+    auto shapeRefIter = m_shapes.find(polyref);
+    if (shapeRefIter == m_shapes.end()) {
         return shapeindexlist;
     }
-    const SalaShape &poly = shapeIter->second;
+    const SalaShape &poly = shapeRefIter->second;
     if (poly.isClosed()) { // <- it ought to be, you shouldn't be using this
                            // function if not!
         std::vector<size_t> testedlist;
@@ -1406,12 +1405,12 @@ std::vector<size_t> ShapeMap::polyInPolyList(int polyref, double tolerance) cons
             for (int y = minpix.y; y <= maxpix.y; y++) {
                 const std::vector<ShapeRef> &pixShapes =
                     m_pixelShapes(static_cast<size_t>(y), static_cast<size_t>(x));
-                const auto iter = depthmapX::findBinary(pixShapes, ShapeRef(polyref));
-                if (iter != pixShapes.end()) {
+                const auto pixIter = depthmapX::findBinary(pixShapes, ShapeRef(polyref));
+                if (pixIter != pixShapes.end()) {
                     // this has us in it, now looked through everything else:
                     for (const ShapeRef &shapeRef : pixShapes) {
-                        if (*iter != shapeRef && ((iter->tags & ShapeRef::SHAPE_CENTRE) ||
-                                                  (shapeRef.tags & ShapeRef::SHAPE_CENTRE))) {
+                        if (*pixIter != shapeRef && ((pixIter->tags & ShapeRef::SHAPE_CENTRE) ||
+                                                     (shapeRef.tags & ShapeRef::SHAPE_CENTRE))) {
                             auto iter = depthmapX::findBinary(testedlist, shapeRef.shapeRef);
                             if (iter == testedlist.end()) {
                                 testedlist.insert(iter, shapeRef.shapeRef);
@@ -1429,9 +1428,9 @@ std::vector<size_t> ShapeMap::polyInPolyList(int polyref, double tolerance) cons
             for (int y = minpix.y; y <= maxpix.y; y++) {
                 const std::vector<ShapeRef> &pixShapes =
                     m_pixelShapes(static_cast<size_t>(y), static_cast<size_t>(x));
-                const auto iter = depthmapX::findBinary(pixShapes, ShapeRef(polyref));
-                if (iter != pixShapes.end()) {
-                    const ShapeRef &shaperef = *iter;
+                const auto pixIter = depthmapX::findBinary(pixShapes, ShapeRef(polyref));
+                if (pixIter != pixShapes.end()) {
+                    const ShapeRef &shaperef = *pixIter;
                     if ((shaperef.tags & ShapeRef::SHAPE_CENTRE) == 0) {
                         // this has us in it, now looked through everything else:
                         for (auto &shaperefb : pixShapes) {
@@ -1599,16 +1598,16 @@ std::optional<size_t> ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef
         const SalaShape &poly = tempShapeIter->second;
         if (poly.m_region.contains_touch(p)) {
             // next simplest, on the outside border:
-            int alpha = 0;
-            int counter = 0;
-            int parity = 0;
+            int alpha1 = 0;
+            int counter1 = 0;
+            int parity1 = 0;
             if (shape.tags & ShapeRef::SHAPE_EDGE) {
                 // run a test line to the edge:
                 if (shape.tags & (ShapeRef::SHAPE_L | ShapeRef::SHAPE_R)) {
                     if (shape.tags & ShapeRef::SHAPE_L) {
-                        parity = -1;
+                        parity1 = -1;
                     } else if (shape.tags & ShapeRef::SHAPE_R) {
-                        parity = +1;
+                        parity1 = +1;
                     }
                     for (size_t j = 0; j < shape.polyrefs.size(); j++) {
                         Line4f lineb =
@@ -1618,32 +1617,32 @@ std::optional<size_t> ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef
                             // crosses or touches... but we need to check
                             // touching exception:
                             if (lineb.t_start().y == p.y) {
-                                if (parity * lineb.t_start().x >= parity * p.x) {
-                                    alpha -= 1;
-                                    counter++;
+                                if (parity1 * lineb.t_start().x >= parity1 * p.x) {
+                                    alpha1 -= 1;
+                                    counter1++;
                                 }
                             }
                             // the other touching exception
                             else if (lineb.t_end().y == p.y) {
-                                if (parity * lineb.t_end().x >= parity * p.x) {
-                                    alpha += 1;
+                                if (parity1 * lineb.t_end().x >= parity1 * p.x) {
+                                    alpha1 += 1;
                                     // n.b., no counter here
                                 }
                             }
                             // at this stage we know the line isn't horizontal, so we can find
                             // the intersection point:
-                            else if (parity * (lineb.grad(LineAxis::XAXIS) * (p.y - lineb.ay()) +
-                                               lineb.ax()) >=
-                                     parity * p.x) {
-                                counter++;
+                            else if (parity1 * (lineb.grad(LineAxis::XAXIS) * (p.y - lineb.ay()) +
+                                                lineb.ax()) >=
+                                     parity1 * p.x) {
+                                counter1++;
                             }
                         }
                     }
                 } else {
                     if (shape.tags & ShapeRef::SHAPE_B) {
-                        parity = -1;
+                        parity1 = -1;
                     } else if (shape.tags & ShapeRef::SHAPE_T) {
-                        parity = +1;
+                        parity1 = +1;
                     }
                     for (size_t j = 0; j < shape.polyrefs.size(); j++) {
                         Line4f lineb =
@@ -1653,29 +1652,29 @@ std::optional<size_t> ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef
                             // crosses or touches... but we need to check
                             // touching exception:
                             if (lineb.topRight.x == p.x) {
-                                if (parity * lineb.by() >= parity * p.y) {
-                                    alpha -= 1;
-                                    counter++;
+                                if (parity1 * lineb.by() >= parity1 * p.y) {
+                                    alpha1 -= 1;
+                                    counter1++;
                                 }
                             }
                             // the other touching exception
                             else if (lineb.bottomLeft.x == p.x) {
-                                if (parity * lineb.ay() >= parity * p.y) {
-                                    alpha += 1;
+                                if (parity1 * lineb.ay() >= parity1 * p.y) {
+                                    alpha1 += 1;
                                     // n.b., no counter here
                                 }
                             }
                             // at this stage we know the line isn't vertical, so we can find
                             // the intersection point:
-                            else if (parity * (lineb.grad(LineAxis::YAXIS) * (p.x - lineb.ax()) +
-                                               lineb.ay()) >=
-                                     parity * p.y) {
-                                counter++;
+                            else if (parity1 * (lineb.grad(LineAxis::YAXIS) * (p.x - lineb.ax()) +
+                                                lineb.ay()) >=
+                                     parity1 * p.y) {
+                                counter1++;
                             }
                         }
                     }
                 }
-                if (counter % 2 != 0 && alpha == 0) {
+                if (counter1 % 2 != 0 && alpha1 == 0) {
                     shapeIter = tempShapeIter;
                 }
             }
@@ -1707,9 +1706,9 @@ std::optional<size_t> ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef
                         iter = pixelShapes->end();
                     }
                 }
-                int alpha = 0;
-                int counter = 0;
-                int parity = -1;
+                int alpha2 = 0;
+                int counter2 = 0;
+                int parity2 = -1;
 
                 for (j = 0; j < testnodes.size(); j++) {
                     Line4f lineb = Line4f(poly.points[testnodes[j]],
@@ -1718,28 +1717,28 @@ std::optional<size_t> ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef
                         // crosses or touches... but we need to check
                         // touching exception:
                         if (lineb.topRight.x == p.x) {
-                            if (parity * lineb.by() >= parity * p.y) {
-                                alpha -= 1;
-                                counter++;
+                            if (parity2 * lineb.by() >= parity2 * p.y) {
+                                alpha2 -= 1;
+                                counter2++;
                             }
                         }
                         // the other touching exception
                         else if (lineb.bottomLeft.x == p.x) {
-                            if (parity * lineb.ay() >= parity * p.y) {
-                                alpha += 1;
+                            if (parity2 * lineb.ay() >= parity2 * p.y) {
+                                alpha2 += 1;
                                 // n.b., no counter here
                             }
                         }
                         // at this stage we know the line isn't vertical, so we can find the
                         // intersection point:
-                        else if (parity * (lineb.grad(LineAxis::YAXIS) * (p.x - lineb.ax()) +
-                                           lineb.ay()) >=
-                                 parity * p.y) {
-                            counter++;
+                        else if (parity2 * (lineb.grad(LineAxis::YAXIS) * (p.x - lineb.ax()) +
+                                            lineb.ay()) >=
+                                 parity2 * p.y) {
+                            counter2++;
                         }
                     }
                 }
-                if (counter % 2 != 0 && alpha == 0) {
+                if (counter2 % 2 != 0 && alpha2 == 0) {
                     shapeIter = m_shapes.find(shape.shapeRef);
                 }
             }

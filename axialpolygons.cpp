@@ -441,15 +441,15 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
 // possibles list
 
 void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
-    std::vector<std::vector<int>> handledList;
+    std::vector<std::vector<int>> newHandledList;
     for (size_t j = 0; j < vertexPossibles.size(); j++) {
-        handledList.push_back(std::vector<int>());
+        newHandledList.push_back(std::vector<int>());
     }
 
     int i = -1;
     for (const auto &vertPoss : vertexPossibles) {
         i++;
-        std::vector<int> &currList = handledList[size_t(i)];
+        std::vector<int> &currList = newHandledList[size_t(i)];
         if (vertPoss.second.size() == 1) {
             continue;
         }
@@ -490,7 +490,8 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                     // came!
                     winner = wayback;
                 }
-                handledList[std::distance(vertexPossibles.begin(), vertPossIter)].push_back(winner);
+                newHandledList[std::distance(vertexPossibles.begin(), vertPossIter)].push_back(
+                    winner);
                 last = curr;
                 curr = vertPossIter->second.at(winner);
             }

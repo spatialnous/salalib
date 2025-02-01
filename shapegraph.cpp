@@ -109,8 +109,8 @@ void ShapeGraph::outputNet(std::ostream &netfile) const {
             netfile << (i * 2 + 2) << " \"" << i << "b\" " << p2.x << " " << p2.y << std::endl;
         }
         netfile << "*Edges" << std::endl;
-        for (size_t i = 0; i < m_shapes.size(); i++) {
-            netfile << (i * 2 + 1) << " " << (i * 2 + 2) << " 2" << std::endl;
+        for (size_t si = 0; si < m_shapes.size(); si++) {
+            netfile << (si * 2 + 1) << " " << (si * 2 + 2) << " 2" << std::endl;
         }
         netfile << "*Arcs" << std::endl;
         // this makes an assumption about which is the "start" and which is the "end"

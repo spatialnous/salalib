@@ -165,14 +165,14 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
     int relEntropyCol = attributes.getColumnIndex(relEntropyColText);
 
     auto dataIter = colData.begin();
-    for (size_t i = 0; i < attributes.getNumRows(); i++) {
-        result.setValue(i, integDvCol, dataIter->integDv);
-        result.setValue(i, integPvCol, dataIter->integPv);
-        result.setValue(i, integTkCol, dataIter->integTk);
-        result.setValue(i, countCol, dataIter->count);
-        result.setValue(i, depthCol, dataIter->depth);
-        result.setValue(i, entropyCol, dataIter->entropy);
-        result.setValue(i, relEntropyCol, dataIter->relEntropy);
+    for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {
+        result.setValue(ridx, integDvCol, dataIter->integDv);
+        result.setValue(ridx, integPvCol, dataIter->integPv);
+        result.setValue(ridx, integTkCol, dataIter->integTk);
+        result.setValue(ridx, countCol, dataIter->count);
+        result.setValue(ridx, depthCol, dataIter->depth);
+        result.setValue(ridx, entropyCol, dataIter->entropy);
+        result.setValue(ridx, relEntropyCol, dataIter->relEntropy);
         dataIter++;
     }
 

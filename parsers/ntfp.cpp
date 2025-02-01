@@ -223,8 +223,8 @@ void NtfMap::open(const std::vector<std::string> &fileset, Communicator *comm) {
                         lastpoint = currpoint;
                         currtoken = 1;
                     }
-                    for (size_t i = currtoken; i < tokens.size(); i++) {
-                        int numbersparsed = currpoint.parse(tokens[i]);
+                    for (size_t j = currtoken; j < tokens.size(); j++) {
+                        int numbersparsed = currpoint.parse(tokens[j]);
                         if (numbersparsed == 2) {
                             Line4f li = makeLine(lastpoint, currpoint);
                             geom.lines.push_back(li);

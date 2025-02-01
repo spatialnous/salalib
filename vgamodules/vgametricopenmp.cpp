@@ -109,11 +109,11 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
     int countCol = result.getColumnIndex(countColText);
 
     auto dataIter = colData.begin();
-    for (size_t i = 0; i < attributes.getNumRows(); i++) {
-        result.setValue(i, mspaCol, dataIter->mspa);
-        result.setValue(i, msplCol, dataIter->mspl);
-        result.setValue(i, distCol, dataIter->dist);
-        result.setValue(i, countCol, dataIter->count);
+    for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {
+        result.setValue(ridx, mspaCol, dataIter->mspa);
+        result.setValue(ridx, msplCol, dataIter->mspl);
+        result.setValue(ridx, distCol, dataIter->dist);
+        result.setValue(ridx, countCol, dataIter->count);
         dataIter++;
     }
 

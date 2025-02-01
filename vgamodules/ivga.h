@@ -101,10 +101,10 @@ class IVGA : public IAnalysis {
         }
         if (columnStats.has_value()) {
 
-            auto colIdxIt = newColIndxs.begin();
+            auto newColIdxIt = newColIndxs.begin();
             auto colStatsIt = columnStats->begin();
-            for (; colIdxIt != newColIndxs.end(); colIdxIt++, colStatsIt++) {
-                attributes.getColumn(*colIdxIt).setStats(*colStatsIt);
+            for (; newColIdxIt != newColIndxs.end(); newColIdxIt++, colStatsIt++) {
+                attributes.getColumn(*newColIdxIt).setStats(*colStatsIt);
             }
         }
     }

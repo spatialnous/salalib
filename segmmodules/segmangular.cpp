@@ -78,14 +78,14 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         }
         // node_count includes this one, but will be added in next algo:
         while (anglebins.size()) {
-            auto iter = anglebins.begin();
-            SegmentData lineindex = iter->second;
+            auto biniter = anglebins.begin();
+            SegmentData lineindex = biniter->second;
             if (!covered[lineindex.ref]) {
                 covered[lineindex.ref] = true;
-                double depthToLine = iter->first;
+                double depthToLine = biniter->first;
                 totalDepth[lineindex.coverage] += depthToLine;
                 nodeCount[lineindex.coverage] += 1;
-                anglebins.erase(iter);
+                anglebins.erase(biniter);
                 Connector &line = map.getConnections()[lineindex.ref];
                 if (lineindex.dir != -1) {
                     for (auto &segconn : line.forwardSegconns) {
@@ -126,7 +126,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                     }
                 }
             } else {
-                anglebins.erase(iter);
+                anglebins.erase(biniter);
             }
         }
         AttributeRow &row = iter.getRow();

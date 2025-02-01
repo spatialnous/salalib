@@ -423,18 +423,18 @@ namespace depthmapX {
         while (!stream.eof()) {
             std::getline(stream, inputline);
             if (!inputline.empty()) {
-                auto strings = dXstring::split(inputline, delimiter);
-                if (strings.size() != columns.size()) {
+                auto inputStrings = dXstring::split(inputline, delimiter);
+                if (inputStrings.size() != columns.size()) {
                     std::stringstream message;
                     message << "Cells in line " << inputline
                             << " not the same number as the columns" << std::flush;
                     throw RuntimeException(message.str().c_str());
                 }
-                if (!strings.size()) {
+                if (!inputStrings.size()) {
                     continue;
                 }
-                for (size_t i = 0; i < strings.size(); i++) {
-                    table[columns[i]].push_back(strings[i]);
+                for (size_t i = 0; i < inputStrings.size(); i++) {
+                    table[columns[i]].push_back(inputStrings[i]);
                 }
             }
         }

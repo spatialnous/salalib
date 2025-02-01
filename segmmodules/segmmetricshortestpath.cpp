@@ -93,19 +93,19 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
 
             connectedCursor = iter->first.ref;
             if (seen[connectedCursor] > segdepth) {
-                float length = seglengths[connectedCursor];
+                float connectedLength = seglengths[connectedCursor];
                 seen[connectedCursor] = segdepth;
-                audittrail[connectedCursor] =
-                    TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
+                audittrail[connectedCursor] = TopoMetSegmentRef(
+                    connectedCursor, here.dir, here.dist + connectedLength, here.ref);
                 parents[connectedCursor] = here.ref;
                 // puts in a suitable bin ahead of us...
                 open++;
                 //
                 // better to divide by 511 but have 512 bins...
-                list[(bin + int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
-                    connectedCursor);
+                list[(bin + int(floor(0.5 + 511 * connectedLength / maxseglength))) % 512]
+                    .push_back(connectedCursor);
                 AttributeRow &row = m_map.getAttributeRowFromShapeIndex(connectedCursor);
-                row.setValue(distCol, here.dist + length * 0.5);
+                row.setValue(distCol, here.dist + connectedLength * 0.5);
             }
             if (connectedCursor == m_refTo) {
                 refFound = true;

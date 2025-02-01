@@ -19,32 +19,14 @@ namespace {
     // old depthmapX display information, left here to allow reading
     // metagraph files
     enum {
-        NONE = 0x0000,
-        POINTMAPS = 0x0002,
-        LINEDATA = 0x0004,
-        ANGULARGRAPH = 0x0010,
-        DATAMAPS = 0x0020,
-        AXIALLINES = 0x0040,
-        SHAPEGRAPHS = 0x0100,
-        BUGGY = 0x8000
-    };
-    enum {
-        SHOWHIDEVGA = 0x0100,
-        SHOWVGATOP = 0x0200,
-        SHOWHIDEAXIAL = 0x0400,
-        SHOWAXIALTOP = 0x0800,
-        SHOWHIDESHAPE = 0x1000,
-        SHOWSHAPETOP = 0x2000
-    };
-    enum {
-        VIEWNONE = 0x00,
-        VIEWVGA = 0x01,
-        VIEWBACKVGA = 0x02,
-        VIEWAXIAL = 0x04,
-        VIEWBACKAXIAL = 0x08,
-        VIEWDATA = 0x20,
-        VIEWBACKDATA = 0x40,
-        VIEWFRONT = 0x25
+        MG_State_NONE = 0x0000,
+        MG_State_POINTMAPS = 0x0002,
+        MG_State_LINEDATA = 0x0004,
+        MG_State_ANGULARGRAPH = 0x0010,
+        MG_State_DATAMAPS = 0x0020,
+        MG_State_AXIALLINES = 0x0040,
+        MG_State_SHAPEGRAPHS = 0x0100,
+        MG_State_BUGGY = 0x8000
     };
 
     // These allow for the functions below to accept both maps (PointMap, Shapemap etc)
@@ -108,17 +90,17 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
     char header[3];
     stream.read(header, 3);
     if (stream.fail() || header[0] != 'g' || header[1] != 'r' || header[2] != 'f') {
-        mgd.readStatus = ReadStatus::NOT_A_GRAPH;
+        mgd.readWriteStatus = ReadWriteStatus::NOT_A_GRAPH;
         return mgd;
     }
 
     stream.read(reinterpret_cast<char *>(&mgd.version), sizeof(mgd.version));
     if (mgd.version > METAGRAPH_VERSION) {
-        mgd.readStatus = ReadStatus::NEWER_VERSION;
+        mgd.readWriteStatus = ReadWriteStatus::NEWER_VERSION;
         return mgd;
     }
     if (mgd.version < METAGRAPH_VERSION) {
-        mgd.readStatus = ReadStatus::DEPRECATED_VERSION;
+        mgd.readWriteStatus = ReadWriteStatus::DEPRECATED_VERSION;
         return mgd;
     }
 
@@ -144,14 +126,14 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
     if (type == 'd') {
         // contains deprecated datalayers. depthmapX should be able to
         // convert them into shapemaps
-        mgd.readStatus = ReadStatus::DEPRECATED_VERSION;
+        mgd.readWriteStatus = ReadWriteStatus::DEPRECATED_VERSION;
         return mgd;
     }
     if (type == 'x') {
         mgd.metaGraph.fileProperties.read(stream);
         if (stream.eof()) {
             // erk... this shouldn't happen
-            mgd.readStatus = ReadStatus::DAMAGED_FILE;
+            mgd.readWriteStatus = ReadWriteStatus::DAMAGED_FILE;
             return mgd;
         } else if (!stream.eof()) {
             stream.read(&type, 1);
@@ -170,7 +152,7 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
 
         if (stream.eof()) {
             // erk... this shouldn't happen
-            mgd.readStatus = ReadStatus::DAMAGED_FILE;
+            mgd.readWriteStatus = ReadWriteStatus::DAMAGED_FILE;
             return mgd;
         } else if (!stream.eof()) {
             stream.read(&type, 1);
@@ -183,20 +165,20 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
         }
         mgd.metaGraph.region = readRegion(stream);
         std::tie(mgd.drawingFiles, mgd.displayData.perDrawingMap) = readDrawingFiles(stream);
-        tempState |= LINEDATA;
+        tempState |= MG_State_LINEDATA;
         if (!stream.eof()) {
             stream.read(&type, 1);
         }
         if (!stream.eof() && !stream.good()) {
             // erk... this shouldn't happen
-            mgd.readStatus = ReadStatus::DAMAGED_FILE;
+            mgd.readWriteStatus = ReadWriteStatus::DAMAGED_FILE;
             return mgd;
         }
     }
     if (type == 'p') {
         std::tie(mgd.pointMaps, mgd.displayData.perPointMap, mgd.displayData.displayedPointMap) =
             MetaGraphReadWrite::readPointMaps(stream, mgd.metaGraph.region);
-        tempState |= POINTMAPS;
+        tempState |= MG_State_POINTMAPS;
         if (!stream.eof()) {
             stream.read(&type, 1);
         }
@@ -210,7 +192,7 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
         }
     }
     if (type == 'a') {
-        tempState |= ANGULARGRAPH;
+        tempState |= MG_State_ANGULARGRAPH;
         if (!stream.eof()) {
             stream.read(&type, 1);
         }
@@ -218,7 +200,7 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
     if (type == 'x') {
         std::tie(mgd.shapeGraphs, mgd.allLineMapData, mgd.displayData.perShapeGraph,
                  mgd.displayData.displayedShapeGraph) = MetaGraphReadWrite::readShapeGraphs(stream);
-        tempState |= SHAPEGRAPHS;
+        tempState |= MG_State_SHAPEGRAPHS;
         if (!stream.eof()) {
             stream.read(&type, 1);
         }
@@ -226,18 +208,19 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
     if (type == 's') {
         std::tie(mgd.dataMaps, mgd.displayData.perDataMap, mgd.displayData.displayedDataMap) =
             readDataMaps(stream);
-        tempState |= DATAMAPS;
+        tempState |= MG_State_DATAMAPS;
         if (!stream.eof()) {
             stream.read(&type, 1);
         }
     }
     mgd.displayData.state = tempState;
 
-    mgd.readStatus = ReadStatus::OK;
+    mgd.readWriteStatus = ReadWriteStatus::OK;
     return mgd;
 }
 
-int MetaGraphReadWrite::writeToFile(const std::string &filename, const MetaGraphData &mgd) {
+MetaGraphReadWrite::ReadWriteStatus MetaGraphReadWrite::writeToFile(const std::string &filename,
+                                                                    const MetaGraphData &mgd) {
     auto &dd = mgd.displayData;
     return MetaGraphReadWrite::writeToFile(
         filename,
@@ -250,7 +233,8 @@ int MetaGraphReadWrite::writeToFile(const std::string &filename, const MetaGraph
         dd.perShapeGraph);
 }
 
-int MetaGraphReadWrite::writeToStream(std::ostream &stream, const MetaGraphData &mgd) {
+MetaGraphReadWrite::ReadWriteStatus MetaGraphReadWrite::writeToStream(std::ostream &stream,
+                                                                      const MetaGraphData &mgd) {
     auto &dd = mgd.displayData;
     return MetaGraphReadWrite::writeToStream(
         stream,
@@ -478,7 +462,7 @@ bool MetaGraphReadWrite::writeShapeGraphs(
 }
 
 template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
-int MetaGraphReadWrite::writeToFile(
+MetaGraphReadWrite::ReadWriteStatus MetaGraphReadWrite::writeToFile(
     const std::string &filename,
     // MetaGraph Data
     const int version, const std::string &name, const Region4f &region,
@@ -496,17 +480,6 @@ int MetaGraphReadWrite::writeToFile(
     const std::optional<unsigned int> displayedShapeGraph,
     const std::vector<ShapeMapDisplayData> perShapeGraph) {
 
-    enum {
-        OK,
-        WARN_BUGGY_VERSION,
-        WARN_CONVERTED,
-        NOT_A_GRAPH,
-        DAMAGED_FILE,
-        DISK_ERROR,
-        NEWER_VERSION,
-        DEPRECATED_VERSION
-    };
-
     std::ofstream stream;
 
     // As of MetaGraph version 70 the disk caching has been removed
@@ -515,7 +488,7 @@ int MetaGraphReadWrite::writeToFile(
         if (stream.rdbuf()->is_open()) {
             stream.close();
         }
-        return DISK_ERROR;
+        return ReadWriteStatus::DISK_ERROR;
     }
     auto result = writeToStream(stream,
                                 // MetaGraph Data
@@ -531,7 +504,7 @@ int MetaGraphReadWrite::writeToFile(
 }
 
 template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
-int MetaGraphReadWrite::writeToStream(
+MetaGraphReadWrite::ReadWriteStatus MetaGraphReadWrite::writeToStream(
     std::ostream &stream,
     // MetaGraph Data
     const int version, const std::string &name, const Region4f &region,
@@ -548,27 +521,6 @@ int MetaGraphReadWrite::writeToStream(
     const std::vector<ShapeMapDisplayData> perDataMap,
     const std::optional<unsigned int> displayedShapeGraph,
     const std::vector<ShapeMapDisplayData> perShapeGraph) {
-
-    enum {
-        OK,
-        WARN_BUGGY_VERSION,
-        WARN_CONVERTED,
-        NOT_A_GRAPH,
-        DAMAGED_FILE,
-        DISK_ERROR,
-        NEWER_VERSION,
-        DEPRECATED_VERSION
-    };
-    enum {
-        NONE = 0x0000,
-        POINTMAPS = 0x0002,
-        LINEDATA = 0x0004,
-        ANGULARGRAPH = 0x0010,
-        DATAMAPS = 0x0020,
-        AXIALLINES = 0x0040,
-        SHAPEGRAPHS = 0x0100,
-        BUGGY = 0x8000
-    };
 
     char type;
 
@@ -655,12 +607,13 @@ int MetaGraphReadWrite::writeToStream(
         }
     }
 
-    return OK;
+    return ReadWriteStatus::OK;
 }
 
 // these are just explicit instantiations of the write function to allow the linker
 // to find them when required
-template int MetaGraphReadWrite::writeToFile<PointMap, ShapeMap, ShapeGraph>(
+template MetaGraphReadWrite::ReadWriteStatus
+MetaGraphReadWrite::writeToFile<PointMap, ShapeMap, ShapeGraph>(
     const std::string &filename,
     // MetaGraph Data
     const int version, const std::string &name, const Region4f &region,
@@ -678,7 +631,7 @@ template int MetaGraphReadWrite::writeToFile<PointMap, ShapeMap, ShapeGraph>(
     const std::optional<unsigned int> displayedShapeGraph,
     const std::vector<ShapeMapDisplayData> perShapeGraph);
 
-template int
+template MetaGraphReadWrite::ReadWriteStatus
 MetaGraphReadWrite::writeToFile<std::reference_wrapper<PointMap>, std::reference_wrapper<ShapeMap>,
                                 std::reference_wrapper<ShapeGraph>>(
     const std::string &filename,
@@ -700,7 +653,8 @@ MetaGraphReadWrite::writeToFile<std::reference_wrapper<PointMap>, std::reference
     const std::optional<unsigned int> displayedShapeGraph,
     const std::vector<ShapeMapDisplayData> perShapeGraph);
 
-template int MetaGraphReadWrite::writeToStream<PointMap, ShapeMap, ShapeGraph>(
+template MetaGraphReadWrite::ReadWriteStatus
+MetaGraphReadWrite::writeToStream<PointMap, ShapeMap, ShapeGraph>(
     std::ostream &stream,
     // MetaGraph Data
     const int version, const std::string &name, const Region4f &region,
@@ -718,9 +672,10 @@ template int MetaGraphReadWrite::writeToStream<PointMap, ShapeMap, ShapeGraph>(
     const std::optional<unsigned int> displayedShapeGraph,
     const std::vector<ShapeMapDisplayData> perShapeGraph);
 
-template int MetaGraphReadWrite::writeToStream<std::reference_wrapper<PointMap>,
-                                               std::reference_wrapper<ShapeMap>,
-                                               std::reference_wrapper<ShapeGraph>>(
+template MetaGraphReadWrite::ReadWriteStatus
+MetaGraphReadWrite::writeToStream<std::reference_wrapper<PointMap>,
+                                  std::reference_wrapper<ShapeMap>,
+                                  std::reference_wrapper<ShapeGraph>>(
     std::ostream &stream,
     // MetaGraph Data
     const int version, const std::string &name, const Region4f &region,
@@ -740,25 +695,25 @@ template int MetaGraphReadWrite::writeToStream<std::reference_wrapper<PointMap>,
     const std::optional<unsigned int> displayedShapeGraph,
     const std::vector<ShapeMapDisplayData> perShapeGraph);
 
-std::string MetaGraphReadWrite::getReadMessage(ReadStatus readStatus) {
+std::string MetaGraphReadWrite::getReadMessage(ReadWriteStatus readStatus) {
     switch (readStatus) {
-    case ReadStatus::OK:
+    case ReadWriteStatus::OK:
         return "OK";
-    case ReadStatus::WARN_BUGGY_VERSION:
+    case ReadWriteStatus::WARN_BUGGY_VERSION:
         return "File version is buggy";
-    case ReadStatus::WARN_CONVERTED:
+    case ReadWriteStatus::WARN_CONVERTED:
         return "File was converted from an older version";
-    case ReadStatus::NOT_A_GRAPH:
+    case ReadWriteStatus::NOT_A_GRAPH:
         return "Not a MetaGraph file";
-    case ReadStatus::DAMAGED_FILE:
+    case ReadWriteStatus::DAMAGED_FILE:
         return "Damaged file";
-    case ReadStatus::DISK_ERROR:
+    case ReadWriteStatus::DISK_ERROR:
         return "Disk error";
-    case ReadStatus::NEWER_VERSION:
+    case ReadWriteStatus::NEWER_VERSION:
         return "MetaGraph file too new";
-    case ReadStatus::DEPRECATED_VERSION:
+    case ReadWriteStatus::DEPRECATED_VERSION:
         return "MetaGraph file too old";
-    case ReadStatus::NOT_READ_YET:
+    case ReadWriteStatus::NOT_READ_YET:
         return "Reading interrupted";
     }
     return "<Unknown state>";

@@ -47,9 +47,9 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                 int cluster = 0;
                 float control = 0.0f;
 
-                for (size_t i = 0; i < neighbourhood.size(); i++) {
+                for (size_t nidx = 0; nidx < neighbourhood.size(); nidx++) {
                     int intersectSize = 0, retroSize = 0;
-                    auto &retpt = m_map.getPoint(neighbourhood[i]);
+                    auto &retpt = m_map.getPoint(neighbourhood[nidx]);
                     if (retpt.filled() && retpt.hasNode()) {
                         retpt.getNode().first();
                         while (!retpt.getNode().is_tail()) {

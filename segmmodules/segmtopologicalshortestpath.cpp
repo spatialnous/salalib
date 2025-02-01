@@ -93,11 +93,11 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
             connectedCursor = iter->first.ref;
             AttributeRow &row = m_map.getAttributeRowFromShapeIndex(connectedCursor);
             if (seen[connectedCursor] > segdepth) {
-                float length = seglengths[connectedCursor];
+                float seglength = seglengths[connectedCursor];
                 int axialref = axialrefs[connectedCursor];
                 seen[connectedCursor] = segdepth;
                 audittrail[connectedCursor] =
-                    TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
+                    TopoMetSegmentRef(connectedCursor, here.dir, here.dist + seglength, here.ref);
                 // puts in a suitable bin ahead of us...
                 open++;
                 //

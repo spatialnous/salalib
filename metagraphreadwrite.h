@@ -19,7 +19,7 @@
 
 namespace MetaGraphReadWrite {
 
-    enum class ReadStatus {
+    enum class ReadWriteStatus {
         OK,
         WARN_BUGGY_VERSION,
         WARN_CONVERTED,
@@ -31,7 +31,7 @@ namespace MetaGraphReadWrite {
         NOT_READ_YET
     };
 
-    std::string getReadMessage(ReadStatus readStatus);
+    std::string getReadMessage(ReadWriteStatus readStatus);
 
     class MetaGraphReadError : public depthmapX::BaseException {
       public:
@@ -42,7 +42,7 @@ namespace MetaGraphReadWrite {
     typedef std::tuple<bool, bool, int> ShapeMapDisplayData;
 
     struct MetaGraphData {
-        ReadStatus readStatus = ReadStatus::NOT_READ_YET;
+        ReadWriteStatus readWriteStatus = ReadWriteStatus::NOT_READ_YET;
         int version;
         MetaGraph metaGraph;
         std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> drawingFiles;
@@ -111,10 +111,10 @@ namespace MetaGraphReadWrite {
     MetaGraphData readFromFile(const std::string &filename);
     MetaGraphData readFromStream(std::istream &stream);
 
-    int writeToFile(const std::string &filename, const MetaGraphData &mgd);
+    ReadWriteStatus writeToFile(const std::string &filename, const MetaGraphData &mgd);
 
     template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
-    int writeToFile(
+    ReadWriteStatus writeToFile(
         const std::string &filename,
         // MetaGraph Data
         const int version, const std::string &name, const Region4f &region,
@@ -135,10 +135,10 @@ namespace MetaGraphReadWrite {
         const std::optional<unsigned int> displayedShapeGraph = std::nullopt,
         const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
 
-    int writeToStream(std::ostream &stream, const MetaGraphData &mgd);
+    ReadWriteStatus writeToStream(std::ostream &stream, const MetaGraphData &mgd);
 
     template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
-    int writeToStream(
+    ReadWriteStatus writeToStream(
         std::ostream &stream,
         // MetaGraph Data
         const int version, const std::string &name, const Region4f &region,

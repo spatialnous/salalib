@@ -268,8 +268,8 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
                 m_radialsegcounts[cut] -= 1;
             }
             // vital connections
-            for (size_t k = 0; k < keyvertexconns[j].size(); k++) {
-                keyvertexcounts[keyvertexconns[j][k]] -= 1;
+            for (size_t kvc = 0; kvc < keyvertexconns[j].size(); kvc++) {
+                keyvertexcounts[keyvertexconns[j][kvc]] -= 1;
             }
         }
     }

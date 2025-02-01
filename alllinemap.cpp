@@ -31,13 +31,13 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, MapData &mapData,
     Region4f region;
 
     // add all visible layers to the set of polygon lines...
-    for (auto map : drawingLayers) {
+    for (auto layer : drawingLayers) {
         if (region.atZero()) {
-            region = map.get().getRegion();
+            region = layer.get().getRegion();
         } else {
-            region = region.runion(map.get().getRegion());
+            region = region.runion(layer.get().getRegion());
         }
-        std::vector<SimpleLine> newLines = map.get().getAllShapesAsSimpleLines();
+        std::vector<SimpleLine> newLines = layer.get().getAllShapesAsSimpleLines();
         for (const auto &line : newLines) {
             lines.push_back(Line4f(line.start(), line.end()));
         }
@@ -284,9 +284,9 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
                             keyvertexconns, keyvertexcounts);
 
     // make new lines here (assumes line map has only lines
-    for (int k = 0; k < int(map.getAllShapes().size()); k++) {
-        if (!minimiser.removed(k)) {
-            linesM.push_back(depthmapX::getMapAtIndex(map.getAllShapes(), k)->second.getLine());
+    for (int sk = 0; sk < int(map.getAllShapes().size()); sk++) {
+        if (!minimiser.removed(sk)) {
+            linesM.push_back(depthmapX::getMapAtIndex(map.getAllShapes(), sk)->second.getLine());
         }
     }
 
@@ -295,8 +295,8 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
     fewestlinemapSubsets.init(int(linesS.size()), mapData.polygons.getRegion());
 
     fewestlinemapSubsets.initialiseAttributesAxial();
-    for (size_t k = 0; k < linesS.size(); k++) {
-        fewestlinemapSubsets.makeLineShape(linesS[k]);
+    for (size_t lidx = 0; lidx < linesS.size(); lidx++) {
+        fewestlinemapSubsets.makeLineShape(linesS[lidx]);
     }
     fewestlinemapSubsets.makeConnections();
 
@@ -307,8 +307,8 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
         mapData.polygons.getRegion()); // used to have a '2' for double pixel density
 
     fewestlinemapMinimal.initialiseAttributesAxial();
-    for (size_t k = 0; k < linesM.size(); k++) {
-        fewestlinemapMinimal.makeLineShape(linesM[k]);
+    for (size_t lidx = 0; lidx < linesM.size(); lidx++) {
+        fewestlinemapMinimal.makeLineShape(linesM[lidx]);
     }
     fewestlinemapMinimal.makeConnections();
 

@@ -853,14 +853,14 @@ int SalaCommand::decode(std::string string) // string copied as makelower applie
     }
 
     if (retvar == SP_NONE) {
-        size_t n = string.find_first_of(".");
-        if (n != std::string::npos) {
-            if (n > 0) {
-                decode(string.substr(0, n));
+        size_t ndot = string.find_first_of(".");
+        if (ndot != std::string::npos) {
+            if (ndot > 0) {
+                decode(string.substr(0, ndot));
             }
-            if (decode_member(string.substr(n + 1), false) == SP_NONE) {
-                throw SalaError("There is no known member function called " + string.substr(n + 1),
-                                m_line);
+            if (decode_member(string.substr(ndot + 1), false) == SP_NONE) {
+                throw SalaError(
+                    "There is no known member function called " + string.substr(ndot + 1), m_line);
             }
             retvar = SP_FUNCTION;
         } else {

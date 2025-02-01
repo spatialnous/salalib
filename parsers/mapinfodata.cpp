@@ -111,8 +111,9 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
                     for (int j = 0; j < count; j++) {
                         dXstring::safeGetline(miffile, textline);
                         dXstring::ltrim(textline);
-                        auto tokens = dXstring::split(textline, ' ', true);
-                        pointsets.back().push_back(Point2f(stod(tokens[0]), stod(tokens[1])));
+                        auto multTokens = dXstring::split(textline, ' ', true);
+                        pointsets.back().push_back(
+                            Point2f(stod(multTokens[0]), stod(multTokens[1])));
                     }
                     if (i != 0) {
                         // warn about extraneous pline data

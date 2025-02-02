@@ -74,7 +74,7 @@ size_t DxfParser::numLineTypes() const { return m_lineTypes.size(); }
 
 std::istream &operator>>(std::istream &stream, DxfParser &dxfp) {
     if (dxfp.m_communicator) {
-        long size = static_cast<long>(dxfp.m_communicator->GetInfileSize());
+        auto size = static_cast<size_t>(dxfp.m_communicator->GetInfileSize());
         dxfp.m_communicator->CommPostMessage(Communicator::NUM_RECORDS, size);
 
         qtimer(dxfp.m_time, 0);
@@ -148,7 +148,7 @@ std::istream &DxfParser::open(std::istream &stream) {
                     throw Communicator::CancelledException();
                 }
                 m_communicator->CommPostMessage(Communicator::CURRENT_RECORD,
-                                                static_cast<long>(m_size));
+                                                static_cast<size_t>(m_size));
             }
         }
     }
@@ -360,7 +360,7 @@ void DxfParser::openBlocks(std::istream &stream) {
                     throw Communicator::CancelledException();
                 }
                 m_communicator->CommPostMessage(Communicator::CURRENT_RECORD,
-                                                static_cast<long>(m_size));
+                                                static_cast<size_t>(m_size));
             }
         }
     }
@@ -585,7 +585,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
                     throw Communicator::CancelledException();
                 }
                 m_communicator->CommPostMessage(Communicator::CURRENT_RECORD,
-                                                static_cast<long>(m_size));
+                                                static_cast<size_t>(m_size));
             }
         }
     }
@@ -781,7 +781,7 @@ bool DxfPolyLine::parse(const DxfToken &token, DxfParser *parser) {
 
 size_t DxfPolyLine::numVertices() const { return m_vertices.size(); }
 
-const DxfVertex &DxfPolyLine::getVertex(int i) const { return m_vertices[i]; }
+const DxfVertex &DxfPolyLine::getVertex(size_t i) const { return m_vertices[i]; }
 
 int DxfPolyLine::getAttributes() const { return m_attributes; }
 
@@ -1020,7 +1020,8 @@ bool DxfEllipse::parse(const DxfToken &token, DxfParser *parser) {
 }
 
 int DxfEllipse::numSegments(int segments) const {
-    return ((m_start == m_end) ? segments : (int(m_end - m_start) * segments / (2 * DXF_PI)));
+    return ((m_start == m_end) ? segments
+                               : static_cast<int>((m_end - m_start) * segments / (2 * DXF_PI)));
 }
 
 DxfVertex DxfEllipse::getVertex(int i, int segments) const {
@@ -1164,10 +1165,10 @@ bool DxfSpline::parse(const DxfToken &token, DxfParser *parser) {
         m_attributes = std::stoi(token.data);
         break;
     case 72:
-        m_knotCount = std::stoi(token.data);
+        m_knotCount = static_cast<size_t>(std::stoi(token.data));
         break;
     case 73:
-        m_ctrlPtCount = std::stoi(token.data);
+        m_ctrlPtCount = static_cast<size_t>(std::stoi(token.data));
         break;
     case 40:
         m_knots.push_back(std::stod(token.data));
@@ -1305,19 +1306,19 @@ bool DxfLayer::parse(const DxfToken &token, DxfParser *parser) {
     return parsed;
 }
 
-const DxfVertex &DxfLayer::getPoint(int i) const { return m_points[i]; }
+const DxfVertex &DxfLayer::getPoint(size_t i) const { return m_points[i]; }
 
-const DxfLine &DxfLayer::getLine(int i) const { return m_lines[i]; }
+const DxfLine &DxfLayer::getLine(size_t i) const { return m_lines[i]; }
 
-const DxfPolyLine &DxfLayer::getPolyLine(int i) const { return m_polyLines[i]; }
+const DxfPolyLine &DxfLayer::getPolyLine(size_t i) const { return m_polyLines[i]; }
 
-const DxfArc &DxfLayer::getArc(int i) const { return m_arcs[i]; }
+const DxfArc &DxfLayer::getArc(size_t i) const { return m_arcs[i]; }
 
-const DxfEllipse &DxfLayer::getEllipse(int i) const { return m_ellipses[i]; }
+const DxfEllipse &DxfLayer::getEllipse(size_t i) const { return m_ellipses[i]; }
 
-const DxfCircle &DxfLayer::getCircle(int i) const { return m_circles[i]; }
+const DxfCircle &DxfLayer::getCircle(size_t i) const { return m_circles[i]; }
 
-const DxfSpline &DxfLayer::getSpline(int i) const { return m_splines[i]; }
+const DxfSpline &DxfLayer::getSpline(size_t i) const { return m_splines[i]; }
 
 size_t DxfLayer::numPoints() const { return m_points.size(); }
 

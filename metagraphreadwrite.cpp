@@ -70,10 +70,11 @@ std::tuple<std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>>,
 MetaGraphReadWrite::readDrawingFiles(std::istream &stream) {
     int count;
     stream.read(reinterpret_cast<char *>(&count), sizeof(count));
+    auto ucount = static_cast<size_t>(count);
 
-    std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> drawingFiles(count);
-    std::vector<std::vector<std::tuple<bool, bool, int>>> displayData(count);
-    for (int i = 0; i < count; i++) {
+    std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> drawingFiles(ucount);
+    std::vector<std::vector<std::tuple<bool, bool, int>>> displayData(ucount);
+    for (size_t i = 0; i < ucount; i++) {
         drawingFiles[i].first.readInNameAndRegion(stream);
 
         std::tie(drawingFiles[i].second, displayData[i]) =
@@ -257,7 +258,8 @@ std::streampos MetaGraphReadWrite::skipVirtualMem(std::istream &stream) {
     for (int i = 0; i < nodes; i++) {
         int connections;
         stream.read(reinterpret_cast<char *>(&connections), sizeof(connections));
-        stream.seekg(stream.tellg() + std::streamoff(connections * sizeof(connections)));
+        stream.seekg(stream.tellg() +
+                     std::streamoff(static_cast<size_t>(connections) * sizeof(connections)));
     }
     return (stream.tellg());
 }
@@ -350,7 +352,7 @@ bool MetaGraphReadWrite::writeSpacePixels(
     std::ostream &stream, const std::vector<ShapeMapOrRef> &spacePixels,
     const std::vector<std::tuple<bool, bool, int>> displayData) {
 
-    int count = spacePixels.size();
+    int count = static_cast<int>(spacePixels.size());
     stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
     auto it = displayData.begin();
     for (auto &spacePixel : spacePixels) {

@@ -158,29 +158,30 @@ class ShapeMap : public AttributeMap {
     void init(size_t size, const Region4f &r);
     int getNextShapeKey();
     // convert a single point into a shape
-    int makePointShapeWithRef(const Point2f &point, int shapeRef, bool tempshape = false,
-                              const std::map<int, float> &extraAttributes = std::map<int, float>());
+    int makePointShapeWithRef(
+        const Point2f &point, int shapeRef, bool tempshape = false,
+        const std::map<size_t, float> &extraAttributes = std::map<size_t, float>());
     int makePointShape(const Point2f &point, bool tempshape = false,
-                       const std::map<int, float> &extraAttributes = std::map<int, float>());
+                       const std::map<size_t, float> &extraAttributes = std::map<size_t, float>());
     // or a single line into a shape
-    int makeLineShapeWithRef(const Line4f &line, int shapeRef, bool throughUi = false,
-                             bool tempshape = false,
-                             const std::map<int, float> &extraAttributes = std::map<int, float>());
+    int makeLineShapeWithRef(
+        const Line4f &line, int shapeRef, bool throughUi = false, bool tempshape = false,
+        const std::map<size_t, float> &extraAttributes = std::map<size_t, float>());
     int makeLineShape(const Line4f &line, bool throughUi = false, bool tempshape = false,
-                      const std::map<int, float> &extraAttributes = std::map<int, float>());
+                      const std::map<size_t, float> &extraAttributes = std::map<size_t, float>());
     // or a polygon into a shape
-    int makePolyShapeWithRef(const std::vector<Point2f> &points, bool open, int shapeRef,
-                             bool tempshape = false,
-                             const std::map<int, float> &extraAttributes = std::map<int, float>());
+    int makePolyShapeWithRef(
+        const std::vector<Point2f> &points, bool open, int shapeRef, bool tempshape = false,
+        const std::map<size_t, float> &extraAttributes = std::map<size_t, float>());
     int makePolyShape(const std::vector<Point2f> &points, bool open, bool tempshape = false,
-                      const std::map<int, float> &extraAttributes = std::map<int, float>());
+                      const std::map<size_t, float> &extraAttributes = std::map<size_t, float>());
 
     bool hasGraph() const { return m_hasgraph; }
 
   public:
     // or make a shape from a shape
     int makeShape(const SalaShape &shape, int overrideShapeRef = -1,
-                  const std::map<int, float> &extraAttributes = std::map<int, float>());
+                  const std::map<size_t, float> &extraAttributes = std::map<size_t, float>());
     // convert points to polygons
     bool convertPointsToPolys(double polyRadius,
                               std::optional<std::reference_wrapper<const std::set<int>>> selSet);

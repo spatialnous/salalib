@@ -62,78 +62,79 @@ size_t Connector::count(int mode) const {
     }
     return c;
 }
-int Connector::getConnectedRef(int cursor, int mode) const {
+int Connector::getConnectedRef(const int cursor, const int mode) const {
     int cur = -1;
     if (cursor != -1) {
+        const size_t ucursor = static_cast<size_t>(cursor);
         switch (mode) {
         case CONN_ALL:
-            if (cursor < static_cast<int>(connections.size())) {
-                cur = static_cast<int>(connections[size_t(cursor)]);
+            if (ucursor < connections.size()) {
+                cur = static_cast<int>(connections[ucursor]);
             }
             break;
         case SEG_CONN_ALL:
-            if (cursor < int(backSegconns.size())) {
-                cur = depthmapX::getMapAtIndex(backSegconns, cursor)->first.ref;
-            } else if (size_t(cursor) - backSegconns.size() < forwardSegconns.size()) {
-                cur = depthmapX::getMapAtIndex(forwardSegconns, cursor - int(backSegconns.size()))
+            if (ucursor < backSegconns.size()) {
+                cur = depthmapX::getMapAtIndex(backSegconns, ucursor)->first.ref;
+            } else if (ucursor - backSegconns.size() < forwardSegconns.size()) {
+                cur = depthmapX::getMapAtIndex(forwardSegconns, ucursor - backSegconns.size())
                           ->first.ref;
             }
             break;
         case SEG_CONN_FW:
-            if (cursor < int(forwardSegconns.size())) {
-                cur = depthmapX::getMapAtIndex(forwardSegconns, cursor)->first.ref;
+            if (ucursor < forwardSegconns.size()) {
+                cur = depthmapX::getMapAtIndex(forwardSegconns, ucursor)->first.ref;
             }
             break;
         case SEG_CONN_BK:
-            if (cursor < int(backSegconns.size())) {
-                cur = depthmapX::getMapAtIndex(backSegconns, cursor)->first.ref;
+            if (ucursor < backSegconns.size()) {
+                cur = depthmapX::getMapAtIndex(backSegconns, ucursor)->first.ref;
             }
             break;
         }
     }
     return cur;
 }
-int Connector::direction(int cursor, int mode) const {
+int Connector::direction(const int cursor, const int mode) const {
     int direction = 0;
     if (cursor != -1) {
+        const size_t ucursor = static_cast<size_t>(cursor);
         switch (mode) {
         case SEG_CONN_ALL:
-            if (cursor < (int)backSegconns.size()) {
-                direction = depthmapX::getMapAtIndex(backSegconns, cursor)->first.dir;
-            } else if (size_t(cursor) - backSegconns.size() < forwardSegconns.size()) {
-                direction =
-                    depthmapX::getMapAtIndex(forwardSegconns, cursor - int(backSegconns.size()))
-                        ->first.dir;
+            if (ucursor < backSegconns.size()) {
+                direction = depthmapX::getMapAtIndex(backSegconns, ucursor)->first.dir;
+            } else if (ucursor - backSegconns.size() < forwardSegconns.size()) {
+                direction = depthmapX::getMapAtIndex(forwardSegconns, ucursor - backSegconns.size())
+                                ->first.dir;
             }
             break;
         case SEG_CONN_FW:
-            direction = depthmapX::getMapAtIndex(forwardSegconns, cursor)->first.dir;
+            direction = depthmapX::getMapAtIndex(forwardSegconns, ucursor)->first.dir;
             break;
         case SEG_CONN_BK:
-            direction = depthmapX::getMapAtIndex(backSegconns, cursor)->first.dir;
+            direction = depthmapX::getMapAtIndex(backSegconns, ucursor)->first.dir;
             break;
         }
     }
     return direction;
 }
-float Connector::weight(int cursor, int mode) const {
+float Connector::weight(const int cursor, const int mode) const {
     float weight = 0.0f;
     if (cursor != -1) {
+        const size_t ucursor = static_cast<size_t>(cursor);
         switch (mode) {
         case SEG_CONN_ALL:
-            if (cursor < int(backSegconns.size())) {
-                weight = depthmapX::getMapAtIndex(backSegconns, cursor)->second;
-            } else if (size_t(cursor) - backSegconns.size() < forwardSegconns.size()) {
-                weight =
-                    depthmapX::getMapAtIndex(forwardSegconns, cursor - int(backSegconns.size()))
-                        ->second;
+            if (ucursor < backSegconns.size()) {
+                weight = depthmapX::getMapAtIndex(backSegconns, ucursor)->second;
+            } else if (ucursor - backSegconns.size() < forwardSegconns.size()) {
+                weight = depthmapX::getMapAtIndex(forwardSegconns, ucursor - backSegconns.size())
+                             ->second;
             }
             break;
         case SEG_CONN_FW:
-            weight = depthmapX::getMapAtIndex(forwardSegconns, cursor)->second;
+            weight = depthmapX::getMapAtIndex(forwardSegconns, ucursor)->second;
             break;
         case SEG_CONN_BK:
-            weight = depthmapX::getMapAtIndex(backSegconns, cursor)->second;
+            weight = depthmapX::getMapAtIndex(backSegconns, ucursor)->second;
             break;
         }
     }

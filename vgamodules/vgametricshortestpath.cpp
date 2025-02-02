@@ -24,13 +24,13 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
                            metricZoneColName, invMetricZoneColName},
                           attributes.getNumRows());
 
-    int pathCol = result.getColumnIndex(pathColName);
-    int distCol = result.getColumnIndex(distColName);
-    int linkedCol = result.getColumnIndex(linkedColName);
-    int orderCol = result.getColumnIndex(orderColName);
-    int visualZoneColIdx = result.getColumnIndex(zoneColName);
-    int metricZoneColIdx = result.getColumnIndex(metricZoneColName);
-    int invMetricZoneColIdx = result.getColumnIndex(invMetricZoneColName);
+    auto pathCol = result.getColumnIndex(pathColName);
+    auto distCol = result.getColumnIndex(distColName);
+    auto linkedCol = result.getColumnIndex(linkedColName);
+    auto orderCol = result.getColumnIndex(orderColName);
+    auto visualZoneColIdx = result.getColumnIndex(zoneColName);
+    auto metricZoneColIdx = result.getColumnIndex(metricZoneColName);
+    auto invMetricZoneColIdx = result.getColumnIndex(invMetricZoneColName);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
     const auto refs = getRefVector(analysisData);
@@ -93,8 +93,8 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
 
                             double zoneLineDist = dist(linePixel, zad.ref) * m_map.getSpacing();
                             {
-                                float currMetricZonePixelVal =
-                                    result.getValue(zad.attributeDataRow, metricZoneColIdx);
+                                auto currMetricZonePixelVal = static_cast<float>(
+                                    result.getValue(zad.attributeDataRow, metricZoneColIdx));
                                 if (currMetricZonePixelVal == -1 ||
                                     zoneLineDist < currMetricZonePixelVal) {
                                     result.setValue(zad.attributeDataRow, metricZoneColIdx,
@@ -102,8 +102,8 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
                                 }
                             }
                             {
-                                float currInvMetricZonePixelVal =
-                                    result.getValue(zad.attributeDataRow, invMetricZoneColIdx);
+                                auto currInvMetricZonePixelVal = static_cast<float>(
+                                    result.getValue(zad.attributeDataRow, invMetricZoneColIdx));
                                 if (currInvMetricZonePixelVal == -1 ||
                                     1.0f / (zoneLineDist + 1) > currInvMetricZonePixelVal) {
                                     result.setValue(zad.attributeDataRow, invMetricZoneColIdx,

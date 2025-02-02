@@ -15,7 +15,6 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
     if (m_originPointSets.empty()) {
         return result;
     }
-    int zoneColumnIndex = -1;
     for (auto originPointSet : m_originPointSets) {
         std::string originPointSetName = originPointSet.first;
 
@@ -26,7 +25,7 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
 
         auto originPoints = originPointSet.second;
 
-        zoneColumnIndex = attributes.insertOrResetColumn(zoneColumnName);
+        auto zoneColumnIndex = attributes.insertOrResetColumn(zoneColumnName);
         result.addAttribute(zoneColumnName);
 
         for (PixelRef ref : originPoints) {
@@ -38,7 +37,8 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
             for (auto &zonePixel : newPixels) {
                 auto *zonePixelRow = attributes.getRowPtr(AttributeKey(zonePixel.pixel));
                 if (zonePixelRow != nullptr) {
-                    double zoneLineDist = dist(ref, zonePixel.pixel) * m_map.getSpacing();
+                    auto zoneLineDist =
+                        static_cast<float>(dist(ref, zonePixel.pixel) * m_map.getSpacing());
                     float currZonePixelVal = zonePixelRow->getValue(zoneColumnIndex);
                     if ((currZonePixelVal == -1 || zoneLineDist < currZonePixelVal) &&
                         (m_restrictDistance <= 0 ||
@@ -48,7 +48,7 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
                 }
             }
         }
-        int inverseZoneColumnIndex = attributes.insertOrResetColumn(inverseZoneColumnName);
+        auto inverseZoneColumnIndex = attributes.insertOrResetColumn(inverseZoneColumnName);
         setColumnFormulaAndUpdate(m_map, inverseZoneColumnIndex,
                                   "1/((value(\"" + zoneColumnName + "\") + 1) ^ 2)", std::nullopt);
         result.addAttribute(inverseZoneColumnName);
@@ -75,7 +75,7 @@ void VGAIsovistZone::extractMetric(Node n, std::set<MetricTriple> &pixels, Point
     }
 }
 
-void VGAIsovistZone::setColumnFormulaAndUpdate(PointMap &pointmap, int columnIndex,
+void VGAIsovistZone::setColumnFormulaAndUpdate(PointMap &pointmap, size_t columnIndex,
                                                std::string formula,
                                                std::optional<const std::set<int>> selectionSet) {
     SalaObj programContext;
@@ -91,9 +91,10 @@ void VGAIsovistZone::setColumnFormulaAndUpdate(PointMap &pointmap, int columnInd
     } else {
         bool programCompleted;
         if (selectionSet.has_value()) {
-            programCompleted = proggy.runupdate(columnIndex, selectionSet.value());
+            programCompleted =
+                proggy.runupdate(static_cast<int>(columnIndex), selectionSet.value());
         } else {
-            programCompleted = proggy.runupdate(columnIndex);
+            programCompleted = proggy.runupdate(static_cast<int>(columnIndex));
         }
         if (!programCompleted) {
             throw depthmapX::RuntimeException("There was an error parsing your formula:\n\n" +

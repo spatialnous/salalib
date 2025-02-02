@@ -14,7 +14,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
 if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
         "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-        set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wshadow)
+        set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         set(COMPILE_WARNINGS /W4 /EHsc)
     endif()

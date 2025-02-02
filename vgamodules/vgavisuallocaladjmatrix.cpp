@@ -25,7 +25,8 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     AttributeTable &attributes = m_map.getAttributeTable();
@@ -43,7 +44,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
         }
     }
 
-    int count = 0;
+    size_t count = 0;
 
     std::vector<DataPoint> colData(filled.size());
 
@@ -55,7 +56,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
         refToFilled.insert(std::make_pair(filled[size_t(i)], i));
     }
 
-    std::vector<bool> hoods(n * n);
+    std::vector<bool> hoods(static_cast<size_t>(n * n));
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
@@ -69,7 +70,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
         { dumpNeighbourhood(p.getNode(), neighbourhood); }
         for (auto &neighbour : neighbourhood) {
             if (m_map.getPoint(neighbour).hasNode()) {
-                hoods[long(i * n + refToFilled[neighbour])] = true;
+                hoods[static_cast<size_t>(i * n + refToFilled[neighbour])] = true;
             }
         }
     }
@@ -79,29 +80,31 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 #endif
     for (i = 0; i < n; ++i) {
 
-        DataPoint &dp = colData[i];
+        auto ui = static_cast<size_t>(i);
 
-        Point &p = m_map.getPoint(filled[size_t(i)]);
-        if ((p.contextfilled() && !filled[size_t(i)].iseven()) || (m_gatesOnly)) {
+        DataPoint &dp = colData[ui];
+
+        Point &p = m_map.getPoint(filled[ui]);
+        if ((p.contextfilled() && !filled[ui].iseven()) || (m_gatesOnly)) {
             count++;
             continue;
         }
 
-        std::vector<bool> totalHood(n);
+        std::vector<bool> totalHood(static_cast<size_t>(n));
 
         int cluster = 0;
         float control = 0.0f;
 
         int hoodSize = 0;
         for (int j = 0; j < n; j++) {
-            if (hoods[i * n + j]) {
+            if (hoods[static_cast<size_t>(i * n + j)]) {
                 hoodSize++;
                 int retHood = 0;
                 for (int k = 0; k < n; k++) {
-                    if (hoods[j * n + k]) {
-                        totalHood[k] = true;
+                    if (hoods[static_cast<size_t>(j * n + k)]) {
+                        totalHood[static_cast<size_t>(k)] = true;
                         retHood++;
-                        if (hoods[i * n + k])
+                        if (hoods[static_cast<size_t>(i * n + k)])
                             cluster++;
                     }
                 }
@@ -110,7 +113,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
         }
         int totalReach = 0;
         for (int j = 0; j < n; j++) {
-            if (totalHood[j])
+            if (totalHood[static_cast<size_t>(j)])
                 totalReach++;
         }
 #if defined(_OPENMP)
@@ -152,11 +155,11 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
     std::string clusterColName = Column::VISUAL_CLUSTERING_COEFFICIENT;
     std::string controlColName = Column::VISUAL_CONTROL;
     std::string controllabilityColName = Column::VISUAL_CONTROLLABILITY;
-    int clusterCol = attributes.insertOrResetColumn(clusterColName);
+    auto clusterCol = attributes.insertOrResetColumn(clusterColName);
     result.addAttribute(clusterColName);
-    int controlCol = attributes.insertOrResetColumn(controlColName);
+    auto controlCol = attributes.insertOrResetColumn(controlColName);
     result.addAttribute(controlColName);
-    int controllabilityCol = attributes.insertOrResetColumn(controllabilityColName);
+    auto controllabilityCol = attributes.insertOrResetColumn(controllabilityColName);
     result.addAttribute(controllabilityColName);
 
     auto dataIter = colData.begin();

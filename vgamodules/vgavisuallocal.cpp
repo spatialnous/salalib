@@ -10,7 +10,8 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     AnalysisResult result({Column::VISUAL_CLUSTERING_COEFFICIENT, Column::VISUAL_CONTROL,
@@ -74,8 +75,8 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                 if (neighbourhood.size() > 1) {
                     result.setValue(        //
                         refIdx, clusterCol, //
-                        float(cluster /
-                              double(neighbourhood.size() * (neighbourhood.size() - 1.0))));
+                        float(cluster / static_cast<double>(neighbourhood.size() *
+                                                            (neighbourhood.size() - 1))));
                     result.setValue(        //
                         refIdx, controlCol, //
                         float(control));

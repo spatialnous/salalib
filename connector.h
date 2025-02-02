@@ -85,7 +85,7 @@ struct Connector {
     // are used. salaprogram seems to also be the only place where
     // the last two modes (SEG_CONN_FW, SEG_CONN_BK) are used
     size_t count(int mode = CONN_ALL) const;
-    int getConnectedRef(int cursor, int mode = CONN_ALL) const;
-    int direction(int cursor, int mode = SEG_CONN_ALL) const;
-    float weight(int cursor, int mode = SEG_CONN_ALL) const;
+    int getConnectedRef(const int cursor, const int mode = CONN_ALL) const;
+    int direction(const int cursor, const int mode = SEG_CONN_ALL) const;
+    float weight(const int cursor, const int mode = SEG_CONN_ALL) const;
 };

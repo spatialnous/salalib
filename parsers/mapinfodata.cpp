@@ -178,7 +178,7 @@ int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &
                     }
                     here++;
                     if ((!instring && next == m_delimiter) || here >= line.length()) {
-                        int length = (here < line.length()) ? here - first - 1 : here - first;
+                        auto length = (here < line.length()) ? here - first - 1 : here - first;
                         std::string field = line.substr(first, length);
                         first = here;
                         if (length == 1 && field[0] == m_delimiter) {
@@ -346,7 +346,7 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
     // dummy attributes table:
     AttributeTable attributes;
     for (size_t i = 0; i < polygons.size(); i++) {
-        attributes.addRow(AttributeKey(i));
+        attributes.addRow(AttributeKey(static_cast<int>(i)));
     }
 
     // dummy layers:
@@ -367,7 +367,7 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
         miffile << polygon[0].x << " " << polygon[0].y << std::endl;
         miffile << "    Pen (1,2,0)" << std::endl;
         miffile << "    Brush (2,16777215,16777215)" << std::endl;
-        centre /= polygon.size();
+        centre /= static_cast<double>(polygon.size());
         miffile << "    Center " << centre.x << " " << centre.y << std::endl;
     }
 
@@ -531,7 +531,7 @@ void MapInfoData::writetable(std::ostream &miffile, std::ostream &midfile,
 std::istream &MapInfoData::read(std::istream &stream) {
     m_version = dXstring::readString(stream);
     m_charset = dXstring::readString(stream);
-    m_delimiter = stream.get();
+    m_delimiter = static_cast<char>(stream.get());
     m_index = dXstring::readString(stream);
     m_coordsys = dXstring::readString(stream);
     m_bounds = dXstring::readString(stream);

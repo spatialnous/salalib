@@ -233,12 +233,12 @@ PixelRef PointMap::pixelate(const Point2f &p, bool constrain, int scalefactor) c
     if (constrain) {
         if (ref.x < 0)
             ref.x = 0;
-        else if (ref.x >= static_cast<short>(m_cols * scalefactor))
-            ref.x = static_cast<short>(m_cols * scalefactor) - 1;
+        else if (ref.x >= static_cast<short>(m_cols * static_cast<size_t>(scalefactor)))
+            ref.x = static_cast<short>(m_cols * static_cast<size_t>(scalefactor)) - 1;
         if (ref.y < 0)
             ref.y = 0;
-        else if (ref.y >= static_cast<short>(m_rows * scalefactor))
-            ref.y = static_cast<short>(m_rows * scalefactor) - 1;
+        else if (ref.y >= static_cast<short>(m_rows * static_cast<size_t>(scalefactor)))
+            ref.y = static_cast<short>(m_rows * static_cast<size_t>(scalefactor)) - 1;
     }
 
     return ref;
@@ -591,8 +591,8 @@ void PointMap::outputNet(std::ostream &netfile) {
     for (auto &iter : graph) {
         PixelRefVector &list = iter.second;
         for (size_t m = 0; m < list.size(); m++) {
-            size_t n = depthmapX::findIndexFromKey(graph, list[m]);
-            if (static_cast<int>(n) != -1 && k < n) {
+            auto n = depthmapX::findIndexFromKey(graph, list[m]);
+            if (n != -1 && k < static_cast<size_t>(n)) {
                 netfile << (k + 1) << " " << (n + 1) << " 1" << std::endl;
             }
         }

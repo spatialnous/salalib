@@ -20,7 +20,7 @@ void TidyLines::tidy(std::vector<Line4f> &lines, const Region4f &region) {
                 lines.end());
 
     // now load up m_lines...
-    initLines(lines.size(), m_region.bottomLeft, m_region.topRight);
+    initLines(static_cast<int>(lines.size()), m_region.bottomLeft, m_region.topRight);
     for (auto &line : lines) {
         addLine(line);
     }
@@ -31,55 +31,56 @@ void TidyLines::tidy(std::vector<Line4f> &lines, const Region4f &region) {
         // n.b., as m_lines have just been made, note that what's in m_lines matches
         // whats in lines we will use this later!
         m_test++;
-        m_lines[i].test = m_test;
-        PixelRefVector list = pixelateLine(m_lines[i].line);
+        m_lines[static_cast<int>(i)].test = m_test;
+        PixelRefVector list = pixelateLine(m_lines[static_cast<int>(i)].line);
         for (size_t a = 0; a < list.size(); a++) {
             auto pixelLines =
                 m_pixelLines(static_cast<size_t>(list[a].y), static_cast<size_t>(list[a].x));
             for (int j : pixelLines) {
+                auto uj = static_cast<size_t>(j);
                 if (m_lines[j].test != m_test && j > (int)i &&
-                    lines[i].Region4f::intersects(lines[j], TOLERANCE_B * maxdim)) {
+                    lines[i].Region4f::intersects(lines[uj], TOLERANCE_B * maxdim)) {
                     m_lines[j].test = m_test;
                     LineAxis axisI =
                         (lines[i].width() >= lines[i].height()) ? LineAxis::XAXIS : LineAxis::YAXIS;
-                    LineAxis axisJ =
-                        (lines[j].width() >= lines[j].height()) ? LineAxis::XAXIS : LineAxis::YAXIS;
+                    LineAxis axisJ = (lines[uj].width() >= lines[uj].height()) ? LineAxis::XAXIS
+                                                                               : LineAxis::YAXIS;
                     LineAxis axisReverse =
                         (axisI == LineAxis::XAXIS) ? LineAxis::YAXIS : LineAxis::XAXIS;
                     if (axisI == axisJ &&
-                        fabs(lines[i].grad(axisReverse) - lines[j].grad(axisReverse)) <
+                        fabs(lines[i].grad(axisReverse) - lines[uj].grad(axisReverse)) <
                             TOLERANCE_A &&
-                        fabs(lines[i].constant(axisReverse) - lines[j].constant(axisReverse)) <
+                        fabs(lines[i].constant(axisReverse) - lines[uj].constant(axisReverse)) <
                             (TOLERANCE_B * maxdim)) {
                         // check for overlap and merge
                         int parity = (axisI == LineAxis::XAXIS) ? 1 : lines[i].sign();
                         if ((lines[i].start()[axisI] * parity + TOLERANCE_B * maxdim) >
-                                (lines[j].start()[axisJ] * parity) &&
+                                (lines[uj].start()[axisJ] * parity) &&
                             (lines[i].start()[axisI] * parity) <
-                                (lines[j].end()[axisJ] * parity + TOLERANCE_B * maxdim)) {
-                            int end = ((lines[i].end()[axisI] * parity) >
-                                       (lines[j].end()[axisJ] * parity))
-                                          ? i
-                                          : j;
-                            lines[j].bx() = lines[end].bx();
-                            lines[j].by() = lines[end].by();
-                            removelist.push_back(i);
+                                (lines[uj].end()[axisJ] * parity + TOLERANCE_B * maxdim)) {
+                            size_t end = ((lines[i].end()[axisI] * parity) >
+                                          (lines[uj].end()[axisJ] * parity))
+                                             ? i
+                                             : uj;
+                            lines[uj].bx() = lines[end].bx();
+                            lines[uj].by() = lines[end].by();
+                            removelist.push_back(static_cast<int>(i));
                             continue; // <- don't do this any more, we've zapped it and
                                       // replaced it with the later line
                         }
-                        if ((lines[j].start()[axisJ] * parity + TOLERANCE_B * maxdim) >
+                        if ((lines[uj].start()[axisJ] * parity + TOLERANCE_B * maxdim) >
                                 (lines[i].start()[axisI] * parity) &&
-                            (lines[j].start()[axisJ] * parity) <
+                            (lines[uj].start()[axisJ] * parity) <
                                 (lines[i].end()[axisI] * parity + TOLERANCE_B * maxdim)) {
-                            int end = ((lines[i].end()[axisI] * parity) >
-                                       (lines[j].end()[axisJ] * parity))
-                                          ? i
-                                          : j;
-                            lines[j].ax() = lines[i].ax();
-                            lines[j].ay() = lines[i].ay();
-                            lines[j].bx() = lines[end].bx();
-                            lines[j].by() = lines[end].by();
-                            removelist.push_back(i);
+                            size_t end = ((lines[i].end()[axisI] * parity) >
+                                          (lines[uj].end()[axisJ] * parity))
+                                             ? i
+                                             : uj;
+                            lines[uj].ax() = lines[i].ax();
+                            lines[uj].ay() = lines[i].ay();
+                            lines[uj].bx() = lines[end].bx();
+                            lines[uj].by() = lines[end].by();
+                            removelist.push_back(static_cast<int>(i));
                             continue; // <- don't do this any more, we've zapped it and
                                       // replaced it with the later line
                         }
@@ -105,7 +106,7 @@ void TidyLines::quicktidy(std::map<int, std::pair<Line4f, int>> &lines, const Re
     for (const auto &line : lines) {
         avglen += line.second.first.length();
     }
-    avglen /= lines.size();
+    avglen /= static_cast<double>(lines.size());
 
     double tolerance = avglen * 10e-6;
 
@@ -119,7 +120,7 @@ void TidyLines::quicktidy(std::map<int, std::pair<Line4f, int>> &lines, const Re
     }
 
     // now load up m_lines...
-    initLines(lines.size(), m_region.bottomLeft, m_region.topRight);
+    initLines(static_cast<int>(lines.size()), m_region.bottomLeft, m_region.topRight);
     for (const auto &line : lines) {
         addLine(line.second.first);
     }

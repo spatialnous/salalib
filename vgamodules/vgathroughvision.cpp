@@ -17,7 +17,8 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     std::vector<AnalysisData> analysisData;
@@ -43,7 +44,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
 
     const auto refs = getRefVector(analysisData);
 
-    int count = 0;
+    size_t count = 0;
     for (auto &ad : analysisData) {
         std::vector<int> seengates;
         auto &p = ad.point;
@@ -88,7 +89,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
         }
     }
 
-    int col = result.getColumnIndex(Column::THROUGH_VISION);
+    auto col = result.getColumnIndex(Column::THROUGH_VISION);
 
     for (auto &ad : analysisData) {
         auto &p = ad.point;

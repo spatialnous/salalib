@@ -9,10 +9,16 @@ std::vector<Point2f> GeometryGenerators::generateDiskTriangles(size_t sides, flo
     std::vector<Point2f> diskTriangles;
     for (size_t i = 0; i < sides; i++) {
         diskTriangles.push_back(Point2f(position.x, position.y));
-        diskTriangles.push_back(Point2f(position.x + radius * sin(2 * M_PI * (i + 1) / sides),
-                                        position.y + radius * cos(2 * M_PI * (i + 1) / sides)));
-        diskTriangles.push_back(Point2f(position.x + radius * sin(2 * M_PI * i / sides),
-                                        position.y + radius * cos(2 * M_PI * i / sides)));
+        diskTriangles.push_back(Point2f(
+            position.x +
+                radius * sin(2 * M_PI * static_cast<double>(i + 1) / static_cast<double>(sides)),
+            position.y +
+                radius * cos(2 * M_PI * static_cast<double>(i + 1) / static_cast<double>(sides))));
+        diskTriangles.push_back(Point2f(
+            position.x +
+                radius * sin(2 * M_PI * static_cast<double>(i) / static_cast<double>(sides)),
+            position.y +
+                radius * cos(2 * M_PI * static_cast<double>(i) / static_cast<double>(sides))));
     }
     return diskTriangles;
 }
@@ -42,10 +48,14 @@ std::vector<SimpleLine> GeometryGenerators::generateCircleLines(size_t sides, fl
     std::vector<SimpleLine> cirleLines;
     for (size_t i = 0; i < sides; i++) {
         cirleLines.push_back(
-            SimpleLine(Point2f(position.x + radius * sin(2 * M_PI * (i + 1) / sides),
-                               position.y + radius * cos(2 * M_PI * (i + 1) / sides)),
-                       Point2f(position.x + radius * sin(2 * M_PI * i / sides),
-                               position.y + radius * cos(2 * M_PI * i / sides))));
+            SimpleLine(Point2f(position.x + radius * sin(2 * M_PI * static_cast<double>(i + 1) /
+                                                         static_cast<double>(sides)),
+                               position.y + radius * cos(2 * M_PI * static_cast<double>(i + 1) /
+                                                         static_cast<double>(sides))),
+                       Point2f(position.x + radius * sin(2 * M_PI * static_cast<double>(i) /
+                                                         static_cast<double>(sides)),
+                               position.y + radius * cos(2 * M_PI * static_cast<double>(i) /
+                                                         static_cast<double>(sides)))));
     }
     return cirleLines;
 }

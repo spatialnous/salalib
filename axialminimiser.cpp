@@ -20,7 +20,8 @@ static int compareValueTriplet(const void *p1, const void *p2) {
                                                                             : 0)));
 }
 
-AxialMinimiser::AxialMinimiser(const ShapeGraph &alllinemap, int noOfAxsegcuts, int noOfRadialsegs)
+AxialMinimiser::AxialMinimiser(const ShapeGraph &alllinemap, size_t noOfAxsegcuts,
+                               size_t noOfRadialsegs)
     : m_alllinemap((ShapeGraph *)&alllinemap), m_vps(new ValueTriplet[noOfAxsegcuts]),
       m_removed(new bool[noOfAxsegcuts]), m_affected(new bool[noOfAxsegcuts]),
       m_vital(new bool[noOfAxsegcuts]), m_radialsegcounts(new int[noOfRadialsegs]) {}
@@ -48,20 +49,20 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
     for (size_t x = 0; x < radialsegs.size(); x++) {
         m_radialsegcounts[x] = 0;
     }
-    int y = -1;
+    size_t y = 0;
     for (const auto &axSegCut : axsegcuts) {
-        y++;
         for (int cut : axSegCut.second) {
             m_radialsegcounts[cut] += 1;
         }
         m_removed[y] = false;
         m_vital[y] = false;
         m_affected[y] = true;
-        m_vps[y].index = y;
-        double length = m_axialconns[y].connections.size();
+        m_vps[y].index = static_cast<int>(y);
+        double length = static_cast<double>(m_axialconns[y].connections.size());
         m_vps[y].value1 = (int)length;
         length = depthmapX::getMapAtIndex(m_alllinemap->m_shapes, y)->second.getLine().length();
         m_vps[y].value2 = (float)length;
+        y++;
     }
 
     // sort according to number of connections then length
@@ -81,7 +82,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                 for (size_t j = 0; j < keyvertexconns[ii].size(); j++) {
                     // first check to see if removing this line will cause elimination of
                     // a vital connection
-                    if (keyvertexcounts[keyvertexconns[ii][j]] <= 1) {
+                    if (keyvertexcounts[static_cast<size_t>(keyvertexconns[ii][j])] <= 1) {
                         // connect vital... just go on to the next one:
                         vitalconn = true;
                         break;
@@ -153,8 +154,8 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                     }
                 }
                 if (presumedvital) {
-                    presumedvital =
-                        checkVital(removeindex, axSegCut, radialsegs, rlds, radialLines);
+                    presumedvital = checkVital(static_cast<int>(removeindex), axSegCut, radialsegs,
+                                               rlds, radialLines);
                 }
                 if (presumedvital) {
                     m_vital[removeindex] = true;
@@ -176,7 +177,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                     }
                     // vital connections
                     for (size_t k = 0; k < keyvertexconns[removeindex].size(); k++) {
-                        keyvertexcounts[keyvertexconns[removeindex][k]] -= 1;
+                        keyvertexcounts[static_cast<size_t>(keyvertexconns[removeindex][k])] -= 1;
                     }
                 }
             }
@@ -208,7 +209,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
         }
     }
 
-    qsort(m_vps, livecount, sizeof(ValueTriplet), compareValueTriplet);
+    qsort(m_vps, static_cast<size_t>(livecount), sizeof(ValueTriplet), compareValueTriplet);
 
     for (int i = 0; i < livecount; i++) {
 
@@ -216,10 +217,11 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
         // vital connections code (uses original unaltered connections)
         bool vitalconn = false;
         size_t k;
-        for (k = 0; k < keyvertexconns[j].size(); k++) {
+        for (k = 0; k < keyvertexconns[static_cast<size_t>(j)].size(); k++) {
             // first check to see if removing this line will cause elimination of a
             // vital connection
-            if (keyvertexcounts[keyvertexconns[j][k]] <= 1) {
+            if (keyvertexcounts[static_cast<size_t>(keyvertexconns[static_cast<size_t>(j)][k])] <=
+                1) {
                 // connect vital... just go on to the next one:
                 vitalconn = true;
                 break;
@@ -230,7 +232,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
         }
         //
         bool presumedvital = false;
-        auto &axSegCut = depthmapX::getMapAtIndex(axsegcuts, j)->second;
+        auto &axSegCut = depthmapX::getMapAtIndex(axsegcuts, static_cast<size_t>(j))->second;
         for (int cut : axSegCut) {
             if (m_radialsegcounts[cut] <= 1) {
                 presumedvital = true;
@@ -242,7 +244,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
         }
         if (!presumedvital) {
             // don't let anything this is connected to go down to zero connections
-            auto &affectedconnections = m_axialconns[j].connections;
+            auto &affectedconnections = m_axialconns[static_cast<size_t>(j)].connections;
             for (auto affectedconnection : affectedconnections) {
                 if (!m_removed[affectedconnection]) {
                     auto &connections = m_axialconns[size_t(affectedconnection)].connections;
@@ -268,8 +270,9 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
                 m_radialsegcounts[cut] -= 1;
             }
             // vital connections
-            for (size_t kvc = 0; kvc < keyvertexconns[j].size(); kvc++) {
-                keyvertexcounts[keyvertexconns[j][kvc]] -= 1;
+            for (size_t kvc = 0; kvc < keyvertexconns[static_cast<size_t>(j)].size(); kvc++) {
+                keyvertexcounts[static_cast<size_t>(keyvertexconns[static_cast<size_t>(j)][kvc])] -=
+                    1;
             }
         }
     }
@@ -291,7 +294,7 @@ bool AxialMinimiser::checkVital(int checkindex, std::set<int> &axSegCut,
         if (m_radialsegcounts[cut] <= 1) {
             bool nonvitalseg = false;
             vitalsegs++;
-            auto radialSegIter = depthmapX::getMapAtIndex(radialsegs, cut);
+            auto radialSegIter = depthmapX::getMapAtIndex(radialsegs, static_cast<size_t>(cut));
             const RadialKey &key = radialSegIter->first;
             RadialSegment &seg = radialSegIter->second;
             std::set<int> &divisorsa = rlds.find(key)->second;

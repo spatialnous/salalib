@@ -68,7 +68,8 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
             covered[j] = false;
         }
         std::vector<std::pair<float, SegmentData>> anglebins;
-        anglebins.push_back(std::make_pair(0.0f, SegmentData(0, i, SegmentRef(), 0, 0.0, 0)));
+        anglebins.push_back(
+            std::make_pair(0.0f, SegmentData(0, static_cast<int>(i), SegmentRef(), 0, 0.0, 0)));
 
         std::vector<double> totalDepth;
         std::vector<int> nodeCount;
@@ -80,16 +81,16 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         while (anglebins.size()) {
             auto biniter = anglebins.begin();
             SegmentData lineindex = biniter->second;
-            if (!covered[lineindex.ref]) {
-                covered[lineindex.ref] = true;
+            if (!covered[static_cast<size_t>(lineindex.ref)]) {
+                covered[static_cast<size_t>(lineindex.ref)] = true;
                 double depthToLine = biniter->first;
                 totalDepth[lineindex.coverage] += depthToLine;
                 nodeCount[lineindex.coverage] += 1;
                 anglebins.erase(biniter);
-                Connector &line = map.getConnections()[lineindex.ref];
+                Connector &line = map.getConnections()[static_cast<size_t>(lineindex.ref)];
                 if (lineindex.dir != -1) {
                     for (auto &segconn : line.forwardSegconns) {
-                        if (!covered[segconn.first.ref]) {
+                        if (!covered[static_cast<size_t>(segconn.first.ref)]) {
                             double angle = depthToLine + segconn.second;
                             size_t rbin = lineindex.coverage;
                             while (rbin != radii.size() && radii[rbin] != -1 &&
@@ -99,16 +100,16 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                             if (rbin != radii.size()) {
                                 depthmapX::insert_sorted(
                                     anglebins,
-                                    std::make_pair(
-                                        float(angle),
-                                        SegmentData(segconn.first, SegmentRef(), 0, 0.0, rbin)));
+                                    std::make_pair(float(angle),
+                                                   SegmentData(segconn.first, SegmentRef(), 0, 0.0,
+                                                               static_cast<unsigned int>(rbin))));
                             }
                         }
                     }
                 }
                 if (lineindex.dir != 1) {
                     for (auto &segconn : line.backSegconns) {
-                        if (!covered[segconn.first.ref]) {
+                        if (!covered[static_cast<size_t>(segconn.first.ref)]) {
                             double angle = depthToLine + segconn.second;
                             size_t rbin = lineindex.coverage;
                             while (rbin != radii.size() && radii[rbin] != -1 &&
@@ -118,9 +119,9 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                             if (rbin != radii.size()) {
                                 depthmapX::insert_sorted(
                                     anglebins,
-                                    std::make_pair(
-                                        float(angle),
-                                        SegmentData(segconn.first, SegmentRef(), 0, 0.0, rbin)));
+                                    std::make_pair(float(angle),
+                                                   SegmentData(segconn.first, SegmentRef(), 0, 0.0,
+                                                               static_cast<unsigned int>(rbin))));
                             }
                         }
                     }

@@ -268,14 +268,14 @@ bool Bin::containsPoint(const PixelRef p) const {
 void Bin::first() const {
     m_curvec = 0;
     if (!pixelVecs.empty())
-        m_curpix = pixelVecs[m_curvec].start();
+        m_curpix = pixelVecs[static_cast<size_t>(m_curvec)].start();
 }
 
 void Bin::next() const {
-    if (m_curpix.move(dir).col(dir) > pixelVecs[m_curvec].end().col(dir)) {
+    if (m_curpix.move(dir).col(dir) > pixelVecs[static_cast<size_t>(m_curvec)].end().col(dir)) {
         m_curvec++;
         if (m_curvec < static_cast<int>(pixelVecs.size()))
-            m_curpix = pixelVecs[m_curvec].start();
+            m_curpix = pixelVecs[static_cast<size_t>(m_curvec)].start();
     }
 }
 
@@ -301,7 +301,7 @@ std::istream &Bin::read(std::istream &stream) {
             stream.read(reinterpret_cast<char *>(&length), sizeof(length));
             pixelVecs = std::vector<PixelVec>(length);
             pixelVecs[0].read(stream, dir);
-            for (int i = 1; i < length; i++) {
+            for (size_t i = 1; i < length; i++) {
                 pixelVecs[i].read(stream, dir, pixelVecs[i - 1]);
             }
         }

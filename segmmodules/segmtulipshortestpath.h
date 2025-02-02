@@ -12,7 +12,7 @@
 class SegmentTulipShortestPath : public IAnalysis {
   private:
     ShapeGraph &m_map;
-    int m_tulipBins;
+    size_t m_tulipBins;
     int m_refFrom, m_refTo;
 
   public:
@@ -23,7 +23,7 @@ class SegmentTulipShortestPath : public IAnalysis {
     };
 
   public:
-    SegmentTulipShortestPath(ShapeGraph &map, int tulipBins, int refFrom, int refTo)
+    SegmentTulipShortestPath(ShapeGraph &map, size_t tulipBins, int refFrom, int refTo)
         : m_map(map), m_tulipBins(tulipBins), m_refFrom(refFrom), m_refTo(refTo) {}
     std::string getAnalysisName() const override { return "Tulip Shortest Path"; }
     AnalysisResult run(Communicator *) override;

@@ -21,7 +21,7 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
     float maxseglength = 0.0f;
     for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
         AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
-        axialrefs.push_back(row.getValue("Axial Line Ref"));
+        axialrefs.push_back(static_cast<int>(row.getValue("Axial Line Ref")));
         seglengths.push_back(row.getValue("Segment Length"));
         if (seglengths.back() > maxseglength) {
             maxseglength = seglengths.back();
@@ -43,13 +43,15 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
         seen[i] = 0xffffffff;
     }
     for (auto &cursor : m_originRefs) {
-        seen[cursor] = 0;
+        seen[static_cast<size_t>(cursor)] = 0;
         open++;
-        double length = seglengths[cursor];
-        audittrail[cursor] = TopoMetSegmentRef(cursor, Connector::SEG_CONN_ALL, length * 0.5, -1);
+        double length = seglengths[static_cast<size_t>(cursor)];
+        audittrail[static_cast<size_t>(cursor)] =
+            TopoMetSegmentRef(static_cast<int>(cursor), Connector::SEG_CONN_ALL, length * 0.5, -1);
         // better to divide by 511 but have 512 bins...
-        list[(int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(cursor);
-        AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
+        list[(int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
+            static_cast<int>(cursor));
+        AttributeRow &row = map.getAttributeRowFromShapeIndex(static_cast<size_t>(cursor));
         row.setValue(sdColIdx, 0);
     }
 
@@ -65,7 +67,7 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
             }
         }
         //
-        TopoMetSegmentRef &here = audittrail[list[bin].back()];
+        TopoMetSegmentRef &here = audittrail[static_cast<size_t>(list[bin].back())];
         list[bin].pop_back();
         open--;
         // this is necessary using unsigned ints for "seen", as it is possible to add a node twice
@@ -75,7 +77,7 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
             here.done = true;
         }
 
-        Connector &axline = map.getConnections().at(here.ref);
+        Connector &axline = map.getConnections().at(static_cast<size_t>(here.ref));
         int connectedCursor = -2;
 
         auto iter = axline.backSegconns.begin();
@@ -91,10 +93,10 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
             }
 
             connectedCursor = iter->first.ref;
-            if (seen[connectedCursor] > segdepth) {
-                float length = seglengths[connectedCursor];
-                seen[connectedCursor] = segdepth;
-                audittrail[connectedCursor] =
+            if (seen[static_cast<size_t>(connectedCursor)] > segdepth) {
+                float length = seglengths[static_cast<size_t>(connectedCursor)];
+                seen[static_cast<size_t>(connectedCursor)] = segdepth;
+                audittrail[static_cast<size_t>(connectedCursor)] =
                     TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
                 // puts in a suitable bin ahead of us...
                 open++;
@@ -102,8 +104,9 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
                 // better to divide by 511 but have 512 bins...
                 list[(bin + int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
                     connectedCursor);
-                AttributeRow &row = map.getAttributeRowFromShapeIndex(connectedCursor);
-                row.setValue(sdColIdx, here.dist + length * 0.5);
+                AttributeRow &row =
+                    map.getAttributeRowFromShapeIndex(static_cast<size_t>(connectedCursor));
+                row.setValue(sdColIdx, static_cast<float>(here.dist + length * 0.5));
             }
             iter++;
         }

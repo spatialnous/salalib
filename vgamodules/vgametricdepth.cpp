@@ -13,7 +13,7 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
     AnalysisResult result({Column::METRIC_STEP_SHORTEST_PATH_ANGLE,
                            Column::METRIC_STEP_SHORTEST_PATH_LENGTH,
                            Column::METRIC_STRAIGHT_LINE_DISTANCE},
-                          m_map.getFilledPointCount());
+                          static_cast<size_t>(m_map.getFilledPointCount()));
 
     // n.b., insert columns sets values to -1 if the column already exists
     auto pathAngleColIdx = result.getColumnIndex(Column::METRIC_STEP_SHORTEST_PATH_ANGLE);

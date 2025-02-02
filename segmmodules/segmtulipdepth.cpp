@@ -14,12 +14,12 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
 
     AnalysisResult result;
 
-    int stepdepthCol = attributes.insertOrResetColumn(Column::ANGULAR_STEP_DEPTH);
+    auto stepdepthCol = attributes.insertOrResetColumn(Column::ANGULAR_STEP_DEPTH);
     result.addAttribute(Column::ANGULAR_STEP_DEPTH);
 
     // The original code set tulip_bins to 1024, divided by two and added one
     // in order to duplicate previous code (using a semicircle of tulip bins)
-    size_t tulipBins = (m_tulipBins / 2) + 1;
+    size_t tulipBins = static_cast<size_t>(m_tulipBins / 2) + 1;
 
     std::vector<bool> covered(map.getConnections().size());
     for (size_t i = 0; i < map.getConnections().size(); i++) {
@@ -29,7 +29,7 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
 
     int opencount = 0;
     for (auto &sel : m_originRefs) {
-        int row = depthmapX::getMapAtIndex(map.getAllShapes(), sel)->first;
+        int row = depthmapX::getMapAtIndex(map.getAllShapes(), static_cast<size_t>(sel))->first;
         if (row != -1) {
             bins[0].push_back(SegmentData(0, row, SegmentRef(), 0, 0.0, 0));
             opencount++;
@@ -52,7 +52,7 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
             // it is slightly slower to delete from an arbitrary place in the bin,
             // but it is necessary to use random paths to even out the number of times through equal
             // paths
-            int curr = pafmath::pafrand() % binIter->size();
+            auto curr = static_cast<int>(pafmath::pafrand() % binIter->size());
             auto currIter = binIter->begin() + curr;
             lineindex = *currIter;
             binIter->erase(currIter);
@@ -62,32 +62,41 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
             binIter->pop_back();
         }
         opencount--;
-        if (!covered[lineindex.ref]) {
-            covered[lineindex.ref] = true;
-            Connector &line = map.getConnections()[lineindex.ref];
+        if (!covered[static_cast<size_t>(lineindex.ref)]) {
+            covered[static_cast<size_t>(lineindex.ref)] = true;
+            Connector &line = map.getConnections()[static_cast<size_t>(lineindex.ref)];
             // convert depth from tulip_bins normalised to standard angle
             // (note the -1)
-            double depthToLine = depthlevel / ((tulipBins - 1) * 0.5);
-            map.getAttributeRowFromShapeIndex(lineindex.ref).setValue(stepdepthCol, depthToLine);
+            double depthToLine = depthlevel / (static_cast<float>(tulipBins - 1) * 0.5);
+            map.getAttributeRowFromShapeIndex(static_cast<size_t>(lineindex.ref))
+                .setValue(stepdepthCol, static_cast<float>(depthToLine));
             int extradepth;
             if (lineindex.dir != -1) {
                 for (auto &segconn : line.forwardSegconns) {
-                    if (!covered[segconn.first.ref]) {
-                        extradepth = (int)floor(segconn.second * tulipBins * 0.5);
-                        bins[(currentbin + tulipBins + extradepth) % tulipBins].push_back(
-                            SegmentData(segconn.first, lineindex.ref, lineindex.segdepth + 1, 0.0,
-                                        0));
+                    if (!covered[static_cast<size_t>(segconn.first.ref)]) {
+                        extradepth =
+                            (int)floor(segconn.second * static_cast<float>(tulipBins) * 0.5);
+                        bins[(static_cast<size_t>(currentbin) + tulipBins +
+                              static_cast<size_t>(extradepth)) %
+                             tulipBins]
+                            .push_back(SegmentData(segconn.first,
+                                                   static_cast<int8_t>(lineindex.ref),
+                                                   lineindex.segdepth + 1, 0.0, 0));
                         opencount++;
                     }
                 }
             }
             if (lineindex.dir != 1) {
                 for (auto &segconn : line.backSegconns) {
-                    if (!covered[segconn.first.ref]) {
-                        extradepth = (int)floor(segconn.second * tulipBins * 0.5);
-                        bins[(currentbin + tulipBins + extradepth) % tulipBins].push_back(
-                            SegmentData(segconn.first, lineindex.ref, lineindex.segdepth + 1, 0.0,
-                                        0));
+                    if (!covered[static_cast<size_t>(segconn.first.ref)]) {
+                        extradepth =
+                            (int)floor(segconn.second * static_cast<float>(tulipBins) * 0.5);
+                        bins[(static_cast<size_t>(currentbin) + tulipBins +
+                              static_cast<size_t>(extradepth)) %
+                             tulipBins]
+                            .push_back(SegmentData(segconn.first,
+                                                   static_cast<int8_t>(lineindex.ref),
+                                                   lineindex.segdepth + 1, 0.0, 0));
                         opencount++;
                     }
                 }

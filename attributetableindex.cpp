@@ -15,19 +15,20 @@ std::vector<ConstAttributeIndexItem> makeAttributeIndex(const AttributeTable &ta
     // appearence in the map
     size_t idx = 0;
     if (colIndex == -1) {
-        double perturbationFactor = 1e-9 / numRows;
+        double perturbationFactor = 1e-9 / static_cast<double>(numRows);
         for (auto &item : table) {
             double value = (double)item.getKey().value;
-            value += idx * perturbationFactor;
+            value += static_cast<double>(idx) * perturbationFactor;
 
             index.push_back(ConstAttributeIndexItem(item.getKey(), value, item.getRow()));
             ++idx;
         }
     } else if (colIndex >= 0) {
-        double perturbationFactor = table.getColumn(colIndex).getStats().max * 1e-9 / numRows;
+        double perturbationFactor = table.getColumn(static_cast<size_t>(colIndex)).getStats().max *
+                                    1e-9 / static_cast<double>(numRows);
         for (auto &item : table) {
-            double value = item.getRow().getValue(colIndex);
-            value += idx * perturbationFactor;
+            double value = item.getRow().getValue(static_cast<size_t>(colIndex));
+            value += static_cast<double>(idx) * perturbationFactor;
 
             index.push_back(ConstAttributeIndexItem(item.getKey(), value, item.getRow()));
             ++idx;
@@ -50,19 +51,20 @@ std::vector<AttributeIndexItem> makeAttributeIndex(AttributeTable &table, int co
     // appearence in the map
     size_t idx = 0;
     if (colIndex == -1) {
-        double perturbationFactor = 1e-9 / numRows;
+        double perturbationFactor = 1e-9 / static_cast<double>(numRows);
         for (auto &item : table) {
             double value = (double)item.getKey().value;
-            value += idx * perturbationFactor;
+            value += static_cast<double>(idx) * perturbationFactor;
 
             index.push_back(AttributeIndexItem(item.getKey(), value, item.getRow()));
             ++idx;
         }
     } else if (colIndex >= 0) {
-        double perturbationFactor = table.getColumn(colIndex).getStats().max * 1e-9 / numRows;
+        double perturbationFactor = table.getColumn(static_cast<size_t>(colIndex)).getStats().max *
+                                    1e-9 / static_cast<double>(numRows);
         for (auto &item : table) {
-            double value = item.getRow().getValue(colIndex);
-            value += idx * perturbationFactor;
+            double value = item.getRow().getValue(static_cast<size_t>(colIndex));
+            value += static_cast<double>(idx) * perturbationFactor;
 
             index.push_back(AttributeIndexItem(item.getKey(), value, item.getRow()));
             ++idx;

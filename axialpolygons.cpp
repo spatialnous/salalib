@@ -11,7 +11,8 @@
 #include "genlib/containerutils.h"
 
 AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Point2f &openspace) {
-    auto vertPossIter = depthmapX::getMapAtIndex(vertexPossibles, vertexkey.refKey);
+    auto vertPossIter =
+        depthmapX::getMapAtIndex(vertexPossibles, static_cast<size_t>(vertexkey.refKey));
     AxialVertex av(vertexkey, vertPossIter->first, openspace);
 
     // n.b., at this point, vertex key m_a and m_b are unfixed
@@ -30,9 +31,9 @@ AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Poi
         anglemap.insert(std::make_pair(openspace.angle(av.point, pointlist[i]), i));
     }
 
-    av.refA = anglemap.begin()->second;
+    av.refA = static_cast<short>(anglemap.begin()->second);
     // TODO: is this supposed to be av.m_ref_b?
-    av.refA = anglemap.rbegin()->second;
+    av.refA = static_cast<short>(anglemap.rbegin()->second);
     Point2f a = av.point - pointlist[size_t(anglemap.begin()->second)];
     Point2f b = pointlist[size_t(anglemap.rbegin()->second)] - av.point;
     av.a = a;
@@ -126,7 +127,7 @@ void AxialPolygons::init(std::vector<Line4f> &lines, const Region4f &region) {
     // required
     makeVertexPossibles(lines, connectionset);
 
-    initLines(lines.size(), m_region.bottomLeft, m_region.topRight, 2);
+    initLines(static_cast<int>(lines.size()), m_region.bottomLeft, m_region.topRight, 2);
     // need to init before making pixel polys...
     makePixelPolys();
     // now also add lines
@@ -211,15 +212,16 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
             while (addlist.size()) {
                 m_vertexPolys[size_t(addlist.back())] = currentPoly;
                 std::vector<Point2f> &connections =
-                    depthmapX::getMapAtIndex(vertexPossibles, addlist.back())->second;
+                    depthmapX::getMapAtIndex(vertexPossibles, static_cast<size_t>(addlist.back()))
+                        ->second;
                 addlist.pop_back();
                 for (size_t j = 0; j < connections.size(); j++) {
-                    int index = depthmapX::findIndexFromKey(vertexPossibles, connections[j]);
+                    auto index = depthmapX::findIndexFromKey(vertexPossibles, connections[j]);
                     if (index == -1) {
                         throw 3;
                     }
                     if (m_vertexPolys[size_t(index)] == -1) {
-                        addlist.push_back(index);
+                        addlist.push_back(static_cast<int>(index));
                     }
                 }
             }
@@ -257,7 +259,8 @@ AxialVertexKey AxialPolygons::seedVertex(const Point2f &seed) {
     while (!foundvertex) {
         for (int vertexref :
              m_pixelPolys(static_cast<size_t>(seedref.y), static_cast<size_t>(seedref.x))) {
-            const Point2f &trialpoint = depthmapX::getMapAtIndex(vertexPossibles, vertexref)->first;
+            const Point2f &trialpoint =
+                depthmapX::getMapAtIndex(vertexPossibles, static_cast<size_t>(vertexref))->first;
             if (!intersect_exclude(Line4f(seed, trialpoint))) {
                 // yay... ...but wait... we need to see if it's a proper polygon vertex
                 // first...
@@ -266,7 +269,7 @@ AxialVertexKey AxialPolygons::seedVertex(const Point2f &seed) {
             }
         }
         if (!foundvertex) {
-            seedref = seedref.move(dir);
+            seedref = seedref.move(static_cast<int8_t>(dir));
             // spiral outwards:
             if (++runlength == sidelength) {
                 switch (dir) {
@@ -301,11 +304,11 @@ AxialVertexKey AxialPolygons::seedVertex(const Point2f &seed) {
             }
             if (seedref.x >= static_cast<short>(m_cols)) {
                 allboundaries |= 0x04;
-                seedref.x = m_cols - 1;
+                seedref.x = static_cast<short>(m_cols - 1);
             }
             if (seedref.y >= static_cast<short>(m_rows)) {
                 allboundaries |= 0x08;
-                seedref.y = m_rows - 1;
+                seedref.y = static_cast<short>(m_rows - 1);
             }
             if (allboundaries == 0x0f) {
                 return NoVertex;
@@ -370,9 +373,10 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                             shortlineSegend = true;
                         }
                     }
-                    if (m_vertexPolys[vertex.refKey] !=
-                        m_vertexPolys[nextVertex.refKey]) { // must be on separate
-                                                            // polygons
+                    if (m_vertexPolys[static_cast<size_t>(vertex.refKey)] !=
+                        m_vertexPolys[static_cast<size_t>(
+                            nextVertex.refKey)]) { // must be on separate
+                                                   // polygons
                         // radial line(s) (for new point)
                         RadialLine radialshort(nextVertex, shortlineSegend, vertex.point,
                                                nextVertex.point, nextVertex.point + nextVertex.b);
@@ -399,9 +403,10 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                             shortlineSegend = true;
                         }
                     }
-                    if (m_vertexPolys[vertex.refKey] !=
-                        m_vertexPolys[nextVertex.refKey]) { // must be on separate
-                                                            // polygons
+                    if (m_vertexPolys[static_cast<size_t>(vertex.refKey)] !=
+                        m_vertexPolys[static_cast<size_t>(
+                            nextVertex.refKey)]) { // must be on separate
+                                                   // polygons
                         // radial line(s) (for original point)
                         RadialLine radialshort(vertex, shortlineSegend, nextVertex.point,
                                                vertex.point, vertex.point + vertex.b);
@@ -478,11 +483,11 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                             if (vertexPossibles.find(vertPossIter->second.at(k))->second.size() >
                                 1) {
                                 minangle = thisangle;
-                                winner = k;
+                                winner = static_cast<int>(k);
                             }
                         }
                     } else {
-                        wayback = k;
+                        wayback = static_cast<int>(k);
                     }
                 }
                 if (winner == -1) {
@@ -490,10 +495,11 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                     // came!
                     winner = wayback;
                 }
-                newHandledList[std::distance(vertexPossibles.begin(), vertPossIter)].push_back(
-                    winner);
+                newHandledList[static_cast<size_t>(
+                                   std::distance(vertexPossibles.begin(), vertPossIter))]
+                    .push_back(winner);
                 last = curr;
-                curr = vertPossIter->second.at(winner);
+                curr = vertPossIter->second.at(static_cast<size_t>(winner));
             }
             polygons.push_back(polygon);
         }

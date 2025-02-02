@@ -26,7 +26,8 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     std::vector<AnalysisData> globalAnalysisData;
@@ -43,7 +44,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
     const auto refs = getRefVector(globalAnalysisData);
     const auto graph = getGraph(globalAnalysisData, refs, false);
 
-    int count = 0;
+    size_t count = 0;
 
     std::vector<DataPoint> colData(attributes.getNumRows());
 
@@ -61,7 +62,9 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
             continue;
         }
 
-        DataPoint &dp = colData[i];
+        auto ui = static_cast<size_t>(i);
+
+        DataPoint &dp = colData[ui];
 
         std::vector<AnalysisData> analysisData;
         analysisData.reserve(m_map.getAttributeTable().getNumRows());
@@ -77,7 +80,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         float totalAngle = 0.0f;
         int totalNodes = 0;
 
-        auto &ad0 = analysisData.at(i);
+        auto &ad0 = analysisData.at(ui);
 
         std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
 
@@ -123,9 +126,9 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
     AnalysisResult result({meanDepthColText, totalDetphColText, countColText},
                           attributes.getNumRows());
 
-    int meanDepthCol = result.getColumnIndex(meanDepthColText.c_str());
-    int totalDepthCol = result.getColumnIndex(totalDetphColText.c_str());
-    int countCol = result.getColumnIndex(countColText.c_str());
+    auto meanDepthCol = result.getColumnIndex(meanDepthColText.c_str());
+    auto totalDepthCol = result.getColumnIndex(totalDetphColText.c_str());
+    auto countCol = result.getColumnIndex(countColText.c_str());
 
     auto dataIter = colData.begin();
     for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {

@@ -41,7 +41,7 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
 
     AnalysisResult result(std::move(colNames), attributes.getNumRows());
 
-    std::map<PixelRef, std::vector<int>> columns;
+    std::map<PixelRef, std::vector<size_t>> columns;
     {
         for (PixelRef ref : m_pixelsTo) {
             columns[ref].push_back(
@@ -62,11 +62,11 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
     }
 
     for (PixelRef pixelTo : m_pixelsTo) {
-        const std::vector<int> &pixelToCols = columns[pixelTo];
-        int pathCol = pixelToCols[0];
-        int distCol = pixelToCols[1];
-        int linkedCol = pixelToCols[2];
-        int orderCol = pixelToCols[3];
+        const std::vector<size_t> &pixelToCols = columns[pixelTo];
+        auto pathCol = pixelToCols[0];
+        auto distCol = pixelToCols[1];
+        auto linkedCol = pixelToCols[2];
+        auto orderCol = pixelToCols[3];
         auto pixelToParent = parents.find(pixelTo);
         if (pixelToParent != parents.end()) {
 

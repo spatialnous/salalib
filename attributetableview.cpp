@@ -26,14 +26,14 @@ float AttributeTableView::getNormalisedValue(const AttributeKey &key,
         --endIter;
         return (float)key.value / (float)endIter->getKey().value;
     }
-    return row.getNormalisedValue(m_displayColumn);
+    return row.getNormalisedValue(static_cast<size_t>(m_displayColumn));
 }
 
 const DisplayParams &AttributeTableView::getDisplayParams() const {
     if (m_displayColumn < 0) {
         return table.getDisplayParams();
     }
-    return table.getColumn(m_displayColumn).getDisplayParams();
+    return table.getColumn(static_cast<size_t>(m_displayColumn)).getDisplayParams();
 }
 
 void AttributeTableHandle::setDisplayColIndex(int columnIndex) {
@@ -46,7 +46,7 @@ void AttributeTableHandle::setDisplayColIndex(int columnIndex) {
     }
     AttributeTableView::setDisplayColIndex(columnIndex);
 }
-int AttributeTableHandle::findInIndex(const AttributeKey &key) {
+long AttributeTableHandle::findInIndex(const AttributeKey &key) {
 
     auto iter = std::find_if(m_mutableIndex.begin(), m_mutableIndex.end(), index_item_key(key));
     if (iter != m_mutableIndex.end()) {

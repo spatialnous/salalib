@@ -19,7 +19,7 @@
 
 int NtfPoint::parse(const std::string &token, bool secondhalf /* = false */) {
     if (secondhalf) {
-        std::string second = token.substr(0, chars);
+        std::string second = token.substr(0, static_cast<size_t>(chars));
         b = stoi(second);
         if (chars == 5) {
             b *= 100;
@@ -29,15 +29,15 @@ int NtfPoint::parse(const std::string &token, bool secondhalf /* = false */) {
         if ((int)token.length() < chars) {
             return 0;
         }
-        std::string first = token.substr(0, chars);
+        std::string first = token.substr(0, static_cast<size_t>(chars));
         a = stoi(first);
         if (chars == 5) {
             a *= 100;
         }
         return 1;
     } else {
-        std::string first = token.substr(0, chars);
-        std::string second = token.substr(chars, chars);
+        std::string first = token.substr(0, static_cast<size_t>(chars));
+        std::string second = token.substr(static_cast<size_t>(chars), static_cast<size_t>(chars));
         a = stoi(first);
         b = stoi(second);
         if (chars == 5) {
@@ -223,7 +223,7 @@ void NtfMap::open(const std::vector<std::string> &fileset, Communicator *comm) {
                         lastpoint = currpoint;
                         currtoken = 1;
                     }
-                    for (size_t j = currtoken; j < tokens.size(); j++) {
+                    for (size_t j = static_cast<size_t>(currtoken); j < tokens.size(); j++) {
                         int numbersparsed = currpoint.parse(tokens[j]);
                         if (numbersparsed == 2) {
                             Line4f li = makeLine(lastpoint, currpoint);

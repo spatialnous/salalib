@@ -31,7 +31,8 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
     float maxseglength = 0.0f;
     for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
         AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
-        axialrefs.push_back(row.getValue(attributes.getColumnIndex("Axial Line Ref")));
+        axialrefs.push_back(
+            static_cast<int>(row.getValue(attributes.getColumnIndex("Axial Line Ref"))));
         seglengths.push_back(row.getValue(attributes.getColumnIndex("Segment Length")));
         if (seglengths.back() > maxseglength) {
             maxseglength = seglengths.back();
@@ -79,10 +80,10 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
         }
         std::vector<int> list[512]; // 512 bins!
         int bin = 0;
-        list[bin].push_back(cursor);
+        list[bin].push_back(static_cast<int>(cursor));
         double rootseglength = seglengths[cursor];
-        audittrail[cursor] =
-            TopoMetSegmentRef(cursor, Connector::SEG_CONN_ALL, rootseglength * 0.5, -1);
+        audittrail[cursor] = TopoMetSegmentRef(static_cast<int>(cursor), Connector::SEG_CONN_ALL,
+                                               rootseglength * 0.5, -1);
         int open = 1;
         unsigned int segdepth = 0;
         double total = 0.0, wtotal = 0.0, wtotaldepth = 0.0, totalsegdepth = 0.0;
@@ -95,7 +96,7 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
                 }
             }
             //
-            TopoMetSegmentRef &here = audittrail[list[bin].back()];
+            TopoMetSegmentRef &here = audittrail[static_cast<size_t>(list[bin].back())];
             list[bin].pop_back();
             open--;
             //
@@ -105,14 +106,14 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
                 here.done = true;
             }
             //
-            double len = seglengths[here.ref];
+            double len = seglengths[static_cast<size_t>(here.ref)];
             totalsegdepth += segdepth;
             wtotal += len;
             wtotaldepth += len * segdepth;
 
             total += 1;
             //
-            Connector &axline = map.getConnections().at(here.ref);
+            Connector &axline = map.getConnections().at(static_cast<size_t>(here.ref));
             int connectedCursor = -2;
 
             auto iter = axline.backSegconns.begin();
@@ -129,23 +130,24 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
 
                 connectedCursor = iter->first.ref;
 
-                if (seen[connectedCursor] > segdepth &&
+                if (seen[static_cast<size_t>(connectedCursor)] > segdepth &&
                     static_cast<size_t>(connectedCursor) != cursor) {
-                    bool seenalready = (seen[connectedCursor] == 0xffffffff) ? false : true;
-                    float length = seglengths[connectedCursor];
-                    int axialref = axialrefs[connectedCursor];
-                    audittrail[connectedCursor] =
+                    bool seenalready =
+                        (seen[static_cast<size_t>(connectedCursor)] == 0xffffffff) ? false : true;
+                    float length = seglengths[static_cast<size_t>(connectedCursor)];
+                    int axialref = axialrefs[static_cast<size_t>(connectedCursor)];
+                    audittrail[static_cast<size_t>(connectedCursor)] =
                         TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
-                    seen[connectedCursor] = segdepth;
+                    seen[static_cast<size_t>(connectedCursor)] = segdepth;
                     if (m_radius == -1 || here.dist + length < m_radius) {
                         // puts in a suitable bin ahead of us...
                         open++;
                         //
-                        if (axialrefs[here.ref] == axialref) {
+                        if (axialrefs[static_cast<size_t>(here.ref)] == axialref) {
                             list[bin].push_back(connectedCursor);
                         } else {
                             list[(bin + 1) % 2].push_back(connectedCursor);
-                            seen[connectedCursor] =
+                            seen[static_cast<size_t>(connectedCursor)] =
                                 segdepth +
                                 1; // this is so if another node is connected directly to this one
                                    // but is found later it is still handled -- note it can result
@@ -163,9 +165,10 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
                         int subcur = connectedCursor;
                         while (subcur != -1) {
                             // in this method of choice, start and end lines are included
-                            choicevals[subcur].choice += 1;
-                            choicevals[subcur].wchoice += (rootseglength * length);
-                            subcur = audittrail[subcur].previous;
+                            choicevals[static_cast<size_t>(subcur)].choice += 1;
+                            choicevals[static_cast<size_t>(subcur)].wchoice +=
+                                (rootseglength * length);
+                            subcur = audittrail[static_cast<size_t>(subcur)].previous;
                         }
                     }
                 }
@@ -173,11 +176,12 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
             }
         }
         // also put in mean depth:
-        row.setValue(meandepthcol.c_str(), totalsegdepth / (total - 1));
-        row.setValue(totaldcol.c_str(), totalsegdepth);
-        row.setValue(wmeandepthcol.c_str(), wtotaldepth / (wtotal - rootseglength));
-        row.setValue(totalcol.c_str(), total);
-        row.setValue(wtotalcol.c_str(), wtotal);
+        row.setValue(meandepthcol.c_str(), static_cast<float>(totalsegdepth / (total - 1)));
+        row.setValue(totaldcol.c_str(), static_cast<float>(totalsegdepth));
+        row.setValue(wmeandepthcol.c_str(),
+                     static_cast<float>(wtotaldepth / (wtotal - rootseglength)));
+        row.setValue(totalcol.c_str(), static_cast<float>(total));
+        row.setValue(wtotalcol.c_str(), static_cast<float>(wtotal));
         //
         if (comm) {
             if (qtimer(atime, 500)) {
@@ -185,7 +189,7 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
                     throw Communicator::CancelledException();
                 }
             }
-            comm->CommPostMessage(Communicator::CURRENT_RECORD, reccount);
+            comm->CommPostMessage(Communicator::CURRENT_RECORD, static_cast<size_t>(reccount));
         }
         reccount++;
     }
@@ -193,8 +197,8 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
         // note, I've stopped sel only from calculating choice values:
         for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
             AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
-            row.setValue(choicecol.c_str(), choicevals[cursor].choice);
-            row.setValue(wchoicecol.c_str(), choicevals[cursor].wchoice);
+            row.setValue(choicecol.c_str(), static_cast<float>(choicevals[cursor].choice));
+            row.setValue(wchoicecol.c_str(), static_cast<float>(choicevals[cursor].wchoice));
         }
     }
 

@@ -22,7 +22,7 @@ void AgentProgram::mutate() {
             ruleOrder[i] = -1;
         }
         for (int j = 0; j < 4; j++) {
-            int choice = pafmath::pafrand() % (4 - j);
+            auto choice = static_cast<int>(pafmath::pafrand() % static_cast<uint>(4 - j));
             for (int k = 0; k < choice + 1; k++) {
                 if (ruleOrder[k] != -1) {
                     choice++;
@@ -154,7 +154,7 @@ bool AgentProgram::open(const std::string &filename) {
         if (line.substr(0, 6) == "steps:") {
             std::string inputSteps = line.substr(6);
             dXstring::ltrim(inputSteps);
-            inputSteps = stoi(inputSteps);
+            inputSteps = static_cast<char>(std::stoi(inputSteps));
             file >> line;
             foundsteps = true;
         }
@@ -196,7 +196,7 @@ bool AgentProgram::open(const std::string &filename) {
                 return false;
             }
             for (int i = 0; i < 4; i++) {
-                ruleOrder[i] = stoi(orders[i]);
+                ruleOrder[i] = stoi(orders[static_cast<size_t>(i)]);
             }
             file >> line;
         } else {

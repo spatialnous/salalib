@@ -27,12 +27,13 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     const auto refs = getRefVector(attributes);
 
-    int count = 0;
+    size_t count = 0;
 
     std::vector<DataPoint> colData(attributes.getNumRows());
 
@@ -50,12 +51,14 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
             continue;
         }
 
-        DataPoint &dp = colData[i];
+        auto ui = static_cast<size_t>(i);
+
+        DataPoint &dp = colData[ui];
 
         std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
         const auto graph = getGraph(analysisData, refs, false);
 
-        auto &ad0 = analysisData.at(i);
+        auto &ad0 = analysisData.at(ui);
 
         auto [totalDepth, totalAngle, euclidDepth, totalNodes] =
             traverseSum(analysisData, graph, refs, m_radius, ad0);
@@ -103,10 +106,10 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
     AnalysisResult result({mspaColText, msplColText, distColText, countColText},
                           attributes.getNumRows());
 
-    int mspaCol = result.getColumnIndex(mspaColText);
-    int msplCol = result.getColumnIndex(msplColText);
-    int distCol = result.getColumnIndex(distColText);
-    int countCol = result.getColumnIndex(countColText);
+    auto mspaCol = result.getColumnIndex(mspaColText);
+    auto msplCol = result.getColumnIndex(msplColText);
+    auto distCol = result.getColumnIndex(distColText);
+    auto countCol = result.getColumnIndex(countColText);
 
     auto dataIter = colData.begin();
     for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {

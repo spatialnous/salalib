@@ -15,7 +15,7 @@ AnalysisResult VGAMetricDepthLinkCost::run(Communicator *) {
     std::string pathLengthColName = Column::METRIC_STEP_DEPTH;
     AnalysisResult result({pathLengthColName}, attributes.getNumRows());
 
-    int pathLengthColIdx = result.getColumnIndex(pathLengthColName);
+    auto pathLengthColIdx = result.getColumnIndex(pathLengthColName);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
     const auto refs = getRefVector(analysisData);

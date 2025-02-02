@@ -27,7 +27,7 @@ class AxialMinimiser {
     std::vector<Connector>
         m_axialconns; // <- uses a copy of axial lines as it will remove connections
   public:
-    AxialMinimiser(const ShapeGraph &alllinemap, int noOfAxsegcuts, int noOfRadialsegs);
+    AxialMinimiser(const ShapeGraph &alllinemap, size_t noOfAxsegcuts, size_t noOfRadialsegs);
     ~AxialMinimiser();
     void removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                        std::map<RadialKey, RadialSegment> &radialsegs,

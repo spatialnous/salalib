@@ -295,28 +295,30 @@ namespace depthmapX {
         int xcol = -1, ycol = -1, x1col = -1, y1col = -1, x2col = -1, y2col = -1, refcol = -1;
         for (auto const &column : table) {
             if (column.first == "x" || column.first == "easting")
-                xcol = columns.size();
+                xcol = static_cast<int>(columns.size());
             else if (column.first == "y" || column.first == "northing")
-                ycol = columns.size();
+                ycol = static_cast<int>(columns.size());
             else if (column.first == "x1")
-                x1col = columns.size();
+                x1col = static_cast<int>(columns.size());
             else if (column.first == "x2")
-                x2col = columns.size();
+                x2col = static_cast<int>(columns.size());
             else if (column.first == "y1")
-                y1col = columns.size();
+                y1col = static_cast<int>(columns.size());
             else if (column.first == "y2")
-                y2col = columns.size();
+                y2col = static_cast<int>(columns.size());
             else if (column.first == "Ref")
-                refcol = columns.size();
+                refcol = static_cast<int>(columns.size());
             columns.push_back(column.first);
         }
 
         if (xcol != -1 && ycol != -1 && refcol != -1) {
-            std::map<int, Point2f> points = extractPointsWithRefs(
-                table[columns[xcol]], table[columns[ycol]], table[columns[refcol]]);
-            table.erase(table.find(columns[xcol]));
-            table.erase(table.find(columns[ycol]));
-            table.erase(table.find(columns[refcol]));
+            std::map<int, Point2f> points =
+                extractPointsWithRefs(table[columns[static_cast<size_t>(xcol)]],
+                                      table[columns[static_cast<size_t>(ycol)]],
+                                      table[columns[static_cast<size_t>(refcol)]]);
+            table.erase(table.find(columns[static_cast<size_t>(xcol)]));
+            table.erase(table.find(columns[static_cast<size_t>(ycol)]));
+            table.erase(table.find(columns[static_cast<size_t>(refcol)]));
 
             Region4f region;
 
@@ -332,9 +334,10 @@ namespace depthmapX {
             shapeMap.importPointsWithRefs(points, table);
 
         } else if (xcol != -1 && ycol != -1) {
-            std::vector<Point2f> points = extractPoints(table[columns[xcol]], table[columns[ycol]]);
-            table.erase(table.find(columns[xcol]));
-            table.erase(table.find(columns[ycol]));
+            std::vector<Point2f> points = extractPoints(table[columns[static_cast<size_t>(xcol)]],
+                                                        table[columns[static_cast<size_t>(ycol)]]);
+            table.erase(table.find(columns[static_cast<size_t>(xcol)]));
+            table.erase(table.find(columns[static_cast<size_t>(ycol)]));
 
             Region4f region;
 
@@ -350,14 +353,17 @@ namespace depthmapX {
             shapeMap.importPoints(points, table);
 
         } else if (x1col != -1 && y1col != -1 && x2col != -1 && y2col != -1 && refcol != -1) {
-            std::map<int, Line4f> lines = extractLinesWithRef(
-                table[columns[x1col]], table[columns[y1col]], table[columns[x2col]],
-                table[columns[y2col]], table[columns[refcol]]);
-            table.erase(table.find(columns[x1col]));
-            table.erase(table.find(columns[y1col]));
-            table.erase(table.find(columns[x2col]));
-            table.erase(table.find(columns[y2col]));
-            table.erase(table.find(columns[refcol]));
+            std::map<int, Line4f> lines =
+                extractLinesWithRef(table[columns[static_cast<size_t>(x1col)]],
+                                    table[columns[static_cast<size_t>(y1col)]],
+                                    table[columns[static_cast<size_t>(x2col)]],
+                                    table[columns[static_cast<size_t>(y2col)]],
+                                    table[columns[static_cast<size_t>(refcol)]]);
+            table.erase(table.find(columns[static_cast<size_t>(x1col)]));
+            table.erase(table.find(columns[static_cast<size_t>(y1col)]));
+            table.erase(table.find(columns[static_cast<size_t>(x2col)]));
+            table.erase(table.find(columns[static_cast<size_t>(y2col)]));
+            table.erase(table.find(columns[static_cast<size_t>(refcol)]));
 
             Region4f region;
 
@@ -373,12 +379,14 @@ namespace depthmapX {
             shapeMap.importLinesWithRefs(lines, table);
 
         } else if (x1col != -1 && y1col != -1 && x2col != -1 && y2col != -1) {
-            std::vector<Line4f> lines = extractLines(table[columns[x1col]], table[columns[y1col]],
-                                                     table[columns[x2col]], table[columns[y2col]]);
-            table.erase(table.find(columns[x1col]));
-            table.erase(table.find(columns[y1col]));
-            table.erase(table.find(columns[x2col]));
-            table.erase(table.find(columns[y2col]));
+            std::vector<Line4f> lines = extractLines(table[columns[static_cast<size_t>(x1col)]],
+                                                     table[columns[static_cast<size_t>(y1col)]],
+                                                     table[columns[static_cast<size_t>(x2col)]],
+                                                     table[columns[static_cast<size_t>(y2col)]]);
+            table.erase(table.find(columns[static_cast<size_t>(x1col)]));
+            table.erase(table.find(columns[static_cast<size_t>(y1col)]));
+            table.erase(table.find(columns[static_cast<size_t>(x2col)]));
+            table.erase(table.find(columns[static_cast<size_t>(y2col)]));
 
             Region4f region;
 
@@ -525,9 +533,9 @@ namespace depthmapX {
         for (size_t n = 0; n < dxfLayer.numArcs(); n++) {
             const DxfArc &circ = dxfLayer.getArc(n);
             std::vector<Point2f> vertices;
-            size_t segments = circ.numSegments(DXFCIRCLERES);
+            int segments = static_cast<int>(circ.numSegments(DXFCIRCLERES));
             if (segments > 1) {
-                for (size_t m = 0; m <= segments; m++) {
+                for (int m = 0; m <= segments; m++) {
                     DxfVertex v = circ.getVertex(m, segments);
                     vertices.push_back(Point2f(v.x, v.y));
                 }
@@ -538,9 +546,9 @@ namespace depthmapX {
         for (size_t n = 0; n < dxfLayer.numEllipses(); n++) {
             const DxfEllipse &ellipse = dxfLayer.getEllipse(n);
             std::vector<Point2f> vertices;
-            size_t segments = ellipse.numSegments(DXFCIRCLERES);
+            auto segments = static_cast<int>(ellipse.numSegments(DXFCIRCLERES));
             if (segments > 1) {
-                for (size_t m = 0; m <= segments; m++) {
+                for (int m = 0; m <= segments; m++) {
                     DxfVertex v = ellipse.getVertex(m, segments);
                     vertices.push_back(Point2f(v.x, v.y));
                 }
@@ -579,7 +587,7 @@ namespace depthmapX {
         int refcol = -1;
         for (auto const &column : table) {
             if (column.first == "Ref")
-                refcol = outColumns.size();
+                refcol = static_cast<int>(outColumns.size());
             else
                 outColumns.push_back(column.first);
         }
@@ -608,7 +616,7 @@ namespace depthmapX {
         // so no need for corrective measures yet
 
         for (const std::string &column : outColumns) {
-            int colIdx = attributes.insertOrResetColumn(column);
+            auto colIdx = attributes.insertOrResetColumn(column);
             auto outRowIter = table[column].begin();
             for (auto inRowIter = inRows.begin(); inRowIter != inRows.end();
                  inRowIter++, outRowIter++) {

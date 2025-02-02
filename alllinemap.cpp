@@ -96,7 +96,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     }
 
     time_t atime = 0;
-    int count = 0;
+    size_t count = 0;
     if (comm) {
         qtimer(atime, 0);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 2);
@@ -153,7 +153,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     // -> don't know what this was for: alllinemap.sortBins(m_poly_connections);
     map.makeConnections(preaxialdata);
 
-    map.setKeyVertexCount(mapData.polygons.vertexPossibles.size());
+    map.setKeyVertexCount(static_cast<int>(mapData.polygons.vertexPossibles.size()));
 }
 
 std::tuple<ShapeGraph, ShapeGraph>
@@ -228,7 +228,8 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
                     if (radialSegIter != radialsegs.end() &&
                         rkStart == radialSegIter->second.radialB) {
                         radialSegIter->second.indices.insert(axIter->first);
-                        axSeg->second.insert(std::distance(radialsegs.begin(), radialSegIter));
+                        axSeg->second.insert(
+                            static_cast<int>(std::distance(radialsegs.begin(), radialSegIter)));
                     }
                 }
                 ++axRadCutIter;
@@ -255,7 +256,7 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
                 auto res = std::lower_bound(conn.begin(), conn.end(), axbi);
                 if (res == conn.end() || axbi < *res) {
                     conn.insert(res, axbi);
-                    keyvertexcounts[axbi] += 1;
+                    keyvertexcounts[static_cast<size_t>(axbi)] += 1;
                 }
             }
         }
@@ -286,13 +287,14 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
     // make new lines here (assumes line map has only lines
     for (int sk = 0; sk < int(map.getAllShapes().size()); sk++) {
         if (!minimiser.removed(sk)) {
-            linesM.push_back(depthmapX::getMapAtIndex(map.getAllShapes(), sk)->second.getLine());
+            linesM.push_back(depthmapX::getMapAtIndex(map.getAllShapes(), static_cast<size_t>(sk))
+                                 ->second.getLine());
         }
     }
 
     ShapeGraph fewestlinemapSubsets("Fewest-Line Map (Subsets)", ShapeMap::AXIALMAP);
     fewestlinemapSubsets.clearAll();
-    fewestlinemapSubsets.init(int(linesS.size()), mapData.polygons.getRegion());
+    fewestlinemapSubsets.init(linesS.size(), mapData.polygons.getRegion());
 
     fewestlinemapSubsets.initialiseAttributesAxial();
     for (size_t lidx = 0; lidx < linesS.size(); lidx++) {
@@ -303,7 +305,7 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
     ShapeGraph fewestlinemapMinimal("Fewest-Line Map (Minimal)", ShapeMap::AXIALMAP);
     fewestlinemapMinimal.clearAll();
     fewestlinemapMinimal.init(
-        int(linesM.size()),
+        linesM.size(),
         mapData.polygons.getRegion()); // used to have a '2' for double pixel density
 
     fewestlinemapMinimal.initialiseAttributesAxial();
@@ -330,7 +332,7 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
         PixelRefVector pixels = map.pixelateLine(polyconnections[i].line);
         std::vector<size_t> testedshapes;
         auto connIter = radialdivisions.find(polyconnections[i].key);
-        size_t connindex = std::distance(radialdivisions.begin(), connIter);
+        auto connindex = static_cast<int>(std::distance(radialdivisions.begin(), connIter));
         for (size_t j = 0; j < pixels.size(); j++) {
             PixelRef pix = pixels[j];
             const auto &shapes = map.getShapesAtPixel(pix);
@@ -339,35 +341,37 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                 if (iter != testedshapes.end()) {
                     continue;
                 }
-                testedshapes.insert(iter, int(shape.shapeRef));
-                const Line4f &line = map.getAllShapes().find(shape.shapeRef)->second.getLine();
+                testedshapes.insert(iter, shape.shapeRef);
+                const Line4f &line =
+                    map.getAllShapes().find(static_cast<int>(shape.shapeRef))->second.getLine();
                 //
-                if (line.Region4f::intersects(polyconnections[i].line, tolerance * line.length())) {
-                    switch (line.intersects_distinguish(polyconnections[i].line,
-                                                        tolerance * line.length())) {
+                if (line.Region4f::intersects(polyconnections[i].line,
+                                              static_cast<double>(tolerance * line.length()))) {
+                    switch (line.intersects_distinguish(
+                        polyconnections[i].line, static_cast<double>(tolerance * line.length()))) {
                     case 0:
                         break;
                     case 2: {
-                        size_t index =
-                            depthmapX::findIndexFromKey(axialdividers, (int)shape.shapeRef);
-                        if (index != shape.shapeRef) {
+                        auto index = static_cast<int>(
+                            depthmapX::findIndexFromKey(axialdividers, (int)shape.shapeRef));
+                        if (index != static_cast<int>(shape.shapeRef)) {
                             throw 1; // for the code to work later this can't be true!
                         }
                         axialdividers[index].insert(connindex);
-                        connIter->second.insert(shape.shapeRef);
+                        connIter->second.insert(static_cast<int>(shape.shapeRef));
                     } break;
                     case 1: {
-                        size_t index =
-                            depthmapX::findIndexFromKey(axialdividers, (int)shape.shapeRef);
-                        if (index != shape.shapeRef) {
+                        auto index = static_cast<int>(
+                            depthmapX::findIndexFromKey(axialdividers, (int)shape.shapeRef));
+                        if (index != static_cast<int>(shape.shapeRef)) {
                             throw 1; // for the code to work later this can't be true!
                         }
                         //
                         // this makes sure actually crosses between the line and the
                         // openspace properly
-                        if (radiallines[connindex].cuts(line)) {
+                        if (radiallines[static_cast<size_t>(connindex)].cuts(line)) {
                             axialdividers[index].insert(connindex);
-                            connIter->second.insert(shape.shapeRef);
+                            connIter->second.insert(static_cast<int>(shape.shapeRef));
                         }
                     } break;
                     default:

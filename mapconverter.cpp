@@ -71,16 +71,17 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToAxial(
     // we can stop here for all line axial map!
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::AXIALMAP));
 
-    usermap->init(int(lines.size()), region); // used to be double density
-    std::map<int, float> layerAttributes;
+    usermap->init(lines.size(), region); // used to be double density
+    std::map<size_t, float> layerAttributes;
     usermap->initialiseAttributesAxial();
-    int layerCol = -1;
+    std::optional<size_t> layerCol = std::nullopt;
     if (recordlayer) {
-        layerCol = usermap->getAttributeTable().getOrInsertColumn("Drawing Layer");
+        layerCol =
+            static_cast<int>(usermap->getAttributeTable().getOrInsertColumn("Drawing Layer"));
     }
     for (auto &line : lines) {
         if (recordlayer) {
-            layerAttributes[layerCol] = float(line.second.second);
+            layerAttributes[layerCol.value()] = float(line.second.second);
         }
         usermap->makeLineShape(line.second.first, false, false, layerAttributes);
     }
@@ -141,13 +142,13 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
     // we can stop here for all line axial map!
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::AXIALMAP));
 
-    usermap->init(int(lines.size()), region); // used to be double density
+    usermap->init(lines.size(), region); // used to be double density
     usermap->initialiseAttributesAxial();
 
     usermap->getAttributeTable().insertOrResetColumn("Data Map Ref");
 
-    std::map<int, float> extraAttr;
-    std::map<int, int> inOutColumns;
+    std::map<size_t, float> extraAttr;
+    std::map<size_t, size_t> inOutColumns;
     if (copydata) {
         AttributeTable &input = shapemap.getAttributeTable();
         AttributeTable &output = usermap->getAttributeTable();
@@ -160,7 +161,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
 
         std::vector<std::string> newColumns;
         for (size_t i = 0; i < indices.size(); i++) {
-            int idx = indices[i];
+            auto idx = indices[i];
             std::string colname = input.getColumnName(idx);
             for (size_t k = 1; output.hasColumn(colname); k++) {
                 colname = dXstring::formatString(int(k), input.getColumnName(idx) + " %d");
@@ -173,17 +174,18 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
         }
     }
 
-    int dataMapShapeRefCol = usermap->getAttributeTable().getOrInsertColumn("Data Map Ref");
+    auto dataMapShapeRefCol = usermap->getAttributeTable().getOrInsertColumn("Data Map Ref");
 
     AttributeTable &input = shapemap.getAttributeTable();
     for (auto &line : lines) {
         if (copydata) {
             auto &row = input.getRow(AttributeKey(line.second.second));
             for (auto inOutColumn : inOutColumns) {
-                extraAttr[inOutColumn.second] = row.getValue(inOutColumn.first);
+                extraAttr[inOutColumn.second] =
+                    row.getValue(static_cast<size_t>(inOutColumn.first));
             }
         }
-        extraAttr[dataMapShapeRefCol] = line.second.second;
+        extraAttr[dataMapShapeRefCol] = static_cast<float>(line.second.second);
         usermap->makeLineShape(line.second.first, false, false, extraAttr);
     }
 
@@ -207,7 +209,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToConvex(
     Communicator *, const std::string &name,
     const std::vector<std::pair<std::reference_wrapper<const ShapeMap>, int>> &drawingMaps) {
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::CONVEXMAP));
-    int connCol =
+    auto connCol =
         usermap->getAttributeTable().insertOrResetLockedColumn(ShapeGraph::Column::CONNECTIVITY);
 
     size_t count = 0;
@@ -235,13 +237,13 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToConvex(Communicator *,
                                                               const std::string &name,
                                                               ShapeMap &shapemap, bool copydata) {
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::CONVEXMAP));
-    int connCol =
+    auto connCol =
         usermap->getAttributeTable().insertOrResetLockedColumn(ShapeGraph::Column::CONNECTIVITY);
 
     std::vector<int> lookup;
     auto refShapes = shapemap.getAllShapes();
-    std::map<int, float> extraAttr;
-    std::vector<int> attrCols;
+    std::map<size_t, float> extraAttr;
+    std::vector<size_t> attrCols;
     AttributeTable &input = shapemap.getAttributeTable();
     if (copydata) {
         AttributeTable &output = usermap->getAttributeTable();
@@ -334,16 +336,16 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToSegment(
     // we can stop here for all line axial map!
     std::unique_ptr<ShapeGraph> usermap(new ShapeGraph(name, ShapeMap::SEGMENTMAP));
 
-    usermap->init(int(lines.size()), region);
-    std::map<int, float> layerAttributes;
+    usermap->init(lines.size(), region);
+    std::map<size_t, float> layerAttributes;
     usermap->initialiseAttributesSegment();
-    int layerCol = -1;
+    std::optional<size_t> layerCol = std::nullopt;
     if (recordlayer) {
         layerCol = usermap->getAttributeTable().insertOrResetColumn("Drawing Layer");
     }
     for (auto &line : lines) {
         if (recordlayer) {
-            layerAttributes[layerCol] = float(line.second.second);
+            layerAttributes[layerCol.value()] = float(line.second.second);
         }
         usermap->makeLineShape(line.second.first, false, false, layerAttributes);
     }
@@ -408,13 +410,13 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
         usermap->copyMapInfoBaseData(shapemap);
     }
 
-    usermap->init(int(lines.size()), region);
+    usermap->init(lines.size(), region);
     usermap->initialiseAttributesSegment();
 
     usermap->getAttributeTable().insertOrResetColumn("Data Map Ref");
 
-    std::map<int, float> extraAttr;
-    std::map<int, int> inOutColumns;
+    std::map<size_t, float> extraAttr;
+    std::map<size_t, size_t> inOutColumns;
     if (copydata) {
         AttributeTable &input = shapemap.getAttributeTable();
         AttributeTable &output = usermap->getAttributeTable();
@@ -431,7 +433,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
 
         std::vector<std::string> newColumns;
         for (size_t i = 0; i < indices.size(); i++) {
-            int idx = indices[i];
+            auto idx = indices[i];
             std::string colname = input.getColumnName(idx);
             for (size_t k = 1; output.hasColumn(colname); k++) {
                 colname = dXstring::formatString(int(k), input.getColumnName(idx) + " %d");
@@ -444,7 +446,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
         }
     }
 
-    int dataMapShapeRefCol = usermap->getAttributeTable().getOrInsertColumn("Data Map Ref");
+    auto dataMapShapeRefCol = usermap->getAttributeTable().getOrInsertColumn("Data Map Ref");
 
     AttributeTable &input = shapemap.getAttributeTable();
     for (auto &line : lines) {
@@ -454,7 +456,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
                 extraAttr[inOutColumn.second] = row.getValue(inOutColumn.first);
             }
         }
-        extraAttr[dataMapShapeRefCol] = line.second.second;
+        extraAttr[dataMapShapeRefCol] = static_cast<float>(line.second.second);
         usermap->makeLineShape(line.second.first, false, false, extraAttr);
     }
 

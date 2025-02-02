@@ -12,7 +12,7 @@
 class AxialIntegration : IAxial {
   private:
     std::set<double> m_radiusSet;
-    int m_weightedMeasureCol;
+    std::optional<size_t> m_weightedMeasureCol;
     bool m_choice;
     bool m_fulloutput;
     bool m_forceLegacyColumnOrder = false;
@@ -82,8 +82,10 @@ class AxialIntegration : IAxial {
   public:
     AxialIntegration(std::set<double> radiusSet, int weightedMeasureCol, bool choice,
                      bool fulloutput)
-        : m_radiusSet(radiusSet), m_weightedMeasureCol(weightedMeasureCol), m_choice(choice),
-          m_fulloutput(fulloutput) {}
+        : m_radiusSet(radiusSet),
+          m_weightedMeasureCol(weightedMeasureCol < 0 ? std::nullopt
+                                                      : std::make_optional(weightedMeasureCol)),
+          m_choice(choice), m_fulloutput(fulloutput) {}
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
         m_forceLegacyColumnOrder = forceLegacyColumnOrder;

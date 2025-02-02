@@ -44,7 +44,7 @@ class VGAIsovistZone : public IAnalysis {
     }
     void extractMetric(Node n, std::set<MetricTriple> &pixels, PointMap &map,
                        const MetricTriple &curs);
-    void setColumnFormulaAndUpdate(PointMap &pointmap, int columnIndex, std::string formula,
+    void setColumnFormulaAndUpdate(PointMap &pointmap, size_t columnIndex, std::string formula,
                                    std::optional<const std::set<int>> selectionSet);
 
   public:

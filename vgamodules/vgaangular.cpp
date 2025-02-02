@@ -12,7 +12,8 @@ AnalysisResult VGAAngular::run(Communicator *comm) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     std::string meanDepthColText = getColumnWithRadius(Column::ANGULAR_MEAN_DEPTH,    //
@@ -25,15 +26,15 @@ AnalysisResult VGAAngular::run(Communicator *comm) {
     AnalysisResult result({meanDepthColText, totalDetphColText, countColText},
                           attributes.getNumRows());
 
-    int meanDepthCol = result.getColumnIndex(meanDepthColText);
-    int countCol = result.getColumnIndex(countColText);
-    int totalDepthCol = result.getColumnIndex(totalDetphColText);
+    auto meanDepthCol = result.getColumnIndex(meanDepthColText);
+    auto countCol = result.getColumnIndex(countColText);
+    auto totalDepthCol = result.getColumnIndex(totalDetphColText);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const auto refs = getRefVector(analysisData);
     const auto graph = getGraph(analysisData, refs, false);
 
-    int count = 0;
+    size_t count = 0;
 
     for (auto &ad0 : analysisData) {
 

@@ -127,7 +127,7 @@ void AttributeRowImpl::addColumn() { m_data.push_back(-1); }
 
 void AttributeRowImpl::removeColumn(size_t index) {
     checkIndex(index);
-    m_data.erase(m_data.begin() + index);
+    m_data.erase(m_data.begin() + static_cast<int>(index));
 }
 
 void AttributeRowImpl::read(std::istream &stream) {
@@ -276,7 +276,7 @@ void AttributeTable::removeColumn(size_t colIndex) {
             elem.second--;
         }
     }
-    m_columns.erase(m_columns.begin() + colIndex);
+    m_columns.erase(m_columns.begin() + static_cast<int>(colIndex));
     for (auto &row : m_rows) {
         row.second->removeColumn(colIndex);
     }
@@ -342,8 +342,8 @@ void AttributeTable::write(std::ostream &stream, const LayerManager &layerManage
     std::sort(indices.begin(), indices.end(),
               [&](size_t a, size_t b) { return m_columns[a].getName() < m_columns[b].getName(); });
 
-    for (int idx : indices) {
-        m_columns[idx].write(stream, m_columnMapping[m_columns[idx].getName()]);
+    for (size_t idx : indices) {
+        m_columns[idx].write(stream, static_cast<int>(m_columnMapping[m_columns[idx].getName()]));
     }
 
     int rowcount = (int)m_rows.size();
@@ -385,9 +385,10 @@ size_t AttributeTable::getColumnSortedIndex(size_t index) const {
     if (index == size_t(-1) || index == size_t(-2))
         return index;
     if (index >= m_columns.size())
-        return -1;
+        return static_cast<size_t>(-1);
 
-    return std::distance(m_columnMapping.begin(), m_columnMapping.find(getColumnName(index)));
+    return static_cast<size_t>(
+        std::distance(m_columnMapping.begin(), m_columnMapping.find(getColumnName(index))));
 }
 
 const AttributeColumn &AttributeTable::getColumn(size_t index) const {

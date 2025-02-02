@@ -17,15 +17,20 @@
 struct AnalysisResult {
     bool completed = false;
     void addAttribute(std::string attribute) {
-        auto colIt = std::find(m_newAttributeses.begin(), m_newAttributeses.end(), attribute);
-        if (colIt == m_newAttributeses.end()) {
-            m_newAttributeses.push_back(attribute);
+        auto colIt = std::find(m_newAttributes.begin(), m_newAttributes.end(), attribute);
+        if (colIt == m_newAttributes.end()) {
+            m_newAttributes.push_back(attribute);
         }
     }
-    const std::vector<std::string> &getAttributes() const { return m_newAttributeses; };
-    long getColumnIndex(const std::string &column) {
-        return std::distance(m_newAttributeses.begin(),
-                             std::find(m_newAttributeses.begin(), m_newAttributeses.end(), column));
+    const std::vector<std::string> &getAttributes() const { return m_newAttributes; };
+    size_t getColumnIndex(const std::string &column) {
+        auto iter = std::find(m_newAttributes.begin(), m_newAttributes.end(), column);
+        if (iter == m_newAttributes.end()) {
+            std::stringstream message;
+            message << "Unknown column name " << column;
+            throw std::out_of_range(message.str());
+        }
+        return static_cast<size_t>(std::distance(m_newAttributes.begin(), iter));
     }
 
     double getValue(size_t row, size_t column) { return m_attributeDatata(row, column); }
@@ -38,7 +43,7 @@ struct AnalysisResult {
 
     AnalysisResult(std::vector<std::string> &&attributeNames = std::vector<std::string>(),
                    size_t rowCount = 0, double defValue = -1.0f)
-        : m_newAttributeses(attributeNames),
+        : m_newAttributes(attributeNames),
           m_attributeDatata(depthmapX::RowMatrix<double>(rowCount, attributeNames.size())) {
         m_attributeDatata.initialiseValues(defValue);
     }
@@ -48,7 +53,7 @@ struct AnalysisResult {
     std::optional<std::vector<AttributeColumnStats>> columnStats = std::nullopt;
 
   protected:
-    std::vector<std::string> m_newAttributeses = std::vector<std::string>();
+    std::vector<std::string> m_newAttributes = std::vector<std::string>();
     depthmapX::RowMatrix<double> m_attributeDatata;
     std::vector<ShapeMap> m_newShapeMapsps;
     std::vector<PointMap> m_newPointMapsps;
@@ -64,7 +69,7 @@ struct AppendableAnalysisResult : public AnalysisResult {
         } else {
             completed &= other.completed;
         }
-        m_newAttributeses.insert(m_newAttributeses.end(), other.getAttributes().begin(),
-                                 other.getAttributes().end());
+        m_newAttributes.insert(m_newAttributes.end(), other.getAttributes().begin(),
+                               other.getAttributes().end());
     }
 };

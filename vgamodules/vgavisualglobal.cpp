@@ -33,7 +33,8 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     std::optional<size_t> entropyCol = std::nullopt, relEntropyCol = std::nullopt,

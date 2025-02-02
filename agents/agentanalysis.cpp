@@ -130,7 +130,7 @@ AnalysisResult AgentAnalysis::run(Communicator *comm) {
         m_agentProgram.vbin = (m_agentFOV - 1) / 2;
     }
 
-    m_agentProgram.steps = m_agentStepsToDecision;
+    m_agentProgram.steps = static_cast<int>(m_agentStepsToDecision);
     m_agentProgram.selType = m_agentAlgorithm;
 
     std::vector<PixelRef> releaseLocations;
@@ -152,7 +152,8 @@ AnalysisResult AgentAnalysis::run(Communicator *comm) {
         // switch the reference numbers from the gates layer to the vga layer
         table.insertOrResetColumn(AgentAnalysis::Column::INTERNAL_GATE);
         // Transferring refs here, so we need to get the column name of the "Ref" column
-        const std::string &colIn = m_gateLayer->get().getAttributeTable().getColumnName(-1);
+        const std::string &colIn =
+            m_gateLayer->get().getAttributeTable().getColumnName(static_cast<size_t>(-1));
         PushValues::shapeToPoint(m_gateLayer->get(), colIn, m_pointMap,
                                  AgentAnalysis::Column::INTERNAL_GATE, PushValues::Func::TOT);
 

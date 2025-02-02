@@ -100,10 +100,10 @@ std::vector<SalaEdgeU> SalaShape::getClippingSet(Region4f &clipframe) const {
         if (lastInside != nextInside) {
             if (lastInside) {
                 EdgeU eu = clipframe.getCutEdgeU(points[i - 1], points[i]);
-                edgeset.push_back(SalaEdgeU(i, false, eu));
+                edgeset.push_back(SalaEdgeU(static_cast<int>(i), false, eu));
             } else {
                 EdgeU eu = clipframe.getCutEdgeU(points[i], points[i - 1]);
-                edgeset.push_back(SalaEdgeU(i - 1, true, eu));
+                edgeset.push_back(SalaEdgeU(static_cast<int>(i - 1), true, eu));
             }
         }
         lastInside = nextInside;

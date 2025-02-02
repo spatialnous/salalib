@@ -170,20 +170,20 @@ void Isovist::drawnode(const Line4f &li, int tag) {
     if (angle2 > angle1) {
         if (angle2 - angle1 >= M_PI) {
             // 0 to angle1 and angle2 to 2 pi
-            addBlock(li, tag, 0.0, angle1);
-            addBlock(li, tag, angle2, pipi);
+            addBlock(li, tag, 0.0, static_cast<double>(angle1));
+            addBlock(li, tag, static_cast<double>(angle2), static_cast<double>(pipi));
         } else {
             // angle1 to angle2
-            addBlock(li, tag, angle1, angle2);
+            addBlock(li, tag, static_cast<double>(angle1), static_cast<double>(angle2));
         }
     } else {
         if (angle1 - angle2 >= M_PI) {
             // 0 to angle2 and angle1 to 2 pi
-            addBlock(li, tag, 0.0, angle2);
-            addBlock(li, tag, angle1, pipi);
+            addBlock(li, tag, 0.0, static_cast<double>(angle2));
+            addBlock(li, tag, static_cast<double>(angle1), static_cast<double>(pipi));
         } else {
             // angle2 to angle1
-            addBlock(li, tag, angle2, angle1);
+            addBlock(li, tag, static_cast<double>(angle2), static_cast<double>(angle1));
         }
     }
     //
@@ -244,12 +244,14 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
             }
 
             // using cos and sin directly to achieve double binary parity between macos and linux
-            Point2f pa =
-                li.intersection_point(Line4f(m_centre, m_centre + Point2f(cos(a), sin(a))));
-            Point2f pb =
-                li.intersection_point(Line4f(m_centre, m_centre + Point2f(cos(b), sin(b))));
+            Point2f pa = li.intersection_point(
+                Line4f(m_centre, m_centre + Point2f(cos(static_cast<double>(a)),
+                                                    sin(static_cast<double>(a)))));
+            Point2f pb = li.intersection_point(
+                Line4f(m_centre, m_centre + Point2f(cos(static_cast<double>(b)),
+                                                    sin(static_cast<double>(b)))));
 
-            m_blocks.insert(IsoSeg(a, b, pa, pb, tag));
+            m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb, tag));
         } else {
             finished = true;
         }

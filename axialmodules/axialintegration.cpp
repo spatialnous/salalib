@@ -192,10 +192,10 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
     // retrieve weighted col data, as this may well be overwritten in the new analysis:
     std::vector<double> weights;
     std::string weightingColText;
-    if (m_weightedMeasureCol != -1) {
-        weightingColText = attributes.getColumnName(m_weightedMeasureCol);
+    if (m_weightedMeasureCol.has_value()) {
+        weightingColText = attributes.getColumnName(*m_weightedMeasureCol);
         for (size_t i = 0; i < map.getShapeCount(); i++) {
-            weights.push_back(map.getAttributeRowFromShapeIndex(i).getValue(m_weightedMeasureCol));
+            weights.push_back(map.getAttributeRowFromShapeIndex(i).getValue(*m_weightedMeasureCol));
         }
     }
 
@@ -218,7 +218,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 attributes, Column::CHOICE, radius));
             nChoiceCol.push_back(getFormattedColumnIdx( //
                 attributes, Column::CHOICE, radius, std::nullopt, Normalisation::NORM));
-            if (m_weightedMeasureCol != -1) {
+            if (m_weightedMeasureCol.has_value()) {
                 wChoiceCol.push_back(getFormattedColumnIdx( //
                     attributes, Column::CHOICE, radius, weightingColText));
                 nwChoiceCol.push_back(getFormattedColumnIdx( //
@@ -254,7 +254,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 attributes, Column::RELATIVISED_ENTROPY, radius));
         }
 
-        if (m_weightedMeasureCol != -1) {
+        if (m_weightedMeasureCol.has_value()) {
             wDepthCol.push_back(getFormattedColumnIdx( //
                 attributes, Column::MEAN_DEPTH, radius, weightingColText, std::nullopt));
             totalWeightCol.push_back(getFormattedColumnIdx( //
@@ -314,26 +314,26 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         int totalDepth = 0, depth = 1, nodeCount = 1, pos = -1,
             previous = -1; // node_count includes this 1
         double weight = 0.0, rootweight = 0.0, totalWeight = 0.0, wTotalDepth = 0.0;
-        if (m_weightedMeasureCol != -1) {
+        if (m_weightedMeasureCol.has_value()) {
             rootweight = weights[i];
             // include this line in total weights (as per nodecount)
             totalWeight += rootweight;
         }
         int index = -1;
-        int r = 0;
+        size_t r = 0;
         for (int radius : radii) {
             while (foundlist.a().size()) {
                 if (!m_choice) {
                     index = foundlist.a().back().first;
                 } else {
-                    pos = pafmath::pafrand() % foundlist.a().size();
-                    index = foundlist.a().at(pos).first;
-                    previous = foundlist.a().at(pos).second;
+                    pos = static_cast<int>(pafmath::pafrand() % foundlist.a().size());
+                    index = foundlist.a().at(static_cast<size_t>(pos)).first;
+                    previous = foundlist.a().at(static_cast<size_t>(pos)).second;
                     audittrail[index][0].previous.ref =
                         previous; // note 0th member used here: can be used individually different
                                   // radius previous
                 }
-                Connector &line = map.getConnections()[index];
+                Connector &line = map.getConnections()[static_cast<size_t>(index)];
                 for (size_t k = 0; k < line.connections.size(); k++) {
                     if (!covered[line.connections[k]]) {
                         covered[line.connections[k]] = true;
@@ -347,15 +347,17 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                         if (m_choice && previous != -1) {
                             // both directional paths are now recorded for choice
                             // (coincidentally fixes choice problem which was completely wrong)
-                            size_t here = index; // note: start counting from index as actually
-                                                 // looking ahead here
-                            while (here != i) {  // not i means not the current root for the path
+                            size_t here =
+                                static_cast<size_t>(index); // note: start counting from index as
+                                                            // actually looking ahead here
+                            while (here != i) { // not i means not the current root for the path
                                 audittrail[here][r].choice += 1;
                                 audittrail[here][r].weightedChoice += weight * rootweight;
-                                here = audittrail[here][0]
-                                           .previous
-                                           .ref; // <- note, just using 0th position: radius for
-                                                 // the previous doesn't matter in this analysis
+                                here = static_cast<size_t>(
+                                    audittrail[here][0]
+                                        .previous
+                                        .ref); // <- note, just using 0th position: radius for
+                                               // the previous doesn't matter in this analysis
                             }
                             if (m_weightedMeasureCol != -1) {
                                 // in weighted choice, root node and current node receive values:

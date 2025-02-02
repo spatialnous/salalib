@@ -27,12 +27,13 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     const auto refs = getRefVector(attributes);
 
-    int count = 0;
+    size_t count = 0;
 
     if (comm) {
         qtimer(atime, 0);
@@ -49,19 +50,21 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 #pragma omp parallel for
 #endif
     for (i = 0; i < n; i++) {
-        if ((m_map.getPoint(refs[i]).contextfilled() && !refs[i].iseven()) || (m_gatesOnly)) {
+        if ((m_map.getPoint(refs[static_cast<size_t>(i)]).contextfilled() &&
+             !refs[static_cast<size_t>(i)].iseven()) ||
+            (m_gatesOnly)) {
 #if defined(_OPENMP)
 #pragma omp atomic
 #endif
             count++;
             continue;
         }
-        DataPoint &dp = colData[i];
+        DataPoint &dp = colData[static_cast<size_t>(i)];
 
         std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
         const auto graph = getGraph(analysisData, refs, false);
 
-        auto &ad0 = analysisData.at(i);
+        auto &ad0 = analysisData.at(static_cast<size_t>(i));
 
         auto [totalDepth, totalNodes, distribution] =
             traverseSum(analysisData, graph, refs, m_radius, ad0);
@@ -156,13 +159,13 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
                            depthColText, countColText, relEntropyColText},
                           attributes.getNumRows());
 
-    int entropyCol = attributes.getColumnIndex(entropyColText);
-    int integDvCol = attributes.getColumnIndex(integDvColText);
-    int integPvCol = attributes.getColumnIndex(integPvColText);
-    int integTkCol = attributes.getColumnIndex(integTkColText);
-    int depthCol = attributes.getColumnIndex(depthColText);
-    int countCol = attributes.getColumnIndex(countColText);
-    int relEntropyCol = attributes.getColumnIndex(relEntropyColText);
+    auto entropyCol = attributes.getColumnIndex(entropyColText);
+    auto integDvCol = attributes.getColumnIndex(integDvColText);
+    auto integPvCol = attributes.getColumnIndex(integPvColText);
+    auto integTkCol = attributes.getColumnIndex(integTkColText);
+    auto depthCol = attributes.getColumnIndex(depthColText);
+    auto countCol = attributes.getColumnIndex(countColText);
+    auto relEntropyCol = attributes.getColumnIndex(relEntropyColText);
 
     auto dataIter = colData.begin();
     for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {

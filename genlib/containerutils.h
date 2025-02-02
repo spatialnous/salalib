@@ -49,7 +49,7 @@ namespace depthmapX {
         return iter;
     }
 
-    template <typename K, typename V> int findIndexFromKey(const std::map<K, V> &m, K key) {
+    template <typename K, typename V> long findIndexFromKey(const std::map<K, V> &m, K key) {
         auto iter = m.find(key);
         return iter == m.end() ? -1 : std::distance(m.begin(), iter);
     }

@@ -13,16 +13,16 @@ AnalysisResult ExtractLinkData::run(Communicator *) {
     auto &attributes = m_map.getAttributeTable();
 
     std::string angularCostColName = Column::LINK_ANGULAR_COST;
-    int angularCostCol = attributes.insertOrResetColumn(angularCostColName);
+    auto angularCostCol = attributes.insertOrResetColumn(angularCostColName);
     result.addAttribute(angularCostColName);
     std::string metricCostColName = Column::LINK_METRIC_COST;
-    int metricCostCol = attributes.insertOrResetColumn(metricCostColName);
+    auto metricCostCol = attributes.insertOrResetColumn(metricCostColName);
     result.addAttribute(metricCostColName);
     std::string linkToColName = Column::LINK_TO;
-    int linkToCol = attributes.insertOrResetColumn(linkToColName);
+    auto linkToCol = attributes.insertOrResetColumn(linkToColName);
     result.addAttribute(linkToColName);
     std::string visualCostColName = Column::LINK_VISUAL_COST;
-    int visualCostCol = attributes.insertOrResetColumn(visualCostColName);
+    auto visualCostCol = attributes.insertOrResetColumn(visualCostColName);
     result.addAttribute(visualCostColName);
 
     for (auto &row : attributes) {
@@ -30,9 +30,10 @@ AnalysisResult ExtractLinkData::run(Communicator *) {
         Point &p = m_map.getPoint(pix);
         PixelRef mergePixel = p.getMergePixel();
         if (!mergePixel.empty()) {
-            row.getRow().setValue(linkToCol, static_cast<int>(mergePixel));
+            row.getRow().setValue(linkToCol, static_cast<float>(mergePixel));
             row.getRow().setValue(visualCostCol, 1);
-            row.getRow().setValue(metricCostCol, dist(pix, mergePixel) * m_map.getSpacing());
+            row.getRow().setValue(metricCostCol,
+                                  static_cast<float>(dist(pix, mergePixel) * m_map.getSpacing()));
             row.getRow().setValue(angularCostCol, 1);
         }
     }

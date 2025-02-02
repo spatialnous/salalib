@@ -13,7 +13,8 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     std::string mspaColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE,    //
@@ -28,10 +29,10 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
     AnalysisResult result({mspaColText, msplColText, distColText, countColText},
                           attributes.getNumRows());
 
-    int mspaCol = result.getColumnIndex(mspaColText);
-    int msplCol = result.getColumnIndex(msplColText);
-    int distCol = result.getColumnIndex(distColText);
-    int countCol = result.getColumnIndex(countColText);
+    auto mspaCol = result.getColumnIndex(mspaColText);
+    auto msplCol = result.getColumnIndex(msplColText);
+    auto distCol = result.getColumnIndex(distColText);
+    auto countCol = result.getColumnIndex(countColText);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const auto refs = getRefVector(analysisData);

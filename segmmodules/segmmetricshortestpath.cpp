@@ -29,7 +29,7 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
     float maxseglength = 0.0f;
     for (size_t cursor = 0; cursor < shapeCount; cursor++) {
         AttributeRow &row = m_map.getAttributeRowFromShapeIndex(cursor);
-        axialrefs.push_back(row.getValue("Axial Line Ref"));
+        axialrefs.push_back(static_cast<int>(row.getValue("Axial Line Ref")));
         seglengths.push_back(row.getValue("Segment Length"));
         if (seglengths.back() > maxseglength) {
             maxseglength = seglengths.back();
@@ -43,13 +43,14 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
     std::vector<int> list[512]; // 512 bins!
     int open = 0;
 
-    seen[m_refFrom] = 0;
+    seen[static_cast<size_t>(m_refFrom)] = 0;
     open++;
-    double length = seglengths[m_refFrom];
-    audittrail[m_refFrom] = TopoMetSegmentRef(m_refFrom, Connector::SEG_CONN_ALL, length * 0.5, -1);
+    double length = seglengths[static_cast<size_t>(m_refFrom)];
+    audittrail[static_cast<size_t>(m_refFrom)] =
+        TopoMetSegmentRef(m_refFrom, Connector::SEG_CONN_ALL, length * 0.5, -1);
     // better to divide by 511 but have 512 bins...
     list[(int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(m_refFrom);
-    m_map.getAttributeRowFromShapeIndex(m_refFrom).setValue(distCol, 0);
+    m_map.getAttributeRowFromShapeIndex(static_cast<size_t>(m_refFrom)).setValue(distCol, 0);
 
     unsigned int segdepth = 0;
     int bin = 0;
@@ -66,7 +67,7 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
             }
         }
         //
-        TopoMetSegmentRef &here = audittrail[list[bin].back()];
+        TopoMetSegmentRef &here = audittrail[static_cast<size_t>(list[bin].back())];
         list[bin].pop_back();
         open--;
         // this is necessary using unsigned ints for "seen", as it is possible to add a node twice
@@ -76,7 +77,7 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
             here.done = true;
         }
 
-        Connector &axline = m_map.getConnections().at(here.ref);
+        Connector &axline = m_map.getConnections().at(static_cast<size_t>(here.ref));
         int connectedCursor = -2;
 
         auto iter = axline.backSegconns.begin();
@@ -92,20 +93,22 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
             }
 
             connectedCursor = iter->first.ref;
-            if (seen[connectedCursor] > segdepth) {
-                float connectedLength = seglengths[connectedCursor];
-                seen[connectedCursor] = segdepth;
-                audittrail[connectedCursor] = TopoMetSegmentRef(
+            if (seen[static_cast<size_t>(connectedCursor)] > segdepth) {
+                float connectedLength = seglengths[static_cast<size_t>(connectedCursor)];
+                seen[static_cast<size_t>(connectedCursor)] = segdepth;
+                audittrail[static_cast<size_t>(connectedCursor)] = TopoMetSegmentRef(
                     connectedCursor, here.dir, here.dist + connectedLength, here.ref);
-                parents[connectedCursor] = here.ref;
+                parents[static_cast<unsigned int>(connectedCursor)] =
+                    static_cast<unsigned int>(here.ref);
                 // puts in a suitable bin ahead of us...
                 open++;
                 //
                 // better to divide by 511 but have 512 bins...
                 list[(bin + int(floor(0.5 + 511 * connectedLength / maxseglength))) % 512]
                     .push_back(connectedCursor);
-                AttributeRow &row = m_map.getAttributeRowFromShapeIndex(connectedCursor);
-                row.setValue(distCol, here.dist + connectedLength * 0.5);
+                AttributeRow &row =
+                    m_map.getAttributeRowFromShapeIndex(static_cast<size_t>(connectedCursor));
+                row.setValue(distCol, static_cast<float>(here.dist + connectedLength * 0.5));
             }
             if (connectedCursor == m_refTo) {
                 refFound = true;
@@ -115,22 +118,23 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
         }
     }
 
-    auto refToParent = parents.find(m_refTo);
+    auto refToParent = parents.find(static_cast<unsigned int>(m_refTo));
     int counter = 0;
     while (refToParent != parents.end()) {
         AttributeRow &row = m_map.getAttributeRowFromShapeIndex(refToParent->first);
-        row.setValue(pathCol, counter);
+        row.setValue(pathCol, static_cast<float>(counter));
         counter++;
         refToParent = parents.find(refToParent->second);
     }
-    m_map.getAttributeRowFromShapeIndex(m_refFrom).setValue(pathCol, counter);
+    m_map.getAttributeRowFromShapeIndex(static_cast<size_t>(m_refFrom))
+        .setValue(pathCol, static_cast<float>(counter));
 
     for (auto iter = attributes.begin(); iter != attributes.end(); iter++) {
         AttributeRow &row = iter->getRow();
         if (row.getValue(pathCol) < 0) {
             row.setValue(distCol, -1);
         } else {
-            row.setValue(pathCol, counter - row.getValue(pathCol));
+            row.setValue(pathCol, static_cast<float>(counter) - row.getValue(pathCol));
         }
     }
 

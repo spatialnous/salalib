@@ -379,7 +379,8 @@ void SpacePixel::makeViewportLines(const Region4f &viewport) const {
         for (int j = bl.y; j <= tr.y; j++) {
             auto &pixelLines = m_pixelLines(static_cast<size_t>(j), static_cast<size_t>(i));
             for (int pixelLine : pixelLines) {
-                m_displayLines[size_t(depthmapX::findIndexFromKey(m_lines, pixelLine))] = 1;
+                m_displayLines[static_cast<size_t>(
+                    depthmapX::findIndexFromKey(m_lines, pixelLine))] = 1;
             }
         }
     }
@@ -427,8 +428,8 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
     double whRatio = m_region.width() / m_region.height();
     double hwRatio = m_region.height() / m_region.width();
 
-    m_rows = (int)sqrt(double(size) * whRatio * density);
-    m_cols = (int)sqrt(double(size) * hwRatio * density);
+    m_rows = static_cast<size_t>(sqrt(double(size) * whRatio * density));
+    m_cols = static_cast<size_t>(sqrt(double(size) * hwRatio * density));
 
     if (m_rows < 1)
         m_rows = 1;
@@ -449,8 +450,8 @@ void SpacePixel::reinitLines(double density) {
     double whRatio = m_region.width() / m_region.height();
     double hwRatio = m_region.height() / m_region.width();
 
-    m_rows = (int)sqrt(double(m_lines.size()) * whRatio * density);
-    m_cols = (int)sqrt(double(m_lines.size()) * hwRatio * density);
+    m_rows = static_cast<size_t>(sqrt(double(m_lines.size()) * whRatio * density));
+    m_cols = static_cast<size_t>(sqrt(double(m_lines.size()) * hwRatio * density));
 
     if (m_rows < 1)
         m_rows = 1;
@@ -636,14 +637,15 @@ void SpacePixel::cutLine(Line4f &l, short dir) {
                                     if (linetest.line.start() == touchingLines[k].start() ||
                                         linetest.line.end() == touchingLines[k].end()) {
                                         a = linetest.line.end() - linetest.line.start();
-                                        pair = k;
+                                        pair = static_cast<int>(k);
                                     } else if (linetest.line.start() == touchingLines[k].end() ||
                                                linetest.line.end() == touchingLines[k].start()) {
                                         a = linetest.line.start() - linetest.line.end();
-                                        pair = k;
+                                        pair = static_cast<int>(k);
                                     }
                                     if (pair != -1) {
-                                        b = touchingLines[pair].end() - touchingLines[pair].start();
+                                        b = touchingLines[static_cast<size_t>(pair)].end() -
+                                            touchingLines[static_cast<size_t>(pair)].start();
                                         Point2f p = trueend - truestart;
                                         double oa = p.det(a);
                                         double ob = p.det(b);
@@ -659,8 +661,9 @@ void SpacePixel::cutLine(Line4f &l, short dir) {
                                                     l.intersection_point(linetest.line, axis));
                                             } else if (fabs(ob) >
                                                        tolerance * linetest.line.length()) {
-                                                loc.insert(l.intersection_point(touchingLines[pair],
-                                                                                axis));
+                                                loc.insert(l.intersection_point(
+                                                    touchingLines[static_cast<size_t>(pair)],
+                                                    axis));
                                             } else {
                                                 // parallel with both lines ... this shouldn't
                                                 // happen...

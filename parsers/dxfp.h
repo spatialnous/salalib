@@ -251,7 +251,7 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
     void clear(); // for reuse when parsing
     //
     size_t numVertices() const;
-    const DxfVertex &getVertex(int i) const;
+    const DxfVertex &getVertex(size_t i) const;
     int getAttributes() const;
     const DxfRegion &getBoundingBox();
     //
@@ -533,13 +533,13 @@ class DxfLayer : public DxfTableRow, public DxfRegion {
   public:
     DxfLayer(const std::string &name = "");
     //
-    const DxfVertex &getPoint(int i) const;
-    const DxfLine &getLine(int i) const;
-    const DxfPolyLine &getPolyLine(int i) const;
-    const DxfArc &getArc(int i) const;
-    const DxfEllipse &getEllipse(int i) const;
-    const DxfCircle &getCircle(int i) const;
-    const DxfSpline &getSpline(int i) const;
+    const DxfVertex &getPoint(size_t i) const;
+    const DxfLine &getLine(size_t i) const;
+    const DxfPolyLine &getPolyLine(size_t i) const;
+    const DxfArc &getArc(size_t i) const;
+    const DxfEllipse &getEllipse(size_t i) const;
+    const DxfCircle &getCircle(size_t i) const;
+    const DxfSpline &getSpline(size_t i) const;
     //
     size_t numPoints() const;
     size_t numLines() const;

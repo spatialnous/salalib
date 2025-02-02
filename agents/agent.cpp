@@ -129,7 +129,8 @@ void Agent::onStep() {
         m_loc = nextloc;
     }
     if (!m_stopped && m_trailNum != -1) {
-        m_program->trails[m_trailNum].push_back(Event2f(m_loc, m_program->steps));
+        m_program->trails[static_cast<size_t>(m_trailNum)].push_back(
+            Event2f(m_loc, m_program->steps));
     }
 }
 bool Agent::diagonalStep() {
@@ -252,7 +253,7 @@ Point2f Agent::onStandardLook(bool wholeisovist) {
             return Point2f(0, 0);
         }
     } else {
-        int chosen = pafmath::pafrand() % choices;
+        auto chosen = static_cast<int>(pafmath::pafrand() % static_cast<uint>(choices));
         Node &node = m_pointmap->getPoint(m_node).getNode();
         for (; chosen >= node.bincount(directionbin % 32); directionbin++) {
             chosen -= node.bincount(directionbin % 32);
@@ -371,7 +372,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
                 return Point2f(0, 0);
             }
         } else {
-            size_t chosen = pafmath::pafrand() % choices;
+            size_t chosen = pafmath::pafrand() % static_cast<uint>(choices);
             for (; chosen >= node.occlusionBins[directionbin % 32].size(); directionbin++) {
                 chosen -= node.occlusionBins[directionbin % 32].size();
             }

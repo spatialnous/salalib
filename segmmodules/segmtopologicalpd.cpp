@@ -21,7 +21,7 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
     float maxseglength = 0.0f;
     for (size_t cursor = 0; cursor < map.getShapeCount(); cursor++) {
         AttributeRow &row = map.getAttributeRowFromShapeIndex(cursor);
-        axialrefs.push_back(row.getValue("Axial Line Ref"));
+        axialrefs.push_back(static_cast<int>(row.getValue("Axial Line Ref")));
         seglengths.push_back(row.getValue("Segment Length"));
         if (seglengths.back() > maxseglength) {
             maxseglength = seglengths.back();
@@ -42,10 +42,11 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
         seen[i] = 0xffffffff;
     }
     for (auto &cursor : m_originRefs) {
-        seen[cursor] = 0;
+        seen[static_cast<size_t>(cursor)] = 0;
         open++;
-        double length = seglengths[cursor];
-        audittrail[cursor] = TopoMetSegmentRef(cursor, Connector::SEG_CONN_ALL, length * 0.5, -1);
+        double length = seglengths[static_cast<size_t>(cursor)];
+        audittrail[static_cast<size_t>(cursor)] =
+            TopoMetSegmentRef(cursor, Connector::SEG_CONN_ALL, length * 0.5, -1);
         list[0].push_back(cursor);
         attributes.getRow(AttributeKey(cursor)).setValue(sdColIdx, 0);
     }
@@ -62,7 +63,7 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
             }
         }
         //
-        TopoMetSegmentRef &here = audittrail[list[bin].back()];
+        TopoMetSegmentRef &here = audittrail[static_cast<size_t>(list[bin].back())];
         list[bin].pop_back();
         open--;
         // this is necessary using unsigned ints for "seen", as it is possible to add a node twice
@@ -72,7 +73,7 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
             here.done = true;
         }
 
-        Connector &axline = map.getConnections().at(here.ref);
+        Connector &axline = map.getConnections().at(static_cast<size_t>(here.ref));
         int connectedCursor = -2;
 
         auto iter = axline.backSegconns.begin();
@@ -88,26 +89,27 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
             }
 
             connectedCursor = iter->first.ref;
-            AttributeRow &row = map.getAttributeRowFromShapeIndex(connectedCursor);
-            if (seen[connectedCursor] > segdepth) {
-                float length = seglengths[connectedCursor];
-                int axialref = axialrefs[connectedCursor];
-                seen[connectedCursor] = segdepth;
-                audittrail[connectedCursor] =
+            AttributeRow &row =
+                map.getAttributeRowFromShapeIndex(static_cast<size_t>(connectedCursor));
+            if (seen[static_cast<size_t>(connectedCursor)] > segdepth) {
+                float length = seglengths[static_cast<size_t>(connectedCursor)];
+                int axialref = axialrefs[static_cast<size_t>(connectedCursor)];
+                seen[static_cast<size_t>(connectedCursor)] = segdepth;
+                audittrail[static_cast<size_t>(connectedCursor)] =
                     TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
                 // puts in a suitable bin ahead of us...
                 open++;
                 //
-                if (axialrefs[here.ref] == axialref) {
+                if (axialrefs[static_cast<size_t>(here.ref)] == axialref) {
                     list[bin].push_back(connectedCursor);
-                    row.setValue(sdColIdx, segdepth);
+                    row.setValue(sdColIdx, static_cast<float>(segdepth));
                 } else {
                     list[(bin + 1) % 2].push_back(connectedCursor);
-                    seen[connectedCursor] =
+                    seen[static_cast<size_t>(connectedCursor)] =
                         segdepth + 1; // this is so if another node is connected directly to this
                                       // one but is found later it is still handled -- note it can
                                       // result in the connected cursor being added twice
-                    row.setValue(sdColIdx, segdepth + 1);
+                    row.setValue(sdColIdx, static_cast<float>(segdepth + 1));
                 }
             }
             iter++;

@@ -338,6 +338,8 @@ class SalaCommand {
     std::string
         m_lastString; // occassionally useful in debugging if the user does something unsyntactical
                       //
+    char read(std::istream &program) { return static_cast<char>(program.get()); }
+
   public:
     SalaCommand() : m_program(nullptr), m_parent(nullptr), m_command(SC_NONE), m_indent(0) {}
     SalaCommand(SalaProgram *program, SalaCommand *parent, int indent, Command command = SC_NONE);
@@ -371,6 +373,7 @@ class SalaProgram {
                    // are cleared at the end of the execution
     // marks for state management in maps
     std::map<int, SalaObj> m_marks;
+    char read(std::istream &program) { return static_cast<char>(program.get()); }
 
   public:
     SalaProgram(SalaObj context);

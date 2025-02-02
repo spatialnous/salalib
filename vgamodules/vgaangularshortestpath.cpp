@@ -18,12 +18,12 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
                            Column::ANGULAR_SHORTEST_PATH_INV_METRIC_ZONE},
                           attributes.getNumRows());
 
-    int pathColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH);
-    int linkedColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_LINKED);
-    int orderColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_ORDER);
-    int visualZoneColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_VISUAL_ZONE);
-    int metricZoneColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_METRIC_ZONE);
-    int invMetricZoneColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_INV_METRIC_ZONE);
+    auto pathColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH);
+    auto linkedColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_LINKED);
+    auto orderColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_ORDER);
+    auto visualZoneColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_VISUAL_ZONE);
+    auto metricZoneColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_METRIC_ZONE);
+    auto invMetricZoneColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_INV_METRIC_ZONE);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const auto refs = getRefVector(analysisData);
@@ -83,7 +83,7 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
 
                             double zoneLineDist = dist(linePixel, zad.ref) * m_map.getSpacing();
                             {
-                                float currMetricZonePixelVal =
+                                auto currMetricZonePixelVal =
                                     result.getValue(zad.attributeDataRow, metricZoneColIdx);
                                 if (currMetricZonePixelVal == -1 ||
                                     zoneLineDist < currMetricZonePixelVal) {
@@ -92,7 +92,7 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
                                 }
                             }
                             {
-                                float currInvMetricZonePixelVal =
+                                auto currInvMetricZonePixelVal =
                                     result.getValue(zad.attributeDataRow, invMetricZoneColIdx);
                                 if (currInvMetricZonePixelVal == -1 ||
                                     1.0f / (zoneLineDist + 1) > currInvMetricZonePixelVal) {

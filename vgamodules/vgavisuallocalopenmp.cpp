@@ -25,7 +25,8 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
 
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
     AttributeTable &attributes = m_map.getAttributeTable();
@@ -43,9 +44,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
         }
     }
 
-    int count = 0;
-
-    count = 0;
+    size_t count = 0;
 
     std::vector<DataPoint> colData(filled.size());
 
@@ -81,16 +80,17 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
 #endif
     for (i = 0; i < n; ++i) {
 
-        DataPoint &dp = colData[i];
+        auto ui = static_cast<size_t>(i);
+        DataPoint &dp = colData[ui];
 
-        Point &p = m_map.getPoint(filled[size_t(i)]);
-        if ((p.contextfilled() && !filled[size_t(i)].iseven())) {
+        Point &p = m_map.getPoint(filled[ui]);
+        if ((p.contextfilled() && !filled[ui].iseven())) {
             count++;
             continue;
         }
 
         // This is much easier to do with a straight forward list:
-        std::set<int> &neighbourhood = hoods[size_t(i)];
+        std::set<int> &neighbourhood = hoods[ui];
         std::set<int> totalneighbourhood;
         int cluster = 0;
         float control = 0.0f;
@@ -111,7 +111,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
         {
             if (neighbourhood.size() > 1) {
                 dp.cluster =
-                    float(cluster / double(neighbourhood.size() * (neighbourhood.size() - 1.0)));
+                    float(cluster / double(neighbourhood.size() * (neighbourhood.size() - 1)));
                 dp.control = float(control);
                 dp.controllability =
                     float(double(neighbourhood.size()) / double(totalneighbourhood.size()));
@@ -146,11 +146,11 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
     std::string clusterColName = Column::VISUAL_CLUSTERING_COEFFICIENT;
     std::string controlColName = Column::VISUAL_CONTROL;
     std::string controllabilityColName = Column::VISUAL_CONTROLLABILITY;
-    int clusterCol = attributes.insertOrResetColumn(clusterColName);
+    auto clusterCol = attributes.insertOrResetColumn(clusterColName);
     result.addAttribute(clusterColName);
-    int controlCol = attributes.insertOrResetColumn(controlColName);
+    auto controlCol = attributes.insertOrResetColumn(controlColName);
     result.addAttribute(controlColName);
-    int controllabilityCol = attributes.insertOrResetColumn(controllabilityColName);
+    auto controllabilityCol = attributes.insertOrResetColumn(controllabilityColName);
     result.addAttribute(controllabilityColName);
 
     auto dataIter = colData.begin();

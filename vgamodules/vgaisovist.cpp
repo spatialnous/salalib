@@ -23,11 +23,13 @@ AnalysisResult VGAIsovist::run(Communicator *comm) {
     time_t atime = 0;
     if (comm) {
         qtimer(atime, 0);
-        comm->CommPostMessage(Communicator::NUM_RECORDS, m_map.getFilledPointCount());
+        comm->CommPostMessage(Communicator::NUM_RECORDS,
+                              static_cast<size_t>(m_map.getFilledPointCount()));
     }
     size_t count = 0;
 
-    AnalysisResult result(createAttributes(m_simpleVersion), m_map.getFilledPointCount());
+    AnalysisResult result(createAttributes(m_simpleVersion),
+                          static_cast<size_t>(m_map.getFilledPointCount()));
 
     for (size_t i = 0; i < m_map.getCols(); i++) {
         for (size_t j = 0; j < m_map.getRows(); j++) {
@@ -147,7 +149,7 @@ BSPNode VGAIsovist::makeBSPtree(Communicator *communicator,
         time_t atime = 0;
         if (communicator) {
             communicator->CommPostMessage(Communicator::NUM_RECORDS,
-                                          static_cast<int>(partitionlines.size()));
+                                          static_cast<size_t>(partitionlines.size()));
             qtimer(atime, 0);
         }
 

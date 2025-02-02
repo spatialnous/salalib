@@ -57,7 +57,7 @@ void NtfMap::fitBounds(const Line4f &li) {
 }
 
 void NtfMap::addGeom(size_t layerIdx, NtfGeometry &geom) {
-    m_lineCount += geom.lines.size();
+    m_lineCount += static_cast<int>(geom.lines.size());
     layers[layerIdx].m_lineCount += geom.lines.size();
     layers[layerIdx].geometries.push_back(geom);
     for (size_t i = 0; i < geom.lines.size(); i++) {

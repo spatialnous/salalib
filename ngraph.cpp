@@ -427,15 +427,13 @@ std::ostream &PixelVec::write(std::ostream &stream, const int8_t dir, const Pixe
     switch (dir) {
     case PixelRef::HORIZONTAL:
         stream.write(reinterpret_cast<const char *>(&(m_start.x)), sizeof(m_start.x));
-        shiftlength.runlength = static_cast<decltype(ShiftLength::runlength)>(m_end.x - m_start.x);
-        shiftlength.shift =
-            static_cast<decltype(ShiftLength::shift)>(m_start.y - context.m_start.y);
+        shiftlength.runlength = static_cast<unsigned short>(m_end.x - m_start.x) & 0x0FFF;
+        shiftlength.shift = static_cast<unsigned short>(m_start.y - context.m_start.y) & 0x0F;
         break;
     case PixelRef::VERTICAL:
         stream.write(reinterpret_cast<const char *>(&(m_start.y)), sizeof(m_start.y));
-        shiftlength.runlength = static_cast<decltype(ShiftLength::runlength)>(m_end.y - m_start.y);
-        shiftlength.shift =
-            static_cast<decltype(ShiftLength::shift)>(m_start.x - context.m_start.x);
+        shiftlength.runlength = static_cast<unsigned short>(m_end.y - m_start.y) & 0x0FFF;
+        shiftlength.shift = static_cast<unsigned short>(m_start.x - context.m_start.x) & 0x0F;
         break;
     }
     stream.write(reinterpret_cast<const char *>(&shiftlength), sizeof(shiftlength));

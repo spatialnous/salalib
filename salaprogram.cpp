@@ -1477,7 +1477,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                             std::vector<SalaObj> &list = *(obj.m_data.list.list);
                             int i = param.toInt();
                             if (i < 0)
-                                i += list.size();
+                                i += static_cast<int>(list.size());
                             if (i < 0 || i >= (int)list.size())
                                 throw SalaError("Index out of range");
                             data = list[static_cast<size_t>(i)];

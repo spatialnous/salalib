@@ -359,7 +359,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
         Node &node = m_pointmap->getPoint(m_node).getNode();
         for (int i = 0; i < vbin; i++) {
             if (node.occlusionBins[(directionbin + i) % 32].size()) {
-                choices += node.occlusionBins[(directionbin + i) % 32].size();
+                choices += static_cast<int>(node.occlusionBins[(directionbin + i) % 32].size());
             }
         }
         if (choices == 0) {

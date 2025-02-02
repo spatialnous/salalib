@@ -103,7 +103,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
                                   std::inserter(intersect, intersect.begin()));
             totalneighbourhood.insert(retneighbourhood.begin(), retneighbourhood.end());
             control += 1.0f / float(retneighbourhood.size());
-            cluster += intersect.size();
+            cluster += static_cast<int>(intersect.size());
         }
 #if defined(_OPENMP)
 #pragma omp critical(add_to_col)

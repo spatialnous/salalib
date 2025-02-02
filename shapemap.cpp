@@ -1103,7 +1103,7 @@ void ShapeMap::shapePixelBorder(std::map<int, int> &relations, int polyref, int 
             depthmapX::findBinary(pixShapes, ShapeRef(static_cast<unsigned int>(polyref)));
         if (iter == pixShapes.end())
             throw new depthmapX::RuntimeException("Poly reference not found");
-        iter->tags |= side;
+        iter->tags |= static_cast<uint8_t>(side);
         relation->second &= ~side; // <- clear to check all have been done later
         side <<= 1;
         if (side > ShapeRef::SHAPE_T) {

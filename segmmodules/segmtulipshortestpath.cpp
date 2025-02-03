@@ -90,9 +90,10 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
                             .push_back(SegmentData(segconn.first,
                                                    static_cast<int8_t>(lineindex.ref),
                                                    lineindex.segdepth + 1, 0.0, 0));
-                        if (parents.find(static_cast<uint>(segconn.first.ref)) == parents.end()) {
-                            parents[static_cast<uint>(segconn.first.ref)] =
-                                static_cast<uint>(lineindex.ref);
+                        if (parents.find(static_cast<unsigned int>(segconn.first.ref)) ==
+                            parents.end()) {
+                            parents[static_cast<unsigned int>(segconn.first.ref)] =
+                                static_cast<unsigned int>(lineindex.ref);
                         }
                         opencount++;
                     }
@@ -109,9 +110,10 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
                             .push_back(SegmentData(segconn.first,
                                                    static_cast<int8_t>(lineindex.ref),
                                                    lineindex.segdepth + 1, 0.0, 0));
-                        if (parents.find(static_cast<uint>(segconn.first.ref)) == parents.end()) {
-                            parents[static_cast<uint>(segconn.first.ref)] =
-                                static_cast<uint>(lineindex.ref);
+                        if (parents.find(static_cast<unsigned int>(segconn.first.ref)) ==
+                            parents.end()) {
+                            parents[static_cast<unsigned int>(segconn.first.ref)] =
+                                static_cast<unsigned int>(lineindex.ref);
                         }
                         opencount++;
                     }
@@ -123,7 +125,7 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
         }
     }
 
-    auto refToParent = parents.find(static_cast<uint>(m_refTo));
+    auto refToParent = parents.find(static_cast<unsigned int>(m_refTo));
     int counter = 0;
     while (refToParent != parents.end()) {
         AttributeRow &attrRow = m_map.getAttributeRowFromShapeIndex(refToParent->first);

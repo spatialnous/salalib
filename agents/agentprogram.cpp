@@ -22,7 +22,7 @@ void AgentProgram::mutate() {
             ruleOrder[i] = -1;
         }
         for (int j = 0; j < 4; j++) {
-            auto choice = static_cast<int>(pafmath::pafrand() % static_cast<uint>(4 - j));
+            auto choice = static_cast<int>(pafmath::pafrand() % static_cast<unsigned int>(4 - j));
             for (int k = 0; k < choice + 1; k++) {
                 if (ruleOrder[k] != -1) {
                     choice++;

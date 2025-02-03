@@ -253,7 +253,7 @@ Point2f Agent::onStandardLook(bool wholeisovist) {
             return Point2f(0, 0);
         }
     } else {
-        auto chosen = static_cast<int>(pafmath::pafrand() % static_cast<uint>(choices));
+        auto chosen = static_cast<int>(pafmath::pafrand() % static_cast<unsigned int>(choices));
         Node &node = m_pointmap->getPoint(m_node).getNode();
         for (; chosen >= node.bincount(directionbin % 32); directionbin++) {
             chosen -= node.bincount(directionbin % 32);
@@ -372,7 +372,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
                 return Point2f(0, 0);
             }
         } else {
-            size_t chosen = pafmath::pafrand() % static_cast<uint>(choices);
+            size_t chosen = pafmath::pafrand() % static_cast<unsigned int>(choices);
             for (; chosen >= node.occlusionBins[directionbin % 32].size(); directionbin++) {
                 chosen -= node.occlusionBins[directionbin % 32].size();
             }

@@ -114,8 +114,9 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
                                       // result in the connected cursor being added twice
                     row.setValue(depthCol, static_cast<float>(segdepth + 1));
                 }
-                if (parents.find(static_cast<uint>(connectedCursor)) == parents.end()) {
-                    parents[static_cast<uint>(connectedCursor)] = static_cast<uint>(here.ref);
+                if (parents.find(static_cast<unsigned int>(connectedCursor)) == parents.end()) {
+                    parents[static_cast<unsigned int>(connectedCursor)] =
+                        static_cast<unsigned int>(here.ref);
                 }
             }
             if (connectedCursor == m_refTo) {
@@ -128,7 +129,7 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
             break;
     }
 
-    auto refToParent = parents.find(static_cast<uint>(m_refTo));
+    auto refToParent = parents.find(static_cast<unsigned int>(m_refTo));
     int counter = 0;
     while (refToParent != parents.end()) {
         AttributeRow &row = m_map.getAttributeRowFromShapeIndex(refToParent->first);

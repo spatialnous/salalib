@@ -425,17 +425,23 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
     // work out extents...
     m_region = Region4f(min, max);
 
-    double whRatio = m_region.width() / m_region.height();
-    double hwRatio = m_region.height() / m_region.width();
-
-    m_rows = static_cast<size_t>(sqrt(double(size) * whRatio * density));
-    m_cols = static_cast<size_t>(sqrt(double(size) * hwRatio * density));
-
-    if (m_rows < 1)
+    if (m_region.height() == 0) {
         m_rows = 1;
-    if (m_cols < 1)
-        m_cols = 1;
+    } else {
+        double whRatio = m_region.width() / m_region.height();
+        m_rows = static_cast<size_t>(sqrt(double(size) * whRatio * density));
+        if (m_rows < 1)
+            m_rows = 1;
+    }
 
+    if (m_region.width() == 0) {
+        m_cols = 1;
+    } else {
+        double hwRatio = m_region.height() / m_region.width();
+        m_cols = static_cast<size_t>(sqrt(double(size) * hwRatio * density));
+        if (m_cols < 1)
+            m_cols = 1;
+    }
     // could work these two out on the fly, but it's easier to have them stored:
     // m_pixel_height = m_region.height() / double(m_rows);
     // m_pixel_width  = m_region.width()  / double(m_cols);

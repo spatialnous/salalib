@@ -17,6 +17,8 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         set(COMPILE_WARNINGS /W4 /EHsc)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
+
     endif()
 endif()
 

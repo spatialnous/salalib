@@ -1125,69 +1125,40 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                     data = tmp1 + tmp2;
                     break;
                 }
-                case SalaObj::S_SUBTRACT:
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) - evaluate(pointer, pObj);
-#else
-                {
+                case SalaObj::S_SUBTRACT: {
                     SalaObj tmp1 = evaluate(pointer, pObj);
                     SalaObj tmp2 = evaluate(pointer, pObj);
                     data = tmp1 - tmp2;
-                }
-#endif
                     break;
+                }
                 case SalaObj::S_PLUS:
                     data = evaluate(pointer, pObj); // just ignore it
                     break;
-                case SalaObj::S_MINUS:
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = -evaluate(pointer, pObj);
-#else
-                {
+                case SalaObj::S_MINUS: {
                     SalaObj tmp1 = evaluate(pointer, pObj);
                     data = -tmp1;
-                }
-#endif
                     break;
-                case SalaObj::S_MULTIPLY:
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) * evaluate(pointer, pObj);
-#else
-                {
+                }
+                case SalaObj::S_MULTIPLY: {
                     SalaObj tmp1 = evaluate(pointer, pObj);
                     SalaObj tmp2 = evaluate(pointer, pObj);
                     data = tmp1 * tmp2;
-                }
-#endif
                     break;
-                case SalaObj::S_DIVIDE:
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) / evaluate(pointer, pObj);
-#else
-                {
+                }
+                case SalaObj::S_DIVIDE: {
                     SalaObj tmp1 = evaluate(pointer, pObj);
                     SalaObj tmp2 = evaluate(pointer, pObj);
                     data = tmp2 / tmp1;
-                }
-#endif
                     break;
-                case SalaObj::S_MODULO:
+                }
+                case SalaObj::S_MODULO: {
                     data = evaluate(pointer, pObj);
-
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) % data; // reverse order
-#else
                     {
                         SalaObj tmp1 = evaluate(pointer, pObj);
                         data = tmp1 % data;
                     }
-#endif
                     break;
+                }
                 case SalaObj::S_POWER:
                     data = evaluate(pointer, pObj); // reverse order
                     data = pow(evaluate(pointer, pObj).toDouble(), data.toDouble());
@@ -1250,92 +1221,58 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 case SalaObj::S_NOT:
                     data = !evaluate(pointer, pObj).toBool();
                     break;
-                case SalaObj::S_EQ:
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) == evaluate(pointer, pObj);
-#else
-                {
+                case SalaObj::S_EQ: {
                     SalaObj tmp1 = evaluate(pointer, pObj);
                     SalaObj tmp2 = evaluate(pointer, pObj);
                     data = (tmp1 == tmp2);
-                }
-#endif
                     break;
-                case SalaObj::S_IS:
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = op_is(evaluate(pointer, pObj), evaluate(pointer, pObj));
-#else
-                {
+                }
+                case SalaObj::S_IS: {
                     SalaObj tmp1 = evaluate(pointer, pObj);
                     SalaObj tmp2 = evaluate(pointer, pObj);
                     data = op_is(tmp1, tmp2);
-                }
-#endif
                     break;
-                case SalaObj::S_NEQ:
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) != evaluate(pointer, pObj);
-#else
-                {
+                }
+                case SalaObj::S_NEQ: {
                     SalaObj tmp1 = evaluate(pointer, pObj);
                     SalaObj tmp2 = evaluate(pointer, pObj);
                     data = (tmp1 != tmp2);
-                }
-#endif
                     break;
-                case SalaObj::S_GT:
+                }
+                case SalaObj::S_GT: {
                     data = evaluate(pointer, pObj);
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) > data; // revese order
-#else
                     {
                         SalaObj tmp1 = evaluate(pointer, pObj);
                         data = (tmp1 > data);
                     }
-#endif
                     break;
-                case SalaObj::S_LT:
+                }
+                case SalaObj::S_LT: {
                     data = evaluate(pointer, pObj);
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) < data; // revese order
-#else
                     {
                         SalaObj tmp1 = evaluate(pointer, pObj);
                         data = (tmp1 < data);
                     }
-#endif
-                    break;
-                case SalaObj::S_GEQ:
-                    data = evaluate(pointer, pObj);
 
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) >= data; // revese order
-#else
+                    break;
+                }
+                case SalaObj::S_GEQ: {
+                    data = evaluate(pointer, pObj);
                     {
                         SalaObj tmp1 = evaluate(pointer, pObj);
                         data = (tmp1 >= data);
                     }
-#endif
                     break;
-                case SalaObj::S_LEQ:
+                }
+                case SalaObj::S_LEQ: {
                     data = evaluate(pointer, pObj);
-
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) <= data; // revese order
-#else
                     {
                         SalaObj tmp1 = evaluate(pointer, pObj);
                         data = (tmp1 <= data);
                     }
-#endif
+
                     break;
+                }
                 default:
                     break;
                 }

@@ -1119,18 +1119,12 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
         if (group == SalaObj::S_MATH_OPS) {
             try {
                 switch (func) {
-                case SalaObj::S_ADD:
-                    // Quick mod - TV
-#if defined(_MSC_VER)
-                    data = evaluate(pointer, pObj) + evaluate(pointer, pObj);
-#else
-                {
+                case SalaObj::S_ADD: {
                     SalaObj tmp1 = evaluate(pointer, pObj);
                     SalaObj tmp2 = evaluate(pointer, pObj);
                     data = tmp1 + tmp2;
-                }
-#endif
                     break;
+                }
                 case SalaObj::S_SUBTRACT:
                     // Quick mod - TV
 #if defined(_MSC_VER)

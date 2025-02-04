@@ -5,16 +5,16 @@
 
 set(salalib salalib)
 
-# Disable floating-point expression contraction to get the
-# same results on x86 and arm64
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
-
 #set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 
 if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
         "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
+        # Disable floating-point expression contraction to get the
+        # same results on x86 and arm64
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
+
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         set(COMPILE_WARNINGS /W4 /EHsc)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")

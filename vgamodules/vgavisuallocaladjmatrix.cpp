@@ -48,9 +48,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(filled.size());
 
-    // This is to silence msvc warnings where it can't see
-    // that we're using i later and triggers a C4101
-    [[maybe_unused]] int i = 0;
+    int i = 0;
 
     const long n = long(filled.size());
 
@@ -83,12 +81,10 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 #endif
     for (i = 0; i < n; ++i) {
 
-        auto ui = static_cast<size_t>(i);
+        DataPoint &dp = colData[static_cast<size_t>(i)];
 
-        DataPoint &dp = colData[ui];
-
-        Point &p = m_map.getPoint(filled[ui]);
-        if ((p.contextfilled() && !filled[ui].iseven()) || (m_gatesOnly)) {
+        Point &p = m_map.getPoint(filled[static_cast<size_t>(i)]);
+        if ((p.contextfilled() && !filled[static_cast<size_t>(i)].iseven()) || (m_gatesOnly)) {
             count++;
             continue;
         }

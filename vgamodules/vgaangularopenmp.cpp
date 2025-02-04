@@ -48,11 +48,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(attributes.getNumRows());
 
-    // This is to silence msvc warnings where it can't see
-    // that we're using i later and triggers a C4101
-    [[maybe_unused]] int i = 0;
-
-    int n = int(attributes.getNumRows());
+    int i, n = int(attributes.getNumRows());
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
@@ -66,9 +62,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
             continue;
         }
 
-        auto ui = static_cast<size_t>(i);
-
-        DataPoint &dp = colData[ui];
+        DataPoint &dp = colData[static_cast<size_t>(i)];
 
         std::vector<AnalysisData> analysisData;
         analysisData.reserve(m_map.getAttributeTable().getNumRows());
@@ -84,7 +78,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         float totalAngle = 0.0f;
         int totalNodes = 0;
 
-        auto &ad0 = analysisData.at(ui);
+        auto &ad0 = analysisData.at(static_cast<size_t>(i));
 
         std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
 

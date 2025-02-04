@@ -56,11 +56,8 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
     }
     std::vector<std::set<int>> hoods(filled.size());
 
-    // This is to silence msvc warnings where it can't see
-    // that we're using i later and triggers a C4101
-    [[maybe_unused]] int i = 0;
+    int i, n = int(filled.size());
 
-    int n = int(filled.size());
     std::map<PixelRef, int> refToFilled;
     for (i = 0; i < n; ++i) {
         refToFilled.insert(std::make_pair(filled[size_t(i)], i));
@@ -83,18 +80,16 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif
     for (i = 0; i < n; ++i) {
+        DataPoint &dp = colData[static_cast<size_t>(i)];
 
-        auto ui = static_cast<size_t>(i);
-        DataPoint &dp = colData[ui];
-
-        Point &p = m_map.getPoint(filled[ui]);
-        if ((p.contextfilled() && !filled[ui].iseven())) {
+        Point &p = m_map.getPoint(filled[static_cast<size_t>(i)]);
+        if ((p.contextfilled() && !filled[static_cast<size_t>(i)].iseven())) {
             count++;
             continue;
         }
 
         // This is much easier to do with a straight forward list:
-        std::set<int> &neighbourhood = hoods[ui];
+        std::set<int> &neighbourhood = hoods[static_cast<size_t>(i)];
         std::set<int> totalneighbourhood;
         int cluster = 0;
         float control = 0.0f;

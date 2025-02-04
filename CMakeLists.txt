@@ -16,7 +16,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
 
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-        set(COMPILE_WARNINGS /W4 /EHsc)
+        add_compile_options(/EHsc /W4 /WX)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
 
     endif()

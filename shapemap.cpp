@@ -2756,21 +2756,21 @@ bool ShapeMap::unlinkShapesByKey(int key1, int key2) {
     auto connCol = m_attributes->getColumnIndex("Connectivity");
     bool update = false;
 
-    auto index1 = std::distance(m_shapes.begin(), m_shapes.find(key1));
-    auto index2 = std::distance(m_shapes.begin(), m_shapes.find(key2));
+    auto index1 = static_cast<size_t>(std::distance(m_shapes.begin(), m_shapes.find(key1)));
+    auto index2 = static_cast<size_t>(std::distance(m_shapes.begin(), m_shapes.find(key2)));
 
     if (key1 != key2) {
         // unlink these shapes...
         // first look for explicit links and clear
-        OrderedSizeTPair unlink(static_cast<size_t>(index1), static_cast<size_t>(index2));
+        OrderedSizeTPair unlink(index1, index2);
         auto linkiter = std::find(m_links.begin(), m_links.end(), unlink);
         if (linkiter != m_links.end()) {
             m_links.erase(linkiter);
             update = true;
         } else {
             // then check if linked already
-            auto &connections1 = m_connectors[size_t(index1)].connections;
-            auto &connections2 = m_connectors[size_t(index2)].connections;
+            auto &connections1 = m_connectors[index1].connections;
+            auto &connections2 = m_connectors[index2].connections;
             auto linkIter1 = std::find(connections1.begin(), connections1.end(), index2);
             auto linkIter2 = std::find(connections2.begin(), connections2.end(), index1);
             if (linkIter1 != connections1.end() && linkIter2 != connections2.end()) {
@@ -2782,10 +2782,8 @@ bool ShapeMap::unlinkShapesByKey(int key1, int key2) {
     }
 
     if (update) {
-        depthmapX::findAndErase(m_connectors[size_t(index1)].connections,
-                                static_cast<size_t>(index2));
-        depthmapX::findAndErase(m_connectors[size_t(index2)].connections,
-                                static_cast<size_t>(index1));
+        depthmapX::findAndErase(m_connectors[index1].connections, index2);
+        depthmapX::findAndErase(m_connectors[index2].connections, index1);
         auto &row1 = m_attributes->getRow(AttributeKey(key1));
         auto &row2 = m_attributes->getRow(AttributeKey(key1));
         row1.incrValue(connCol, -1.0f);
@@ -2797,15 +2795,15 @@ bool ShapeMap::unlinkShapesByKey(int key1, int key2) {
 bool ShapeMap::clearLinks() {
     for (size_t i = 0; i < m_unlinks.size(); i++) {
         const OrderedSizeTPair &link = m_unlinks[i];
-        depthmapX::insert_sorted(m_connectors[size_t(link.a)].connections, link.b);
-        depthmapX::insert_sorted(m_connectors[size_t(link.b)].connections, link.a);
+        depthmapX::insert_sorted(m_connectors[link.a].connections, link.b);
+        depthmapX::insert_sorted(m_connectors[link.b].connections, link.a);
     }
     m_unlinks.clear();
 
     for (size_t j = 0; j < m_links.size(); j++) {
         const OrderedSizeTPair &link = m_links[j];
-        depthmapX::findAndErase(m_connectors[size_t(link.a)].connections, link.b);
-        depthmapX::findAndErase(m_connectors[size_t(link.b)].connections, link.a);
+        depthmapX::findAndErase(m_connectors[link.a].connections, link.b);
+        depthmapX::findAndErase(m_connectors[link.b].connections, link.a);
     }
     m_links.clear();
 

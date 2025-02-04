@@ -48,7 +48,11 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(attributes.getNumRows());
 
-    int i = 0, n = int(attributes.getNumRows());
+    // This is to silence msvc warnings where it can't see
+    // that we're using i later and triggers a C4101
+    [[maybe_unused]] int i = 0;
+
+    int n = int(attributes.getNumRows());
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)

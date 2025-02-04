@@ -48,7 +48,10 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(filled.size());
 
-    int i = 0;
+    // This is to silence msvc warnings where it can't see
+    // that we're using i later and triggers a C4101
+    [[maybe_unused]] int i = 0;
+
     const long n = long(filled.size());
 
     std::map<PixelRef, int> refToFilled;

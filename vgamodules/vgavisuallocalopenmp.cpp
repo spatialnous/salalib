@@ -56,7 +56,11 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
     }
     std::vector<std::set<int>> hoods(filled.size());
 
-    int i = 0, n = int(filled.size());
+    // This is to silence msvc warnings where it can't see
+    // that we're using i later and triggers a C4101
+    [[maybe_unused]] int i = 0;
+
+    int n = int(filled.size());
     std::map<PixelRef, int> refToFilled;
     for (i = 0; i < n; ++i) {
         refToFilled.insert(std::make_pair(filled[size_t(i)], i));

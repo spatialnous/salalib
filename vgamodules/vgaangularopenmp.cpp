@@ -52,6 +52,9 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
+#else
+    // Hack to force MSVC to ignore the C4104 warning
+    (void)i;
 #endif
     for (i = 0; i < n; i++) {
         if (m_gatesOnly) {

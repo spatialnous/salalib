@@ -37,12 +37,12 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(attributes.getNumRows());
 
-    int i, n = int(attributes.getNumRows());
+    int n = int(attributes.getNumRows());
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)
 #endif
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         if (m_gatesOnly) {
 #if defined(_OPENMP)
 #pragma omp atomic

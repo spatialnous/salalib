@@ -105,7 +105,7 @@ void LayerManagerImpl::write(std::ostream &stream) const {
             // too many layers -- maximum 64
             throw OutOfLayersException();
         }
-        int64_t newlayer = 0x1 << loc;
+        int64_t newlayer = 0x1 << static_cast<int64_t>(loc);
         // now layer has been found, eliminate from available layers
         // and add a lookup for the name
         availableLayers = (availableLayers & (~newlayer));
@@ -134,7 +134,7 @@ void LayerManagerImpl::write(std::ostream &stream) const {
             // too many layers -- maximum 64
             throw OutOfLayersException();
         }
-        newlayer = 0x1 << loc;
+        newlayer = 0x1 << static_cast<int64_t>(loc);
         stream.write((const char *)&newlayer, sizeof(KeyType));
         dXstring::writeString(stream, m_layers[i]);
     }

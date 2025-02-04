@@ -309,7 +309,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         depthcounts.push_back(0);
 
         pflipper<std::vector<std::pair<int, int>>> foundlist;
-        foundlist.a().push_back(std::pair<int, int>(i, -1));
+        foundlist.a().push_back(std::pair<int, int>(static_cast<int>(i), -1));
         covered[i] = true;
         int totalDepth = 0, depth = 1, nodeCount = 1, pos = -1,
             previous = -1; // node_count includes this 1

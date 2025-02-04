@@ -29,7 +29,8 @@ namespace EntityParsing {
         size_t i;
         for (i = 0; i < strings.size(); i++) {
             if (!strings[i].empty()) {
-                std::transform(strings[i].begin(), strings[i].end(), strings[i].begin(), ::tolower);
+                std::transform(strings[i].begin(), strings[i].end(), strings[i].begin(),
+                               [](const char c) { return static_cast<char>(std::tolower(c)); });
                 // strings[i].ltrim('\"');
                 // strings[i].rtrim('\"');
             }

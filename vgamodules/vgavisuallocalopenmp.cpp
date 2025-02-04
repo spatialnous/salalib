@@ -56,7 +56,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
     }
     std::vector<std::set<int>> hoods(filled.size());
 
-    int i, n = int(filled.size());
+    int i = 0, n = int(filled.size());
     std::map<PixelRef, int> refToFilled;
     for (i = 0; i < n; ++i) {
         refToFilled.insert(std::make_pair(filled[size_t(i)], i));

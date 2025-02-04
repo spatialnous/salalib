@@ -46,7 +46,8 @@ void AttributeTableHandle::setDisplayColIndex(int columnIndex) {
     }
     AttributeTableView::setDisplayColIndex(columnIndex);
 }
-long AttributeTableHandle::findInIndex(const AttributeKey &key) {
+AttributeTableHandle::Index::iterator::difference_type
+AttributeTableHandle::findInIndex(const AttributeKey &key) {
 
     auto iter = std::find_if(m_mutableIndex.begin(), m_mutableIndex.end(), index_item_key(key));
     if (iter != m_mutableIndex.end()) {

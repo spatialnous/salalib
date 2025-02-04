@@ -48,7 +48,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(filled.size());
 
-    int i;
+    int i = 0;
     const long n = long(filled.size());
 
     std::map<PixelRef, int> refToFilled;

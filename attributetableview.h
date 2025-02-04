@@ -40,7 +40,7 @@ class AttributeTableHandle : public AttributeTableView {
     typedef std::vector<AttributeIndexItem> Index;
     const Index &getTableIndex() const { return m_mutableIndex; }
     void setDisplayColIndex(int columnIndex) override;
-    long findInIndex(const AttributeKey &key);
+    Index::iterator::difference_type findInIndex(const AttributeKey &key);
 
   private:
     AttributeTable &m_mutableTable;

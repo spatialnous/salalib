@@ -29,14 +29,14 @@ class LayerManager {
     virtual ~LayerManager() {}
 
   public:
-    class OutOfLayersException : depthmapX::BaseException {
+    class OutOfLayersException : public depthmapX::BaseException {
       public:
         OutOfLayersException() {}
         OutOfLayersException(const std::string &message)
             : depthmapX::BaseException(message.c_str()) {}
     };
 
-    class DuplicateKeyException : depthmapX::BaseException {
+    class DuplicateKeyException : public depthmapX::BaseException {
       public:
         DuplicateKeyException() {}
         DuplicateKeyException(const std::string &message)

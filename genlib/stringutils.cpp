@@ -61,7 +61,8 @@ namespace dXstring {
     }
 
     std::string &toLower(std::string &str) {
-        std::transform(str.begin(), str.end(), str.begin(), tolower);
+        std::transform(str.begin(), str.end(), str.begin(),
+                       [](const char c) { return static_cast<char>(std::tolower(c)); });
         return str;
     }
 

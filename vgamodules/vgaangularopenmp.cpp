@@ -48,7 +48,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(attributes.getNumRows());
 
-    int i, n = int(attributes.getNumRows());
+    int i = 0, n = int(attributes.getNumRows());
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) private(i) schedule(dynamic)

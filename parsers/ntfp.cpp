@@ -101,7 +101,7 @@ void NtfMap::open(const std::vector<std::string> &fileset, Communicator *comm) {
             dXstring::safeGetline(stream, line);
             if (line.length() > 2) {
                 if (dXstring::beginsWith<std::string>(line, "02")) {
-                    std::transform(line.begin(), line.end(), line.begin(), ::tolower);
+                    dXstring::toLower(line);
                     if (dXstring::beginsWith<std::string>(line, "02land-line")) {
                         filetype = NTF_LANDLINE;
                     } else if (dXstring::beginsWith<std::string>(line, "02meridian")) {

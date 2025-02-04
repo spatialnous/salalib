@@ -337,7 +337,8 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 for (size_t k = 0; k < line.connections.size(); k++) {
                     if (!covered[line.connections[k]]) {
                         covered[line.connections[k]] = true;
-                        foundlist.b().push_back(std::pair<int, int>(line.connections[k], index));
+                        foundlist.b().push_back(
+                            std::pair<int, int>(line.connections[k], static_cast<size_t>(index)));
                         if (m_weightedMeasureCol.has_value()) {
                             // the weight is taken from the discovered node:
                             weight = weights[line.connections[k]];

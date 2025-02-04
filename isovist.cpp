@@ -245,11 +245,11 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
 
             // using cos and sin directly to achieve double binary parity between macos and linux
             Point2f pa = li.intersection_point(
-                Line4f(m_centre, m_centre + Point2f(cos(static_cast<double>(a)),
-                                                    sin(static_cast<double>(a)))));
+                Line4f(m_centre, m_centre + Point2f(static_cast<double>(cosl(a)),
+                                                    static_cast<double>(sinl(a)))));
             Point2f pb = li.intersection_point(
-                Line4f(m_centre, m_centre + Point2f(cos(static_cast<double>(b)),
-                                                    sin(static_cast<double>(b)))));
+                Line4f(m_centre, m_centre + Point2f(static_cast<double>(cosl(b)),
+                                                    static_cast<double>(sinl(b)))));
 
             m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb, tag));
         } else {

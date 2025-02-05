@@ -64,7 +64,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
     }
 
 #if defined(_OPENMP)
-#pragma omp parallel for default(shared) private(i) schedule(dynamic)
+#pragma omp parallel for default(shared) schedule(dynamic)
 #endif
     for (int i = 0; i < n; ++i) {
         Point &p = m_map.getPoint(filled[size_t(i)]);
@@ -77,7 +77,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
     }
 
 #if defined(_OPENMP)
-#pragma omp parallel for default(shared) private(i) schedule(dynamic)
+#pragma omp parallel for default(shared) schedule(dynamic)
 #endif
     for (int i = 0; i < n; ++i) {
         DataPoint &dp = colData[static_cast<size_t>(i)];

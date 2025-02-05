@@ -47,7 +47,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
     int n = int(attributes.getNumRows());
 
 #if defined(_OPENMP)
-#pragma omp parallel for default(shared) private(i) schedule(dynamic)
+#pragma omp parallel for default(shared) schedule(dynamic)
 #endif
     for (int i = 0; i < n; i++) {
         if ((m_map.getPoint(refs[static_cast<size_t>(i)]).contextfilled() &&

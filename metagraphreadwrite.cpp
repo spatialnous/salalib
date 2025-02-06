@@ -264,9 +264,9 @@ std::streampos MetaGraphReadWrite::skipVirtualMem(std::istream &stream) {
     return (stream.tellg());
 }
 
-std::tuple<std::vector<PointMap>, std::vector<int>, unsigned int>
+std::tuple<std::vector<PointMap>, std::vector<int>, std::optional<unsigned int>>
 MetaGraphReadWrite::readPointMaps(std::istream &stream, Region4f defaultRegion) {
-    unsigned int displayedMap;
+    int displayedMap = -1;
     stream.read(reinterpret_cast<char *>(&displayedMap), sizeof(displayedMap));
     std::vector<PointMap> pointMaps;
     std::vector<int> displayAttributes;
@@ -277,7 +277,10 @@ MetaGraphReadWrite::readPointMaps(std::istream &stream, Region4f defaultRegion) 
         auto [completed, displayedAttribute] = pointMaps.back().read(stream);
         displayAttributes.push_back(displayedAttribute);
     }
-    return std::make_tuple(std::move(pointMaps), std::move(displayAttributes), displayedMap);
+    return std::make_tuple(std::move(pointMaps), std::move(displayAttributes),
+                           displayedMap < -1
+                               ? std::nullopt
+                               : std::make_optional(static_cast<unsigned int>(displayedMap)));
 }
 
 template <typename PointMapOrRef>
@@ -285,8 +288,7 @@ bool MetaGraphReadWrite::writePointMaps(std::ostream &stream,
                                         const std::vector<PointMapOrRef> &pointMaps,
                                         const std::vector<int> displayData,
                                         const std::optional<unsigned int> displayedMap) {
-    unsigned int displayedPointmap =
-        displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
+    int displayedPointmap = displayedMap.has_value() ? static_cast<int>(*displayedMap) : -1;
     stream.write(reinterpret_cast<const char *>(&displayedPointmap), sizeof(displayedPointmap));
     auto count = pointMaps.size();
     stream.write(reinterpret_cast<const char *>(&count), sizeof(static_cast<int>(count)));
@@ -300,13 +302,14 @@ bool MetaGraphReadWrite::writePointMaps(std::ostream &stream,
     return true;
 }
 
-std::tuple<std::vector<ShapeMap>, std::vector<std::tuple<bool, bool, int>>, unsigned int>
+std::tuple<std::vector<ShapeMap>, std::vector<std::tuple<bool, bool, int>>,
+           std::optional<unsigned int>>
 MetaGraphReadWrite::readDataMaps(std::istream &stream) {
     std::vector<ShapeMap> dataMaps;
     std::vector<std::tuple<bool, bool, int>> displayData;
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
-    unsigned int displayedMap;
+    int displayedMap = -1;
     stream.read(reinterpret_cast<char *>(&displayedMap), sizeof(displayedMap));
     // read maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
@@ -319,7 +322,10 @@ MetaGraphReadWrite::readDataMaps(std::istream &stream) {
         auto [completed, editable, show, displayedAttribute] = dataMaps.back().read(stream);
         displayData.emplace_back(editable, show, displayedAttribute);
     }
-    return std::make_tuple(std::move(dataMaps), std::move(displayData), displayedMap);
+    return std::make_tuple(std::move(dataMaps), std::move(displayData),
+                           displayedMap < 0
+                               ? std::nullopt
+                               : std::make_optional(static_cast<unsigned int>(displayedMap)));
 }
 
 template <typename ShapeMapOrRef>
@@ -329,8 +335,7 @@ bool MetaGraphReadWrite::writeDataMaps(std::ostream &stream,
                                        const std::optional<unsigned int> displayedMap) {
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
-    unsigned int displayedDataMap =
-        displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
+    int displayedDataMap = displayedMap.has_value() ? static_cast<int>(*displayedMap) : -1;
     stream.write(reinterpret_cast<const char *>(&displayedDataMap), sizeof(displayedDataMap));
     // write maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
@@ -366,13 +371,13 @@ bool MetaGraphReadWrite::writeSpacePixels(
 }
 
 std::tuple<std::vector<ShapeGraph>, std::optional<AllLine::MapData>,
-           std::vector<MetaGraphReadWrite::ShapeMapDisplayData>, unsigned int>
+           std::vector<MetaGraphReadWrite::ShapeMapDisplayData>, std::optional<unsigned int>>
 MetaGraphReadWrite::readShapeGraphs(std::istream &stream) {
     std::vector<ShapeGraph> shapeGraphs;
     std::vector<std::tuple<bool, bool, int>> displayData;
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
-    unsigned int displayedMap;
+    int displayedMap = -1;
     stream.read(reinterpret_cast<char *>(&displayedMap), sizeof(displayedMap));
     // read maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
@@ -423,7 +428,9 @@ MetaGraphReadWrite::readShapeGraphs(std::istream &stream) {
         stream.read(reinterpret_cast<char *>(&length), sizeof(unsigned int));
     }
     return std::make_tuple(std::move(shapeGraphs), allLineMapData, std::move(displayData),
-                           displayedMap);
+                           displayedMap < 0
+                               ? std::nullopt
+                               : std::make_optional(static_cast<unsigned int>(displayedMap)));
 }
 
 template <typename ShapeGraphOrRef>
@@ -434,8 +441,7 @@ bool MetaGraphReadWrite::writeShapeGraphs(
     const std::optional<unsigned int> displayedMap) {
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
-    unsigned int displayedShapeGraph =
-        displayedMap.has_value() ? *displayedMap : static_cast<unsigned int>(-1);
+    int displayedShapeGraph = displayedMap.has_value() ? static_cast<int>(*displayedMap) : -1;
     stream.write(reinterpret_cast<const char *>(&displayedShapeGraph), sizeof(displayedShapeGraph));
     // write maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion

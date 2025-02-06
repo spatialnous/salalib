@@ -77,7 +77,7 @@ namespace MetaGraphReadWrite {
     readDrawingFiles(std::istream &stream);
 
     std::tuple<std::vector<ShapeGraph>, std::optional<AllLine::MapData>,
-               std::vector<ShapeMapDisplayData>, unsigned int>
+               std::vector<ShapeMapDisplayData>, std::optional<unsigned int>>
     readShapeGraphs(std::istream &stream);
 
     template <typename ShapeGraphOrRef>
@@ -86,7 +86,8 @@ namespace MetaGraphReadWrite {
                           const std::vector<std::tuple<bool, bool, int>> perShapeGraph,
                           const std::optional<unsigned int> displayedMap);
 
-    std::tuple<std::vector<ShapeMap>, std::vector<std::tuple<bool, bool, int>>, unsigned int>
+    std::tuple<std::vector<ShapeMap>, std::vector<std::tuple<bool, bool, int>>,
+               std::optional<unsigned int>>
     readDataMaps(std::istream &stream);
 
     template <typename ShapeMapOrRef>
@@ -95,7 +96,7 @@ namespace MetaGraphReadWrite {
         const std::vector<ShapeMapDisplayData> displayData = std::vector<ShapeMapDisplayData>(),
         const std::optional<unsigned int> displayedMap = 0);
 
-    std::tuple<std::vector<PointMap>, std::vector<int>, unsigned int>
+    std::tuple<std::vector<PointMap>, std::vector<int>, std::optional<unsigned int>>
     readPointMaps(std::istream &stream, Region4f defaultRegion);
 
     template <typename PointMapOrRef>

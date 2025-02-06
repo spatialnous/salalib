@@ -278,7 +278,7 @@ MetaGraphReadWrite::readPointMaps(std::istream &stream, Region4f defaultRegion) 
         displayAttributes.push_back(displayedAttribute);
     }
     return std::make_tuple(std::move(pointMaps), std::move(displayAttributes),
-                           displayedMap < -1
+                           displayedMap < 0
                                ? std::nullopt
                                : std::make_optional(static_cast<unsigned int>(displayedMap)));
 }

@@ -164,8 +164,14 @@ void Isovist::drawnode(const Line4f &li, int tag) {
     Point2f p2 = li.end() - m_centre;
     p2.normalise();
 
-    long double angle1 = (p1.y < 0) ? (2.0 * M_PI - acosl(p1.x)) : acosl(p1.x);
-    long double angle2 = (p2.y < 0) ? (2.0 * M_PI - acosl(p2.x)) : acosl(p2.x);
+    auto p1x = static_cast<long double>(p1.x);
+    auto p2x = static_cast<long double>(p2.x);
+
+    long double acosl1x = acosl(p1x);
+    long double acosl2x = acosl(p2x);
+
+    long double angle1 = (p1.y < 0) ? (pipi - acosl1x) : acosl1x;
+    long double angle2 = (p2.y < 0) ? (pipi - acosl2x) : acosl2x;
 
     if (angle2 > angle1) {
         if (angle2 - angle1 >= M_PI) {

@@ -227,7 +227,7 @@ bool MapInfoData::exportFile(std::ostream& miffile, std::ostream& midfile, const
    // write the mif table
    writetable(miffile,midfile,map.m_attributes);
 
-   miffile.precision(16);
+   miffile.precision(14);
 
    for (int i = 0; i < map.m_lines.size(); i++) {
       miffile << "Line " << map.m_lines[i].line.start().x << " "
@@ -256,7 +256,7 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     // write the mif table
     writetable(miffile, midfile, points.getAttributeTable(), points.getLayers());
 
-    miffile.precision(16);
+    miffile.precision(14);
 
     for (auto iter = points.getAttributeTable().begin(); iter != points.getAttributeTable().end();
          iter++) {
@@ -288,8 +288,8 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     // write the mid table
     writetable(miffile, midfile, map.getAttributeTable(), map.getLayers());
 
-    miffile.precision(16);
-    midfile.precision(16);
+    miffile.precision(14);
+    midfile.precision(14);
 
     for (const auto &shape : map.getAllShapes()) {
         // note, attributes must align for this:
@@ -355,7 +355,7 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
     // write the mid table
     writetable(miffile, midfile, attributes, layers);
 
-    miffile.precision(16);
+    miffile.precision(12);
     for (auto &polygon : polygons) {
         Point2f centre;
         miffile << "QtRegion  1" << std::endl;

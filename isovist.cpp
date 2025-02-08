@@ -22,7 +22,7 @@
 
 void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, double startangle,
                      double endangle, bool forceClosePoly) {
-    const double ISOVIST_POINT_MATCH_TOLERANCE = 1e-6;
+    const double ISOVIST_POINT_MATCH_TOLERANCE = 1e-9;
     // region is used to give an idea of scale, so isovists can be linked when
     // there is floating point error
     double tolerance = std::max(region.width(), region.height()) * ISOVIST_POINT_MATCH_TOLERANCE;
@@ -116,9 +116,9 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
     }
     if (forceClosePoly) {
         // if the polygon is not closed force it to close
-        if (fabs(m_poly.front().x - m_poly.back().x) > ISOVIST_POINT_MATCH_TOLERANCE ||
-            fabs(m_poly.front().y - m_poly.back().y) > ISOVIST_POINT_MATCH_TOLERANCE) {
-            m_poly.push_back(m_poly.front());
+        if (!m_poly.front().approxeq(m_poly.back())) {
+            //            m_poly.push_back(m_poly.front());
+            std::cout << "Force closing" << std::endl;
         }
     }
 }

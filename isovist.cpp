@@ -114,7 +114,7 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
         }
     }
     if (forceClosePoly) {
-        const double ISOVIST_FORCE_CLOSE_TOLERANCE = TOLERANCE_C;
+        const double ISOVIST_FORCE_CLOSE_TOLERANCE = 1e-4;
         // if the polygon is not closed force it to close
         if (fabs(m_poly.front().x - m_poly.back().x) > ISOVIST_FORCE_CLOSE_TOLERANCE ||
             fabs(m_poly.front().y - m_poly.back().y) > ISOVIST_FORCE_CLOSE_TOLERANCE) {

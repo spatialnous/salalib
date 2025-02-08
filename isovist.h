@@ -67,7 +67,7 @@ class Isovist {
     const Point2f &getCentre() const { return m_centre; }
     //
     void makeit(BSPNode *root, const Point2f &p, const Region4f &region, double startangle = 0.0,
-                double endangle = 0.0);
+                double endangle = 0.0, bool forceClosePoly = false);
     void make(BSPNode *here);
     void drawnode(const Line4f &li, int tag);
     void addBlock(const Line4f &li, int tag, double startangle, double endangle);

@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "isovist.h"
+#include "salalib/tolerances.h"
 
 #include <cmath>
 #include <float.h>
@@ -20,7 +21,7 @@
 // This uses BSP trees, and appears to be superfast once the tree is built
 
 void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, double startangle,
-                     double endangle) {
+                     double endangle, bool forceClosePoly) {
     // region is used to give an idea of scale, so isovists can be linked when
     // there is floating point error
     double tolerance = std::max(region.width(), region.height()) * 1e-9;
@@ -110,6 +111,14 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
             } else {
                 m_occlusionPoints.push_back(PointDist(m_blocks.begin()->startpoint, occluded));
             }
+        }
+    }
+    if (forceClosePoly) {
+        const double ISOVIST_FORCE_CLOSE_TOLERANCE = TOLERANCE_C;
+        // if the polygon is not closed force it to close
+        if (fabs(m_poly.front().x - m_poly.back().x) > ISOVIST_FORCE_CLOSE_TOLERANCE ||
+            fabs(m_poly.front().y - m_poly.back().y) > ISOVIST_FORCE_CLOSE_TOLERANCE) {
+            m_poly.push_back(m_poly.front());
         }
     }
 }

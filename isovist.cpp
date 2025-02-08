@@ -116,9 +116,8 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
     }
     if (forceClosePoly) {
         // if the polygon is not closed force it to close
-        if (!m_poly.front().approxeq(m_poly.back())) {
-            //            m_poly.push_back(m_poly.front());
-            std::cout << "Force closing" << std::endl;
+        if (!m_poly.front().approxeq(m_poly.back(), tolerance)) {
+            m_poly.push_back(m_poly.front());
         }
     }
 }

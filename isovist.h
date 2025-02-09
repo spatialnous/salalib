@@ -18,12 +18,13 @@ struct IsoSeg {
     Point2f startpoint;
     Point2f endpoint;
     int8_t quadrant;
+    size_t index;
     int tag;
-    IsoSeg(double start = 0.0, double end = 0.0, int8_t q = 0, int t = -1)
-        : tagdelete(false), startangle(start), endangle(end), quadrant(q), tag(t) {}
-    IsoSeg(double start, double end, const Point2f &pstart, Point2f &pend, int t = -1)
+    IsoSeg(double start = 0.0, double end = 0.0, int8_t q = 0, size_t i = 0, int t = -1)
+        : tagdelete(false), startangle(start), endangle(end), quadrant(q), index(i), tag(t) {}
+    IsoSeg(double start, double end, const Point2f &pstart, Point2f &pend, size_t i, int t = -1)
         : tagdelete(false), startangle(start), endangle(end), startpoint(pstart), endpoint(pend),
-          quadrant(0), tag(t) {}
+          quadrant(0), index(i), tag(t) {}
     friend bool operator==(const IsoSeg &b1, const IsoSeg &b2);
     friend bool operator>(const IsoSeg &b1, const IsoSeg &b2);
     friend bool operator<(const IsoSeg &b1, const IsoSeg &b2);
@@ -32,12 +33,14 @@ inline bool operator==(const IsoSeg &b1, const IsoSeg &b2) {
     return (b1.startangle == b2.startangle && b1.endangle == b2.endangle);
 }
 inline bool operator>(const IsoSeg &b1, const IsoSeg &b2) {
-    return b1.startangle == b2.startangle ? b1.endangle > b2.endangle
-                                          : b1.startangle > b2.startangle;
+    return b1.startangle != b2.startangle ? b1.startangle > b2.startangle
+           : b1.endangle != b2.endangle   ? b1.endangle > b2.endangle
+                                          : b1.index > b2.index;
 }
 inline bool operator<(const IsoSeg &b1, const IsoSeg &b2) {
-    return b1.startangle == b2.startangle ? b1.endangle < b2.endangle
-                                          : b1.startangle < b2.startangle;
+    return b1.startangle != b2.startangle ? b1.startangle < b2.startangle
+           : b1.endangle != b2.endangle   ? b1.endangle < b2.endangle
+                                          : b1.index < b2.index;
 }
 
 class AttributeTable;

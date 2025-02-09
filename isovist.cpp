@@ -350,7 +350,8 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
                       << std::endl;
             std::cout << std::endl;
 
-            m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb, tag));
+            m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb,
+                                   m_blocks.size(), tag));
         } else {
             finished = true;
         }

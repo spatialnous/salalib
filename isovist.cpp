@@ -63,6 +63,15 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
     auto prev = m_blocks.begin();
     auto curr = m_blocks.begin();
     for (; curr != m_blocks.end(); ++curr) {
+        std::cout << "block: " << std::endl                                                       //
+                  << "\t- curr->startangle: " << curr->startangle                                 //
+                  << std::endl                                                                    //
+                  << "\t- curr->endangle: " << curr->endangle                                     //
+                  << std::endl                                                                    //
+                  << "\t- curr->startpoint: " << curr->startpoint.x << ", " << curr->startpoint.y //
+                  << std::endl                                                                    //
+                  << "\t- curr->endpoint: " << curr->endpoint.x << ", " << curr->endpoint.y       //
+                  << std::endl;                                                                   //
         if (!complete && !markedcentre && !parity && curr->startangle == startangle) {
             // centre
             m_poly.push_back(p);
@@ -260,7 +269,7 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
                     gap = m_gaps.insert(hint, isoseg);
                 } else {
                     b = endangle;
-                    m_gaps.insert(IsoSeg(endangle, gap->endangle, gap->quadrant));
+                    m_gaps.insert(IsoSeg(endangle, gap->endangle, 0, gap->quadrant));
                     IsoSeg isoseg = *gap;
                     isoseg.endangle = startangle;
                     auto hint = gap;
@@ -350,8 +359,7 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
                       << std::endl;
             std::cout << std::endl;
 
-            m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb,
-                                   m_blocks.size(), tag));
+            m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb, 0, tag));
         } else {
             finished = true;
         }

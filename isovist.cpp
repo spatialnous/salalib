@@ -338,20 +338,16 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
                       << std::endl;
             std::cout << "a2:\t" << a2.dValue << " " << a2.iValue //
                       << std::endl;
-            std::cout
-                << "a:\t" << a << " "
-                << au.iValue //
-                //                      << "\n\t" << pointfromangle(a).x << " " << av.iValue //
-                << "\n\t" << pa.x << " " << pax.iValue //
-                << "\n\t" << pa.y << " " << pay.iValue << std::endl
-                << std::endl;
-            std::cout
-                << "b:\t" << b << " "
-                << bu.iValue //
-                //                      << "\n\t" << pointfromangle(b).x << " " << bv.iValue //
-                << "\n\t" << pb.x << " " << pbx.iValue //
-                << "\n\t" << pb.y << " " << pby.iValue << std::endl
-                << std::endl;
+            std::cout << "a:\t" << a << " " << au.iValue         //
+                      << "\n\t" << av.dValue << " " << av.iValue //
+                      << "\n\t" << pa.x << " " << pax.iValue     //
+                      << "\n\t" << pa.y << " " << pay.iValue << std::endl
+                      << std::endl;
+            std::cout << "b:\t" << b << " " << bu.iValue         //
+                      << "\n\t" << bv.dValue << " " << bv.iValue //
+                      << "\n\t" << pb.x << " " << pbx.iValue     //
+                      << "\n\t" << pb.y << " " << pby.iValue << std::endl
+                      << std::endl;
             std::cout << std::endl;
 
             m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb, tag));

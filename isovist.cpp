@@ -116,7 +116,7 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
     }
     if (forceClosePoly) {
         // if the polygon is not closed force it to close
-        if (!m_poly.front().approxeq(m_poly.back(), 0.001)) {
+        if (!m_poly.front().approxeq(m_poly.back(), 0.00001)) {
             std::cout << "x1: " << m_poly.front().x << std::endl                         //
                       << "y1: " << m_poly.front().y << std::endl                         //
                       << "x2: " << m_poly.back().x << std::endl                          //
@@ -219,6 +219,11 @@ void Isovist::drawnode(const Line4f &li, int tag) {
     }
 }
 
+union myUnion {
+    double dValue;
+    uint64_t iValue;
+};
+
 void Isovist::addBlock(const Line4f &li, int tag, double startangle, double endangle) {
     auto gap = m_gaps.begin();
     bool finished = false;
@@ -273,6 +278,81 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
             Point2f pb = li.intersection_point(
                 Line4f(m_centre, m_centre + Point2f(static_cast<double>(cosl(b)),
                                                     static_cast<double>(sinl(b)))));
+
+            Point2f p1 = li.start() - m_centre;
+            p1.normalise();
+            Point2f p2 = li.end() - m_centre;
+            p2.normalise();
+
+            myUnion lisx;
+            lisx.dValue = p1.x;
+            myUnion lisy;
+            lisy.dValue = p1.y;
+            myUnion liex;
+            liex.dValue = p2.x;
+            myUnion liey;
+            liey.dValue = p2.y;
+
+            long double pipi = 2.0 * M_PI;
+
+            auto p1x = static_cast<long double>(p1.x);
+            auto p2x = static_cast<long double>(p1.x);
+
+            long double acosl1x = acosl(p1x);
+            long double acosl2x = acosl(p2x);
+
+            long double angle1 = (p1.y < 0) ? (pipi - acosl1x) : acosl1x;
+            long double angle2 = (p2.y < 0) ? (pipi - acosl2x) : acosl2x;
+
+            myUnion a1;
+            a1.dValue = static_cast<double>(angle1);
+            myUnion a2;
+            a2.dValue = static_cast<double>(angle2);
+
+            myUnion au;
+            au.dValue = static_cast<double>(a);
+            myUnion pax;
+            pax.dValue = pa.x;
+            myUnion pay;
+            pay.dValue = pa.y;
+            myUnion av;
+            av.dValue = static_cast<double>(cosl(a));
+
+            myUnion bu;
+            bu.dValue = static_cast<double>(b);
+            myUnion pbx;
+            pbx.dValue = pb.x;
+            myUnion pby;
+            pby.dValue = pb.y;
+            myUnion bv;
+            bv.dValue = static_cast<double>(cosl(b));
+            //            bv.dValue = sin(b);
+            //            bv.dValue = pointfromangle(b).x;
+
+            std::cout << "li:\t" << lisx.dValue << " " << lisx.iValue //
+                      << "\n\t" << lisy.dValue << " " << lisy.iValue  //
+                      << "\n\t" << liex.dValue << " " << liex.iValue  //
+                      << "\n\t" << liey.dValue << " " << liey.iValue << std::endl
+                      << std::endl;
+            std::cout << "a1:\t" << a1.dValue << " " << a1.iValue //
+                      << std::endl;
+            std::cout << "a2:\t" << a2.dValue << " " << a2.iValue //
+                      << std::endl;
+            std::cout
+                << "a:\t" << a << " "
+                << au.iValue //
+                //                      << "\n\t" << pointfromangle(a).x << " " << av.iValue //
+                << "\n\t" << pa.x << " " << pax.iValue //
+                << "\n\t" << pa.y << " " << pay.iValue << std::endl
+                << std::endl;
+            std::cout
+                << "b:\t" << b << " "
+                << bu.iValue //
+                //                      << "\n\t" << pointfromangle(b).x << " " << bv.iValue //
+                << "\n\t" << pb.x << " " << pbx.iValue //
+                << "\n\t" << pb.y << " " << pby.iValue << std::endl
+                << std::endl;
+            std::cout << std::endl;
 
             m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb, tag));
         } else {

@@ -11,15 +11,19 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
         "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
-        # Disable floating-point expression contraction to get the
-        # same results on x86 and arm64
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
-
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         add_compile_options(/EHsc /W4 /WX)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
 
     endif()
+endif()
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    # Disable floating-point expression contraction to get the
+    # same results on x86 and arm64
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
 endif()
 
 set(salalib_HDRS

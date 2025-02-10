@@ -74,11 +74,15 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
                   << std::endl;                                                                   //
         if (!complete && !markedcentre && !parity && curr->startangle == startangle) {
             // centre
+            std::cout << "centrepoint: " << std::endl    //
+                      << "\t- p: " << p.x << ", " << p.y //
+                      << std::endl;                      //
             m_poly.push_back(p);
             // perimeter! occlusivity!
             markedcentre = true;
         }
         if (curr != m_blocks.begin() && !prev->endpoint.approxeq(curr->startpoint, tolerance)) {
+            std::cout << "pushing curr->startpoint" << std::endl; //
             m_poly.push_back(curr->startpoint);
             // record perimeter information:
             double occluded = prev->endpoint.dist(curr->startpoint);
@@ -93,6 +97,7 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
                 m_occlusionPoints.push_back(PointDist(curr->startpoint, occluded));
             }
         }
+        std::cout << "pushing curr->endpoint" << std::endl; //
         m_poly.push_back(curr->endpoint);
         m_perimeter += curr->startpoint.dist(curr->endpoint);
         prev = curr;
@@ -100,12 +105,28 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
     // for some reason to do with ordering, if parity is true, the centre point
     // must be last not first
     if (!complete && parity) {
+        std::cout << "lastcentrepoint: " << std::endl //
+                  << "\t- p: " << p.x << ", " << p.y  //
+                  << std::endl;                       //
         // centre
         m_poly.push_back(p);
         // perimeter! occlusivity!
     }
     if (m_blocks.size() &&
         !m_blocks.rbegin()->endpoint.approxeq(m_blocks.begin()->startpoint, tolerance)) {
+
+        std::cout << "lastblock: " << std::endl                               //
+                  << "\t- curr->startangle: " << m_blocks.begin()->startangle //
+                  << std::endl                                                //
+                  << "\t- curr->endangle: " << m_blocks.begin()->endangle     //
+                  << std::endl                                                //
+                  << "\t- curr->startpoint: " << m_blocks.begin()->startpoint.x << ", "
+                  << m_blocks.begin()->startpoint.y //
+                  << std::endl                      //
+                  << "\t- curr->endpoint: " << m_blocks.begin()->endpoint.x << ", "
+                  << m_blocks.begin()->endpoint.y //
+                  << std::endl;                   //
+
         m_poly.push_back(m_blocks.begin()->startpoint);
         // record perimeter information:
         double occluded = m_blocks.rbegin()->endpoint.dist(m_blocks.begin()->startpoint);

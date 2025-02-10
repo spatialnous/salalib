@@ -251,7 +251,7 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
                     gap = m_gaps.insert(hint, isoseg);
                 } else {
                     b = endangle;
-                    m_gaps.insert(IsoSeg(endangle, gap->endangle, 0, gap->quadrant));
+                    m_gaps.insert(IsoSeg(endangle, gap->endangle, gap->quadrant));
                     IsoSeg isoseg = *gap;
                     isoseg.endangle = startangle;
                     auto hint = gap;
@@ -270,7 +270,7 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
                 Line4f(m_centre, m_centre + Point2f(static_cast<double>(cosl(b)),
                                                     static_cast<double>(sinl(b)))));
 
-            m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb, 0, tag));
+            m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb, tag));
         } else {
             finished = true;
         }

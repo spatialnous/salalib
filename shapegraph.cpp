@@ -50,7 +50,7 @@ void ShapeGraph::makeConnections(const KeyVertices &keyvertices) {
         // all indices should match...
         m_connectors.push_back(Connector());
         m_connectors[i].connections =
-            getLineConnections(key, TOLERANCE_B * __max(m_region.height(), m_region.width()));
+            getLineConnections(key, TOLERANCE_B * std::max(m_region.height(), m_region.width()));
         row.setValue(connCol, float(m_connectors[i].connections.size()));
         row.setValue(lengCol, float(shape.second.getLine().length()));
         if (keyvertices.size()) {
@@ -86,7 +86,7 @@ bool ShapeGraph::outputMifPolygons(std::ostream &miffile, std::ostream &midfile)
 }
 
 void ShapeGraph::outputNet(std::ostream &netfile) const {
-    double maxdim = __max(m_region.width(), m_region.height());
+    double maxdim = std::max(m_region.width(), m_region.height());
     Point2f offset = Point2f((maxdim - m_region.width()) / (2.0 * maxdim),
                              (maxdim - m_region.height()) / (2.0 * maxdim));
     if (isSegmentMap()) {
@@ -377,7 +377,7 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
         comm->CommPostMessage(Communicator::NUM_RECORDS, lineConnectors.size());
     }
 
-    double maxdim = __max(m_region.width(), m_region.height());
+    double maxdim = std::max(m_region.width(), m_region.height());
 
     size_t count = 0;
     for (auto &lineConnectorA : lineConnectors) {
@@ -402,12 +402,14 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
                 alpha.normalise();
                 beta.normalise();
                 if (lineA.t_start().approxeq(lineB.t_start(), (maxdim * TOLERANCE_B))) {
-                    float x = float(2.0 * acos(__min(__max(-alpha.dot(beta), -1.0), 1.0)) / M_PI);
+                    float x =
+                        float(2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) / M_PI);
                     depthmapX::addIfNotExists(connectionsetA.backSegconns, SegmentRef(1, idxB), x);
                     depthmapX::addIfNotExists(connectionsetB.backSegconns, SegmentRef(1, idxA), x);
                 }
                 if (lineA.t_start().approxeq(lineB.t_end(), (maxdim * TOLERANCE_B))) {
-                    float x = float(2.0 * acos(__min(__max(-alpha.dot(-beta), -1.0), 1.0)) / M_PI);
+                    float x =
+                        float(2.0 * acos(std::min(std::max(-alpha.dot(-beta), -1.0), 1.0)) / M_PI);
                     depthmapX::addIfNotExists(connectionsetA.backSegconns, SegmentRef(-1, idxB), x);
                     depthmapX::addIfNotExists(connectionsetB.forwardSegconns, SegmentRef(1, idxA),
                                               x);
@@ -432,15 +434,15 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
                 alpha.normalise();
                 beta.normalise();
                 if (lineA.t_end().approxeq(lineB.t_start(), (maxdim * TOLERANCE_B))) {
-                    float x =
-                        float(2.0 * acos(__min(__max(-(-alpha).dot(beta), -1.0), 1.0)) / M_PI);
+                    float x = float(2.0 * acos(std::min(std::max(-(-alpha).dot(beta), -1.0), 1.0)) /
+                                    M_PI);
                     depthmapX::addIfNotExists(connectionsetA.forwardSegconns, SegmentRef(1, idxB),
                                               x);
                     depthmapX::addIfNotExists(connectionsetB.backSegconns, SegmentRef(-1, idxA), x);
                 }
                 if (lineA.t_end().approxeq(lineB.t_end(), (maxdim * TOLERANCE_B))) {
-                    float x =
-                        float(2.0 * acos(__min(__max(-(-alpha).dot(-beta), -1.0), 1.0)) / M_PI);
+                    float x = float(
+                        2.0 * acos(std::min(std::max(-(-alpha).dot(-beta), -1.0), 1.0)) / M_PI);
                     depthmapX::addIfNotExists(connectionsetA.forwardSegconns, SegmentRef(-1, idxB),
                                               x);
                     depthmapX::addIfNotExists(connectionsetB.forwardSegconns, SegmentRef(-1, idxA),
@@ -593,7 +595,8 @@ void ShapeGraph::makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connecto
                                 alpha.normalise();
                                 beta.normalise();
                                 float x = float(
-                                    2.0 * acos(__min(__max(-alpha.dot(beta), -1.0), 1.0)) / M_PI);
+                                    2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) /
+                                    M_PI);
                                 depthmapX::addIfNotExists(connectors[size_t(segA)].forwardSegconns,
                                                           SegmentRef(-1, seg1), x);
                                 depthmapX::addIfNotExists(connectors[size_t(seg1)].forwardSegconns,
@@ -607,7 +610,8 @@ void ShapeGraph::makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connecto
                                 alpha.normalise();
                                 beta.normalise();
                                 float x = float(
-                                    2.0 * acos(__min(__max(-alpha.dot(beta), -1.0), 1.0)) / M_PI);
+                                    2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) /
+                                    M_PI);
                                 depthmapX::addIfNotExists(connectors[size_t(segA)].forwardSegconns,
                                                           SegmentRef(1, seg2), x);
                                 depthmapX::addIfNotExists(connectors[size_t(seg2)].backSegconns,
@@ -623,7 +627,8 @@ void ShapeGraph::makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connecto
                                 alpha.normalise();
                                 beta.normalise();
                                 float x = float(
-                                    2.0 * acos(__min(__max(-alpha.dot(beta), -1.0), 1.0)) / M_PI);
+                                    2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) /
+                                    M_PI);
                                 depthmapX::addIfNotExists(connectors[size_t(segB)].backSegconns,
                                                           SegmentRef(-1, seg1), x);
                                 depthmapX::addIfNotExists(connectors[size_t(seg1)].forwardSegconns,
@@ -637,7 +642,8 @@ void ShapeGraph::makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connecto
                                 alpha.normalise();
                                 beta.normalise();
                                 float x = float(
-                                    2.0 * acos(__min(__max(-alpha.dot(beta), -1.0), 1.0)) / M_PI);
+                                    2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) /
+                                    M_PI);
                                 depthmapX::addIfNotExists(connectors[size_t(segB)].backSegconns,
                                                           SegmentRef(1, seg2), x);
                                 depthmapX::addIfNotExists(connectors[size_t(seg2)].backSegconns,

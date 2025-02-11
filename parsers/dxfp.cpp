@@ -87,7 +87,7 @@ std::istream &DxfParser::open(std::istream &stream) {
     DxfToken token;
     int section = UNIDENTIFIED;
 
-    while (!stream.eof() && section != _EOF) {
+    while (!stream.eof() && section != ENDOFFILE) {
         switch (section) {
         case ZEROTOKEN:
             if (token.data == "SECTION") {
@@ -110,7 +110,7 @@ std::istream &DxfParser::open(std::istream &stream) {
                     section = UNIDENTIFIED;
                 }
             } else if (token.data == "EOF") {
-                section = _EOF;
+                section = ENDOFFILE;
             } else {
                 section = UNIDENTIFIED;
             }

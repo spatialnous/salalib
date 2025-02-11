@@ -13,8 +13,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         # Common GCC and Clang warnings
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
-            -Wunreachable-code -Wunused-macros -Wmissing-noreturn
-            -Wmissing-declarations
+            -Wunused-macros -Wmissing-noreturn -Wmissing-declarations
             # yes
             -Wno-padded
             -Wno-old-style-cast
@@ -31,9 +30,9 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             # Clang-specific
             set(COMPILE_WARNINGS "${COMPILE_WARNINGS}"
                 -Wunreachable-code-break -Wextra-semi-stmt
-                -Wno-reserved-identifier
+                -Wreserved-identifier -Wmissing-prototypes
                 # yes
-                -Wno-missing-prototypes  -Wno-suggest-destructor-override
+                -Wno-suggest-destructor-override
             )
         endif()
 

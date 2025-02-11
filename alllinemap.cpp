@@ -128,7 +128,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     // cut out duplicates:
     for (size_t j = 0; j < axiallines.size(); j++) {
         for (size_t k = axiallines.size() - 1; k > j; k--) {
-            double maxdim = __max(region.width(), region.height());
+            double maxdim = std::max(region.width(), region.height());
             if (axiallines[j].start().approxeq(axiallines[k].start(), maxdim * TOLERANCE_B) &&
                 axiallines[j].end().approxeq(axiallines[k].end(), maxdim * TOLERANCE_B)) {
                 for (int preaxiali : preaxialdata[k]) {

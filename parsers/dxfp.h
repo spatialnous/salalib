@@ -583,7 +583,7 @@ class DxfParser {
 
   public:
     enum token_t { UNIDENTIFIED = -2, ZEROTOKEN = -1 };
-    enum section_t { HEADER, CLASSES, TABLES, BLOCKS, ENTITIES, OBJECTS, _EOF };
+    enum section_t { HEADER, CLASSES, TABLES, BLOCKS, ENTITIES, OBJECTS, ENDOFFILE };
     enum subsection_t {
         EXTMIN,
         EXTMAX,

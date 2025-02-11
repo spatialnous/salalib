@@ -46,15 +46,17 @@ ShapeMap::ShapeMap(const std::string &name, int type)
 // this can be reinit as well
 
 void ShapeMap::init(size_t size, const Region4f &r) {
-    m_rows = static_cast<size_t>(__min(__max(20, static_cast<int>(sqrt((double)size))), 32768));
-    m_cols = static_cast<size_t>(__min(__max(20, static_cast<int>(sqrt((double)size))), 32768));
+    m_rows =
+        static_cast<size_t>(std::min(std::max(20, static_cast<int>(sqrt((double)size))), 32768));
+    m_cols =
+        static_cast<size_t>(std::min(std::max(20, static_cast<int>(sqrt((double)size))), 32768));
     if (m_region.atZero()) {
         m_region = r;
     } else {
         m_region = m_region.runion(r);
     }
     // calculate geom data:
-    m_tolerance = __max(m_region.width(), m_region.height()) * TOLERANCE_A;
+    m_tolerance = std::max(m_region.width(), m_region.height()) * TOLERANCE_A;
     //
     m_pixelShapes = depthmapX::ColumnMatrix<std::vector<ShapeRef>>(m_rows, m_cols);
 }
@@ -546,10 +548,10 @@ bool ShapeMap::moveShape(int shaperef, const Line4f &line, bool undoing) {
         if (isAxialMap()) {
             // line connections optimised for line-line intersection
             m_connectors[rowid].connections = getLineConnections(
-                shaperef, TOLERANCE_B * __max(m_region.height(), m_region.width()));
+                shaperef, TOLERANCE_B * std::max(m_region.height(), m_region.width()));
         } else {
             m_connectors[rowid].connections = getShapeConnections(
-                shaperef, TOLERANCE_B * __max(m_region.height(), m_region.width()));
+                shaperef, TOLERANCE_B * std::max(m_region.height(), m_region.width()));
         }
 
         std::vector<size_t> &newconnections = m_connectors[rowid].connections;
@@ -878,7 +880,7 @@ void ShapeMap::undo() {
             //
             // calculate this line's connections
             m_connectors[rowid].connections = getLineConnections(
-                event.shapeRef, TOLERANCE_B * __max(m_region.height(), m_region.width()));
+                event.shapeRef, TOLERANCE_B * std::max(m_region.height(), m_region.width()));
             // update:
             auto connCol = m_attributes->getOrInsertLockedColumn("Connectivity");
             row.setValue(connCol, float(m_connectors[rowid].connections.size()));
@@ -1913,10 +1915,11 @@ size_t ShapeMap::connectIntersected(int rowid, bool linegraph) {
         m_connectors.push_back(Connector());
     }
     m_connectors[urowid].connections =
-        linegraph ? getLineConnections(shaperefIter->first,
-                                       TOLERANCE_B * __max(m_region.height(), m_region.width()))
-                  : getShapeConnections(shaperefIter->first,
-                                        TOLERANCE_B * __max(m_region.height(), m_region.width()));
+        linegraph
+            ? getLineConnections(shaperefIter->first,
+                                 TOLERANCE_B * std::max(m_region.height(), m_region.width()))
+            : getShapeConnections(shaperefIter->first,
+                                  TOLERANCE_B * std::max(m_region.height(), m_region.width()));
 
     auto &row = getAttributeRowFromShapeIndex(urowid);
     row.setValue(connCol, float(m_connectors[urowid].connections.size()));
@@ -2041,8 +2044,8 @@ void ShapeMap::makeShapeConnections() {
             auto &row = m_attributes->addRow(AttributeKey(key));
             // all indices should match...
             m_connectors.push_back(Connector());
-            m_connectors[static_cast<size_t>(i)].connections =
-                getShapeConnections(key, TOLERANCE_B * __max(m_region.height(), m_region.width()));
+            m_connectors[static_cast<size_t>(i)].connections = getShapeConnections(
+                key, TOLERANCE_B * std::max(m_region.height(), m_region.width()));
             row.setValue(static_cast<size_t>(connCol),
                          float(m_connectors[static_cast<size_t>(i)].connections.size()));
         }
@@ -2138,7 +2141,7 @@ bool ShapeMap::readPart2(std::istream &stream) {
     m_rows = static_cast<size_t>(rows);
     m_cols = static_cast<size_t>(cols);
     // calculate geom data:
-    m_tolerance = __max(m_region.width(), m_region.height()) * TOLERANCE_A;
+    m_tolerance = std::max(m_region.width(), m_region.height()) * TOLERANCE_A;
 
     // read next object ref to be used:
     stream.read(reinterpret_cast<char *>(&m_objRef), sizeof(m_objRef));

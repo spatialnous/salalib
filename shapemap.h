@@ -315,14 +315,8 @@ class ShapeMap : public AttributeMap {
     //
     double getLocationValue(const Point2f &point, std::optional<size_t> attributeIdx) const;
 
-    // Quick mod - TV
-#if !defined(_MSC_VER)
-#define __max(x, y) ((x < y) ? y : x)
-#define __min(x, y) ((x < y) ? x : y)
-#endif
-    //
     double getSpacing() const {
-        return __max(m_region.width(), m_region.height()) /
+        return std::max(m_region.width(), m_region.height()) /
                (10 * log((double)10 + static_cast<double>(m_shapes.size())));
     }
     //

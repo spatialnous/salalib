@@ -31,8 +31,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             set(COMPILE_WARNINGS "${COMPILE_WARNINGS}"
                 -Wunreachable-code-break -Wextra-semi-stmt
                 -Wreserved-identifier -Wmissing-prototypes
-                # yes
-                -Wno-suggest-destructor-override
+                -Wsuggest-destructor-override
             )
         endif()
 

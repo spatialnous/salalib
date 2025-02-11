@@ -27,7 +27,7 @@ class AttributeMap : public PixelBase {
     AttributeMap(std::unique_ptr<AttributeTable> attributes)
         : m_attributes(std::move(attributes)),
           m_attribHandle(new AttributeTableHandle(*m_attributes)) {}
-    virtual ~AttributeMap() {}
+    virtual ~AttributeMap() override {}
 
   public:
     size_t addAttribute(const std::string &name) { return m_attributes->insertOrResetColumn(name); }

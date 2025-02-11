@@ -10,15 +10,15 @@ set(salalib salalib)
 if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
         "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        # Common GCC and Clang warnings
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
-            -Wextra-semi-stmt -Wunreachable-code-break
+            -Wunreachable-code
             -Wmissing-noreturn -Wmissing-declarations
             # yes
             -Wno-padded
             -Wno-old-style-cast -Wno-suggest-destructor-override
             -Wno-unused-macros
-            -Wno-missing-prototypes
             -Wno-reserved-identifier
             # yes eventually
             -Wno-float-equal -Wno-double-promotion -Wno-reserved-macro-identifier
@@ -28,8 +28,16 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             -Wno-cast-qual -Wno-deprecated-copy-with-user-provided-dtor
             -Wno-exit-time-destructors -Wno-format-nonliteral
             # no
-            -Wno-c++98-compat
-    )
+            -Wno-c++98-compat)
+        if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+            # Clang-specific
+            set(COMPILE_WARNINGS "${COMPILE_WARNINGS}"
+                -Wunreachable-code-break -Wextra-semi-stmt
+                # yes
+                -Wno-missing-prototypes
+            )
+        endif()
+
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         add_compile_options(/EHsc /W4 /WX)
 

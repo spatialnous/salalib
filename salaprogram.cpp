@@ -33,14 +33,15 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 // Assign and list access rather incongruently in math ops, but never mind:
+namespace {
+    bool g_sala_loaded = false;
 
-bool g_sala_loaded = false;
-
-std::vector<SalaFuncLabel> g_sala_math_ops;
-std::vector<SalaFuncLabel> g_sala_comp_ops;
-std::vector<SalaFuncLabel> g_sala_logical_ops;
-std::vector<SalaFuncLabel> g_sala_global_funcs;
-std::vector<SalaMemberFuncLabel> g_sala_member_funcs;
+    std::vector<SalaFuncLabel> g_sala_math_ops;
+    std::vector<SalaFuncLabel> g_sala_comp_ops;
+    std::vector<SalaFuncLabel> g_sala_logical_ops;
+    std::vector<SalaFuncLabel> g_sala_global_funcs;
+    std::vector<SalaMemberFuncLabel> g_sala_member_funcs;
+} // namespace
 
 void loadSalaProgram() {
     // math ops

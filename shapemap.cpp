@@ -2826,9 +2826,7 @@ bool ShapeMap::unlinkShapeSet(std::istream &idset, int refcol) {
                 unlink.second = stoi(tokens[1]);
                 unlinks.push_back(unlink);
             } catch (const std::invalid_argument &) {
-                ;
             } catch (const std::out_of_range &) {
-                ;
             } // don't do anything if it can't parse the numbers, just ignore (e.g.,
               // first line)
         }

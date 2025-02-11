@@ -33,4 +33,4 @@ namespace AllLine {
                        const std::vector<RadialLine> &radiallines,
                        std::map<RadialKey, std::set<int>> &radialdivisions,
                        std::map<int, std::set<int>> &axialdividers, Communicator *comm);
-}; // namespace AllLine
+} // namespace AllLine

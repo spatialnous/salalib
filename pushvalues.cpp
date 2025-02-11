@@ -44,7 +44,7 @@ PushValues::getColumnIndices(const AttributeTable &sourceAttr, std::optional<std
         if (!colInIdx.has_value()) {
             throw PushValueError("Column " + colIn.value() + " has not been found in source table");
         }
-    };
+    }
     std::optional<size_t> colOutIdx = destAttr.getColumnIndexOptional(colOut);
     if (!colOutIdx.has_value()) {
         throw PushValueError("Column " + colOut + " has not been found in destination table");
@@ -56,7 +56,7 @@ PushValues::getColumnIndices(const AttributeTable &sourceAttr, std::optional<std
             throw PushValueError("Column " + countCol.value() +
                                  " has not been found in destination table");
         }
-    };
+    }
     return std::make_tuple(colInIdx, colOutIdx.value(), countColIdx);
 }
 
@@ -80,7 +80,7 @@ PushValues::getColumnIndices(const AttributeTable &sourceAttr, std::string colIn
             throw PushValueError("Column " + countCol.value() +
                                  " has not been found in destination table");
         }
-    };
+    }
     return std::make_tuple(colInIdx.value(), colOutIdx.value(), countColIdx);
 }
 

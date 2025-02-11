@@ -20,13 +20,13 @@
 class TigerChain {
   public:
     std::vector<Line4f> lines;
-    TigerChain() { ; }
+    TigerChain() {}
 };
 
 class TigerCategory {
   public:
     std::vector<TigerChain> chains;
-    TigerCategory() { ; }
+    TigerCategory() {}
 };
 
 class TigerMap {

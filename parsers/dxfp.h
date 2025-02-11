@@ -188,7 +188,7 @@ class DxfRegion {
         m_max.scale(baseVertex, scale);
     }
     // rotate tricky...
-    void rotate(const DxfVertex &, double) { ; }
+    void rotate(const DxfVertex &, double) {}
     void translate(const DxfVertex &translation) {
         m_min.translate(translation);
         m_max.translate(translation);

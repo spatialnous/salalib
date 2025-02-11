@@ -16,7 +16,7 @@ struct PixelVec {
     PixelVec(const PixelRef start = NoPixel, const PixelRef end = NoPixel) {
         m_start = (int)start;
         m_end = (int)end;
-    };
+    }
     PixelRef start() const { return m_start; }
     PixelRef end() const { return m_end; } //
     void setStart(PixelRef start) { m_start = start; }
@@ -133,8 +133,8 @@ class Node {
 
 class PixelRefH : public PixelRef {
   public:
-    PixelRefH() : PixelRef() { ; }
-    PixelRefH(const PixelRef &p) : PixelRef(p) { ; }
+    PixelRefH() : PixelRef() {}
+    PixelRefH(const PixelRef &p) : PixelRef(p) {}
     friend bool operator>(const PixelRefH &a, const PixelRefH &b);
     friend bool operator<(const PixelRefH &a, const PixelRefH &b);
 };
@@ -146,8 +146,8 @@ inline bool operator<(const PixelRefH &a, const PixelRefH &b) {
 }
 class PixelRefV : public PixelRef {
   public:
-    PixelRefV() : PixelRef() { ; }
-    PixelRefV(const PixelRef &p) : PixelRef(p) { ; }
+    PixelRefV() : PixelRef() {}
+    PixelRefV(const PixelRef &p) : PixelRef(p) {}
     friend bool operator>(const PixelRefV &a, const PixelRefV &b);
     friend bool operator<(const PixelRefV &a, const PixelRefV &b);
 };

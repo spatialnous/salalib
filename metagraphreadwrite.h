@@ -159,6 +159,6 @@ namespace MetaGraphReadWrite {
         const std::vector<ShapeMapDisplayData> perDataMap = std::vector<ShapeMapDisplayData>(),
         const std::optional<unsigned int> displayedShapeGraph = std::nullopt,
         const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
-}; // namespace MetaGraphReadWrite
+} // namespace MetaGraphReadWrite
 
 // #include "metagraphreadwrite_impl.h"

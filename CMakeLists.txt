@@ -11,9 +11,10 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
         "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
-            -Wcast-align -Wpacked -Wsuggest-override
+            -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
+            -Wextra-semi-stmt
             # yes
-            -Wno-extra-semi -Wno-extra-semi-stmt -Wno-padded
+            -Wno-padded
             -Wno-old-style-cast -Wno-suggest-destructor-override
             -Wno-unused-macros -Wno-unreachable-code-break
             #-Wno-missing-variable-declarations -Wno-missing-prototypes

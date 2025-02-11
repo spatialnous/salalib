@@ -17,8 +17,8 @@ class FileProperties {
     std::string m_description;
 
   public:
-    FileProperties() { ; }
-    virtual ~FileProperties() { ; }
+    FileProperties() {}
+    virtual ~FileProperties() {}
     //
     void setProperties(const std::string &person, const std::string &organization,
                        const std::string &date, const std::string &program) {

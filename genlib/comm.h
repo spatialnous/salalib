@@ -48,7 +48,7 @@ class Communicator {
     class CancelledException // throw from your class
     {
       public:
-        CancelledException() { ; }
+        CancelledException() {}
     };
     enum { NUM_STEPS, CURRENT_STEP, NUM_RECORDS, CURRENT_RECORD };
 
@@ -149,7 +149,7 @@ class ICommunicator : public Communicator {
     ICommunicator() {
         m_deleteFlag = true;
     } // note: an ICommunicator lets IComm know that it should delete it
-    ~ICommunicator() override { ; }
+    ~ICommunicator() override {}
     void CommPostMessage(size_t m, size_t x) const override;
 };
 

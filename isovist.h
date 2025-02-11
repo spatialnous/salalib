@@ -62,7 +62,7 @@ class Isovist {
     double m_minRadial;
 
   public:
-    Isovist() { ; }
+    Isovist() {}
     const std::vector<Point2f> &getPolygon() const { return m_poly; }
     const std::vector<PointDist> &getOcclusionPoints() const { return m_occlusionPoints; }
     const Point2f &getCentre() const { return m_centre; }

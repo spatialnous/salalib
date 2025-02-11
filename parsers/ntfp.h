@@ -23,7 +23,7 @@ struct NtfPoint {
 class NtfGeometry {
   public:
     std::vector<Line4f> lines;
-    NtfGeometry() { ; }
+    NtfGeometry() {}
 };
 
 class NtfLayer {
@@ -52,7 +52,7 @@ class NtfMap {
     int m_lineCount;
 
   public:
-    NtfMap() { ; }
+    NtfMap() {}
     Line4f makeLine(const NtfPoint &a, const NtfPoint &b);
 
     void open(const std::vector<std::string> &fileset, Communicator *comm);

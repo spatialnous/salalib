@@ -48,7 +48,7 @@ class RegionTree {
 
 class RegionTreeBranch : public RegionTree {
   public:
-    RegionTreeBranch() : RegionTree() { ; }
+    RegionTreeBranch() : RegionTree() {}
     RegionTreeBranch(const Line4f &r, const RegionTree &a, const RegionTree &b) {
         m_pLeft = (RegionTree *)&a;
         m_pRight = (RegionTree *)&b;
@@ -61,7 +61,7 @@ class RegionTreeBranch : public RegionTree {
 
 class RegionTreeLeaf : public RegionTree {
   public:
-    RegionTreeLeaf() : RegionTree() { ; }
+    RegionTreeLeaf() : RegionTree() {}
     RegionTreeLeaf(const Line4f &l) {
         // no subnodes (but nice recursive properties)
         m_pLeft = this;

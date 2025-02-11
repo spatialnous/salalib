@@ -22,7 +22,7 @@ struct AnalysisResult {
             m_newAttributes.push_back(attribute);
         }
     }
-    const std::vector<std::string> &getAttributes() const { return m_newAttributes; };
+    const std::vector<std::string> &getAttributes() const { return m_newAttributes; }
     size_t getColumnIndex(const std::string &column) {
         auto iter = std::find(m_newAttributes.begin(), m_newAttributes.end(), column);
         if (iter == m_newAttributes.end()) {

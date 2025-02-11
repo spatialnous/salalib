@@ -85,7 +85,7 @@ struct SalaGrf {
     Map map;
 
   public:
-    SalaGrf() : map(){};
+    SalaGrf() : map() {}
 };
 
 // SalaObj is 16 bytes, which is larger than I intended, but it appears

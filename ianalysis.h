@@ -43,7 +43,7 @@ class IAnalysis {
                 updateStats(newValue, oldVal);
             }
             m_data[index] = newValue;
-        };
+        }
 
         float getValue(size_t index) { return m_data[index]; }
         const AttributeColumnStats getStats() { return m_stats; }

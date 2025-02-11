@@ -83,7 +83,7 @@ struct RadialLine : public RadialKey {
     Point2f openspace;
     Point2f keyvertex;
     Point2f nextvertex;
-    RadialLine(const RadialKey &rk = RadialKey()) : RadialKey(rk) { ; }
+    RadialLine(const RadialKey &rk = RadialKey()) : RadialKey(rk) {}
     RadialLine(const AxialVertexKey &v, bool se, const Point2f &o, const Point2f &k,
                const Point2f &n)
         : openspace(o), keyvertex(k), nextvertex(n) {

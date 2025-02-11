@@ -22,7 +22,7 @@ struct xmlelement {
 
   protected:
     bool subparse(std::ifstream &stream);
-    void badcharacter(char c, const std::string &location);
+    [[noreturn]] void badcharacter(char c, const std::string &location);
 };
 
 struct xmlerror {

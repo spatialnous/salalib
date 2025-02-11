@@ -136,7 +136,7 @@ bool xmlelement::parse(std::ifstream &stream, bool parsesubelements) {
     return closed;
 }
 
-void xmlelement::badcharacter(char c, const std::string &location) {
+[[noreturn]] void xmlelement::badcharacter(char c, const std::string &location) {
     if (isprint(c)) {
         throw(std::string("Found '") + c + std::string("' while ") + location);
     } else {

@@ -13,13 +13,13 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
             -Wextra-semi-stmt -Wunreachable-code-break
-            -Wmissing-variable-declarations
+            -Wmissing-noreturn -Wno-missing-declarations
             # yes
             -Wno-padded
             -Wno-old-style-cast -Wno-suggest-destructor-override
             -Wno-unused-macros
             -Wno-missing-prototypes
-            -Wno-reserved-identifier -Wno-missing-noreturn
+            -Wno-reserved-identifier
             # yes eventually
             -Wno-float-equal -Wno-double-promotion -Wno-reserved-macro-identifier
             -Wno-switch-enum -Wno-effc++

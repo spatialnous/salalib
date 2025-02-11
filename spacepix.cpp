@@ -17,10 +17,6 @@
 #include <fstream>
 #include <set>
 
-#ifndef _WIN32
-#define _finite finite
-#endif
-
 /*
 // Algorithm from Chi
 // make sure dx > dy

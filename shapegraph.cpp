@@ -16,10 +16,6 @@
 #include <float.h>
 #include <time.h>
 
-#ifndef _WIN32
-#define _finite finite
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 ShapeGraph::ShapeGraph(const std::string &name, int type)

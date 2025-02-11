@@ -41,77 +41,79 @@ namespace {
     std::vector<SalaFuncLabel> g_sala_logical_ops;
     std::vector<SalaFuncLabel> g_sala_global_funcs;
     std::vector<SalaMemberFuncLabel> g_sala_member_funcs;
+
+    void loadSalaProgram() {
+        // math ops
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_ADD, "+", "add"));
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_SUBTRACT, "-", "subtract"));
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_MINUS, "-", "negative"));
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_PLUS, "+", "positive"));
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_MULTIPLY, "*", "multiply"));
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_DIVIDE, "/", "divide"));
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_MODULO, "%", "modulo"));
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_POWER, "^", "power"));
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_ASSIGN, "=", "assignment"));
+        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_LIST_ACCESS, "[]",
+                                                "list access")); // list access included even though
+                                                                 // not parsed directly like this
+
+        // comp ops
+        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_GT, ">", "greater than"));
+        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_LT, "<", "less than"));
+        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_GEQ, ">=", "greater than or equal to"));
+        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_LEQ, "<=", "less than or equal to"));
+        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_NEQ, "!=", "not equal to"));
+        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_EQ, "==", "equal to"));
+        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_IS, "is", "is the same object as"));
+
+        // logical ops
+        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_NOT, "not", "logical not"));
+        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_NOT, "!", "logical not"));
+        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_AND, "and", "logical and"));
+        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_AND, "&&", "logical and"));
+        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_OR, "or", "logical or"));
+        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_OR, "||", "logical or"));
+
+        // global functions
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_SQRT, "sqrt", "square root"));
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_LOG, "log", "log base 10"));
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_LN, "ln", "natural logarithm"));
+        g_sala_global_funcs.push_back(
+            SalaFuncLabel(SalaObj::S_RAND, "random", "random number (0.0 to 1.0)"));
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_SIN, "sin", "sine"));
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_COS, "cos", "cosine"));
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_TAN, "tan", "tangent"));
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_ASIN, "asin", "inverse sine"));
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_ACOS, "acos", "inverse cosine"));
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_ATAN, "atan", "inverse tangent"));
+        g_sala_global_funcs.push_back(
+            SalaFuncLabel(SalaObj::S_LEN, "len", "array or string length"));
+        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_RANGE, "range", "set of integers"));
+
+        // member functions
+        g_sala_member_funcs.push_back(
+            SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FAPPEND, "append", "append item"));
+        g_sala_member_funcs.push_back(
+            SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FEXTEND, "extend", "extend by list"));
+        g_sala_member_funcs.push_back(
+            SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FPOP, "pop", "pop (last) item"));
+        g_sala_member_funcs.push_back(
+            SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FCLEAR, "clear", "clear contents"));
+        g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FVALUE,
+                                                          "value", "get attribute value"));
+        g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FSETVALUE,
+                                                          "setvalue", "set attribute value"));
+        g_sala_member_funcs.push_back(
+            SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FMARK, "mark", "get node mark"));
+        g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FSETMARK,
+                                                          "setmark", "set node mark"));
+        g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ,
+                                                          SalaObj::S_FCONNECTIONS, "connections",
+                                                          "get list of connections"));
+
+        g_sala_loaded = true;
+    }
 } // namespace
-
-void loadSalaProgram() {
-    // math ops
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_ADD, "+", "add"));
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_SUBTRACT, "-", "subtract"));
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_MINUS, "-", "negative"));
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_PLUS, "+", "positive"));
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_MULTIPLY, "*", "multiply"));
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_DIVIDE, "/", "divide"));
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_MODULO, "%", "modulo"));
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_POWER, "^", "power"));
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_ASSIGN, "=", "assignment"));
-    g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_LIST_ACCESS, "[]",
-                                            "list access")); // list access included even though not
-                                                             // parsed directly like this
-
-    // comp ops
-    g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_GT, ">", "greater than"));
-    g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_LT, "<", "less than"));
-    g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_GEQ, ">=", "greater than or equal to"));
-    g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_LEQ, "<=", "less than or equal to"));
-    g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_NEQ, "!=", "not equal to"));
-    g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_EQ, "==", "equal to"));
-    g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_IS, "is", "is the same object as"));
-
-    // logical ops
-    g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_NOT, "not", "logical not"));
-    g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_NOT, "!", "logical not"));
-    g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_AND, "and", "logical and"));
-    g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_AND, "&&", "logical and"));
-    g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_OR, "or", "logical or"));
-    g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_OR, "||", "logical or"));
-
-    // global functions
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_SQRT, "sqrt", "square root"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_LOG, "log", "log base 10"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_LN, "ln", "natural logarithm"));
-    g_sala_global_funcs.push_back(
-        SalaFuncLabel(SalaObj::S_RAND, "random", "random number (0.0 to 1.0)"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_SIN, "sin", "sine"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_COS, "cos", "cosine"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_TAN, "tan", "tangent"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_ASIN, "asin", "inverse sine"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_ACOS, "acos", "inverse cosine"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_ATAN, "atan", "inverse tangent"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_LEN, "len", "array or string length"));
-    g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_RANGE, "range", "set of integers"));
-
-    // member functions
-    g_sala_member_funcs.push_back(
-        SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FAPPEND, "append", "append item"));
-    g_sala_member_funcs.push_back(
-        SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FEXTEND, "extend", "extend by list"));
-    g_sala_member_funcs.push_back(
-        SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FPOP, "pop", "pop (last) item"));
-    g_sala_member_funcs.push_back(
-        SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FCLEAR, "clear", "clear contents"));
-    g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FVALUE,
-                                                      "value", "get attribute value"));
-    g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FSETVALUE,
-                                                      "setvalue", "set attribute value"));
-    g_sala_member_funcs.push_back(
-        SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FMARK, "mark", "get node mark"));
-    g_sala_member_funcs.push_back(
-        SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FSETMARK, "setmark", "set node mark"));
-    g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FCONNECTIONS,
-                                                      "connections", "get list of connections"));
-
-    g_sala_loaded = true;
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 

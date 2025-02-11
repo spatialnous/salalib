@@ -29,13 +29,6 @@ bool Point2f::intriangle(const Point2f &p1, const Point2f &p2, const Point2f &p3
     return false;
 }
 
-Point2f pointfromangle(double angle) {
-    Point2f p;
-    p.x = cos(angle);
-    p.y = sin(angle);
-    return p;
-}
-
 // First time we have a region available to use...
 void Point2f::normalScale(const Point2f &rbl, double width, double height) {
     if (width != 0)

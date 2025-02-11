@@ -77,7 +77,6 @@ class Point2f {
     bool approxeq(const Point2f &p2, double tolerance = 0.0) const {
         return (fabs(x - p2.x) <= tolerance && fabs(y - p2.y) <= tolerance);
     }
-    Point2f pointfromangle(double angle);
 
     // a couple of useful tests
     bool intriangle(const Point2f &p1, const Point2f &p2, const Point2f &p3);

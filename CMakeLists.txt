@@ -13,7 +13,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
             -Wextra-semi-stmt -Wunreachable-code-break
-            -Wmissing-noreturn -Wno-missing-declarations
+            -Wmissing-noreturn -Wmissing-declarations
             # yes
             -Wno-padded
             -Wno-old-style-cast -Wno-suggest-destructor-override

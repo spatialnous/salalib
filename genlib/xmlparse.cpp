@@ -12,11 +12,12 @@ enum {
     STEP_ATTRIBUTE_VALUE,
     STEP_CLOSING
 };
-
-bool iscrlf(char c) {
-    // \n is MAC = 13, UNIX = 10, MS = 13,10
-    return (c == 10 || c == 13);
-}
+namespace {
+    bool iscrlf(char c) {
+        // \n is MAC = 13, UNIX = 10, MS = 13,10
+        return (c == 10 || c == 13);
+    }
+} // namespace
 
 bool xmlelement::parse(std::ifstream &stream, bool parsesubelements) {
     bool closed = false;

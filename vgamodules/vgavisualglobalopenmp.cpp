@@ -44,7 +44,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(attributes.getNumRows());
 
-    int n = int(attributes.getNumRows());
+    int n = static_cast<int>(attributes.getNumRows());
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) schedule(dynamic)
@@ -72,24 +72,25 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
         // only set to single float precision after divide
         // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of Space
 
-        dp.count = float(totalNodes); // note: total nodes includes this one;
+        dp.count = static_cast<float>(totalNodes); // note: total nodes includes this one;
 
         // ERROR !!!!!!
         if (totalNodes > 1) {
-            double meanDepth = double(totalDepth) / double(totalNodes - 1);
-            dp.depth = float(meanDepth);
+            double meanDepth =
+                static_cast<double>(totalDepth) / static_cast<double>(totalNodes - 1);
+            dp.depth = static_cast<float>(meanDepth);
             // total nodes > 2 to avoid divide by 0 (was > 3)
             if (totalNodes > 2 && meanDepth > 1.0) {
-                double ra = 2.0 * (meanDepth - 1.0) / double(totalNodes - 2);
+                double ra = 2.0 * (meanDepth - 1.0) / static_cast<double>(totalNodes - 2);
                 // d-value / p-values from Depthmap 4 manual, note: node_count includes this one
                 double rraD = ra / pafmath::dvalue(totalNodes);
                 double rraP = ra / pafmath::pvalue(totalNodes);
                 double integTk = pafmath::teklinteg(totalNodes, totalDepth);
-                dp.integDv = float(1.0 / rraD);
-                dp.integPv = float(1.0 / rraP);
+                dp.integDv = static_cast<float>(1.0 / rraD);
+                dp.integPv = static_cast<float>(1.0 / rraP);
 
                 if (totalDepth - totalNodes + 1 > 1) {
-                    dp.integTk = float(integTk);
+                    dp.integTk = static_cast<float>(integTk);
                 } else {
                     dp.integTk = -1.0f;
                 }
@@ -103,16 +104,19 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
             // -> chopped from entropy to avoid divide by zero if only one node
             for (size_t k = 1; k < distribution.size(); k++) {
                 if (distribution[k] > 0) {
-                    double prob = double(distribution[k]) / double(totalNodes - 1);
+                    double prob =
+                        static_cast<double>(distribution[k]) / static_cast<double>(totalNodes - 1);
                     entropy -= prob * log2(prob);
                     // Formula from Turner 2001, "Depthmap"
-                    factorial *= double(k + 1);
-                    double q = (pow(meanDepth, double(k)) / double(factorial)) * exp(-meanDepth);
-                    relEntropy += (float)prob * log2(prob / q);
+                    factorial *= static_cast<double>(k + 1);
+                    double q =
+                        (pow(meanDepth, static_cast<double>(k)) / static_cast<double>(factorial)) *
+                        exp(-meanDepth);
+                    relEntropy += static_cast<float>(prob) * log2(prob / q);
                 }
             }
-            dp.entropy = float(entropy);
-            dp.relEntropy = float(relEntropy);
+            dp.entropy = static_cast<float>(entropy);
+            dp.relEntropy = static_cast<float>(relEntropy);
         } else {
             dp.depth = -1.0f;
             dp.entropy = -1.0f;

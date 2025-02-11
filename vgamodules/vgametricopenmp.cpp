@@ -37,7 +37,7 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(attributes.getNumRows());
 
-    int n = int(attributes.getNumRows());
+    auto n = static_cast<int>(attributes.getNumRows());
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) schedule(dynamic)
@@ -68,10 +68,13 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
             ad0.point.dummyCumangle = ad0.cumAngle;
         }
 
-        dp.mspa = float(double(totalAngle) / double(totalNodes));
-        dp.mspl = float(double(totalDepth) / double(totalNodes));
-        dp.dist = float(double(euclidDepth) / double(totalNodes));
-        dp.count = float(totalNodes);
+        dp.mspa =
+            static_cast<float>(static_cast<double>(totalAngle) / static_cast<double>(totalNodes));
+        dp.mspl =
+            static_cast<float>(static_cast<double>(totalDepth) / static_cast<double>(totalNodes));
+        dp.dist =
+            static_cast<float>(static_cast<double>(euclidDepth) / static_cast<double>(totalNodes));
+        dp.count = static_cast<float>(totalNodes);
 
 #if defined(_OPENMP)
 #pragma omp atomic

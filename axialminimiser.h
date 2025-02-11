@@ -16,7 +16,7 @@ struct ValueTriplet {
 
 class AxialMinimiser {
   protected:
-    ShapeGraph *m_alllinemap;
+    const ShapeGraph *m_alllinemap;
     //
     ValueTriplet *m_vps;
     bool *m_removed;
@@ -44,7 +44,8 @@ class AxialMinimiser {
     // advanced topological testing:
     bool checkVital(int checkindex, std::set<int> &axSegCut,
                     std::map<RadialKey, RadialSegment> &radialsegs,
-                    std::map<RadialKey, std::set<int>> &rlds, std::vector<RadialLine> &radialLines);
+                    std::map<RadialKey, std::set<int>> &rlds,
+                    std::vector<RadialLine> &radialLines) const;
     //
     bool removed(int i) const { return m_removed[i]; }
 };

@@ -39,8 +39,8 @@ class ISegment {
         std::string radiusText;
         if (radius != -1) {
             if (radiusType == RadiusType::TOPOLOGICAL) {
-                radiusText =
-                    std::string(" R") + dXstring::formatString(int(radius), "%d") + " step";
+                radiusText = std::string(" R") +
+                             dXstring::formatString(static_cast<int>(radius), "%d") + " step";
             } else if (radiusType == RadiusType::METRIC) {
                 radiusText = std::string(" R") + makeFloatRadiusText(radius) + " metric";
             } else { // radius angular

@@ -82,8 +82,8 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
             if (lineindex.dir != -1) {
                 for (auto &segconn : line.forwardSegconns) {
                     if (!covered[static_cast<size_t>(segconn.first.ref)]) {
-                        extradepth =
-                            (int)floor(segconn.second * static_cast<double>(tulipBins) * 0.5);
+                        extradepth = static_cast<int>(
+                            floor(segconn.second * static_cast<double>(tulipBins) * 0.5));
                         bins[(static_cast<size_t>(currentbin) + tulipBins +
                               static_cast<size_t>(extradepth)) %
                              tulipBins]
@@ -102,8 +102,8 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
             if (lineindex.dir != 1) {
                 for (auto &segconn : line.backSegconns) {
                     if (!covered[static_cast<size_t>(segconn.first.ref)]) {
-                        extradepth =
-                            (int)floor(segconn.second * static_cast<double>(tulipBins) * 0.5);
+                        extradepth = static_cast<int>(
+                            floor(segconn.second * static_cast<double>(tulipBins) * 0.5));
                         bins[(static_cast<size_t>(currentbin) + tulipBins +
                               static_cast<size_t>(extradepth)) %
                              tulipBins]

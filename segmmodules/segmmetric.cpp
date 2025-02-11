@@ -143,8 +143,9 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
                         open++;
                         //
                         // better to divide by 511 but have 512 bins...
-                        list[(bin + int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
-                            connectedCursor);
+                        list[(bin + static_cast<int>(floor(0.5 + 511 * length / maxseglength))) %
+                             512]
+                            .push_back(connectedCursor);
                     }
                     // not sure why this is outside the radius restriction
                     // (sel_only: with restricted selection set, not all lines will be labelled)
@@ -152,7 +153,7 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
                     // can go twice)
 
                     // Quick mod - TV
-                    if (!m_selSet.has_value() && connectedCursor > int(cursor) &&
+                    if (!m_selSet.has_value() && connectedCursor > static_cast<int>(cursor) &&
                         !seenalready) { // only one way paths, saves doing this twice
                         int subcur = connectedCursor;
                         while (subcur != -1) {

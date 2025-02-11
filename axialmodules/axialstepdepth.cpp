@@ -36,7 +36,7 @@ AnalysisResult AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
                 covered[line.connections[k]] = true;
                 foundlist.b().push_back(line.connections[k]);
                 map.getAttributeRowFromShapeIndex(line.connections[k])
-                    .setValue(stepdepthCol, float(depth));
+                    .setValue(stepdepthCol, static_cast<float>(depth));
             }
         }
         foundlist.a().pop_back();

@@ -14,8 +14,8 @@
 
 struct PixelVec {
     PixelVec(const PixelRef start = NoPixel, const PixelRef end = NoPixel) {
-        m_start = (int)start;
-        m_end = (int)end;
+        m_start = static_cast<int>(start);
+        m_end = static_cast<int>(end);
     }
     PixelRef start() const { return m_start; }
     PixelRef end() const { return m_end; } //

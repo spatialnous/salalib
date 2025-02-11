@@ -220,15 +220,16 @@ class PointMap : public AttributeMap {
 // inlined to make thread safe
 
 inline Point2f PointMap::depixelate(const PixelRef &p, double scalefactor) const {
-    return Point2f(m_bottomLeft.x + m_spacing * scalefactor * double(p.x),
-                   m_bottomLeft.y + m_spacing * scalefactor * double(p.y));
+    return Point2f(m_bottomLeft.x + m_spacing * scalefactor * static_cast<double>(p.x),
+                   m_bottomLeft.y + m_spacing * scalefactor * static_cast<double>(p.y));
 }
 
 inline Region4f PointMap::regionate(const PixelRef &p, double border) const {
-    return Region4f(Point2f(m_bottomLeft.x + m_spacing * (double(p.x) - 0.5 - border),
-                            m_bottomLeft.y + m_spacing * (double(p.y) - 0.5 - border)),
-                    Point2f(m_bottomLeft.x + m_spacing * (double(p.x) + 0.5 + border),
-                            m_bottomLeft.y + m_spacing * (double(p.y) + 0.5 + border)));
+    return Region4f(
+        Point2f(m_bottomLeft.x + m_spacing * (static_cast<double>(p.x) - 0.5 - border),
+                m_bottomLeft.y + m_spacing * (static_cast<double>(p.y) - 0.5 - border)),
+        Point2f(m_bottomLeft.x + m_spacing * (static_cast<double>(p.x) + 0.5 + border),
+                m_bottomLeft.y + m_spacing * (static_cast<double>(p.y) + 0.5 + border)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

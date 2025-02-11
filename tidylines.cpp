@@ -38,7 +38,7 @@ void TidyLines::tidy(std::vector<Line4f> &lines, const Region4f &region) {
                 m_pixelLines(static_cast<size_t>(list[a].y), static_cast<size_t>(list[a].x));
             for (int j : pixelLines) {
                 auto uj = static_cast<size_t>(j);
-                if (m_lines[j].test != m_test && j > (int)i &&
+                if (m_lines[j].test != m_test && j > static_cast<int>(i) &&
                     lines[i].Region4f::intersects(lines[uj], TOLERANCE_B * maxdim)) {
                     m_lines[j].test = m_test;
                     LineAxis axisI =
@@ -134,7 +134,7 @@ void TidyLines::quicktidy(std::map<int, std::pair<Line4f, int>> &lines, const Re
         PixelRef start = pixelate(line.second.first.start());
         auto &pixelLines = m_pixelLines(static_cast<size_t>(start.y), static_cast<size_t>(start.x));
         for (int k : pixelLines) {
-            if (k > int(i) &&
+            if (k > static_cast<int>(i) &&
                 m_lines[i].line.start().approxeq(m_lines[k].line.start(), tolerance)) {
                 if (m_lines[i].line.end().approxeq(m_lines[k].line.end(), tolerance)) {
                     removelist.push_back(line.first);

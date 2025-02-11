@@ -317,7 +317,7 @@ MetaGraphReadWrite::readDataMaps(std::istream &stream) {
     unsigned int count = 0;
     stream.read(reinterpret_cast<char *>(&count), sizeof(count));
 
-    for (size_t j = 0; j < size_t(count); j++) {
+    for (size_t j = 0; j < static_cast<size_t>(count); j++) {
         dataMaps.emplace_back();
         auto [completed, editable, show, displayedAttribute] = dataMaps.back().read(stream);
         displayData.emplace_back(editable, show, displayedAttribute);
@@ -340,7 +340,7 @@ bool MetaGraphReadWrite::writeDataMaps(std::ostream &stream,
     // write maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
-    unsigned int count = (unsigned int)dataMaps.size();
+    auto count = static_cast<unsigned int>(dataMaps.size());
     stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
     auto it = displayData.begin();
     for (auto &dataMap : dataMaps) {
@@ -385,7 +385,7 @@ MetaGraphReadWrite::readShapeGraphs(std::istream &stream) {
     unsigned int count = 0;
     stream.read(reinterpret_cast<char *>(&count), sizeof(count));
 
-    for (size_t j = 0; j < size_t(count); j++) {
+    for (size_t j = 0; j < static_cast<size_t>(count); j++) {
         shapeGraphs.emplace_back();
         auto [completed, editable, show, displayedAttribute] = shapeGraphs.back().read(stream);
         displayData.emplace_back(editable, show, displayedAttribute);
@@ -446,7 +446,7 @@ bool MetaGraphReadWrite::writeShapeGraphs(
     // write maps
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
-    unsigned int count = (unsigned int)shapeGraphs.size();
+    auto count = static_cast<unsigned int>(shapeGraphs.size());
     stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
     auto it = displayData.begin();
     for (auto &shapeGraphPtr : shapeGraphs) {

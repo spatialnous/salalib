@@ -136,7 +136,7 @@ namespace dXstring {
                     is.setstate(std::ios::eofbit);
                 return is;
             default:
-                t += (char)c;
+                t += static_cast<char>(c);
             }
         }
     }

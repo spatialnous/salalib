@@ -84,7 +84,7 @@ class Point2f {
                    double tolerance = 0.0);
 
     // A few simple vector ops:
-    double length() const { return (double)sqrt(x * x + y * y); }
+    double length() const { return sqrt(x * x + y * y); }
     Point2f &scale(const double scalar) {
         x *= scalar;
         y *= scalar;

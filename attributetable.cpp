@@ -75,8 +75,8 @@ size_t AttributeColumnImpl::read(std::istream &stream) {
 
 void AttributeColumnImpl::write(std::ostream &stream, int physicalCol) {
     dXstring::writeString(stream, m_name);
-    float smin = (float)stats.min;
-    float smax = (float)stats.max;
+    auto smin = static_cast<float>(stats.min);
+    auto smax = static_cast<float>(stats.max);
     stream.write(reinterpret_cast<const char *>(&smin), sizeof(float));
     stream.write(reinterpret_cast<const char *>(&smax), sizeof(float));
     stream.write(reinterpret_cast<const char *>(&stats.total), sizeof(stats.total));
@@ -105,7 +105,7 @@ float AttributeRowImpl::getNormalisedValue(size_t index) const {
     }
     return m_data[index] < 0
                ? -1.0f
-               : float((m_data[index] - colStats.min) / (colStats.max - colStats.min));
+               : static_cast<float>((m_data[index] - colStats.min) / (colStats.max - colStats.min));
 }
 
 AttributeRow &AttributeRowImpl::setValue(const std::string &column, float value) {
@@ -220,7 +220,7 @@ void AttributeTable::removeRow(const AttributeKey &key) {
 }
 
 AttributeColumn &AttributeTable::getColumn(size_t index) {
-    if (index == size_t(-1)) {
+    if (index == static_cast<size_t>(-1)) {
         return m_keyColumn;
     }
     checkColumnIndex(index);
@@ -330,7 +330,7 @@ void AttributeTable::read(std::istream &stream, LayerManager &layerManager) {
 
 void AttributeTable::write(std::ostream &stream, const LayerManager &layerManager) {
     layerManager.write(stream);
-    int colCount = (int)m_columns.size();
+    auto colCount = static_cast<int>(m_columns.size());
     stream.write(reinterpret_cast<const char *>(&colCount), sizeof(int));
 
     // TODO: For binary compatibility write the columns in alphabetical order
@@ -346,13 +346,13 @@ void AttributeTable::write(std::ostream &stream, const LayerManager &layerManage
         m_columns[idx].write(stream, static_cast<int>(m_columnMapping[m_columns[idx].getName()]));
     }
 
-    int rowcount = (int)m_rows.size();
+    auto rowcount = static_cast<int>(m_rows.size());
     stream.write(reinterpret_cast<const char *>(&rowcount), sizeof(int));
     for (auto &kvp : m_rows) {
         kvp.first.write(stream);
         kvp.second->write(stream);
     }
-    stream.write((const char *)&m_displayParams, sizeof(DisplayParams));
+    stream.write(reinterpret_cast<const char *>(&m_displayParams), sizeof(DisplayParams));
 }
 
 void AttributeTable::clear() {
@@ -382,7 +382,7 @@ std::optional<size_t> AttributeTable::getColumnIndexOptional(const std::string &
 // TODO: Compatibility. Method to retreive a column's index
 // if the set of columns was sorted
 size_t AttributeTable::getColumnSortedIndex(size_t index) const {
-    if (index == size_t(-1) || index == size_t(-2))
+    if (index == static_cast<size_t>(-1) || index == static_cast<size_t>(-2))
         return index;
     if (index >= m_columns.size())
         return static_cast<size_t>(-1);
@@ -392,7 +392,7 @@ size_t AttributeTable::getColumnSortedIndex(size_t index) const {
 }
 
 const AttributeColumn &AttributeTable::getColumn(size_t index) const {
-    if (index == size_t(-1)) {
+    if (index == static_cast<size_t>(-1)) {
         return m_keyColumn;
     }
     checkColumnIndex(index);

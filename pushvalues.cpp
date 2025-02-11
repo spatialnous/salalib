@@ -165,11 +165,11 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
             }
         }
         if (pushFunc == Func::AVG && val != -1.0) {
-            val /= double(count);
+            val /= static_cast<double>(count);
         }
-        row.setValue(colOutIdx, float(val));
+        row.setValue(colOutIdx, static_cast<float>(val));
         if (countColIdx.has_value()) {
-            row.setValue(countColIdx.value(), float(count));
+            row.setValue(countColIdx.value(), static_cast<float>(count));
         }
     }
 }
@@ -206,11 +206,11 @@ void PushValues::shapeToAxial(ShapeMap &sourceMap, std::optional<std::string> co
             }
         }
         if (pushFunc == Func::AVG && val != -1.0) {
-            val /= double(count);
+            val /= static_cast<double>(count);
         }
-        iterOut->getRow().setValue(colOutIdx, float(val));
+        iterOut->getRow().setValue(colOutIdx, static_cast<float>(val));
         if (countColIdx.has_value()) {
-            iterOut->getRow().setValue(countColIdx.value(), float(count));
+            iterOut->getRow().setValue(countColIdx.value(), static_cast<float>(count));
         }
     }
 }
@@ -247,11 +247,11 @@ void PushValues::shapeToShape(ShapeMap &sourceMap, std::optional<std::string> co
             }
         }
         if (pushFunc == Func::AVG && val != -1.0) {
-            val /= double(count);
+            val /= static_cast<double>(count);
         }
-        iterOut->getRow().setValue(colOutIdx, float(val));
+        iterOut->getRow().setValue(colOutIdx, static_cast<float>(val));
         if (countColIdx.has_value()) {
-            iterOut->getRow().setValue(countColIdx.value(), float(count));
+            iterOut->getRow().setValue(countColIdx.value(), static_cast<float>(count));
         }
     }
 }
@@ -302,11 +302,11 @@ void PushValues::pointToShape(const PointMap &sourceMap, std::optional<std::stri
             continue;
         }
         if (pushFunc == Func::AVG && vals[i] != -1.0) {
-            vals[i] /= double(counts[i]);
+            vals[i] /= static_cast<double>(counts[i]);
         }
-        iter->getRow().setValue(colOutIdx, float(vals[i]));
+        iter->getRow().setValue(colOutIdx, static_cast<float>(vals[i]));
         if (countColIdx.has_value()) {
-            iter->getRow().setValue(countColIdx.value(), float(counts[i]));
+            iter->getRow().setValue(countColIdx.value(), static_cast<float>(counts[i]));
         }
         i++;
     }
@@ -361,11 +361,11 @@ void PushValues::pointToAxial(const PointMap &sourceMap, std::optional<std::stri
             continue;
         }
         if (pushFunc == Func::AVG && vals[i] != -1.0) {
-            vals[i] /= double(counts[i]);
+            vals[i] /= static_cast<double>(counts[i]);
         }
-        iter->getRow().setValue(colOutIdx, float(vals[i]));
+        iter->getRow().setValue(colOutIdx, static_cast<float>(vals[i]));
         if (countColIdx.has_value()) {
-            iter->getRow().setValue(countColIdx.value(), float(counts[i]));
+            iter->getRow().setValue(countColIdx.value(), static_cast<float>(counts[i]));
         }
         i++;
     }
@@ -420,11 +420,11 @@ void PushValues::axialToShape(const ShapeGraph &sourceMap, std::optional<std::st
             continue;
         }
         if (pushFunc == Func::AVG && vals[i] != -1.0) {
-            vals[i] /= double(counts[i]);
+            vals[i] /= static_cast<double>(counts[i]);
         }
-        iter->getRow().setValue(colOutIdx, float(vals[i]));
+        iter->getRow().setValue(colOutIdx, static_cast<float>(vals[i]));
         if (countColIdx.has_value()) {
-            iter->getRow().setValue(countColIdx.value(), float(counts[i]));
+            iter->getRow().setValue(countColIdx.value(), static_cast<float>(counts[i]));
         }
         i++;
     }
@@ -478,11 +478,11 @@ void PushValues::axialToAxial(const ShapeGraph &sourceMap, std::optional<std::st
             continue;
         }
         if (pushFunc == Func::AVG && vals[i] != -1.0) {
-            vals[i] /= double(counts[i]);
+            vals[i] /= static_cast<double>(counts[i]);
         }
-        iter->getRow().setValue(colOutIdx, float(vals[i]));
+        iter->getRow().setValue(colOutIdx, static_cast<float>(vals[i]));
         if (countColIdx.has_value()) {
-            iter->getRow().setValue(countColIdx.value(), float(counts[i]));
+            iter->getRow().setValue(countColIdx.value(), static_cast<float>(counts[i]));
         }
         i++;
     }

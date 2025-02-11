@@ -119,8 +119,8 @@ class Line4f : public Region4f {
     }
     //
     double length() const {
-        return (double)sqrt((topRight.x - bottomLeft.x) * (topRight.x - bottomLeft.x) +
-                            (topRight.y - bottomLeft.y) * (topRight.y - bottomLeft.y));
+        return sqrt((topRight.x - bottomLeft.x) * (topRight.x - bottomLeft.x) +
+                    (topRight.y - bottomLeft.y) * (topRight.y - bottomLeft.y));
     }
     //
     short direction() const { return m_bits.direction; }

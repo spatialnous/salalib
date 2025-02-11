@@ -267,9 +267,9 @@ namespace EntityParsing {
         int fromcol = -1, tocol = -1;
         for (i = 0; i < strings.size(); i++) {
             if (strings[i] == "reffrom") {
-                fromcol = int(i);
+                fromcol = static_cast<int>(i);
             } else if (strings[i] == "refto") {
-                tocol = int(i);
+                tocol = static_cast<int>(i);
             }
         }
 
@@ -291,9 +291,9 @@ namespace EntityParsing {
                 }
                 int from = -1, to = -1;
                 for (i = 0; i < strings.size(); i++) {
-                    if (i == size_t(fromcol)) {
+                    if (i == static_cast<size_t>(fromcol)) {
                         from = std::atoi(strings[i].c_str());
-                    } else if (i == size_t(tocol)) {
+                    } else if (i == static_cast<size_t>(tocol)) {
                         to = std::atoi(strings[i].c_str());
                     }
                 }

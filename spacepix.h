@@ -62,8 +62,8 @@ struct LineKey {
     unsigned int file : 4;
     unsigned int layer : 6;
     unsigned int lineref : 20;
-    operator int() { return *(int *)this; }
-    LineKey(int value = 0) { *(int *)this = value; }
+    operator int() { return *reinterpret_cast<int *>(this); }
+    LineKey(int value = 0) { *reinterpret_cast<int *>(this) = value; }
     friend bool operator<(LineKey a, LineKey b);
     friend bool operator>(LineKey a, LineKey b);
     friend bool operator==(LineKey a, LineKey b);
@@ -121,7 +121,6 @@ class SpacePixel : public PixelBase {
     int addLineDynamic(const Line4f &l);
 
     virtual void makeViewportLines(const Region4f &viewport) const;
-    virtual bool findNextLine(bool &) const;
     virtual const Line4f &getNextLine() const;
     //
     bool intersect(const Line4f &l, double tolerance = 0.0);
@@ -129,7 +128,7 @@ class SpacePixel : public PixelBase {
 
     void cutLine(Line4f &l, short dir);
 
-    Region4f &getRegion() const { return (Region4f &)m_region; }
+    const Region4f &getRegion() const { return static_cast<const Region4f &>(m_region); }
 
     void setRegion(Region4f &region) { m_region = region; }
     //

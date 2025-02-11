@@ -24,7 +24,7 @@ float AttributeTableView::getNormalisedValue(const AttributeKey &key,
     if (m_displayColumn < 0) {
         auto endIter = table.end();
         --endIter;
-        return (float)key.value / (float)endIter->getKey().value;
+        return static_cast<float>(key.value) / static_cast<float>(endIter->getKey().value);
     }
     return row.getNormalisedValue(static_cast<size_t>(m_displayColumn));
 }

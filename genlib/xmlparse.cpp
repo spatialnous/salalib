@@ -142,7 +142,7 @@ bool xmlelement::parse(std::ifstream &stream, bool parsesubelements) {
         throw(std::string("Found '") + c + std::string("' while ") + location);
     } else {
         std::stringstream s;
-        s << "Found character " << int(c) << " while " << location;
+        s << "Found character " << static_cast<int>(c) << " while " << location;
         throw(s.str());
     }
 }

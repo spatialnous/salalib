@@ -52,7 +52,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 
     std::map<PixelRef, int> refToFilled;
     for (int i = 0; i < n; ++i) {
-        refToFilled.insert(std::make_pair(filled[size_t(i)], i));
+        refToFilled.insert(std::make_pair(filled[static_cast<size_t>(i)], i));
     }
 
     std::vector<bool> hoods(static_cast<size_t>(n * n));
@@ -61,7 +61,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 #pragma omp parallel for default(shared) schedule(dynamic)
 #endif
     for (int i = 0; i < n; ++i) {
-        Point &p = m_map.getPoint(filled[size_t(i)]);
+        Point &p = m_map.getPoint(filled[static_cast<size_t>(i)]);
         std::set<PixelRef> neighbourhood;
 #if defined(_OPENMP)
 #pragma omp critical(dumpNeighbourhood)
@@ -105,7 +105,7 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
                             cluster++;
                     }
                 }
-                control += 1.0f / float(retHood);
+                control += 1.0f / static_cast<float>(retHood);
             }
         }
         int totalReach = 0;
@@ -118,9 +118,11 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 #endif
         {
             if (hoodSize > 1) {
-                dp.cluster = float(cluster / double(hoodSize * (hoodSize - 1.0)));
-                dp.control = float(control);
-                dp.controllability = float(double(hoodSize) / double(totalReach));
+                dp.cluster =
+                    static_cast<float>(cluster / static_cast<double>(hoodSize * (hoodSize - 1.0)));
+                dp.control = static_cast<float>(control);
+                dp.controllability = static_cast<float>(static_cast<double>(hoodSize) /
+                                                        static_cast<double>(totalReach));
             } else {
                 dp.cluster = -1.0f;
                 dp.control = -1.0f;

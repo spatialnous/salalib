@@ -49,7 +49,7 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
         audittrail[static_cast<size_t>(cursor)] =
             TopoMetSegmentRef(static_cast<int>(cursor), Connector::SEG_CONN_ALL, length * 0.5, -1);
         // better to divide by 511 but have 512 bins...
-        list[(int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
+        list[(static_cast<int>(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
             static_cast<int>(cursor));
         AttributeRow &row = map.getAttributeRowFromShapeIndex(static_cast<size_t>(cursor));
         row.setValue(sdColIdx, 0);
@@ -102,8 +102,8 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
                 open++;
                 //
                 // better to divide by 511 but have 512 bins...
-                list[(bin + int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
-                    connectedCursor);
+                list[(bin + static_cast<int>(floor(0.5 + 511 * length / maxseglength))) % 512]
+                    .push_back(connectedCursor);
                 AttributeRow &row =
                     map.getAttributeRowFromShapeIndex(static_cast<size_t>(connectedCursor));
                 row.setValue(sdColIdx, static_cast<float>(here.dist + length * 0.5));

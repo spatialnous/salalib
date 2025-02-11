@@ -67,7 +67,7 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                             }
                             retpt.getNode().next();
                         }
-                        control += 1.0f / float(retroSize);
+                        control += 1.0f / static_cast<float>(retroSize);
                         cluster += intersectSize;
                     }
                 }
@@ -75,14 +75,16 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                 if (neighbourhood.size() > 1) {
                     result.setValue(        //
                         refIdx, clusterCol, //
-                        float(cluster / static_cast<double>(neighbourhood.size() *
-                                                            (neighbourhood.size() - 1))));
+                        static_cast<float>(cluster /
+                                           static_cast<double>(neighbourhood.size() *
+                                                               (neighbourhood.size() - 1))));
                     result.setValue(        //
                         refIdx, controlCol, //
-                        float(control));
+                        static_cast<float>(control));
                     result.setValue(                //
                         refIdx, controllabilityCol, //
-                        float(double(neighbourhood.size()) / double(totalneighbourhood.size())));
+                        static_cast<float>(static_cast<double>(neighbourhood.size()) /
+                                           static_cast<double>(totalneighbourhood.size())));
                 } else {
                     result.setValue(refIdx, clusterCol, -1);
                     result.setValue(refIdx, controlCol, -1);

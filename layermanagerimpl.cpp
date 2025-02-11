@@ -45,7 +45,7 @@ void LayerManagerImpl::setLayerVisible(size_t layerIndex, bool visible) {
         m_visibleLayers = visible ? 1 : 0;
         return;
     }
-    int64_t layerValue = ((KeyType)1) << layerIndex;
+    int64_t layerValue = (static_cast<KeyType>(1)) << layerIndex;
 
     // if visible, switch on this layer and switch everything layer off, else just
     // switch off this layer
@@ -111,14 +111,14 @@ void LayerManagerImpl::write(std::ostream &stream) const {
         availableLayers = (availableLayers & (~newlayer));
     }
 
-    stream.write((const char *)&availableLayers, sizeof(KeyType));
-    stream.write((const char *)&m_visibleLayers, sizeof(KeyType));
-    int sizeAsInt = (int)m_layers.size();
-    stream.write((const char *)&sizeAsInt, sizeof(int));
+    stream.write(reinterpret_cast<const char *>(&availableLayers), sizeof(KeyType));
+    stream.write(reinterpret_cast<const char *>(&m_visibleLayers), sizeof(KeyType));
+    auto sizeAsInt = static_cast<int>(m_layers.size());
+    stream.write(reinterpret_cast<const char *>(&sizeAsInt), sizeof(int));
 
     availableLayers = 0xffffffff << (32 + 0xfffffffe);
     int64_t newlayer = 0x1;
-    stream.write((const char *)&newlayer, sizeof(KeyType));
+    stream.write(reinterpret_cast<const char *>(&newlayer), sizeof(KeyType));
     dXstring::writeString(stream, m_layers[0]);
     for (size_t i = 1; i < m_layers.size(); ++i) {
         // again keeping binary comatibility
@@ -135,13 +135,13 @@ void LayerManagerImpl::write(std::ostream &stream) const {
             throw OutOfLayersException();
         }
         newlayer = static_cast<int64_t>(0x1) << static_cast<int64_t>(loc);
-        stream.write((const char *)&newlayer, sizeof(KeyType));
+        stream.write(reinterpret_cast<const char *>(&newlayer), sizeof(KeyType));
         dXstring::writeString(stream, m_layers[i]);
     }
 }
 
 LayerManager::KeyType LayerManagerImpl::getKey(size_t layerIndex) const {
-    return ((int64_t)1) << layerIndex;
+    return (static_cast<int64_t>(1)) << layerIndex;
 }
 
 void LayerManagerImpl::checkIndex(size_t index) const {

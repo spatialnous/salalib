@@ -65,12 +65,7 @@ namespace {
     // htmlByte converts a normalised number to an HTML safe byte
 
     unsigned char htmlByte(double colorByte) {
-        // Quick mod - TV
-#if defined(_MSC_VER)
-        return (unsigned char((colorByte + 0.0333) * 15.0) * 0x11);
-#else
-        return ((unsigned char)((colorByte + 0.0333) * 15.0) * 0x11);
-#endif
+        return (static_cast<unsigned char>((colorByte + 0.0333) * 15.0) * 0x11);
     }
 } // namespace
 
@@ -133,33 +128,33 @@ PafColor &PafColor::makeColor(double field, DisplayParams dp) {
 // this makes an Axman-like colour range
 
 PafColor &PafColor::makeAxmanesque(double field) {
-    color = 0xff000000 | g_nicecolor[int((field - 1e-9) * 10.0)];
+    color = 0xff000000 | g_nicecolor[static_cast<int>((field - 1e-9) * 10.0)];
     return *this;
 }
 
 PafColor &PafColor::makeHueOnlyAxmanesque(double field) {
-    color = 0xff000000 | g_nicecolorhsb[int((field - 1e-9) * 10.0)];
+    color = 0xff000000 | g_nicecolorhsb[static_cast<int>((field - 1e-9) * 10.0)];
     return *this;
 }
 
 // this makes a purple-orange scheme that is red-green colour-blind safe
 
 PafColor &PafColor::makePurpleOrange(double field) {
-    color = 0xff000000 | g_purpleorange[int((field - 1e-9) * 7.0)];
+    color = 0xff000000 | g_purpleorange[static_cast<int>((field - 1e-9) * 7.0)];
     return *this;
 }
 
 // this makes a blue-red scheme that is red-green colour-blind safe
 
 PafColor &PafColor::makeBlueRed(double field) {
-    color = 0xff000000 | g_bluered[int((field - 1e-9) * 7.0)];
+    color = 0xff000000 | g_bluered[static_cast<int>((field - 1e-9) * 7.0)];
     return *this;
 }
 
 // this makes a greyscale colour range
 
 PafColor &PafColor::makeGreyScale(double field) {
-    color = 0xff000000 | g_greyscale[int((field - 1e-9) * 7.0)];
+    color = 0xff000000 | g_greyscale[static_cast<int>((field - 1e-9) * 7.0)];
     return *this;
 }
 
@@ -176,14 +171,14 @@ PafColor &PafColor::makeDepthmapClassic(double field, double blue, double red) {
 #if defined(_MSC_VER)
         setb(unsigned char(0xFF));
 #else
-        setb((unsigned char)(0xFF));
+        setb(static_cast<unsigned char>(0xFF));
 #endif
     } else if (field >= blue && field < (green + blue) / 2.0) {
         // Quick mod - TV
 #if defined(_MSC_VER)
         setb(unsigned char(0xFF));
 #else
-        setb((unsigned char)(0xFF));
+        setb(static_cast<unsigned char>(0xFF));
 #endif
         setg(htmlByte((2.0 * (field - blue) / (green - blue)) * 1.0));
     } else if (field >= (green + blue) / 2.0 && field < green) {
@@ -192,14 +187,14 @@ PafColor &PafColor::makeDepthmapClassic(double field, double blue, double red) {
 #if defined(_MSC_VER)
         setg(unsigned char(0xFF));
 #else
-        setg((unsigned char)(0xFF));
+        setg(static_cast<unsigned char>(0xFF));
 #endif
     } else if (field >= green && field < (green + red) / 2.0) {
         // Quick mod - TV
 #if defined(_MSC_VER)
         setg(unsigned char(0xFF));
 #else
-        setg((unsigned char)(0xFF));
+        setg(static_cast<unsigned char>(0xFF));
 #endif
         setr(htmlByte((2.0 * (field - green) / (red - green)) * 1.0));
     } else if (field >= (green + red) / 2.0 && field < red) {
@@ -208,14 +203,14 @@ PafColor &PafColor::makeDepthmapClassic(double field, double blue, double red) {
 #if defined(_MSC_VER)
         setr(unsigned char(0xFF));
 #else
-        setr((unsigned char)(0xFF));
+        setr(static_cast<unsigned char>(0xFF));
 #endif
     } else if (field >= red) {
         // Quick mod - TV
 #if defined(_MSC_VER)
         setr(unsigned char(0xFF));
 #else
-        setr((unsigned char)(0xFF));
+        setr(static_cast<unsigned char>(0xFF));
 #endif
         setb(htmlByte(0.5 * (field - red) / (1.0 - red) * 1.0));
     }

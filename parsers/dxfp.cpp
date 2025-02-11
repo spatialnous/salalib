@@ -899,7 +899,7 @@ bool DxfArc::parse(const DxfToken &token, DxfParser *parser) {
 }
 
 int DxfArc::numSegments(int segments) const {
-    return ((m_start == m_end) ? segments : (int(m_end - m_start) * segments / 360));
+    return ((m_start == m_end) ? segments : (static_cast<int>(m_end - m_start) * segments / 360));
 }
 
 DxfVertex DxfArc::getVertex(int i, int segments) const {
@@ -907,7 +907,7 @@ DxfVertex DxfArc::getVertex(int i, int segments) const {
     double range = 2.0 * DXF_PI;
     if (m_start != m_end)
         range = (m_end - m_start) * DXF_PI / 180.0;
-    double ang = range * double(i) / double(segments);
+    double ang = range * static_cast<double>(i) / static_cast<double>(segments);
     if (m_start != m_end) {
         ang += 2.0 * DXF_PI * (m_start / 360.0);
     }
@@ -1029,7 +1029,7 @@ DxfVertex DxfEllipse::getVertex(int i, int segments) const {
     double range = 2.0 * DXF_PI;
     if (m_start != m_end)
         range = (m_end - m_start);
-    double ang = m_start + range * double(i) / double(segments);
+    double ang = m_start + range * static_cast<double>(i) / static_cast<double>(segments);
 
     double c = cos(ang);
     double s = sin(ang);
@@ -1118,7 +1118,7 @@ bool DxfCircle::parse(const DxfToken &token, DxfParser *parser) {
 
 DxfVertex DxfCircle::getVertex(int i, int segments) const {
     DxfVertex v = m_centre;
-    double ang = 2.0 * DXF_PI * double(i) / double(segments);
+    double ang = 2.0 * DXF_PI * static_cast<double>(i) / static_cast<double>(segments);
     // CIRCLES go anticlockwise from (1 0)
     v.x = m_centre.x + m_radius * cos(ang);
     v.y = m_centre.y + m_radius * sin(ang);
@@ -1285,9 +1285,9 @@ bool DxfLineType::parse(const DxfToken &token, DxfParser *parser) {
     return parsed;
 }
 
-DxfVertex &DxfLine::getStart() const { return (DxfVertex &)m_start; }
+const DxfVertex &DxfLine::getStart() const { return static_cast<const DxfVertex &>(m_start); }
 
-DxfVertex &DxfLine::getEnd() const { return (DxfVertex &)m_end; }
+const DxfVertex &DxfLine::getEnd() const { return static_cast<const DxfVertex &>(m_end); }
 
 ///////////////////////////////////////////////////////////////////////////////
 

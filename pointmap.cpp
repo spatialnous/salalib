@@ -127,9 +127,10 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
     m_bottomLeft = Point2f(m_parentRegion->bottomLeft.x + m_offset.x,
                            m_parentRegion->bottomLeft.y + m_offset.y);
 
-    m_region = Region4f(Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
-                        Point2f(m_bottomLeft.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
-                                m_bottomLeft.y + double(m_rows - 1) * m_spacing + m_spacing / 2.0));
+    m_region = Region4f(
+        Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
+        Point2f(m_bottomLeft.x + static_cast<double>(m_cols - 1) * m_spacing + m_spacing / 2.0,
+                m_bottomLeft.y + static_cast<double>(m_rows - 1) * m_spacing + m_spacing / 2.0));
 
     m_points = depthmapX::ColumnMatrix<Point>(m_rows, m_cols);
     for (size_t j = 0; j < m_cols; j++) {
@@ -226,7 +227,7 @@ bool PointMap::undoPoints() {
 PixelRef PointMap::pixelate(const Point2f &p, bool constrain, int scalefactor) const {
     PixelRef ref;
 
-    double spacing = m_spacing / double(scalefactor);
+    double spacing = m_spacing / static_cast<double>(scalefactor);
     ref.x = static_cast<short>(floor((p.x - m_bottomLeft.x + (m_spacing / 2.0)) / spacing));
     ref.y = static_cast<short>(floor((p.y - m_bottomLeft.y + (m_spacing / 2.0)) / spacing));
 
@@ -761,9 +762,10 @@ bool PointMap::readMetadata(std::istream &stream) {
 
     stream.read(reinterpret_cast<char *>(&m_bottomLeft), sizeof(m_bottomLeft));
 
-    m_region = Region4f(Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
-                        Point2f(m_bottomLeft.x + double(m_cols - 1) * m_spacing + m_spacing / 2.0,
-                                m_bottomLeft.y + double(m_rows - 1) * m_spacing + m_spacing / 2.0));
+    m_region = Region4f(
+        Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),
+        Point2f(m_bottomLeft.x + static_cast<double>(m_cols - 1) * m_spacing + m_spacing / 2.0,
+                m_bottomLeft.y + static_cast<double>(m_rows - 1) * m_spacing + m_spacing / 2.0));
     return true;
 }
 
@@ -1133,7 +1135,7 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
                         // appropriately
                         double thisDist = dist(addlist[n], curs) * m_spacing;
                         if (thisDist > farBinDists[bin]) {
-                            farBinDists[bin] = (float)thisDist;
+                            farBinDists[bin] = static_cast<float>(thisDist);
                         }
                         totalDist += thisDist;
                         totalDistSqr += thisDist * thisDist;
@@ -1157,9 +1159,9 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
         pt.m_node->make(curs, binsB, farBinDists,
                         pt.m_processflag); // note: make clears bins!
         AttributeRow &row = m_attributes->getRow(AttributeKey(curs));
-        row.setValue(PointMap::Column::CONNECTIVITY, float(neighbourhoodSize));
-        row.setValue(PointMap::Column::POINT_FIRST_MOMENT, float(totalDist));
-        row.setValue(PointMap::Column::POINT_SECOND_MOMENT, float(totalDistSqr));
+        row.setValue(PointMap::Column::CONNECTIVITY, static_cast<float>(neighbourhoodSize));
+        row.setValue(PointMap::Column::POINT_FIRST_MOMENT, static_cast<float>(totalDist));
+        row.setValue(PointMap::Column::POINT_SECOND_MOMENT, static_cast<float>(totalDistSqr));
     } else {
         // Clear bins by hand if not using them to make
         for (int i = 0; i < 32; i++) {
@@ -1183,8 +1185,8 @@ bool PointMap::sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q,
         if (iter->remove) {
             continue;
         }
-        for (int ind = (int)ceil(iter->start * (depth - 0.5) - 0.5);
-             ind <= (int)floor(iter->end * (depth + 0.5) + 0.5); ind++) {
+        for (int ind = static_cast<int>(ceil(iter->start * (depth - 0.5) - 0.5));
+             ind <= static_cast<int>(floor(iter->end * (depth + 0.5) + 0.5)); ind++) {
             if (ind < firstind) {
                 continue;
             }
@@ -1207,8 +1209,8 @@ bool PointMap::sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q,
             if (includes(here)) {
                 hasgaps = true;
                 // centre gap checks to see if the point is blocked itself
-                bool centregap =
-                    (double(ind) >= (iter->start * depth) && double(ind) <= (iter->end * depth));
+                bool centregap = (static_cast<double>(ind) >= (iter->start * depth) &&
+                                  static_cast<double>(ind) <= (iter->end * depth));
 
                 if (centregap && (getPoint(here).m_state & Point::FILLED)) {
                     // don't repeat axes / diagonals
@@ -1243,9 +1245,9 @@ bool PointMap::binDisplay(Communicator *, std::set<int> &selSet) {
             Bin &b = p.m_node->bin(i);
             b.first();
             while (!b.is_tail()) {
-                // m_attributes->setValue( row, bindisplay_col, float((i % 8) + 1) );
+                // m_attributes->setValue( row, bindisplay_col, static_cast<float>((i % 8) + 1) );
                 m_attributes->getRow(AttributeKey(b.cursor()))
-                    .setValue(bindisplayCol, float(b.distance()));
+                    .setValue(bindisplayCol, static_cast<float>(b.distance()));
                 b.next();
             }
         }
@@ -1266,7 +1268,7 @@ bool PointMap::mergePoints(const Point2f &p, Region4f &firstPointsBounds,
     //
     for (auto &sel : firstPoints) {
         PixelRef a = sel;
-        PixelRef b = ((PixelRef)sel) + offset;
+        PixelRef b = static_cast<PixelRef>(sel) + offset;
         // check in limits:
         if (includes(b) && getPoint(b).filled()) {
             mergePixels(a, b);

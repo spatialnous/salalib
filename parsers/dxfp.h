@@ -210,8 +210,8 @@ class DxfLine : public DxfEntity, public DxfRegion {
     DxfLine(int tag = -1);
     void clear(); // for reuse when parsing
     //
-    DxfVertex &getStart() const;
-    DxfVertex &getEnd() const;
+    const DxfVertex &getStart() const;
+    const DxfVertex &getEnd() const;
     //
     // some basic manipulation
     void scale(const DxfVertex &baseVertex, const DxfVertex &scale) {

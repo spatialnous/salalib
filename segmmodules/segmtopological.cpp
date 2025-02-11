@@ -160,7 +160,7 @@ AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool
                     // can go twice)
 
                     // Quick mod - TV
-                    if (!m_selSet.has_value() && connectedCursor > int(cursor) &&
+                    if (!m_selSet.has_value() && connectedCursor > static_cast<int>(cursor) &&
                         !seenalready) { // only one way paths, saves doing this twice
                         int subcur = connectedCursor;
                         while (subcur != -1) {

@@ -35,7 +35,7 @@ class VGAVisualGlobal : public IVGAVisual {
     };
     static std::string getColumnWithRadius(std::string column, double radius) {
         if (radius != -1) {
-            return column + " R" + dXstring::formatString(int(radius), "%d");
+            return column + " R" + dXstring::formatString(static_cast<int>(radius), "%d");
         }
         return column;
     }

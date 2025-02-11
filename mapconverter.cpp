@@ -81,7 +81,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToAxial(
     }
     for (auto &line : lines) {
         if (recordlayer) {
-            layerAttributes[layerCol.value()] = float(line.second.second);
+            layerAttributes[layerCol.value()] = static_cast<float>(line.second.second);
         }
         usermap->makeLineShape(line.second.first, false, false, layerAttributes);
     }
@@ -164,7 +164,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
             auto idx = indices[i];
             std::string colname = input.getColumnName(idx);
             for (size_t k = 1; output.hasColumn(colname); k++) {
-                colname = dXstring::formatString(int(k), input.getColumnName(idx) + " %d");
+                colname =
+                    dXstring::formatString(static_cast<int>(k), input.getColumnName(idx) + " %d");
             }
             newColumns.push_back(colname);
             output.insertOrResetColumn(colname);
@@ -259,7 +260,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToConvex(Communicator *,
     for (auto &refShape : refShapes) {
         if (copydata) {
             for (size_t i = 0; i < input.getNumColumns(); ++i) {
-                extraAttr[attrCols[size_t(i)]] =
+                extraAttr[attrCols[static_cast<size_t>(i)]] =
                     input.getRow(AttributeKey(refShape.first)).getValue(i);
             }
         }
@@ -345,7 +346,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToSegment(
     }
     for (auto &line : lines) {
         if (recordlayer) {
-            layerAttributes[layerCol.value()] = float(line.second.second);
+            layerAttributes[layerCol.value()] = static_cast<float>(line.second.second);
         }
         usermap->makeLineShape(line.second.first, false, false, layerAttributes);
     }
@@ -436,7 +437,8 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
             auto idx = indices[i];
             std::string colname = input.getColumnName(idx);
             for (size_t k = 1; output.hasColumn(colname); k++) {
-                colname = dXstring::formatString(int(k), input.getColumnName(idx) + " %d");
+                colname =
+                    dXstring::formatString(static_cast<int>(k), input.getColumnName(idx) + " %d");
             }
             newColumns.push_back(colname);
             output.insertOrResetColumn(colname);

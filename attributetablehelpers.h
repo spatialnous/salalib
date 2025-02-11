@@ -47,7 +47,8 @@ struct OrderedSizeTPair;
 struct OrderedIntPair {
     int a;
     int b;
-    OrderedIntPair(int x = -1, int y = -1) : a((int)x < y ? x : y), b((int)x < y ? y : x) {}
+    OrderedIntPair(int x = -1, int y = -1)
+        : a(static_cast<int>(x) < y ? x : y), b(static_cast<int>(x) < y ? y : x) {}
     OrderedIntPair(const OrderedSizeTPair &osp);
     // inlined at end of file
     friend bool operator==(const OrderedIntPair &x, const OrderedIntPair &y);
@@ -60,7 +61,7 @@ struct OrderedSizeTPair {
     size_t a;
     size_t b;
     OrderedSizeTPair(size_t x = static_cast<size_t>(-1), size_t y = static_cast<size_t>(-1))
-        : a((size_t)x < y ? x : y), b((size_t)x < y ? y : x) {}
+        : a(static_cast<size_t>(x) < y ? x : y), b(static_cast<size_t>(x) < y ? y : x) {}
     OrderedSizeTPair(const OrderedIntPair &oip);
     // inlined at end of file
     friend bool operator==(const OrderedSizeTPair &x, const OrderedSizeTPair &y);

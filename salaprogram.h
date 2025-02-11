@@ -545,7 +545,7 @@ inline int SalaObj::toInt() const {
     case S_INT:
         return m_data.i;
     case S_DOUBLE:
-        return int(std::floor(m_data.f)); // ensure properly implemented
+        return static_cast<int>(std::floor(m_data.f)); // ensure properly implemented
     default:
         throw SalaError(std::string("Cannot convert ") + getTypeIndefArt() + getTypeStr() +
                         std::string(" to an integer value"));
@@ -556,7 +556,7 @@ inline double SalaObj::toDouble() const {
     case S_BOOL:
         return m_data.b ? 1.0 : 0.0;
     case S_INT:
-        return double(m_data.i);
+        return static_cast<double>(m_data.i);
     case S_DOUBLE:
         return m_data.f;
     default:
@@ -594,8 +594,8 @@ inline SalaObj operator+(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return SalaObj(a.m_data.f + b.m_data.f);
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) + b.m_data.f)
-                                            : (a.m_data.f + double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) + b.m_data.f)
+                                            : (a.m_data.f + static_cast<double>(b.m_data.i));
     case SalaObj::S_STRING:
         return SalaObj(*(a.m_data.str.string) + *(b.m_data.str.string));
     default:
@@ -612,8 +612,8 @@ inline SalaObj operator-(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return SalaObj(a.m_data.f - b.m_data.f);
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) - b.m_data.f)
-                                            : (a.m_data.f - double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) - b.m_data.f)
+                                            : (a.m_data.f - static_cast<double>(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot subtract ") + b.getTypeIndefArt() + b.getTypeStr() +
                         std::string(" from ") + a.getTypeIndefArt() + a.getTypeStr());
@@ -638,8 +638,8 @@ inline SalaObj operator*(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return SalaObj(a.m_data.f * b.m_data.f);
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) * b.m_data.f)
-                                            : (a.m_data.f * double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) * b.m_data.f)
+                                            : (a.m_data.f * static_cast<double>(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot multiply ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" by ") + b.getTypeIndefArt() + b.getTypeStr());
@@ -652,8 +652,8 @@ inline SalaObj operator%(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return SalaObj(fmod(a.m_data.f, b.m_data.f));
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? fmod(double(a.m_data.i), b.m_data.f)
-                                            : fmod(a.m_data.f, double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? fmod(static_cast<double>(a.m_data.i), b.m_data.f)
+                                            : fmod(a.m_data.f, static_cast<double>(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot multiply ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" by ") + b.getTypeIndefArt() + b.getTypeStr());
@@ -669,8 +669,8 @@ inline SalaObj operator/(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return SalaObj(a.m_data.f / b.m_data.f);
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) / b.m_data.f)
-                                            : (a.m_data.f / double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) / b.m_data.f)
+                                            : (a.m_data.f / static_cast<double>(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot divide ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" by ") + a.getTypeIndefArt() + b.getTypeStr());
@@ -693,8 +693,8 @@ inline bool operator==(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return a.m_data.f == b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) == b.m_data.f)
-                                            : (a.m_data.f == double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) == b.m_data.f)
+                                            : (a.m_data.f == static_cast<double>(b.m_data.i));
     case SalaObj::S_STRING:
         return a.m_data.str == b.m_data.str;
     case SalaObj::S_LIST:
@@ -734,8 +734,8 @@ inline bool operator!=(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return a.m_data.f != b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) != b.m_data.f)
-                                            : (a.m_data.f != double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) != b.m_data.f)
+                                            : (a.m_data.f != static_cast<double>(b.m_data.i));
     case SalaObj::S_STRING:
         return a.m_data.str != b.m_data.str;
     case SalaObj::S_LIST:
@@ -755,8 +755,8 @@ inline bool operator<(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return a.m_data.f < b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) < b.m_data.f)
-                                            : (a.m_data.f < double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) < b.m_data.f)
+                                            : (a.m_data.f < static_cast<double>(b.m_data.i));
     case SalaObj::S_STRING:
         return a.m_data.str < b.m_data.str;
     default:
@@ -774,8 +774,8 @@ inline bool operator>(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return a.m_data.f > b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) > b.m_data.f)
-                                            : (a.m_data.f > double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) > b.m_data.f)
+                                            : (a.m_data.f > static_cast<double>(b.m_data.i));
     case SalaObj::S_STRING:
         return a.m_data.str > b.m_data.str;
     default:
@@ -793,8 +793,8 @@ inline bool operator<=(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return a.m_data.f <= b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) <= b.m_data.f)
-                                            : (a.m_data.f <= double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) <= b.m_data.f)
+                                            : (a.m_data.f <= static_cast<double>(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot compare ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" with ") + b.getTypeIndefArt() + b.getTypeStr() +
@@ -810,8 +810,8 @@ inline bool operator>=(SalaObj &a, SalaObj &b) {
     case SalaObj::S_DOUBLE:
         return a.m_data.f >= b.m_data.f;
     case SalaObj::S_NUMBER:
-        return (a.m_type == SalaObj::S_INT) ? (double(a.m_data.i) >= b.m_data.f)
-                                            : (a.m_data.f >= double(b.m_data.i));
+        return (a.m_type == SalaObj::S_INT) ? (static_cast<double>(a.m_data.i) >= b.m_data.f)
+                                            : (a.m_data.f >= static_cast<double>(b.m_data.i));
     default:
         throw SalaError(std::string("Cannot compare ") + a.getTypeIndefArt() + a.getTypeStr() +
                         std::string(" with ") + b.getTypeIndefArt() + b.getTypeStr() +
@@ -821,8 +821,8 @@ inline bool operator>=(SalaObj &a, SalaObj &b) {
 // list operations: note -> precheck in program and sort into list and string
 inline SalaObj &SalaObj::list_at(int i) {
     if (i < 0)
-        i += (int)m_data.list.list->size();
-    if (i < 0 || size_t(i) >= m_data.list.list->size())
+        i += static_cast<int>(m_data.list.list->size());
+    if (i < 0 || static_cast<size_t>(i) >= m_data.list.list->size())
         throw SalaError("Index out of range");
     return m_data.list.list->at(static_cast<size_t>(i));
 }
@@ -836,9 +836,9 @@ inline SalaObj SalaObj::char_at(int i) // actually returns a string of the char
 }
 inline int SalaObj::length() {
     if (m_type & S_LIST)
-        return (int)m_data.list.list->size();
+        return static_cast<int>(m_data.list.list->size());
     else if (m_type == S_STRING)
-        return (int)m_data.str.length();
+        return static_cast<int>(m_data.str.length());
     throw SalaError("Cannot get the length of " + getTypeIndefArt() + getTypeStr());
 }
 

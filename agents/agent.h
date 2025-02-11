@@ -90,11 +90,13 @@ class Agent {
 };
 
 // note the add 0.5 means angles from e.g., -1/32 to 1/32 are in bin 0
-inline int binfromvec(const Point2f &p) { return int(32.0 * (0.5 * p.angle() / M_PI) + 0.5); }
+inline int binfromvec(const Point2f &p) {
+    return static_cast<int>(32.0 * (0.5 * p.angle() / M_PI) + 0.5);
+}
 
 // a random angle based on a bin direction
 inline double anglefrombin2(int here) {
-    return (2.0 * M_PI) * ((double(here) - 0.5) / 32.0 + pafmath::prandom() / 32.0);
+    return (2.0 * M_PI) * ((static_cast<double>(here) - 0.5) / 32.0 + pafmath::prandom() / 32.0);
 }
 
 inline int binsbetween(int bin1, int bin2) {

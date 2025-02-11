@@ -292,8 +292,8 @@ bool SalaProgram::runupdate(int col, const std::set<int> &selset) {
             row = sel;
             try {
                 SalaObj val = evaluate();
-                float v = (float)val.toDouble(); // note, toDouble will type check and
-                                                 // throw if there's a problem
+                float v = static_cast<float>(val.toDouble()); // note, toDouble will type check and
+                                                              // throw if there's a problem
                 if (!std::isfinite(v)) {
                     v = -1.0f;
                 }
@@ -309,8 +309,8 @@ bool SalaProgram::runupdate(int col, const std::set<int> &selset) {
             row = iter->getKey().value;
             try {
                 SalaObj val = evaluate();
-                float v = (float)val.toDouble(); // note, toDouble will type check and
-                                                 // throw if there's a problem
+                float v = static_cast<float>(val.toDouble()); // note, toDouble will type check and
+                                                              // throw if there's a problem
                 if (!std::isfinite(v)) {
                     v = -1.0f;
                 }
@@ -1315,7 +1315,8 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                         if (step == 0) {
                             throw SalaError("Range cannot have a step of 0", m_line);
                         }
-                        int listlen = (int)ceil(float(end - start) / float(step));
+                        auto listlen = static_cast<int>(
+                            ceil(static_cast<float>(end - start) / static_cast<float>(step)));
                         if (listlen <= 0) {
                             data = SalaObj(SalaObj::S_LIST);
                         } else {
@@ -1410,7 +1411,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                             int i = param.toInt();
                             if (i < 0)
                                 i += static_cast<int>(list.size());
-                            if (i < 0 || i >= (int)list.size())
+                            if (i < 0 || i >= static_cast<int>(list.size()))
                                 throw SalaError("Index out of range");
                             data = list[static_cast<size_t>(i)];
                             list.erase(list.begin() + i);
@@ -1446,7 +1447,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                             throw SalaError("Function takes 2 parameters");
                         }
                         const std::string &str = param.list_at(0).toStringRef();
-                        float val = (float)param.list_at(1).toDouble();
+                        auto val = static_cast<float>(param.list_at(1).toDouble());
                         AttributeTable *table = obj.getTable();
                         int col = -1;
                         if (str != "Ref Number") {

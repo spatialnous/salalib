@@ -67,13 +67,14 @@ class IVGAMetric : public IVGATraversing {
                 auto &ad = std::get<0>(conn).get();
                 if (ad.visitedFromBin == 0 &&
                     (ad.dist == -1.0 || (curs.dist + dist(ad.ref, curs.ad.ref) < ad.dist))) {
-                    ad.dist = curs.dist + (float)dist(ad.ref, curs.ad.ref);
+                    ad.dist = curs.dist + static_cast<float>(dist(ad.ref, curs.ad.ref));
                     // n.b. dmap v4.06r now sets angle in range 0 to 4 (1 = 90 degrees)
                     ad.cumAngle =
                         curs.ad.cumAngle +
                         (!curs.lastPixel.has_value()
                              ? 0.0f
-                             : (float)(angle(ad.ref, curs.ad.ref, *curs.lastPixel) / (M_PI * 0.5)));
+                             : static_cast<float>(angle(ad.ref, curs.ad.ref, *curs.lastPixel) /
+                                                  (M_PI * 0.5)));
                     pixels.insert(MetricSearchData(ad, ad.dist, curs.ad.ref));
                 }
             }
@@ -117,29 +118,34 @@ class IVGAMetric : public IVGATraversing {
             if (p.filled() && ad1.visitedFromBin != ~0) {
                 extractMetric(graph.at(ad1.attributeDataRow), searchList, m_map, here);
                 ad1.visitedFromBin = ~0;
-                pathAngleCol.setValue(ad1.attributeDataRow, float(ad1.cumAngle), keepStats);
-                pathLengthCol.setValue(ad1.attributeDataRow, float(m_map.getSpacing() * here.dist),
+                pathAngleCol.setValue(ad1.attributeDataRow, static_cast<float>(ad1.cumAngle),
+                                      keepStats);
+                pathLengthCol.setValue(ad1.attributeDataRow,
+                                       static_cast<float>(m_map.getSpacing() * here.dist),
                                        keepStats);
                 if (originRefs.size() == 1) {
                     // Note: Euclidean distance is currently only calculated from a single point
                     euclidDistCol.setValue(
                         ad1.attributeDataRow,
-                        float(m_map.getSpacing() * dist(ad1.ref, *originRefs.begin())), keepStats);
+                        static_cast<float>(m_map.getSpacing() * dist(ad1.ref, *originRefs.begin())),
+                        keepStats);
                 }
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0) {
                         ad2.cumAngle = ad1.cumAngle;
-                        pathAngleCol.setValue(ad2.attributeDataRow, float(ad2.cumAngle), keepStats);
+                        pathAngleCol.setValue(ad2.attributeDataRow,
+                                              static_cast<float>(ad2.cumAngle), keepStats);
                         pathLengthCol.setValue(ad2.attributeDataRow,
-                                               float(m_map.getSpacing() * here.dist), keepStats);
+                                               static_cast<float>(m_map.getSpacing() * here.dist),
+                                               keepStats);
                         if (originRefs.size() == 1) {
                             // Note: Euclidean distance is currently only calculated from a single
                             // point
                             euclidDistCol.setValue(
                                 ad2.attributeDataRow,
-                                float(m_map.getSpacing() *
-                                      dist(p.getMergePixel(), *originRefs.begin())),
+                                static_cast<float>(m_map.getSpacing() *
+                                                   dist(p.getMergePixel(), *originRefs.begin())),
                                 keepStats);
                         }
                         extractMetric(
@@ -314,9 +320,9 @@ class IVGAMetric : public IVGATraversing {
                         ad2.visitedFromBin = ~0;
                     }
                 }
-                totalDepth += float(here.dist * m_map.getSpacing());
+                totalDepth += static_cast<float>(here.dist * m_map.getSpacing());
                 totalAngle += ad1.cumAngle;
-                euclidDepth += float(m_map.getSpacing() * dist(ad1.ref, ad0.ref));
+                euclidDepth += static_cast<float>(m_map.getSpacing() * dist(ad1.ref, ad0.ref));
                 totalNodes += 1;
             }
         }

@@ -49,7 +49,7 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
     audittrail[static_cast<size_t>(m_refFrom)] =
         TopoMetSegmentRef(m_refFrom, Connector::SEG_CONN_ALL, length * 0.5, -1);
     // better to divide by 511 but have 512 bins...
-    list[(int(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(m_refFrom);
+    list[(static_cast<int>(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(m_refFrom);
     m_map.getAttributeRowFromShapeIndex(static_cast<size_t>(m_refFrom)).setValue(distCol, 0);
 
     unsigned int segdepth = 0;
@@ -104,7 +104,8 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
                 open++;
                 //
                 // better to divide by 511 but have 512 bins...
-                list[(bin + int(floor(0.5 + 511 * connectedLength / maxseglength))) % 512]
+                list[(bin + static_cast<int>(floor(0.5 + 511 * connectedLength / maxseglength))) %
+                     512]
                     .push_back(connectedCursor);
                 AttributeRow &row =
                     m_map.getAttributeRowFromShapeIndex(static_cast<size_t>(connectedCursor));

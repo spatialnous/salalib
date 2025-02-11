@@ -46,14 +46,15 @@ AnalysisResult AxialLocal::run(Communicator *comm, ShapeGraph &map, bool) {
                 retroSize++;
                 depthmapX::addIfNotExists(totalneighbourhood, retconnector);
             }
-            control += 1.0 / double(retroSize);
+            control += 1.0 / static_cast<double>(retroSize);
             //}
         }
 
         if (connections.size() > 0) {
-            row.setValue(controlCol, float(control));
+            row.setValue(controlCol, static_cast<float>(control));
             row.setValue(controllabilityCol,
-                         float(double(connections.size()) / double(totalneighbourhood.size() - 1)));
+                         static_cast<float>(static_cast<double>(connections.size()) /
+                                            static_cast<double>(totalneighbourhood.size() - 1)));
         } else {
             row.setValue(controlCol, -1);
             row.setValue(controllabilityCol, -1);

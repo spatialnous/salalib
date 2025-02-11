@@ -22,42 +22,42 @@ namespace IsovistUtils {
         std::string colText = "Isovist Area";
         auto col = table.getOrInsertColumn(colText);
         newColumns.insert(colText);
-        row.setValue(col, float(area));
+        row.setValue(col, static_cast<float>(area));
 
         colText = "Isovist Compactness";
         col = table.getOrInsertColumn(colText);
         newColumns.insert(colText);
-        row.setValue(col, float(4.0 * M_PI * area / (perimeter * perimeter)));
+        row.setValue(col, static_cast<float>(4.0 * M_PI * area / (perimeter * perimeter)));
 
         colText = "Isovist Drift Angle";
         col = table.getOrInsertColumn(colText);
         newColumns.insert(colText);
-        row.setValue(col, float(180.0 * driftang / M_PI));
+        row.setValue(col, static_cast<float>(180.0 * driftang / M_PI));
 
         colText = "Isovist Drift Magnitude";
         col = table.getOrInsertColumn(colText);
         newColumns.insert(colText);
-        row.setValue(col, float(driftmag));
+        row.setValue(col, static_cast<float>(driftmag));
 
         colText = "Isovist Min Radial";
         col = table.getOrInsertColumn(colText);
         newColumns.insert(colText);
-        row.setValue(col, float(isovist.getMinRadial()));
+        row.setValue(col, static_cast<float>(isovist.getMinRadial()));
 
         colText = "Isovist Max Radial";
         col = table.getOrInsertColumn(colText);
         newColumns.insert(colText);
-        row.setValue(col, float(isovist.getMaxRadial()));
+        row.setValue(col, static_cast<float>(isovist.getMaxRadial()));
 
         colText = "Isovist Occlusivity";
         col = table.getOrInsertColumn(colText);
         newColumns.insert(colText);
-        row.setValue(col, float(isovist.getOccludedPerimeter()));
+        row.setValue(col, static_cast<float>(isovist.getOccludedPerimeter()));
 
         colText = "Isovist Perimeter";
         col = table.getOrInsertColumn(colText);
         newColumns.insert(colText);
-        row.setValue(col, float(perimeter));
+        row.setValue(col, static_cast<float>(perimeter));
 
         return newColumns;
     }

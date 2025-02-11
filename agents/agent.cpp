@@ -17,9 +17,9 @@ void Agent::onInit(PixelRef node, int trailNum) {
     if (m_outputMode & OUTPUT_GATE_COUNTS) {
         // see note about gates in Through vision analysis
         m_gate = (m_pointmap->getPoint(node).filled())
-                     ? (int)m_pointmap->getAttributeTable()
-                           .getRow(AttributeKey(m_node))
-                           .getValue(AgentAnalysis::Column::INTERNAL_GATE)
+                     ? static_cast<int>(m_pointmap->getAttributeTable()
+                                            .getRow(AttributeKey(m_node))
+                                            .getValue(AgentAnalysis::Column::INTERNAL_GATE))
                      : -1;
     } else {
         m_gate = -1;
@@ -84,7 +84,7 @@ void Agent::onMove() {
                 row.incrValue(AgentAnalysis::Column::GATE_COUNTS);
             }
             if (m_outputMode & OUTPUT_GATE_COUNTS) {
-                int obj = (int)row.getValue(AgentAnalysis::Column::INTERNAL_GATE);
+                int obj = static_cast<int>(row.getValue(AgentAnalysis::Column::INTERNAL_GATE));
                 if (m_gate != obj) {
                     m_gate = obj;
                     if (m_gate != -1) {
@@ -417,10 +417,10 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
                         weight += fardist;
                         break;
                     case AgentProgram::SEL_OCC_WEIGHT_ANG:
-                        weight += (double(vbin - abs(i - vbin)));
+                        weight += static_cast<double>(vbin - abs(i - vbin));
                         break;
                     case AgentProgram::SEL_OCC_WEIGHT_DIST_ANG:
-                        weight += fardist * (double(vbin - abs(i - vbin)));
+                        weight += fardist * static_cast<double>(vbin - abs(i - vbin));
                         break;
                     default:
                         weight += 1.0;
@@ -486,7 +486,7 @@ Point2f Agent::onLoSLook(bool wholeisovist, int lookType) {
             los *= los;
         }
         if (m_program->destinationDirected) {
-            los *= 1.0 - double(binsbetween(((directionbin + i) % 32), bbin)) / 16.0;
+            los *= 1.0 - static_cast<double>(binsbetween(((directionbin + i) % 32), bbin)) / 16.0;
         }
         weight += los;
         weightmap.push_back(wpair(weight, (directionbin + i) % 32));
@@ -509,7 +509,7 @@ Point2f Agent::onLoSLook(bool wholeisovist, int lookType) {
         }
     }
 
-    float angle = (float)anglefrombin2(targetbin);
+    float angle = static_cast<float>(anglefrombin2(targetbin));
 
     return Point2f(cosf(angle), sinf(angle));
 }
@@ -559,7 +559,7 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int lookType) {
         }
     }
 
-    float angle = (float)anglefrombin2(targetbin);
+    float angle = static_cast<float>(anglefrombin2(targetbin));
 
     return Point2f(cosf(angle), sinf(angle));
 }
@@ -588,7 +588,8 @@ Point2f Agent::onGibsonianLook(bool wholeisovist) {
     float angle = 0.0;
 
     if (ruleChoice != -1) {
-        angle = (float)anglefrombin2((binfromvec(m_vector) + (2 * ruleChoice + 1) * dir + 32) % 32);
+        angle = static_cast<float>(
+            anglefrombin2((binfromvec(m_vector) + (2 * ruleChoice + 1) * dir + 32) % 32));
     }
 
     // if no rule selection made, carry on in current direction
@@ -700,7 +701,7 @@ Point2f Agent::onGibsonianLook2(bool wholeisovist) {
     }
 
     int bin = binfromvec(m_vector) + maxbin;
-    float angle = (float)anglefrombin2(bin);
+    float angle = static_cast<float>(anglefrombin2(bin));
 
     return (maxbin == 0) ? m_vector : Point2f(cosf(angle), sinf(angle));
 }

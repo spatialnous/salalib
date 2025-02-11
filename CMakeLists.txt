@@ -14,9 +14,9 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
             -Wunused-macros -Wmissing-noreturn -Wmissing-declarations
+            -Wold-style-cast
             # yes
             -Wno-padded
-            -Wno-old-style-cast
             # yes eventually
             -Wno-float-equal -Wno-double-promotion -Wno-reserved-macro-identifier
             -Wno-switch-enum -Wno-effc++

@@ -51,8 +51,8 @@ void ShapeGraph::makeConnections(const KeyVertices &keyvertices) {
         m_connectors.push_back(Connector());
         m_connectors[i].connections =
             getLineConnections(key, TOLERANCE_B * std::max(m_region.height(), m_region.width()));
-        row.setValue(connCol, float(m_connectors[i].connections.size()));
-        row.setValue(lengCol, float(shape.second.getLine().length()));
+        row.setValue(connCol, static_cast<float>(m_connectors[i].connections.size()));
+        row.setValue(lengCol, static_cast<float>(shape.second.getLine().length()));
         if (keyvertices.size()) {
             // note: depends on lines being recorded in same order as keyvertices...
             m_keyvertices.push_back(keyvertices[i]);
@@ -265,13 +265,13 @@ void ShapeGraph::writeSegmentConnectionsAsPairsCSV(std::ostream &stream) {
         for (auto &segconn : connectors[i].forwardSegconns) {
             stream << std::endl;
             stream << i << "," << segconn.first.ref << "," << segconn.second << "," << 0 // forward
-                   << "," << int(segconn.first.dir);
+                   << "," << static_cast<int>(segconn.first.dir);
         }
 
         for (auto &segconn : connectors[i].backSegconns) {
             stream << std::endl;
             stream << i << "," << segconn.first.ref << "," << segconn.second << "," << 1 // back
-                   << "," << int(segconn.first.dir);
+                   << "," << static_cast<int>(segconn.first.dir);
         }
     }
 }
@@ -285,11 +285,11 @@ void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {
     auto iter = pixShapes.begin();
     for (; iter != pixShapes.end(); ++iter) {
         for (auto jter = iter; jter != pixShapes.end(); ++jter) {
-            auto aIter = m_shapes.find(int(iter->shapeRef));
-            auto bIter = m_shapes.find(int(jter->shapeRef));
+            auto aIter = m_shapes.find(static_cast<int>(iter->shapeRef));
+            auto bIter = m_shapes.find(static_cast<int>(jter->shapeRef));
             auto a = static_cast<size_t>(std::distance(m_shapes.begin(), aIter));
             auto b = static_cast<size_t>(std::distance(m_shapes.begin(), bIter));
-            auto &connections = m_connectors[size_t(a)].connections;
+            auto &connections = m_connectors[static_cast<size_t>(a)].connections;
             if (aIter != m_shapes.end() && bIter != m_shapes.end() && aIter->second.isLine() &&
                 bIter->second.isLine() &&
                 std::find(connections.begin(), connections.end(), b) != connections.end()) {
@@ -310,7 +310,7 @@ void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {
         j++;
     }
     if (minpair != -1) {
-        auto &intersection = intersections[size_t(minpair)];
+        auto &intersection = intersections[static_cast<size_t>(minpair)];
         unlinkShapes(intersection.first, intersection.second);
     } else {
         std::cerr << "eek!";
@@ -402,14 +402,14 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
                 alpha.normalise();
                 beta.normalise();
                 if (lineA.t_start().approxeq(lineB.t_start(), (maxdim * TOLERANCE_B))) {
-                    float x =
-                        float(2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) / M_PI);
+                    auto x = static_cast<float>(
+                        2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) / M_PI);
                     depthmapX::addIfNotExists(connectionsetA.backSegconns, SegmentRef(1, idxB), x);
                     depthmapX::addIfNotExists(connectionsetB.backSegconns, SegmentRef(1, idxA), x);
                 }
                 if (lineA.t_start().approxeq(lineB.t_end(), (maxdim * TOLERANCE_B))) {
-                    float x =
-                        float(2.0 * acos(std::min(std::max(-alpha.dot(-beta), -1.0), 1.0)) / M_PI);
+                    auto x = static_cast<float>(
+                        2.0 * acos(std::min(std::max(-alpha.dot(-beta), -1.0), 1.0)) / M_PI);
                     depthmapX::addIfNotExists(connectionsetA.backSegconns, SegmentRef(-1, idxB), x);
                     depthmapX::addIfNotExists(connectionsetB.forwardSegconns, SegmentRef(1, idxA),
                                               x);
@@ -434,14 +434,14 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
                 alpha.normalise();
                 beta.normalise();
                 if (lineA.t_end().approxeq(lineB.t_start(), (maxdim * TOLERANCE_B))) {
-                    float x = float(2.0 * acos(std::min(std::max(-(-alpha).dot(beta), -1.0), 1.0)) /
-                                    M_PI);
+                    auto x = static_cast<float>(
+                        2.0 * acos(std::min(std::max(-(-alpha).dot(beta), -1.0), 1.0)) / M_PI);
                     depthmapX::addIfNotExists(connectionsetA.forwardSegconns, SegmentRef(1, idxB),
                                               x);
                     depthmapX::addIfNotExists(connectionsetB.backSegconns, SegmentRef(-1, idxA), x);
                 }
                 if (lineA.t_end().approxeq(lineB.t_end(), (maxdim * TOLERANCE_B))) {
-                    float x = float(
+                    auto x = static_cast<float>(
                         2.0 * acos(std::min(std::max(-(-alpha).dot(-beta), -1.0), 1.0)) / M_PI);
                     depthmapX::addIfNotExists(connectionsetA.forwardSegconns, SegmentRef(-1, idxB),
                                               x);
@@ -588,66 +588,74 @@ void ShapeGraph::makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connecto
                         int seg2 = segIter->second.second;
                         if (segA != -1) {
                             if (seg1 != -1) {
-                                Point2f alpha =
-                                    lines[size_t(segA)].start() - lines[size_t(segA)].end();
-                                Point2f beta =
-                                    lines[size_t(seg1)].start() - lines[size_t(seg1)].end();
+                                Point2f alpha = lines[static_cast<size_t>(segA)].start() -
+                                                lines[static_cast<size_t>(segA)].end();
+                                Point2f beta = lines[static_cast<size_t>(seg1)].start() -
+                                               lines[static_cast<size_t>(seg1)].end();
                                 alpha.normalise();
                                 beta.normalise();
-                                float x = float(
+                                auto x = static_cast<float>(
                                     2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) /
                                     M_PI);
-                                depthmapX::addIfNotExists(connectors[size_t(segA)].forwardSegconns,
-                                                          SegmentRef(-1, seg1), x);
-                                depthmapX::addIfNotExists(connectors[size_t(seg1)].forwardSegconns,
-                                                          SegmentRef(-1, segA), x);
+                                depthmapX::addIfNotExists(
+                                    connectors[static_cast<size_t>(segA)].forwardSegconns,
+                                    SegmentRef(-1, seg1), x);
+                                depthmapX::addIfNotExists(
+                                    connectors[static_cast<size_t>(seg1)].forwardSegconns,
+                                    SegmentRef(-1, segA), x);
                             }
                             if (seg2 != -1) {
-                                Point2f alpha =
-                                    lines[size_t(segA)].start() - lines[size_t(segA)].end();
-                                Point2f beta =
-                                    lines[size_t(seg2)].end() - lines[size_t(seg2)].start();
+                                Point2f alpha = lines[static_cast<size_t>(segA)].start() -
+                                                lines[static_cast<size_t>(segA)].end();
+                                Point2f beta = lines[static_cast<size_t>(seg2)].end() -
+                                               lines[static_cast<size_t>(seg2)].start();
                                 alpha.normalise();
                                 beta.normalise();
-                                float x = float(
+                                auto x = static_cast<float>(
                                     2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) /
                                     M_PI);
-                                depthmapX::addIfNotExists(connectors[size_t(segA)].forwardSegconns,
-                                                          SegmentRef(1, seg2), x);
-                                depthmapX::addIfNotExists(connectors[size_t(seg2)].backSegconns,
-                                                          SegmentRef(-1, segA), x);
+                                depthmapX::addIfNotExists(
+                                    connectors[static_cast<size_t>(segA)].forwardSegconns,
+                                    SegmentRef(1, seg2), x);
+                                depthmapX::addIfNotExists(
+                                    connectors[static_cast<size_t>(seg2)].backSegconns,
+                                    SegmentRef(-1, segA), x);
                             }
                         }
                         if (segB != -1) {
                             if (seg1 != -1) {
-                                Point2f alpha =
-                                    lines[size_t(segB)].end() - lines[size_t(segB)].start();
-                                Point2f beta =
-                                    lines[size_t(seg1)].start() - lines[size_t(seg1)].end();
+                                Point2f alpha = lines[static_cast<size_t>(segB)].end() -
+                                                lines[static_cast<size_t>(segB)].start();
+                                Point2f beta = lines[static_cast<size_t>(seg1)].start() -
+                                               lines[static_cast<size_t>(seg1)].end();
                                 alpha.normalise();
                                 beta.normalise();
-                                float x = float(
+                                auto x = static_cast<float>(
                                     2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) /
                                     M_PI);
-                                depthmapX::addIfNotExists(connectors[size_t(segB)].backSegconns,
-                                                          SegmentRef(-1, seg1), x);
-                                depthmapX::addIfNotExists(connectors[size_t(seg1)].forwardSegconns,
-                                                          SegmentRef(1, segB), x);
+                                depthmapX::addIfNotExists(
+                                    connectors[static_cast<size_t>(segB)].backSegconns,
+                                    SegmentRef(-1, seg1), x);
+                                depthmapX::addIfNotExists(
+                                    connectors[static_cast<size_t>(seg1)].forwardSegconns,
+                                    SegmentRef(1, segB), x);
                             }
                             if (seg2 != -1) {
-                                Point2f alpha =
-                                    lines[size_t(segB)].end() - lines[size_t(segB)].start();
-                                Point2f beta =
-                                    lines[size_t(seg2)].end() - lines[size_t(seg2)].start();
+                                Point2f alpha = lines[static_cast<size_t>(segB)].end() -
+                                                lines[static_cast<size_t>(segB)].start();
+                                Point2f beta = lines[static_cast<size_t>(seg2)].end() -
+                                               lines[static_cast<size_t>(seg2)].start();
                                 alpha.normalise();
                                 beta.normalise();
-                                float x = float(
+                                auto x = static_cast<float>(
                                     2.0 * acos(std::min(std::max(-alpha.dot(beta), -1.0), 1.0)) /
                                     M_PI);
-                                depthmapX::addIfNotExists(connectors[size_t(segB)].backSegconns,
-                                                          SegmentRef(1, seg2), x);
-                                depthmapX::addIfNotExists(connectors[size_t(seg2)].backSegconns,
-                                                          SegmentRef(1, segB), x);
+                                depthmapX::addIfNotExists(
+                                    connectors[static_cast<size_t>(segB)].backSegconns,
+                                    SegmentRef(1, seg2), x);
+                                depthmapX::addIfNotExists(
+                                    connectors[static_cast<size_t>(seg2)].backSegconns,
+                                    SegmentRef(1, segB), x);
                             }
                         }
                     }
@@ -660,9 +668,9 @@ void ShapeGraph::makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connecto
                 }
             }
             if (segA != -1 && segB != -1) {
-                depthmapX::addIfNotExists(connectors[size_t(segA)].forwardSegconns,
+                depthmapX::addIfNotExists(connectors[static_cast<size_t>(segA)].forwardSegconns,
                                           SegmentRef(1, segB), 0.0f);
-                depthmapX::addIfNotExists(connectors[size_t(segB)].backSegconns,
+                depthmapX::addIfNotExists(connectors[static_cast<size_t>(segB)].backSegconns,
                                           SegmentRef(-1, segA), 0.0f);
             }
             segA = segB;
@@ -694,11 +702,11 @@ void ShapeGraph::makeSegmentConnections(std::vector<Connector> &connectionset) {
     int i = -1;
     for (const auto &shape : m_shapes) {
         i++;
-        Connector &connector = connectionset[size_t(i)];
+        Connector &connector = connectionset[static_cast<size_t>(i)];
         AttributeRow &row = m_attributes->getRow(AttributeKey(shape.first));
 
-        row.setValue(refCol, float(connector.segmentAxialref));
-        row.setValue(lengCol, float(shape.second.getLine().length()));
+        row.setValue(refCol, static_cast<float>(connector.segmentAxialref));
+        row.setValue(lengCol, static_cast<float>(shape.second.getLine().length()));
 
         // all indices should match... (including lineset/connectionset versus m_shapes)
         m_connectors.push_back(connector);
@@ -711,12 +719,12 @@ void ShapeGraph::makeSegmentConnections(std::vector<Connector> &connectionset) {
              ++iter) {
             totalWeight += iter->second;
         }
-        row.setValue(wConnCol, float(totalWeight));
-        row.setValue(uwConnCol,
-                     float(connector.forwardSegconns.size() + connector.backSegconns.size()));
+        row.setValue(wConnCol, static_cast<float>(totalWeight));
+        row.setValue(uwConnCol, static_cast<float>(connector.forwardSegconns.size() +
+                                                   connector.backSegconns.size()));
 
         // free up connectionset as we go along:
-        connectionset[size_t(i)] = Connector();
+        connectionset[static_cast<size_t>(i)] = Connector();
     }
 }
 
@@ -736,7 +744,7 @@ void ShapeGraph::pushAxialValues(ShapeGraph &axialmap) {
         colindices.push_back(m_attributes->getOrInsertColumn(colname));
     }
     for (auto iter = m_attributes->begin(); iter != m_attributes->end(); iter++) {
-        int axialref = (int)iter->getRow().getValue(Column::AXIAL_LINE_REF);
+        int axialref = static_cast<int>(iter->getRow().getValue(Column::AXIAL_LINE_REF));
         // P.K: The original code here got the index of the row, but the column
         // "Axial Line Ref" should actually contain keys, not indices
         AttributeRow &row = axialmap.m_attributes->getRow(AttributeKey(axialref));

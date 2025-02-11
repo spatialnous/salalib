@@ -36,8 +36,8 @@ class RegionTree {
 
     void setRegion(Line4f *region) { m_pRegion = region; }
     //
-    Region4f &getInternalRegion() const { return *(Region4f *)m_pRegion; }
-    Line4f &getInternalLine() const { return *(Line4f *)m_pRegion; }
+    Region4f &getInternalRegion() const { return *static_cast<Region4f *>(m_pRegion); }
+    Line4f &getInternalLine() const { return *static_cast<Line4f *>(m_pRegion); }
     //
     bool intersect(const RegionTree &b) const;
     bool subintersect(const RegionTree &b) const;
@@ -49,9 +49,9 @@ class RegionTree {
 class RegionTreeBranch : public RegionTree {
   public:
     RegionTreeBranch() : RegionTree() {}
-    RegionTreeBranch(const Line4f &r, const RegionTree &a, const RegionTree &b) {
-        m_pLeft = (RegionTree *)&a;
-        m_pRight = (RegionTree *)&b;
+    RegionTreeBranch(const Line4f &r, RegionTree &a, RegionTree &b) {
+        m_pLeft = static_cast<RegionTree *>(&a);
+        m_pRight = static_cast<RegionTree *>(&b);
         m_pRegion = new Line4f(r); // copy
     }
     bool is_leaf() const override { return false; }

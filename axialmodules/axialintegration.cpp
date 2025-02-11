@@ -386,53 +386,55 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 }
             }
             // set the attributes for this node:
-            row.setValue(countCol[r], float(nodeCount));
+            row.setValue(countCol[r], static_cast<float>(nodeCount));
             if (m_weightedMeasureCol.has_value()) {
-                row.setValue(totalWeightCol[r], float(totalWeight));
+                row.setValue(totalWeightCol[r], static_cast<float>(totalWeight));
             }
             // node count > 1 to avoid divide by zero (was > 2)
             if (nodeCount > 1) {
                 // note -- node_count includes this one -- mean depth as per p.108 Social Logic of
                 // Space
-                double meanDepth = double(totalDepth) / double(nodeCount - 1);
-                row.setValue(depthCol[r], float(meanDepth));
+                double meanDepth =
+                    static_cast<double>(totalDepth) / static_cast<double>(nodeCount - 1);
+                row.setValue(depthCol[r], static_cast<float>(meanDepth));
                 if (m_weightedMeasureCol.has_value()) {
                     // weighted mean depth:
-                    row.setValue(wDepthCol[r], float(wTotalDepth / totalWeight));
+                    row.setValue(wDepthCol[r], static_cast<float>(wTotalDepth / totalWeight));
                 }
                 // total nodes > 2 to avoid divide by 0 (was > 3)
                 if (nodeCount > 2 && meanDepth > 1.0) {
-                    double ra = 2.0 * (meanDepth - 1.0) / double(nodeCount - 2);
+                    double ra = 2.0 * (meanDepth - 1.0) / static_cast<double>(nodeCount - 2);
                     // d-value / p-value from Depthmap 4 manual, note: node_count includes this one
                     double rraD = ra / pafmath::dvalue(nodeCount);
                     double rraP = ra / pafmath::dvalue(nodeCount);
                     double integTk = pafmath::teklinteg(nodeCount, totalDepth);
-                    row.setValue(integDvCol[r], float(1.0 / rraD));
+                    row.setValue(integDvCol[r], static_cast<float>(1.0 / rraD));
 
                     if (!simpleVersion) {
-                        row.setValue(integPvCol[r], float(1.0 / rraP));
+                        row.setValue(integPvCol[r], static_cast<float>(1.0 / rraP));
                         if (totalDepth - nodeCount + 1 > 1) {
-                            row.setValue(integTkCol[r], float(integTk));
+                            row.setValue(integTkCol[r], static_cast<float>(integTk));
                         } else {
                             row.setValue(integTkCol[r], -1.0f);
                         }
                     }
 
                     if (m_fulloutput) {
-                        row.setValue(raCol[r], float(ra));
+                        row.setValue(raCol[r], static_cast<float>(ra));
 
                         if (!simpleVersion) {
-                            row.setValue(rraCol[r], float(rraD));
+                            row.setValue(rraCol[r], static_cast<float>(rraD));
                         }
-                        row.setValue(tdCol[r], float(totalDepth));
+                        row.setValue(tdCol[r], static_cast<float>(totalDepth));
 
                         if (!simpleVersion) {
                             // alan's palm-tree normalisation: palmtree
                             double dmin = nodeCount - 1;
                             double dmax = pafmath::palmtree(nodeCount, depth - 1);
                             if (dmax != dmin) {
-                                row.setValue(pennNormCol[r],
-                                             float((dmax - totalDepth) / (dmax - dmin)));
+                                row.setValue(
+                                    pennNormCol[r],
+                                    static_cast<float>((dmax - totalDepth) / (dmax - dmin)));
                             }
                         }
                     }
@@ -465,27 +467,29 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                         if (depthcounts[k] != 0) {
                             // some debate over whether or not this should be node count - 1
                             // (i.e., including or not including the node itself)
-                            double prob = double(depthcounts[k]) / double(nodeCount);
+                            double prob = static_cast<double>(depthcounts[k]) /
+                                          static_cast<double>(nodeCount);
                             entropy -= prob * pafmath::log2(prob);
                             // Formula from Turner 2001, "Depthmap"
-                            factorial *= double(k + 1);
-                            double q =
-                                (pow(meanDepth, double(k)) / double(factorial)) * exp(-meanDepth);
-                            relEntropy += (double)prob * pafmath::log2(prob / q);
+                            factorial *= static_cast<double>(k + 1);
+                            double q = (pow(meanDepth, static_cast<double>(k)) /
+                                        static_cast<double>(factorial)) *
+                                       exp(-meanDepth);
+                            relEntropy += static_cast<double>(prob) * pafmath::log2(prob / q);
                             //
-                            harmonic += 1.0 / double(depthcounts[k]);
+                            harmonic += 1.0 / static_cast<double>(depthcounts[k]);
                         }
                     }
-                    harmonic = double(depthcounts.size()) / harmonic;
+                    harmonic = static_cast<double>(depthcounts.size()) / harmonic;
                     if (totalDepth > nodeCount) {
                         intensity = nodeCount * entropy / (totalDepth - nodeCount);
                     } else {
                         intensity = -1;
                     }
-                    row.setValue(entropyCol[r], float(entropy));
-                    row.setValue(relEntropyCol[r], float(relEntropy));
-                    row.setValue(intensityCol[r], float(intensity));
-                    row.setValue(harmonicCol[r], float(harmonic));
+                    row.setValue(entropyCol[r], static_cast<float>(entropy));
+                    row.setValue(relEntropyCol[r], static_cast<float>(relEntropy));
+                    row.setValue(intensityCol[r], static_cast<float>(intensity));
+                    row.setValue(harmonicCol[r], static_cast<float>(harmonic));
                 }
             } else {
                 row.setValue(depthCol[r], -1.0f);
@@ -530,13 +534,15 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                     totalWeight = row.getValue(totalWeightCol[r]);
                 }
                 if (nodeCount > 2) {
-                    row.setValue(choiceCol[r], float(totalChoice));
+                    row.setValue(choiceCol[r], static_cast<float>(totalChoice));
                     row.setValue(nChoiceCol[r],
-                                 float(2.0 * totalChoice / ((nodeCount - 1) * (nodeCount - 2))));
+                                 static_cast<float>(2.0 * totalChoice /
+                                                    ((nodeCount - 1) * (nodeCount - 2))));
                     if (m_weightedMeasureCol.has_value()) {
-                        row.setValue(wChoiceCol[r], float(wTotalChoice));
-                        row.setValue(nwChoiceCol[r],
-                                     float(2.0 * wTotalChoice / (totalWeight * totalWeight)));
+                        row.setValue(wChoiceCol[r], static_cast<float>(wTotalChoice));
+                        row.setValue(
+                            nwChoiceCol[r],
+                            static_cast<float>(2.0 * wTotalChoice / (totalWeight * totalWeight)));
                     }
                 } else {
                     row.setValue(choiceCol[r], -1);

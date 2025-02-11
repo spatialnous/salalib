@@ -48,7 +48,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
     std::vector<DataPoint> colData(attributes.getNumRows());
 
-    int n = int(attributes.getNumRows());
+    auto n = static_cast<int>(attributes.getNumRows());
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) schedule(dynamic)
@@ -83,10 +83,11 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
 
         if (totalNodes > 0) {
-            dp.meanDepth = float(double(totalAngle) / double(totalNodes));
+            dp.meanDepth = static_cast<float>(static_cast<double>(totalAngle) /
+                                              static_cast<double>(totalNodes));
         }
         dp.totalDepth = totalAngle;
-        dp.count = float(totalNodes);
+        dp.count = static_cast<float>(totalNodes);
 
 #if defined(_OPENMP)
 #pragma omp atomic

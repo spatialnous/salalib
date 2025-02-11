@@ -317,7 +317,7 @@ class ShapeMap : public AttributeMap {
 
     double getSpacing() const {
         return std::max(m_region.width(), m_region.height()) /
-               (10 * log((double)10 + static_cast<double>(m_shapes.size())));
+               (10 * log(10.0 + static_cast<double>(m_shapes.size())));
     }
     //
     // dangerous: accessor for the shapes themselves:

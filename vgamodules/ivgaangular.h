@@ -55,7 +55,8 @@ class IVGAAngular : public IVGATraversing {
                     float ang =
                         (!curs.lastPixel.has_value())
                             ? 0.0f
-                            : (float)(angle(ad.ref, curs.ad.ref, *curs.lastPixel) / (M_PI * 0.5));
+                            : static_cast<float>(angle(ad.ref, curs.ad.ref, *curs.lastPixel) /
+                                                 (M_PI * 0.5));
                     if (ad.cumAngle == -1.0 || curs.angle + ang < ad.cumAngle) {
                         ad.cumAngle = curs.ad.cumAngle + ang;
                         pixels.insert(AngularSearchData(ad, ad.cumAngle, curs.ad.ref));
@@ -96,13 +97,14 @@ class IVGAAngular : public IVGATraversing {
             if (p.filled() && ad.visitedFromBin != ~0) {
                 extractAngular(graph.at(ad.attributeDataRow), searchList, m_map, here);
                 ad.visitedFromBin = ~0;
-                angularDepthCol.setValue(ad.attributeDataRow, float(ad.cumAngle), keepStats);
+                angularDepthCol.setValue(ad.attributeDataRow, static_cast<float>(ad.cumAngle),
+                                         keepStats);
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0) {
                         ad2.cumAngle = ad.cumAngle;
-                        angularDepthCol.setValue(ad2.attributeDataRow, float(ad2.cumAngle),
-                                                 keepStats);
+                        angularDepthCol.setValue(ad2.attributeDataRow,
+                                                 static_cast<float>(ad2.cumAngle), keepStats);
                         extractAngular(graph.at(ad2.attributeDataRow), searchList, m_map,
                                        AngularSearchData(ad2, here.angle, std::nullopt));
                         ad2.visitedFromBin = ~0;

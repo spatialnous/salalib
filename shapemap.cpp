@@ -46,10 +46,10 @@ ShapeMap::ShapeMap(const std::string &name, int type)
 // this can be reinit as well
 
 void ShapeMap::init(size_t size, const Region4f &r) {
-    m_rows =
-        static_cast<size_t>(std::min(std::max(20, static_cast<int>(sqrt((double)size))), 32768));
-    m_cols =
-        static_cast<size_t>(std::min(std::max(20, static_cast<int>(sqrt((double)size))), 32768));
+    m_rows = static_cast<size_t>(
+        std::min(std::max(20, static_cast<int>(sqrt(static_cast<double>(size)))), 32768));
+    m_cols = static_cast<size_t>(
+        std::min(std::max(20, static_cast<int>(sqrt(static_cast<double>(size)))), 32768));
     if (m_region.atZero()) {
         m_region = r;
     } else {
@@ -393,7 +393,7 @@ int ShapeMap::makeShapeFromPointSet(const PointMap &pointmap, const std::set<int
     for (auto &relation : relations) {
         if ((relation.second & (ShapeRef::SHAPE_B | ShapeRef::SHAPE_L)) ==
             (ShapeRef::SHAPE_B | ShapeRef::SHAPE_L)) {
-            if ((minpix == NoPixel) || (relation.first < (int)minpix)) {
+            if ((minpix == NoPixel) || (relation.first < static_cast<int>(minpix))) {
                 minpix = relation.first;
             }
         }
@@ -555,17 +555,18 @@ bool ShapeMap::moveShape(int shaperef, const Line4f &line, bool undoing) {
         }
 
         std::vector<size_t> &newconnections = m_connectors[rowid].connections;
-        row.setValue(connCol, float(newconnections.size()));
+        row.setValue(connCol, static_cast<float>(newconnections.size()));
         if (isAxialMap()) {
             auto lengCol = m_attributes->getOrInsertLockedColumn("Line Length");
-            row.setValue(lengCol,
-                         (float)depthmapX::getMapAtIndex(m_shapes, rowid)->second.getLength());
+            row.setValue(
+                lengCol,
+                static_cast<float>(depthmapX::getMapAtIndex(m_shapes, rowid)->second.getLength()));
         }
 
         // now go through our old connections, and remove ourself:
         for (auto oldconnection : oldconnections) {
             if (oldconnection != rowid) { // <- exclude self!
-                auto &connections = m_connectors[size_t(oldconnection)].connections;
+                auto &connections = m_connectors[static_cast<size_t>(oldconnection)].connections;
                 depthmapX::findAndErase(connections, rowid);
                 auto &oldConnectionRow = getAttributeRowFromShapeIndex(oldconnection);
                 oldConnectionRow.incrValue(connCol, -1.0f);
@@ -777,7 +778,8 @@ void ShapeMap::removeShape(int shaperef, bool undoing) {
             for (size_t j = m_connectors[i].connections.size() - 1; static_cast<int>(j) != -1;
                  j--) {
                 if (m_connectors[i].connections[j] == rowid) {
-                    m_connectors[i].connections.erase(m_connectors[i].connections.begin() + int(j));
+                    m_connectors[i].connections.erase(m_connectors[i].connections.begin() +
+                                                      static_cast<int>(j));
                     // getColumnIndex will throw if the column is not found
                     // if (conn_col != -1) {
                     auto &row = getAttributeRowFromShapeIndex(i);
@@ -790,7 +792,7 @@ void ShapeMap::removeShape(int shaperef, bool undoing) {
             // note, you cannot delete from a segment map, it's just too messy!
         }
 
-        m_connectors.erase(m_connectors.begin() + int(rowid));
+        m_connectors.erase(m_connectors.begin() + static_cast<int>(rowid));
 
         // take out explicit links and unlinks (note, undo won't restore these):
         for (auto revIter = m_links.rbegin(); revIter != m_links.rend(); ++revIter) {
@@ -883,12 +885,13 @@ void ShapeMap::undo() {
                 event.shapeRef, TOLERANCE_B * std::max(m_region.height(), m_region.width()));
             // update:
             auto connCol = m_attributes->getOrInsertLockedColumn("Connectivity");
-            row.setValue(connCol, float(m_connectors[rowid].connections.size()));
+            row.setValue(connCol, static_cast<float>(m_connectors[rowid].connections.size()));
             //
             if (event.geometry.isLine()) {
                 auto lengCol = m_attributes->getOrInsertLockedColumn("Line Length");
                 row.setValue(lengCol,
-                             (float)depthmapX::getMapAtIndex(m_shapes, rowid)->second.getLength());
+                             static_cast<float>(
+                                 depthmapX::getMapAtIndex(m_shapes, rowid)->second.getLength()));
             }
             //
             // now go through our connections, and add ourself:
@@ -920,7 +923,7 @@ void ShapeMap::makePolyPixels(int polyref) {
     if (poly.isClosed()) {
         std::map<int, int> relations;
         for (size_t k = 0; k < poly.points.size(); k++) {
-            int nextk = int((k + 1) % poly.points.size());
+            int nextk = static_cast<int>((k + 1) % poly.points.size());
             Line4f li(poly.points[k], poly.points[static_cast<size_t>(nextk)]);
             if (k == 0) {
                 poly.m_region = li;
@@ -983,7 +986,7 @@ void ShapeMap::makePolyPixels(int polyref) {
             }
             if ((relation.second & (ShapeRef::SHAPE_B | ShapeRef::SHAPE_L)) ==
                 (ShapeRef::SHAPE_B | ShapeRef::SHAPE_L)) {
-                if ((minpix == NoPixel) || (relation.first < int(minpix))) {
+                if ((minpix == NoPixel) || (relation.first < static_cast<int>(minpix))) {
                     minpix = relation.first;
                 }
             }
@@ -1423,8 +1426,8 @@ std::vector<size_t> ShapeMap::polyInPolyList(int polyref, double tolerance) cons
                             auto iter = depthmapX::findBinary(testedlist, shapeRef.shapeRef);
                             if (iter == testedlist.end()) {
                                 testedlist.insert(iter, shapeRef.shapeRef);
-                                auto shapeIdx =
-                                    depthmapX::findIndexFromKey(m_shapes, int(shapeRef.shapeRef));
+                                auto shapeIdx = depthmapX::findIndexFromKey(
+                                    m_shapes, static_cast<int>(shapeRef.shapeRef));
                                 shapeindexlist.push_back(static_cast<size_t>(shapeIdx));
                             }
                         }
@@ -1716,8 +1719,8 @@ std::optional<size_t> ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef
             else if (shape.tags & ShapeRef::SHAPE_INTERNAL_EDGE) {
                 std::vector<int> testnodes;
                 size_t j;
-                for (j = 0; j < size_t(shape.polyrefs.size()); j++) {
-                    depthmapX::addIfNotExists(testnodes, int(shape.polyrefs[j]));
+                for (j = 0; j < static_cast<size_t>(shape.polyrefs.size()); j++) {
+                    depthmapX::addIfNotExists(testnodes, static_cast<int>(shape.polyrefs[j]));
                 }
                 PixelRef pix2 = pixelate(p);
                 pix2.move(PixelRef::NEGVERTICAL); // move pix2 down, search for this shape...
@@ -1728,7 +1731,7 @@ std::optional<size_t> ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef
                 auto iter = std::find(pixelShapes->begin(), pixelShapes->end(), shape.shapeRef);
                 while (iter != pixelShapes->end()) {
                     for (size_t k = 0; k < iter->polyrefs.size(); k++) {
-                        depthmapX::addIfNotExists(testnodes, int(iter->polyrefs[k]));
+                        depthmapX::addIfNotExists(testnodes, static_cast<int>(iter->polyrefs[k]));
                     }
                     pix2.move(PixelRef::NEGVERTICAL); // move pix2 down, search for this
                                                       // shape...
@@ -1922,9 +1925,9 @@ size_t ShapeMap::connectIntersected(int rowid, bool linegraph) {
                                   TOLERANCE_B * std::max(m_region.height(), m_region.width()));
 
     auto &row = getAttributeRowFromShapeIndex(urowid);
-    row.setValue(connCol, float(m_connectors[urowid].connections.size()));
+    row.setValue(connCol, static_cast<float>(m_connectors[urowid].connections.size()));
     if (linegraph) {
-        row.setValue(lengCol, (float)shaperefIter->second.getLength());
+        row.setValue(lengCol, static_cast<float>(shaperefIter->second.getLength()));
     }
     // now go through our connections, and add ourself:
     const auto &connections = m_connectors[urowid].connections;
@@ -1974,13 +1977,14 @@ std::vector<size_t> ShapeMap::getLineConnections(int lineref, double tolerance) 
     }
     for (const ShapeRef &shape : shapesToTest) {
         if ((shape.tags & ShapeRef::SHAPE_OPEN) == ShapeRef::SHAPE_OPEN) {
-            const Line4f &line = m_shapes.find(int(shape.shapeRef))->second.getLine();
+            const Line4f &line = m_shapes.find(static_cast<int>(shape.shapeRef))->second.getLine();
             if (line.Region4f::intersects(l, line.length() * tolerance)) {
                 // n.b. originally this followed the logic that we must normalise
                 // intersect_line properly: tolerance * line length one * line length
                 // two in fact, works better if it's just line.length() * tolerance...
                 if (line.Line4f::intersects(l, line.length() * tolerance)) {
-                    auto shapeIdx = depthmapX::findIndexFromKey(m_shapes, int(shape.shapeRef));
+                    auto shapeIdx =
+                        depthmapX::findIndexFromKey(m_shapes, static_cast<int>(shape.shapeRef));
                     depthmapX::insert_sorted(connections, static_cast<size_t>(shapeIdx));
                 }
             }
@@ -2046,8 +2050,9 @@ void ShapeMap::makeShapeConnections() {
             m_connectors.push_back(Connector());
             m_connectors[static_cast<size_t>(i)].connections = getShapeConnections(
                 key, TOLERANCE_B * std::max(m_region.height(), m_region.width()));
-            row.setValue(static_cast<size_t>(connCol),
-                         float(m_connectors[static_cast<size_t>(i)].connections.size()));
+            row.setValue(
+                static_cast<size_t>(connCol),
+                static_cast<float>(m_connectors[static_cast<size_t>(i)].connections.size()));
         }
     }
 }
@@ -2191,7 +2196,7 @@ bool ShapeMap::readPart3(std::istream &stream) {
     stream.read(reinterpret_cast<char *>(&count), sizeof(count));
     for (int i = 0; i < count; i++) {
         m_connectors.push_back(Connector());
-        m_connectors[size_t(i)].read(stream);
+        m_connectors[static_cast<size_t>(i)].read(stream);
     }
     dXreadwrite::readFromCastIntoVector<OrderedIntPair>(stream, m_links);
     dXreadwrite::readFromCastIntoVector<OrderedIntPair>(stream, m_unlinks);
@@ -2645,7 +2650,7 @@ bool ShapeMap::linkShapes(size_t index1, size_t index2) {
 // note it only links one way!
 bool ShapeMap::linkShapes(size_t id1, int dir1, size_t id2, int dir2, float weight) {
     bool success = false;
-    Connector &connector = m_connectors[size_t(id1)];
+    Connector &connector = m_connectors[static_cast<size_t>(id1)];
     if (dir1 == 1) {
         success = depthmapX::addIfNotExists(
             connector.forwardSegconns,
@@ -2728,8 +2733,8 @@ bool ShapeMap::unlinkShapes(size_t index1, size_t index2) {
             update = true;
         } else {
             // then check if linked already
-            auto &connections1 = m_connectors[size_t(index1)].connections;
-            auto &connections2 = m_connectors[size_t(index2)].connections;
+            auto &connections1 = m_connectors[static_cast<size_t>(index1)].connections;
+            auto &connections2 = m_connectors[static_cast<size_t>(index2)].connections;
             auto linkIter1 = std::find(connections1.begin(), connections1.end(), index2);
             auto linkIter2 = std::find(connections2.begin(), connections2.end(), index1);
             if (linkIter1 != connections1.end() && linkIter2 != connections2.end()) {
@@ -2741,8 +2746,8 @@ bool ShapeMap::unlinkShapes(size_t index1, size_t index2) {
     }
 
     if (update) {
-        depthmapX::findAndErase(m_connectors[size_t(index1)].connections, index2);
-        depthmapX::findAndErase(m_connectors[size_t(index2)].connections, index1);
+        depthmapX::findAndErase(m_connectors[static_cast<size_t>(index1)].connections, index2);
+        depthmapX::findAndErase(m_connectors[static_cast<size_t>(index2)].connections, index1);
         auto &row1 = getAttributeRowFromShapeIndex(index1);
         auto &row2 = getAttributeRowFromShapeIndex(index2);
         row1.incrValue(connCol, -1.0f);

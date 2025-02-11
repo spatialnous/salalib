@@ -134,8 +134,8 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
                 for (int preaxiali : preaxialdata[k]) {
                     preaxialdata[j].insert(preaxiali);
                 }
-                preaxialdata.erase(preaxialdata.begin() + int(k));
-                axiallines.erase(axiallines.begin() + int(k));
+                preaxialdata.erase(preaxialdata.begin() + static_cast<int>(k));
+                axiallines.erase(axiallines.begin() + static_cast<int>(k));
             }
         }
     }
@@ -164,13 +164,13 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
     }
 
-    pafmath::pafsrand((unsigned int)time(nullptr));
+    pafmath::pafsrand(static_cast<unsigned int>(time(nullptr)));
 
     // make one rld for each radial line...
     std::map<RadialKey, std::set<int>> radialdivisions;
     size_t i;
     for (auto &radialLine : mapData.radialLines) {
-        radialdivisions.insert(std::make_pair((RadialKey)radialLine, std::set<int>()));
+        radialdivisions.insert(std::make_pair(static_cast<RadialKey>(radialLine), std::set<int>()));
     }
 
     // also, a list of radial lines cut by each axial line
@@ -202,7 +202,8 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
         ++iter;
         for (; iter != mapData.radialLines.end();) {
             if (iter->vertex == prevIter->vertex && iter->ang != prevIter->ang) {
-                radialsegs.insert(std::make_pair((RadialKey)(*iter), (RadialSegment)(*prevIter)));
+                radialsegs.insert(std::make_pair(static_cast<RadialKey>(*iter),
+                                                 static_cast<RadialSegment>(*prevIter)));
             }
             ++iter;
             ++prevIter;
@@ -221,8 +222,8 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
             ++axRadCutIter;
             for (size_t j = 1; j < axIter->second.size(); ++j) {
                 // note similarity to loop above
-                RadialKey &rkEnd = mapData.radialLines[size_t(*axRadCutIter)];
-                RadialKey &rkStart = mapData.radialLines[size_t(*axRadCutIterPrev)];
+                RadialKey &rkEnd = mapData.radialLines[static_cast<size_t>(*axRadCutIter)];
+                RadialKey &rkStart = mapData.radialLines[static_cast<size_t>(*axRadCutIterPrev)];
                 if (rkStart.vertex == rkEnd.vertex) {
                     auto radialSegIter = radialsegs.find(rkEnd);
                     if (radialSegIter != radialsegs.end() &&
@@ -285,7 +286,7 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
                             keyvertexconns, keyvertexcounts);
 
     // make new lines here (assumes line map has only lines
-    for (int sk = 0; sk < int(map.getAllShapes().size()); sk++) {
+    for (int sk = 0; sk < static_cast<int>(map.getAllShapes().size()); sk++) {
         if (!minimiser.removed(sk)) {
             linesM.push_back(depthmapX::getMapAtIndex(map.getAllShapes(), static_cast<size_t>(sk))
                                  ->second.getLine());
@@ -352,8 +353,8 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                     case 0:
                         break;
                     case 2: {
-                        auto index = static_cast<int>(
-                            depthmapX::findIndexFromKey(axialdividers, (int)shape.shapeRef));
+                        auto index = static_cast<int>(depthmapX::findIndexFromKey(
+                            axialdividers, static_cast<int>(shape.shapeRef)));
                         if (index != static_cast<int>(shape.shapeRef)) {
                             throw 1; // for the code to work later this can't be true!
                         }
@@ -361,8 +362,8 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                         connIter->second.insert(static_cast<int>(shape.shapeRef));
                     } break;
                     case 1: {
-                        auto index = static_cast<int>(
-                            depthmapX::findIndexFromKey(axialdividers, (int)shape.shapeRef));
+                        auto index = static_cast<int>(depthmapX::findIndexFromKey(
+                            axialdividers, static_cast<int>(shape.shapeRef)));
                         if (index != static_cast<int>(shape.shapeRef)) {
                             throw 1; // for the code to work later this can't be true!
                         }

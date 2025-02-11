@@ -56,22 +56,22 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
     }
     std::vector<std::set<int>> hoods(filled.size());
 
-    int n = int(filled.size());
+    auto n = static_cast<int>(filled.size());
 
     std::map<PixelRef, int> refToFilled;
     for (int i = 0; i < n; ++i) {
-        refToFilled.insert(std::make_pair(filled[size_t(i)], i));
+        refToFilled.insert(std::make_pair(filled[static_cast<size_t>(i)], i));
     }
 
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) schedule(dynamic)
 #endif
     for (int i = 0; i < n; ++i) {
-        Point &p = m_map.getPoint(filled[size_t(i)]);
+        Point &p = m_map.getPoint(filled[static_cast<size_t>(i)]);
         std::set<PixelRef> neighbourhood = getNeighbourhood(p.getNode());
         for (auto &neighbour : neighbourhood) {
             if (m_map.getPoint(neighbour).hasNode()) {
-                hoods[size_t(i)].insert(refToFilled[neighbour]);
+                hoods[static_cast<size_t>(i)].insert(refToFilled[neighbour]);
             }
         }
     }
@@ -95,13 +95,13 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
         float control = 0.0f;
 
         for (auto &neighbour : neighbourhood) {
-            std::set<int> &retneighbourhood = hoods[size_t(neighbour)];
+            std::set<int> &retneighbourhood = hoods[static_cast<size_t>(neighbour)];
             std::set<int> intersect;
             std::set_intersection(neighbourhood.begin(), neighbourhood.end(),
                                   retneighbourhood.begin(), retneighbourhood.end(),
                                   std::inserter(intersect, intersect.begin()));
             totalneighbourhood.insert(retneighbourhood.begin(), retneighbourhood.end());
-            control += 1.0f / float(retneighbourhood.size());
+            control += 1.0f / static_cast<float>(retneighbourhood.size());
             cluster += static_cast<int>(intersect.size());
         }
 #if defined(_OPENMP)
@@ -110,10 +110,12 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
         {
             if (neighbourhood.size() > 1) {
                 dp.cluster =
-                    float(cluster / double(neighbourhood.size() * (neighbourhood.size() - 1)));
-                dp.control = float(control);
+                    static_cast<float>(cluster / static_cast<double>(neighbourhood.size() *
+                                                                     (neighbourhood.size() - 1)));
+                dp.control = static_cast<float>(control);
                 dp.controllability =
-                    float(double(neighbourhood.size()) / double(totalneighbourhood.size()));
+                    static_cast<float>(static_cast<double>(neighbourhood.size()) /
+                                       static_cast<double>(totalneighbourhood.size()));
             } else {
                 dp.cluster = -1.0f;
                 dp.control = -1.0f;

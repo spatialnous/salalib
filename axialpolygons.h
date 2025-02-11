@@ -88,7 +88,7 @@ struct RadialLine : public RadialKey {
                const Point2f &n)
         : openspace(o), keyvertex(k), nextvertex(n) {
         vertex = v;
-        ang = (float)o.angle(k, n);
+        ang = static_cast<float>(o.angle(k, n));
         segend = se;
     }
     RadialLine(const RadialLine &rl)

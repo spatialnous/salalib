@@ -34,8 +34,8 @@ AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Poi
     av.refA = static_cast<short>(anglemap.begin()->second);
     // TODO: is this supposed to be av.m_ref_b?
     av.refA = static_cast<short>(anglemap.rbegin()->second);
-    Point2f a = av.point - pointlist[size_t(anglemap.begin()->second)];
-    Point2f b = pointlist[size_t(anglemap.rbegin()->second)] - av.point;
+    Point2f a = av.point - pointlist[static_cast<size_t>(anglemap.begin()->second)];
+    Point2f b = pointlist[static_cast<size_t>(anglemap.rbegin()->second)] - av.point;
     av.a = a;
     av.b = b;
     a.normalise();
@@ -186,15 +186,15 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
             // TODO: (CS) What are these integers being thrown?!
             throw 1;
         }
-        auto index0 = vertexPossibles.find(pointlookup[size_t(found(0, i))]);
-        auto index1 = vertexPossibles.find(pointlookup[size_t(found(1, i))]);
+        auto index0 = vertexPossibles.find(pointlookup[static_cast<size_t>(found(0, i))]);
+        auto index1 = vertexPossibles.find(pointlookup[static_cast<size_t>(found(1, i))]);
         if (index0 == vertexPossibles.end() || index1 == vertexPossibles.end()) {
             // TODO: (CS) What are these integers being thrown?!
             throw 2;
         }
 
-        index0->second.push_back(pointlookup[size_t(found(1, i))]);
-        index1->second.push_back(pointlookup[size_t(found(0, i))]);
+        index0->second.push_back(pointlookup[static_cast<size_t>(found(1, i))]);
+        index1->second.push_back(pointlookup[static_cast<size_t>(found(0, i))]);
     }
     for (auto &possible : vertexPossibles) {
         sort(possible.second.begin(), possible.second.end());
@@ -208,9 +208,9 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
         if (m_vertexPolys[i] == -1) {
             currentPoly++;
             std::vector<int> addlist;
-            addlist.push_back(int(i));
+            addlist.push_back(static_cast<int>(i));
             while (addlist.size()) {
-                m_vertexPolys[size_t(addlist.back())] = currentPoly;
+                m_vertexPolys[static_cast<size_t>(addlist.back())] = currentPoly;
                 std::vector<Point2f> &connections =
                     depthmapX::getMapAtIndex(vertexPossibles, static_cast<size_t>(addlist.back()))
                         ->second;
@@ -220,7 +220,7 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
                     if (index == -1) {
                         throw 3;
                     }
-                    if (m_vertexPolys[size_t(index)] == -1) {
+                    if (m_vertexPolys[static_cast<size_t>(index)] == -1) {
                         addlist.push_back(static_cast<int>(index));
                     }
                 }
@@ -380,14 +380,15 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                         // radial line(s) (for new point)
                         RadialLine radialshort(nextVertex, shortlineSegend, vertex.point,
                                                nextVertex.point, nextVertex.point + nextVertex.b);
-                        polyConnections.push_back(PolyConnector(shortline, (RadialKey)radialshort));
+                        polyConnections.push_back(
+                            PolyConnector(shortline, static_cast<RadialKey>(radialshort)));
                         radialLines.push_back(radialshort);
                         if (!vertex.convex && possible) {
                             Line4f longline = Line4f(vertPoss.first, line.t_end());
                             RadialLine radiallong(radialshort);
                             radiallong.segend = shortlineSegend ? 0 : 1;
                             polyConnections.push_back(
-                                PolyConnector(longline, (RadialKey)radiallong));
+                                PolyConnector(longline, static_cast<RadialKey>(radiallong)));
                             radialLines.push_back(radiallong);
                         }
                     }
@@ -410,14 +411,15 @@ void AxialPolygons::makeAxialLines(std::set<AxialVertex> &openvertices, std::vec
                         // radial line(s) (for original point)
                         RadialLine radialshort(vertex, shortlineSegend, nextVertex.point,
                                                vertex.point, vertex.point + vertex.b);
-                        polyConnections.push_back(PolyConnector(shortline, (RadialKey)radialshort));
+                        polyConnections.push_back(
+                            PolyConnector(shortline, static_cast<RadialKey>(radialshort)));
                         radialLines.push_back(radialshort);
                         if (!nextVertex.convex && nextVertex.axial) {
                             Line4f longline = Line4f(line.t_start(), vertex.point);
                             RadialLine radiallong(radialshort);
                             radiallong.segend = shortlineSegend ? 0 : 1;
                             polyConnections.push_back(
-                                PolyConnector(longline, (RadialKey)radiallong));
+                                PolyConnector(longline, static_cast<RadialKey>(radiallong)));
                             radialLines.push_back(radiallong);
                         }
                     }
@@ -454,7 +456,7 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
     int i = -1;
     for (const auto &vertPoss : vertexPossibles) {
         i++;
-        std::vector<int> &currList = newHandledList[size_t(i)];
+        std::vector<int> &currList = newHandledList[static_cast<size_t>(i)];
         if (vertPoss.second.size() == 1) {
             continue;
         }
@@ -462,7 +464,7 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
             if (std::find(currList.begin(), currList.end(), j) != currList.end()) {
                 continue;
             }
-            currList.push_back(int(j));
+            currList.push_back(static_cast<int>(j));
             const Point2f &key = vertPoss.first;
             std::vector<Point2f> polygon;
             polygon.push_back(key);

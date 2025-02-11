@@ -14,7 +14,7 @@ class PixelRef {
     short x = -1;
     short y = -1;
     PixelRef(short ax = -1, short ay = -1) : x(ax), y(ay) {}
-    PixelRef(int i) : x(short(i >> 16)), y(short(i & 0xffff)) {}
+    PixelRef(int i) : x(static_cast<short>(i >> 16)), y(static_cast<short>(i & 0xffff)) {}
 
     bool empty() { return x == -1 && y == -1; }
     PixelRef up() const { return PixelRef(x, y + 1); }
@@ -85,7 +85,7 @@ class PixelRef {
         return (x < 0 || y < 0 || x >= std::numeric_limits<short>::max() ||
                 y >= std::numeric_limits<short>::max())
                    ? -1
-                   : ((int(x) << 16) + (int(y) & 0xffff)); // NOLINT
+                   : ((static_cast<int>(x) << 16) + (static_cast<int>(y) & 0xffff)); // NOLINT
     }
     // NOLINTEND(clang-analyzer-core)
 };
@@ -120,7 +120,7 @@ inline double angle(const PixelRef a, const PixelRef b, const PixelRef c) {
         return 0.0;
     } else {
         // n.b. 1e-12 required for floating point error
-        return acos(double((a.x - b.x) * (b.x - c.x) + (a.y - b.y) * (b.y - c.y)) /
+        return acos(static_cast<double>((a.x - b.x) * (b.x - c.x) + (a.y - b.y) * (b.y - c.y)) /
                     (sqrt(pafmath::sqr(a.x - b.x) + pafmath::sqr(a.y - b.y)) *
                          sqrt(pafmath::sqr(b.x - c.x) + pafmath::sqr(b.y - c.y)) +
                      1e-12));
@@ -158,5 +158,7 @@ inline bool operator>(const PixelRefPair &x, const PixelRefPair &y) {
 }
 
 struct hashPixelRef {
-    size_t operator()(const PixelRef &pixelRef) const { return std::hash<int>()(int(pixelRef)); }
+    size_t operator()(const PixelRef &pixelRef) const {
+        return std::hash<int>()(static_cast<int>(pixelRef));
+    }
 };

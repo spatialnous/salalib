@@ -281,7 +281,7 @@ void Bin::next() const {
 
 bool Bin::is_tail() const { return m_curvec >= static_cast<int>(pixelVecs.size()); }
 
-PixelRef Bin::cursor() const { return (int)m_curpix; }
+PixelRef Bin::cursor() const { return static_cast<int>(m_curpix); }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -7,11 +7,12 @@
 #include <cmath>
 
 GridProperties::GridProperties(double maxDimension) {
-    int maxexponent = (int)floor(log10(maxDimension)) - 1;
+    int maxexponent = static_cast<int>(floor(log10(maxDimension)) - 1);
     int minexponent = maxexponent - 2;
-    int mantissa = (int)floor(maxDimension / pow(10.0, double(maxexponent + 1)));
+    int mantissa =
+        static_cast<int>(floor(maxDimension / pow(10.0, static_cast<double>(maxexponent + 1))));
 
-    m_default = (double)mantissa * pow(10.0, double(maxexponent - 1));
-    m_max = (double)2 * mantissa * pow(10.0, double(maxexponent));
-    m_min = (double)mantissa * pow(10.0, double(minexponent));
+    m_default = static_cast<double>(mantissa) * pow(10.0, static_cast<double>(maxexponent - 1));
+    m_max = 2.0 * mantissa * pow(10.0, static_cast<double>(maxexponent));
+    m_min = static_cast<double>(mantissa) * pow(10.0, static_cast<double>(minexponent));
 }

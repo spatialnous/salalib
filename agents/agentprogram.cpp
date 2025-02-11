@@ -34,10 +34,10 @@ void AgentProgram::mutate() {
     // mutate the rule threshold / probabilities
     for (int i = 0; i < 4; i++) {
         if (pafmath::pafrand() % 20 == 0) { // 5% mutation rate
-            ruleThreshold[i] = float(pafmath::prandom() * 100.0);
+            ruleThreshold[i] = static_cast<float>(pafmath::prandom() * 100.0);
         }
         if (pafmath::pafrand() % 20 == 0) { // 5% mutation rate
-            ruleProbability[i] = float(pafmath::prandom());
+            ruleProbability[i] = static_cast<float>(pafmath::prandom());
         }
     }
 }

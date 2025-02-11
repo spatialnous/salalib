@@ -31,11 +31,15 @@ namespace pafmath {
     unsigned int pafrand(int set = 0);
 
     // a random number from 0 to 1
-    inline double prandom(int set = 0) { return double(pafrand(set)) / double(PAF_RAND_MAX); }
+    inline double prandom(int set = 0) {
+        return static_cast<double>(pafrand(set)) / static_cast<double>(PAF_RAND_MAX);
+    }
 
     // a random number from 0 to just less than 1
 
-    inline double prandomr(int set = 0) { return double(pafrand(set)) / double(PAF_RAND_MAX + 1); }
+    inline double prandomr(int set = 0) {
+        return static_cast<double>(pafrand(set)) / static_cast<double>(PAF_RAND_MAX + 1);
+    }
 
     inline double log2(double a) { return (pafmath_ln(a) * pafmath_M_1_LN2); }
 
@@ -59,7 +63,8 @@ namespace pafmath {
 
     // Teklenburg integration (correction 31.01.11 due to Ulrich Thaler
     inline double teklinteg(double nodecount, double totaldepth) {
-        return pafmath_ln(0.5 * (nodecount - 2.0)) / pafmath_ln(double(totaldepth - nodecount + 1));
+        return pafmath_ln(0.5 * (nodecount - 2.0)) /
+               pafmath_ln(static_cast<double>(totaldepth - nodecount + 1));
     }
 
     // Penn palmtree

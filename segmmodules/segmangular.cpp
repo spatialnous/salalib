@@ -100,7 +100,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                             if (rbin != radii.size()) {
                                 depthmapX::insert_sorted(
                                     anglebins,
-                                    std::make_pair(float(angle),
+                                    std::make_pair(static_cast<float>(angle),
                                                    SegmentData(segconn.first, SegmentRef(), 0, 0.0,
                                                                static_cast<unsigned int>(rbin))));
                             }
@@ -119,7 +119,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                             if (rbin != radii.size()) {
                                 depthmapX::insert_sorted(
                                     anglebins,
-                                    std::make_pair(float(angle),
+                                    std::make_pair(static_cast<float>(angle),
                                                    SegmentData(segconn.first, SegmentRef(), 0, 0.0,
                                                                static_cast<unsigned int>(rbin))));
                             }
@@ -137,13 +137,13 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
         for (size_t r = 0; r < radii.size(); r++) {
             cursNodeCount += nodeCount[r];
             cursTotalDepth += totalDepth[r];
-            row.setValue(countCol[r], float(cursNodeCount));
+            row.setValue(countCol[r], static_cast<float>(cursNodeCount));
             if (cursNodeCount > 1) {
                 // note -- node_count includes this one -- mean depth as per p.108 Social Logic of
                 // Space
-                double meanDepth = cursTotalDepth / double(cursNodeCount - 1);
-                row.setValue(depthCol[r], float(meanDepth));
-                row.setValue(totalCol[r], float(cursTotalDepth));
+                double meanDepth = cursTotalDepth / static_cast<double>(cursNodeCount - 1);
+                row.setValue(depthCol[r], static_cast<float>(meanDepth));
+                row.setValue(totalCol[r], static_cast<float>(cursTotalDepth));
             } else {
                 row.setValue(depthCol[r], -1);
                 row.setValue(totalCol[r], -1);

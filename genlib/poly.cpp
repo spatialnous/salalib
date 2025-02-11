@@ -28,7 +28,7 @@ void Poly::add_line_segment(const Line4f &l) {
     if (m_pRoot == nullptr) {
         // first ever node
 
-        m_pRoot = (RegionTree *)leaf;
+        m_pRoot = static_cast<RegionTree *>(leaf);
     } else {
         // traverse the tree to the insertion point
         //   you'll just have to take my word for it that the next line

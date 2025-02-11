@@ -55,10 +55,11 @@ AnalysisResult VGAAngular::run(Communicator *comm) {
 
         if (totalNodes > 0) {
             result.setValue(ad0.attributeDataRow, meanDepthCol,
-                            float(double(totalAngle) / double(totalNodes)));
+                            static_cast<float>(static_cast<double>(totalAngle) /
+                                               static_cast<double>(totalNodes)));
         }
         result.setValue(ad0.attributeDataRow, totalDepthCol, totalAngle);
-        result.setValue(ad0.attributeDataRow, countCol, float(totalNodes));
+        result.setValue(ad0.attributeDataRow, countCol, static_cast<float>(totalNodes));
 
         count++; // <- increment count
 

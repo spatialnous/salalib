@@ -40,7 +40,7 @@ unsigned int pafmath::pafrand(int set) // = 0
 {
     g_rand[set] = g_mult * g_rand[set] + g_const;
 
-    return (unsigned int)((g_rand[set] >> 32) & pafmath::PAF_RAND_MAX);
+    return static_cast<unsigned int>((g_rand[set] >> 32) & pafmath::PAF_RAND_MAX);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ unsigned int pafmath::pafrand(int set) // = 0
 double pafmath::poisson(int x, double lambda) {
     double f = exp(-lambda);
     for (int i = 1; i <= x; i++) {
-        f *= lambda / double(i);
+        f *= lambda / static_cast<double>(i);
     }
     return f;
 }
@@ -57,7 +57,7 @@ double pafmath::cumpoisson(int x, double lambda) {
     double f = exp(-lambda);
     double c = f;
     for (int i = 1; i <= x; i++) {
-        f *= lambda / double(i);
+        f *= lambda / static_cast<double>(i);
         c += f;
     }
     return c;
@@ -75,7 +75,7 @@ int pafmath::invcumpoisson(double p, double lambda) {
     double c = f;
     int i = 0;
     for (; c < p; i++) {
-        f *= lambda / double(i + 1);
+        f *= lambda / static_cast<double>(i + 1);
         c += f;
     }
     return i;

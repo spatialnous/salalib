@@ -80,23 +80,25 @@ PixelRefVector PixelBase::pixelateLine(Line4f l, int scalefactor) const {
         double hwRatio = l.height() / l.width(); // Working all of these out leaves less scope
                                                  // for floating point error
         double whRatio = l.width() / l.height();
-        double x0Const = l.ay() - double(parity) * hwRatio * l.ax();
-        double y0Const = l.ax() - double(parity) * whRatio * l.ay();
+        double x0Const = l.ay() - static_cast<double>(parity) * hwRatio * l.ax();
+        double y0Const = l.ax() - static_cast<double>(parity) * whRatio * l.ay();
 
         while (a.x < b.x || a.y < b.y) {
             PixelRef e;
             e.y = static_cast<short>(
-                parity *
-                int(double(scaledrows) *
-                    (x0Const + parity * hwRatio * (double(a.x + 1) / double(scaledcols)))));
+                parity * static_cast<int>(static_cast<double>(scaledrows) *
+                                          (x0Const + parity * hwRatio *
+                                                         (static_cast<double>(a.x + 1) /
+                                                          static_cast<double>(scaledcols)))));
             // Note when decending 1.5 -> 1 and ascending 1.5 -> 2
             if (parity < 0) {
-                e.x = static_cast<short>(double(scaledcols) *
-                                         (y0Const + whRatio * (double(a.y) / double(scaledrows))));
+                e.x = static_cast<short>(static_cast<double>(scaledcols) *
+                                         (y0Const + whRatio * (static_cast<double>(a.y) /
+                                                               static_cast<double>(scaledrows))));
             } else {
-                e.x = static_cast<short>(
-                    double(scaledcols) *
-                    (y0Const + whRatio * (double(a.y + 1) / double(scaledrows))));
+                e.x = static_cast<short>(static_cast<double>(scaledcols) *
+                                         (y0Const + whRatio * (static_cast<double>(a.y + 1) /
+                                                               static_cast<double>(scaledrows))));
             }
 
             if (a.y < e.y) {
@@ -166,13 +168,14 @@ PixelRefVector PixelBase::pixelateLineTouching(Line4f l, double tolerance) const
     PixelRef bounds(static_cast<short>(m_cols), static_cast<short>(m_rows));
 
     if (dir == LineAxis::XAXIS) {
-        int first = (int)floor(l.ax() - tolerance);
-        int last = (int)floor(l.bx() + tolerance);
+        auto first = static_cast<int>(floor(l.ax() - tolerance));
+        auto last = static_cast<int>(floor(l.bx() + tolerance));
         for (int i = first; i <= last; i++) {
-            int j1 = (int)floor((first == i ? l.ax() : static_cast<double>(i)) * grad + constant -
-                                l.sign() * tolerance);
-            int j2 = (int)floor((last == i ? l.bx() : static_cast<double>(i + 1)) * grad +
-                                constant + l.sign() * tolerance);
+            auto j1 = static_cast<int>(floor((first == i ? l.ax() : static_cast<double>(i)) * grad +
+                                             constant - l.sign() * tolerance));
+            auto j2 =
+                static_cast<int>(floor((last == i ? l.bx() : static_cast<double>(i + 1)) * grad +
+                                       constant + l.sign() * tolerance));
             if (bounds.encloses(PixelRef(static_cast<short>(i), static_cast<short>(j1)))) {
                 pixelList.push_back(PixelRef(static_cast<short>(i), static_cast<short>(j1)));
             }
@@ -191,13 +194,15 @@ PixelRefVector PixelBase::pixelateLineTouching(Line4f l, double tolerance) const
             }
         }
     } else {
-        int first = (int)floor(l.bottomLeft.y - tolerance);
-        int last = (int)floor(l.topRight.y + tolerance);
+        auto first = static_cast<int>(floor(l.bottomLeft.y - tolerance));
+        auto last = static_cast<int>(floor(l.topRight.y + tolerance));
         for (int i = first; i <= last; i++) {
-            int j1 = (int)floor((first == i ? l.bottomLeft.y : double(i)) * grad + constant -
-                                l.sign() * tolerance);
-            int j2 = (int)floor((last == i ? l.topRight.y : double(i + 1)) * grad + constant +
-                                l.sign() * tolerance);
+            auto j1 = static_cast<int>(
+                floor((first == i ? l.bottomLeft.y : static_cast<double>(i)) * grad + constant -
+                      l.sign() * tolerance));
+            auto j2 = static_cast<int>(
+                floor((last == i ? l.topRight.y : static_cast<double>(i + 1)) * grad + constant +
+                      l.sign() * tolerance));
             if (bounds.encloses(PixelRef(static_cast<short>(j1), static_cast<short>(i)))) {
                 pixelList.push_back(PixelRef(static_cast<short>(j1), static_cast<short>(i)));
             }
@@ -261,13 +266,18 @@ PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) const {
 
     for (int i = 0; i <= t; i++) {
         if (polarity == 1 && fabs(floor(ppy) - ppy) < 1e-9) {
-            list.push_back(PixelRef((short)floor(ppx), (short)floor(ppy + 0.5)));
-            list.push_back(PixelRef((short)floor(ppx), (short)floor(ppy - 0.5)));
+            list.push_back(PixelRef(static_cast<short>(floor(ppx)), //
+                                    static_cast<short>(floor(ppy + 0.5))));
+            list.push_back(PixelRef(static_cast<short>(floor(ppx)), //
+                                    static_cast<short>(floor(ppy - 0.5))));
         } else if (polarity == 2 && fabs(floor(ppx) - ppx) < 1e-9) {
-            list.push_back(PixelRef((short)floor(ppx + 0.5), (short)floor(ppy)));
-            list.push_back(PixelRef((short)floor(ppx - 0.5), (short)floor(ppy)));
+            list.push_back(PixelRef(static_cast<short>(floor(ppx + 0.5)), //
+                                    static_cast<short>(floor(ppy))));
+            list.push_back(PixelRef(static_cast<short>(floor(ppx - 0.5)), //
+                                    static_cast<short>(floor(ppy))));
         } else {
-            list.push_back(PixelRef((short)floor(ppx), (short)floor(ppy)));
+            list.push_back(PixelRef(static_cast<short>(floor(ppx)), //
+                                    static_cast<short>(floor(ppy))));
         }
         ppx += dx;
         ppy += dy;
@@ -334,14 +344,14 @@ PixelRef SpacePixel::pixelate(const Point2f &p, bool constrain, int) const {
     Point2f p1 = p;
     p1.normalScale(m_region.bottomLeft, m_region.width(), m_region.height());
 
-    r.x = short(p1.x * double(static_cast<double>(m_cols) - 1e-9));
+    r.x = static_cast<short>(p1.x * static_cast<double>(static_cast<double>(m_cols) - 1e-9));
     if (constrain) {
         if (r.x >= static_cast<short>(m_cols))
             r.x = static_cast<short>(m_cols) - 1;
         else if (r.x < 0)
             r.x = 0;
     }
-    r.y = short(p1.y * double(static_cast<double>(m_rows) - 1e-9));
+    r.y = static_cast<short>(p1.y * static_cast<double>(static_cast<double>(m_rows) - 1e-9));
     if (constrain) {
         if (r.y >= static_cast<short>(m_rows))
             r.y = static_cast<short>(m_rows) - 1;
@@ -382,27 +392,6 @@ void SpacePixel::makeViewportLines(const Region4f &viewport) const {
     }
 }
 
-// expect to be used as:
-//
-// if (findNext())
-//    getNext();
-
-bool SpacePixel::findNextLine(bool &nextlayer) const {
-    if (m_newline) // after adding a line you must reinitialise the display lines
-        return false;
-
-    while (++m_current < (int)m_lines.size() && m_displayLines[static_cast<size_t>(m_current)] == 0)
-        ;
-
-    if (m_current < (int)m_lines.size()) {
-        return true;
-    } else {
-        m_current = (int)m_lines.size();
-        nextlayer = true;
-        return false;
-    }
-}
-
 const Line4f &SpacePixel::getNextLine() const {
     m_displayLines[static_cast<size_t>(m_current)] = 0; // You've drawn it
     /*
@@ -425,7 +414,7 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
         m_rows = 1;
     } else {
         double whRatio = m_region.width() / m_region.height();
-        m_rows = static_cast<size_t>(sqrt(double(size) * whRatio * density));
+        m_rows = static_cast<size_t>(sqrt(static_cast<double>(size) * whRatio * density));
         if (m_rows < 1)
             m_rows = 1;
     }
@@ -434,13 +423,13 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
         m_cols = 1;
     } else {
         double hwRatio = m_region.height() / m_region.width();
-        m_cols = static_cast<size_t>(sqrt(double(size) * hwRatio * density));
+        m_cols = static_cast<size_t>(sqrt(static_cast<double>(size) * hwRatio * density));
         if (m_cols < 1)
             m_cols = 1;
     }
     // could work these two out on the fly, but it's easier to have them stored:
-    // m_pixel_height = m_region.height() / double(m_rows);
-    // m_pixel_width  = m_region.width()  / double(m_cols);
+    // m_pixel_height = m_region.height() / static_cast<double>(m_rows);
+    // m_pixel_width  = m_region.width()  / static_cast<double>(m_cols);
 
     m_pixelLines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
                                                           static_cast<size_t>(m_cols));
@@ -452,8 +441,8 @@ void SpacePixel::reinitLines(double density) {
     double whRatio = m_region.width() / m_region.height();
     double hwRatio = m_region.height() / m_region.width();
 
-    m_rows = static_cast<size_t>(sqrt(double(m_lines.size()) * whRatio * density));
-    m_cols = static_cast<size_t>(sqrt(double(m_lines.size()) * hwRatio * density));
+    m_rows = static_cast<size_t>(sqrt(static_cast<double>(m_lines.size()) * whRatio * density));
+    m_cols = static_cast<size_t>(sqrt(static_cast<double>(m_lines.size()) * hwRatio * density));
 
     if (m_rows < 1)
         m_rows = 1;
@@ -773,8 +762,8 @@ bool SpacePixel::read(std::istream &stream) {
     m_cols = static_cast<size_t>(cols);
 
     // could work these two out on the fly, but it's easier to have them stored:
-    // m_pixel_height = m_region.height() / double(m_rows);
-    // m_pixel_width  = m_region.width()  / double(m_cols);
+    // m_pixel_height = m_region.height() / static_cast<double>(m_rows);
+    // m_pixel_width  = m_region.width()  / static_cast<double>(m_cols);
 
     // prepare loader:
     m_pixelLines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),

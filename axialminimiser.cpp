@@ -8,8 +8,8 @@
 #include "tolerances.h"
 
 static int compareValueTriplet(const void *p1, const void *p2) {
-    ValueTriplet *vp1 = (ValueTriplet *)p1;
-    ValueTriplet *vp2 = (ValueTriplet *)p2;
+    auto vp1 = static_cast<const ValueTriplet *>(p1);
+    auto vp2 = static_cast<const ValueTriplet *>(p2);
     return (vp1->value1 > vp2->value1 ? 1
             : vp1->value1 < vp2->value1
                 ? -1
@@ -22,9 +22,10 @@ static int compareValueTriplet(const void *p1, const void *p2) {
 
 AxialMinimiser::AxialMinimiser(const ShapeGraph &alllinemap, size_t noOfAxsegcuts,
                                size_t noOfRadialsegs)
-    : m_alllinemap((ShapeGraph *)&alllinemap), m_vps(new ValueTriplet[noOfAxsegcuts]),
-      m_removed(new bool[noOfAxsegcuts]), m_affected(new bool[noOfAxsegcuts]),
-      m_vital(new bool[noOfAxsegcuts]), m_radialsegcounts(new int[noOfRadialsegs]) {}
+    : m_alllinemap(static_cast<const ShapeGraph *>(&alllinemap)),
+      m_vps(new ValueTriplet[noOfAxsegcuts]), m_removed(new bool[noOfAxsegcuts]),
+      m_affected(new bool[noOfAxsegcuts]), m_vital(new bool[noOfAxsegcuts]),
+      m_radialsegcounts(new int[noOfRadialsegs]) {}
 
 AxialMinimiser::~AxialMinimiser() {
     delete[] m_vital;
@@ -59,9 +60,9 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
         m_affected[y] = true;
         m_vps[y].index = static_cast<int>(y);
         double length = static_cast<double>(m_axialconns[y].connections.size());
-        m_vps[y].value1 = (int)length;
+        m_vps[y].value1 = static_cast<int>(length);
         length = depthmapX::getMapAtIndex(m_alllinemap->m_shapes, y)->second.getLine().length();
-        m_vps[y].value2 = (float)length;
+        m_vps[y].value2 = static_cast<float>(length);
         y++;
     }
 
@@ -136,7 +137,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                             break;
                         }
                     }
-                    if (coconnecting >= (int)axa.connections.size()) {
+                    if (coconnecting >= static_cast<int>(axa.connections.size())) {
                         subset = true;
                         break;
                     }
@@ -200,11 +201,10 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
 
     for (size_t y = 0; y < m_axialconns.size(); y++) {
         if (!m_removed[y] && !m_vital[y]) {
-            m_vps[livecount].index = (int)y;
-            m_vps[livecount].value1 = (int)m_axialconns[y].connections.size();
-            m_vps[livecount].value2 = (float)depthmapX::getMapAtIndex(m_alllinemap->m_shapes, y)
-                                          ->second.getLine()
-                                          .length();
+            m_vps[livecount].index = static_cast<int>(y);
+            m_vps[livecount].value1 = static_cast<int>(m_axialconns[y].connections.size());
+            m_vps[livecount].value2 = static_cast<float>(
+                depthmapX::getMapAtIndex(m_alllinemap->m_shapes, y)->second.getLine().length());
             livecount++;
         }
     }
@@ -247,7 +247,8 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
             auto &affectedconnections = m_axialconns[static_cast<size_t>(j)].connections;
             for (auto affectedconnection : affectedconnections) {
                 if (!m_removed[affectedconnection]) {
-                    auto &connections = m_axialconns[size_t(affectedconnection)].connections;
+                    auto &connections =
+                        m_axialconns[static_cast<size_t>(affectedconnection)].connections;
                     if (connections.size() <= 2) { // <- note number of connections includes
                                                    // itself... so you and one other
                         presumedvital = true;
@@ -258,10 +259,11 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
         }
         if (!presumedvital) {
             m_removed[j] = true;
-            auto &affectedconnections = m_axialconns[size_t(j)].connections;
+            auto &affectedconnections = m_axialconns[static_cast<size_t>(j)].connections;
             for (auto affectedconnection : affectedconnections) {
                 if (!m_removed[affectedconnection]) {
-                    auto &connections = m_axialconns[size_t(affectedconnection)].connections;
+                    auto &connections =
+                        m_axialconns[static_cast<size_t>(affectedconnection)].connections;
                     depthmapX::findAndErase(connections, static_cast<size_t>(j));
                     m_affected[affectedconnection] = true;
                 }
@@ -283,8 +285,8 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
 bool AxialMinimiser::checkVital(int checkindex, std::set<int> &axSegCut,
                                 std::map<RadialKey, RadialSegment> &radialsegs,
                                 std::map<RadialKey, std::set<int>> &rlds,
-                                std::vector<RadialLine> &radialLines) {
-    std::map<int, SalaShape> &axiallines = m_alllinemap->m_shapes;
+                                std::vector<RadialLine> &radialLines) const {
+    const std::map<int, SalaShape> &axiallines = m_alllinemap->m_shapes;
 
     bool presumedvital = true;
     int nonvitalcount = 0, vitalsegs = 0;
@@ -318,13 +320,13 @@ bool AxialMinimiser::checkVital(int checkindex, std::set<int> &axSegCut,
                     if (divb == checkindex || m_removed[divb]) {
                         continue;
                     }
-                    auto &connections = m_axialconns[size_t(diva)].connections;
+                    auto &connections = m_axialconns[static_cast<size_t>(diva)].connections;
                     if (std::find(connections.begin(), connections.end(), divb) !=
                         connections.end()) {
                         // as a further challenge, they must link within in the zone of
                         // interest, not on the far side of it... arg!
-                        Point2f p = axiallines[diva].getLine().intersection_point(
-                            axiallines[divb].getLine(), TOLERANCE_A);
+                        Point2f p = axiallines.at(diva).getLine().intersection_point(
+                            axiallines.at(divb).getLine(), TOLERANCE_A);
                         if (p.insegment(rlinea.keyvertex, rlinea.openspace, rlineb.openspace,
                                         TOLERANCE_A)) {
                             nonvitalseg = true;

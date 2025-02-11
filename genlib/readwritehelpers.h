@@ -47,7 +47,7 @@ namespace dXreadwrite {
     template <typename T> void writeVector(std::ostream &stream, const std::vector<T> &vec) {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
-        if (vec.size() > size_t(static_cast<unsigned int>(-1))) {
+        if (vec.size() > static_cast<size_t>(static_cast<unsigned int>(-1))) {
             throw new depthmapX::RuntimeException("Vector exceeded max size for streaming");
         }
         const unsigned int length = static_cast<const unsigned int>(vec.size());
@@ -61,7 +61,7 @@ namespace dXreadwrite {
     void writeCastVector(std::ostream &stream, const std::vector<F> &vecF) {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
-        if (vecF.size() > size_t(static_cast<unsigned int>(-1))) {
+        if (vecF.size() > static_cast<size_t>(static_cast<unsigned int>(-1))) {
             throw new depthmapX::RuntimeException("Vector exceeded max size for streaming");
         }
         const unsigned int length = static_cast<const unsigned int>(vecF.size());
@@ -102,7 +102,7 @@ namespace dXreadwrite {
     void writeMap(std::ostream &stream, const std::map<K, V> &map) {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
-        if (map.size() > size_t(static_cast<unsigned int>(-1))) {
+        if (map.size() > static_cast<size_t>(static_cast<unsigned int>(-1))) {
             throw new depthmapX::RuntimeException("Map exceeded max size for streaming");
         }
         const unsigned int length = static_cast<const unsigned int>(map.size());

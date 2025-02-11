@@ -59,7 +59,7 @@ class IVGAVisual : public IVGATraversing {
                 auto &ad = std::get<0>(*currLvlIter).get();
                 auto &p = ad.point;
                 if (p.filled() && ad.visitedFromBin != ~0) {
-                    sd.setValue(ad.attributeDataRow, float(level), keepStats);
+                    sd.setValue(ad.attributeDataRow, static_cast<float>(level), keepStats);
                     if (!p.contextfilled() || ad.ref.iseven() || level == 0) {
                         extractUnseen(graph.at(ad.attributeDataRow), searchTree[level + 1]);
                         ad.visitedFromBin = ~0;
@@ -67,7 +67,8 @@ class IVGAVisual : public IVGATraversing {
                             auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
                             int &p2misc = ad2.visitedFromBin;
                             if (p2misc != ~0) {
-                                sd.setValue(ad2.attributeDataRow, float(level), keepStats);
+                                sd.setValue(ad2.attributeDataRow, static_cast<float>(level),
+                                            keepStats);
                                 extractUnseen(graph.at(ad2.attributeDataRow),
                                               searchTree[level + 1]);
                                 p2misc = ~0;
@@ -110,8 +111,9 @@ class IVGAVisual : public IVGATraversing {
                     totalDepth += static_cast<int>(level);
                     totalNodes += 1;
                     distribution.back() += 1;
-                    if ((int)radius == -1 || (level < static_cast<size_t>(radius) &&
-                                              (!p.contextfilled() || ad3.ref.iseven()))) {
+                    if (static_cast<int>(radius) == -1 ||
+                        (level < static_cast<size_t>(radius) &&
+                         (!p.contextfilled() || ad3.ref.iseven()))) {
                         extractUnseen(graph.at(ad3.attributeDataRow), searchTree[level + 1]);
                         ad3.visitedFromBin = ~0;
                         if (!p.getMergePixel().empty()) {

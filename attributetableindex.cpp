@@ -17,7 +17,7 @@ std::vector<ConstAttributeIndexItem> makeAttributeIndex(const AttributeTable &ta
     if (colIndex == -1) {
         double perturbationFactor = 1e-9 / static_cast<double>(numRows);
         for (auto &item : table) {
-            double value = (double)item.getKey().value;
+            auto value = static_cast<double>(item.getKey().value);
             value += static_cast<double>(idx) * perturbationFactor;
 
             index.push_back(ConstAttributeIndexItem(item.getKey(), value, item.getRow()));
@@ -53,7 +53,7 @@ std::vector<AttributeIndexItem> makeAttributeIndex(AttributeTable &table, int co
     if (colIndex == -1) {
         double perturbationFactor = 1e-9 / static_cast<double>(numRows);
         for (auto &item : table) {
-            double value = (double)item.getKey().value;
+            auto value = static_cast<double>(item.getKey().value);
             value += static_cast<double>(idx) * perturbationFactor;
 
             index.push_back(AttributeIndexItem(item.getKey(), value, item.getRow()));

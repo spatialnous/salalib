@@ -19,13 +19,13 @@ RegionTree *RegionTree::copy() const {
     }
 
     std::vector<RegionTree *> newlist;
-    std::vector<RegionTree *> oldlist;
+    std::vector<const RegionTree *> oldlist;
 
-    oldlist.push_back((RegionTree *)(this));
-    newlist.push_back((RegionTree *)newtree);
+    oldlist.push_back(static_cast<const RegionTree *>(this));
+    newlist.push_back(static_cast<RegionTree *>(newtree));
 
     do {
-        RegionTree *oldnode = oldlist.back();
+        const RegionTree *oldnode = oldlist.back();
         oldlist.pop_back();
         RegionTree *newnode = newlist.back();
         newlist.pop_back();
@@ -138,7 +138,7 @@ int RegionTree::intersections(const Line4f &b) const {
     } else {
         // Note: touching lines count 1, non-touching lines count 2, this allows through
         // vertex lines (where it touches both vertices)
-        n += ((const Line4f &)(*this)).intersects_b((const Line4f &)b);
+        n += this->getInternalLine().intersects_b(b);
     }
 
     return n;

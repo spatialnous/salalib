@@ -662,7 +662,6 @@ int SalaCommand::parse(std::istream &program, int line) {
             break;
         case '\t':
             throw SalaError("Tab character found: please use only spaces to indent lines", m_line);
-            break;
         default:
             if (strchr("<>=!", cache)) {
                 // >, <, = and ! are held as next step operators
@@ -1103,7 +1102,6 @@ void SalaCommand::evaluate(SalaObj &obj, bool &ret, bool &ifhandled) {
     } break;
     default:
         throw SalaError("Unknown command", m_line);
-        break;
     }
 }
 
@@ -1188,7 +1186,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                         throw SalaError("Cannot be applied to " + data.getTypeIndefArt() +
                                             data.getTypeStr(),
                                         m_line);
-                } break;
+                }
                 default:
                     break;
                 }

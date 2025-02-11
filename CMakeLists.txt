@@ -12,11 +12,11 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
-            -Wextra-semi-stmt
+            -Wextra-semi-stmt -Wunreachable-code-break
             # yes
             -Wno-padded
             -Wno-old-style-cast -Wno-suggest-destructor-override
-            -Wno-unused-macros -Wno-unreachable-code-break
+            -Wno-unused-macros
             #-Wno-missing-variable-declarations -Wno-missing-prototypes
             -Wno-reserved-identifier -Wno-missing-noreturn
             # yes eventually

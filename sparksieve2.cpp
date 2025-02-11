@@ -118,28 +118,20 @@ double sparkSieve2::tanify(const Point2f &point, int q) {
     switch (q) {
     case 0:
         return (point.y - m_centre.y) / (m_centre.x - point.x);
-        break;
     case 1:
         return (point.y - m_centre.y) / (point.x - m_centre.x);
-        break;
     case 2:
         return (m_centre.y - point.y) / (m_centre.x - point.x);
-        break;
     case 3:
         return (m_centre.y - point.y) / (point.x - m_centre.x);
-        break;
     case 4:
         return (m_centre.x - point.x) / (m_centre.y - point.y);
-        break;
     case 5:
         return (point.x - m_centre.x) / (m_centre.y - point.y);
-        break;
     case 6:
         return (m_centre.x - point.x) / (point.y - m_centre.y);
-        break;
     case 7:
         return (point.x - m_centre.x) / (point.y - m_centre.y);
-        break;
     }
     return -1.0;
 }

@@ -6,14 +6,18 @@
 
 #pragma once
 
+#include <cstddef>
 struct TopoMetSegmentRef {
+    double dist;
     int ref;
     int dir;
-    double dist;
     int previous;
     bool done;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+#endif
     TopoMetSegmentRef(int r = -1, int d = -1, double di = 0.0, int p = -1)
-        : ref(r), dir(d), dist(di), previous(p), done(false) {}
+        : dist(di), ref(r), dir(d), previous(p), done(false) {}
 };
 
 // should be double not float!

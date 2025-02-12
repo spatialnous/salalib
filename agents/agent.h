@@ -30,29 +30,32 @@ class Agent {
     int m_step = 0;
     int m_frame = 0;
     int m_gate = -1;
+    int m_outputMode = OUTPUT_NOTHING;
+    // for recording trails:
+    int m_trailNum = -1;
+    Point2f m_loc;
+    Point2f m_target;
+    Point2f m_vector;
+    // a long term goal:
+    Point2f m_destination;
+    PixelRef m_targetPix;
+    // extra memory of last observed values for Gibsonian agents:
+    float m_lastLos[9];
+    float m_currLos[9];
     bool m_stuck = false;
     bool m_stopped = false;
     bool m_targetLock = false;
     bool m_gateEncountered = false;
     bool m_atTarget = false;
-    bool m_atDestination = false;
-    int m_outputMode = OUTPUT_NOTHING;
-    Point2f m_loc;
-    Point2f m_target;
-    Point2f m_vector;
-    PixelRef m_targetPix;
     // a long term goal:
-    Point2f m_destination;
-    //
-    // for recording trails:
-    int m_trailNum = -1;
-    //
+    bool m_atDestination = false;
+
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
+
     // for occlusion memory
     pflipper<PixelRefVector> m_occMemory;
-    //
-    // extra memory of last observed values for Gibsonian agents:
-    float m_lastLos[9];
-    float m_currLos[9];
 
   public:
     Agent() : m_program(nullptr), m_pointmap(nullptr), m_outputMode(OUTPUT_NOTHING) {}

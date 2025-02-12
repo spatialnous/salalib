@@ -9,9 +9,11 @@
 #include "../isegment.h"
 
 class SegmentTulipDepth : ISegment {
-    int m_tulipBins = 1024;
-
     std::set<int> &m_originRefs;
+    int m_tulipBins = 1024;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
 
   public:
     struct Column {
@@ -21,7 +23,7 @@ class SegmentTulipDepth : ISegment {
 
   public:
     SegmentTulipDepth(int tulipBins, std::set<int> &originRefs)
-        : m_tulipBins(tulipBins), m_originRefs(originRefs) {}
+        : m_originRefs(originRefs), m_tulipBins(tulipBins) {}
     std::string getAnalysisName() const override { return "Tulip Analysis"; }
     AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
 };

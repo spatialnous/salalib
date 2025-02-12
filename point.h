@@ -60,12 +60,10 @@ class Point {
     mutable float dummyCumangle;
     // used to speed up graph analysis (not sure whether or not it breaks it!)
     mutable PixelRef dummyExtent;
-
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
   protected:
-    int m_block; // not used, unlikely to be used, but kept for time being
-    int m_state;
-    int8_t m_gridConnections;     // this is a standard set of grid connections, with bits set for
-                                  // E,NE,N,NW,W,SW,S,SE
     std::unique_ptr<Node> m_node; // graph links
     Point2f m_location; // note: this is large, but it helps allow loading of non-standard grid
                         // points, whilst allowing them to be displayed as a visibility graph,
@@ -78,11 +76,17 @@ class Point {
     // (importantly) it works.
     std::vector<Line4f> m_lines;
     int m_processflag;
-
+    int m_block; // not used, unlikely to be used, but kept for time being
+    int m_state;
+    int8_t m_gridConnections; // this is a standard set of grid connections, with bits set for
+                              // E,NE,N,NW,W,SW,S,SE
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+#endif
   public:
     Point()
-        : m_block(0), m_state(EMPTY), m_gridConnections(0), m_node(nullptr), m_merge(NoPixel),
-          m_processflag(0), m_userData(nullptr) {
+        : m_node(nullptr), m_merge(NoPixel), m_processflag(0), m_block(0), m_state(EMPTY),
+          m_gridConnections(0) {
 
         //        m_misc = 0;
     }
@@ -104,9 +108,9 @@ class Point {
         return *this;
     }
     Point(const Point &p)
-        : m_block(p.m_block), m_state(p.m_state), m_gridConnections(p.m_gridConnections),
-          m_location(p.m_location), m_color(p.m_color), m_merge(p.m_merge), m_lines(p.m_lines),
-          m_processflag(p.m_processflag) {
+        : m_location(p.m_location), m_color(p.m_color), m_merge(p.m_merge), m_lines(p.m_lines),
+          m_processflag(p.m_processflag), m_block(p.m_block), m_state(p.m_state),
+          m_gridConnections(p.m_gridConnections) {
 
         //        m_misc = p.m_misc;
 
@@ -174,12 +178,4 @@ class Point {
   public:
     std::istream &read(std::istream &stream);
     std::ostream &write(std::ostream &stream) const;
-    //
-  protected:
-    // for user processing, set their own data on the point:
-    void *m_userData;
-
-  public:
-    void *getUserData() { return m_userData; }
-    void setUserData(void *userData) { m_userData = userData; }
 };

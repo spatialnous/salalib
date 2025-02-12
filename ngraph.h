@@ -35,46 +35,52 @@ class Bin {
     friend class Node;
 
   protected:
-    // TODO: in new version increase precision?
-    unsigned short m_nodeCount;
     float m_distance;
     float m_occDistance;
 
+    // Conversion back to old fashioned schema:
+    mutable int m_curvec;
+    mutable PixelRef m_curpix;
+
+    // TODO: in new version increase precision?
+    unsigned short m_nodeCount;
+
   public:
     int8_t dir;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 1 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
     std::vector<PixelVec> pixelVecs;
-    Bin() : m_nodeCount(0), m_distance(0.0f), m_occDistance(0.0f), dir(PixelRef::NODIR) {}
-    //
+    Bin() : m_distance(0.0f), m_occDistance(0.0f), m_nodeCount(0), dir(PixelRef::NODIR) {}
+
     void make(const PixelRefVector &pixels, int8_t onDir);
 
     int count() const { return m_nodeCount; }
     float distance() const { return m_distance; }
     float occdistance() const { return m_occDistance; }
-    //
+
     void setOccDistance(float d) { m_occDistance = d; }
-    //
+
     bool containsPoint(const PixelRef p) const;
-    //
-    // Iterator
-  protected:
-    // Conversion back to old fashioned schema:
-    mutable int m_curvec;
-    mutable PixelRef m_curpix;
 
   public:
     void first() const;
     void next() const;
     bool is_tail() const;
     PixelRef cursor() const;
-    //
+
     std::istream &read(std::istream &stream);
     std::ostream &write(std::ostream &stream);
-    //
+
     friend std::ostream &operator<<(std::ostream &stream, const Bin &bin);
 };
 
 class Node {
   protected:
+    // Conversion back to old fashioned schema:
+    mutable int m_curbin;
+
     PixelRef m_pixel;
     Bin m_bins[32];
 
@@ -109,12 +115,6 @@ class Node {
     float occdistance(int i) { return m_bins[i].occdistance(); }
     //
     bool containsPoint(const PixelRef p) const;
-    //
-    //
-    // Iterator:
-  protected:
-    // Conversion back to old fashioned schema:
-    mutable int m_curbin;
 
   public:
     void contents(PixelRefVector &hood) const;

@@ -101,8 +101,11 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, std::string colIn, Poin
 
     struct ValueCountRow {
         double value = -1;
-        int count = 0;
         AttributeRow &row;
+        int count = 0;
+#ifdef USE_EXPLICIT_PADDING
+        unsigned : 4 * 8; // padding
+#endif
         ValueCountRow(AttributeRow &rowIn) : row(rowIn) {}
     };
 

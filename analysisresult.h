@@ -16,6 +16,14 @@
 
 struct AnalysisResult {
     bool completed = false;
+
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
+
+    std::optional<std::vector<AttributeColumnStats>> columnStats = std::nullopt;
+
     void addAttribute(std::string attribute) {
         auto colIt = std::find(m_newAttributes.begin(), m_newAttributes.end(), attribute);
         if (colIt == m_newAttributes.end()) {
@@ -49,8 +57,6 @@ struct AnalysisResult {
     }
 
     depthmapX::RowMatrix<double> getAttributeData() const { return m_attributeDatata; }
-
-    std::optional<std::vector<AttributeColumnStats>> columnStats = std::nullopt;
 
   protected:
     std::vector<std::string> m_newAttributes = std::vector<std::string>();

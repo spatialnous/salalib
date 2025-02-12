@@ -1442,7 +1442,7 @@ bool DxfBlock::parse(const DxfToken &token, DxfParser *parser) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfToken::DxfToken() : code(-1), size(0) {}
+DxfToken::DxfToken() : size(0), code(-1) {}
 
 std::istream &operator>>(std::istream &stream, DxfToken &token) {
     std::string codeInputLine;

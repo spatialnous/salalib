@@ -287,8 +287,8 @@ PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) const {
 }
 
 SpacePixel::SpacePixel(const std::string &name)
-    : m_newline(false), m_style(0), m_name(name), m_show(true), m_edit(false), m_pixelLines(0, 0),
-      m_ref(-1), m_test(0) {
+    : m_newline(false), m_show(true), m_edit(false), m_ref(-1), m_style(0), m_name(name),
+      m_pixelLines(0, 0), m_test(0) {
 
     m_cols = 0;
     m_rows = 0;

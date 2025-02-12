@@ -341,11 +341,14 @@ class SalaCommand {
     std::vector<SalaObj> m_funcStack;
     //
     SalaObj m_forIter; // object used in a for loop
-    //
-    int m_line; // useful for debugging to know which line this command starts on
-    std::string
-        m_lastString; // occassionally useful in debugging if the user does something unsyntactical
-                      //
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
+    // useful for debugging to know which line this command starts on
+    int m_line;
+    // occassionally useful in debugging if the user does something unsyntactical
+    std::string m_lastString;
+
     char read(std::istream &program) { return static_cast<char>(program.get()); }
 
   public:
@@ -373,12 +376,15 @@ class SalaProgram {
     // column is stored away from the context, as it's not actually passed to the program
     // itself, just used to update a column
     int m_col;
-    // m_thisobj stores contextual information (which attribute table, node etc)
-    // NB ! -- this can be messed with by SalaCommand!
-    SalaObj m_thisobj;
     //
     bool m_marked; // this is used to tell the program that a node has been "marked" -- all marks
                    // are cleared at the end of the execution
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+#endif
+    // m_thisobj stores contextual information (which attribute table, node etc)
+    // NB ! -- this can be messed with by SalaCommand!
+    SalaObj m_thisobj;
     // marks for state management in maps
     std::map<int, SalaObj> m_marks;
     char read(std::istream &program) { return static_cast<char>(program.get()); }

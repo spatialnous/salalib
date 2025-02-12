@@ -59,9 +59,12 @@ namespace MetaGraphReadWrite {
         struct DisplayData {
             int state = 0, viewClass = 0;
             bool showGrid = false, showText = false;
+            bool displayedPointMapProcessed = false; // P.K: never written but read. Old files?
+#ifdef USE_EXPLICIT_PADDING
+            unsigned : 4 * 8; // padding
+#endif
             std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap;
             std::optional<unsigned int> displayedPointMap = std::nullopt;
-            bool displayedPointMapProcessed = false; // P.K: never written but read. Old files?
             std::vector<int> perPointMap;
             std::optional<unsigned int> displayedDataMap = std::nullopt;
             std::vector<ShapeMapDisplayData> perDataMap;

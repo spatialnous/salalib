@@ -20,8 +20,8 @@ class IVGA : public IAnalysis {
     struct AnalysisData {
         const Point &point;
         const PixelRef ref;
-        size_t attributeDataRow;
         int visitedFromBin = 0;
+        size_t attributeDataRow;
 
         // used to speed up graph analysis (not sure whether or not it breaks it!)
         PixelRef diagonalExtent;
@@ -32,8 +32,8 @@ class IVGA : public IAnalysis {
         AnalysisData(const Point &pointIn, const PixelRef refIn, size_t attributeDataRowIn,
                      int visitedFromBinIn, PixelRef diagonalExtentIn, float distIn,
                      float cumAngleIn)
-            : point(pointIn), ref(refIn), attributeDataRow(attributeDataRowIn),
-              visitedFromBin(visitedFromBinIn), diagonalExtent(diagonalExtentIn), dist(distIn),
+            : point(pointIn), ref(refIn), visitedFromBin(visitedFromBinIn),
+              attributeDataRow(attributeDataRowIn), diagonalExtent(diagonalExtentIn), dist(distIn),
               cumAngle(cumAngleIn) {}
     };
 

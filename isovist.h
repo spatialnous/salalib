@@ -13,17 +13,20 @@
 
 struct IsoSeg {
     mutable bool tagdelete;
+    int8_t quadrant;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 2 * 8; // padding
+#endif
+    int tag;
     double startangle;
     double endangle;
     Point2f startpoint;
     Point2f endpoint;
-    int8_t quadrant;
-    int tag;
     IsoSeg(double start = 0.0, double end = 0.0, int8_t q = 0, int t = -1)
-        : tagdelete(false), startangle(start), endangle(end), quadrant(q), tag(t) {}
+        : tagdelete(false), quadrant(q), tag(t), startangle(start), endangle(end) {}
     IsoSeg(double start, double end, const Point2f &pstart, Point2f &pend, int t = -1)
-        : tagdelete(false), startangle(start), endangle(end), startpoint(pstart), endpoint(pend),
-          quadrant(0), tag(t) {}
+        : tagdelete(false), quadrant(0), tag(t), startangle(start), endangle(end),
+          startpoint(pstart), endpoint(pend) {}
     friend bool operator==(const IsoSeg &b1, const IsoSeg &b2);
     friend bool operator>(const IsoSeg &b1, const IsoSeg &b2);
     friend bool operator<(const IsoSeg &b1, const IsoSeg &b2);

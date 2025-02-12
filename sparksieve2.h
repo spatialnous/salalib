@@ -8,6 +8,7 @@
 
 #include "genlib/line4f.h"
 
+#include <cstdint>
 #include <float.h>
 #include <list>
 #include <map>

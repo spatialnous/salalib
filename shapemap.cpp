@@ -31,8 +31,8 @@
 
 ShapeMap::ShapeMap(const std::string &name, int type)
     : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())), m_name(name),
-      m_mapType(type), m_hasgraph(false), m_objRef(-1), m_pixelShapes(0, 0), m_tolerance(0.0),
-      m_hasMapInfoData(false) {
+      m_mapType(type), m_objRef(-1), m_pixelShapes(0, 0), m_tolerance(0.0), m_hasMapInfoData(false),
+      m_hasgraph(false) {
 
     // shape and object counters
 

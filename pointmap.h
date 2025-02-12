@@ -57,17 +57,19 @@ class PointMap : public AttributeMap {
     std::string m_name;
     const Region4f *m_parentRegion;
     depthmapX::ColumnMatrix<Point> m_points; // will contain the graph reference when created
-    int m_filledPointCount;
+    std::vector<PixelRefPair> m_mergeLines;
     double m_spacing;
     Point2f m_offset;
     Point2f m_bottomLeft;
+    int m_filledPointCount;
+    int m_undocounter;
     bool m_initialised;
     bool m_blockedlines;
     bool m_processed;
     bool m_boundarygraph;
-    int m_undocounter;
-    std::vector<PixelRefPair> m_mergeLines;
-
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
   public: // known columns
     struct Column {
         inline static const std::string                  //

@@ -47,10 +47,14 @@ const double DXF_PI = 3.1415926535897932384626433832795;
 
 class DxfToken {
   public:
-    int code;
     size_t size;
     std::string data;
-    //
+    int code;
+
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
+
     DxfToken();
     friend std::istream &operator>>(std::istream &stream, DxfToken &token);
 };
@@ -87,10 +91,12 @@ class DxfEntity {
 
   protected:
     // Reference data
-    int m_tag;
     DxfLineType *m_pLineType = nullptr;
     DxfLayer *m_pLayer = nullptr;
-
+    int m_tag;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
   public:
     DxfEntity(int tag = -1);
     void clear(); // for reuse when parsing

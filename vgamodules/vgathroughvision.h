@@ -15,11 +15,11 @@ class VGAThroughVision : public IVGA {
     struct AnalysisData {
         const Point &point;
         const PixelRef ref;
-        size_t attributeDataRow;
         int misc = 0;
+        size_t attributeDataRow;
         AnalysisData(const Point &pointIn, const PixelRef refIn, size_t attributeDataRowIn,
                      int miscIn = 0)
-            : point(pointIn), ref(refIn), attributeDataRow(attributeDataRowIn), misc(miscIn) {}
+            : point(pointIn), ref(refIn), misc(miscIn), attributeDataRow(attributeDataRowIn) {}
     };
 
   public:

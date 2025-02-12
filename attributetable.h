@@ -135,10 +135,13 @@ class AttributeColumnImpl : public AttributeColumn, AttributeColumnStats {
 
   private:
     std::string m_name;
+    DisplayParams m_displayParams;
     bool m_locked;
     bool m_hidden;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 2 * 8; // padding
+#endif
     std::string m_formula;
-    DisplayParams m_displayParams;
 };
 
 // Implementation of AttributeColumn that actually links to the keys of the table

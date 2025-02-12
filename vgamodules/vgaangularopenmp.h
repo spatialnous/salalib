@@ -15,13 +15,18 @@ class VGAAngularOpenMP : public IVGAAngular {
 
   private:
     double m_radius;
-    bool m_gatesOnly;
     std::optional<int> m_limitToThreads;
+    bool m_gatesOnly;
     bool m_forceCommUpdatesMasterThread = false;
 
     // To maintain binary compatibility with older .graph versions
     // write the last "misc" values back to the points
     bool m_legacyWriteMiscs = false;
+
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 1 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
 
     struct DataPoint {
         float totalDepth, meanDepth, count;
@@ -51,9 +56,8 @@ class VGAAngularOpenMP : public IVGAAngular {
     VGAAngularOpenMP(const PointMap &map, double radius, bool gatesOnly,
                      std::optional<int> limitToThreads = std::nullopt,
                      bool forceCommUpdatesMasterThread = false)
-        : IVGAAngular(map), m_radius(radius), m_gatesOnly(gatesOnly),
-          m_limitToThreads(limitToThreads),
-          m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
+        : IVGAAngular(map), m_radius(radius), m_limitToThreads(limitToThreads),
+          m_gatesOnly(gatesOnly), m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
     std::string getAnalysisName() const override { return "Angular Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *comm) override;
 

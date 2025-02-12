@@ -58,7 +58,6 @@ class ShapeMap : public AttributeMap {
   protected:
     std::string m_name;
     int m_mapType = EMPTYMAP;
-    bool m_hasgraph = false;
     // counters
     int m_objRef = -1;
     //
@@ -77,10 +76,22 @@ class ShapeMap : public AttributeMap {
     // for geometric operations
     double m_tolerance;
 
+    // links and unlinks
+    std::vector<OrderedSizeTPair> m_links;
+    std::vector<OrderedSizeTPair> m_unlinks;
+
+    MapInfoData m_mapinfodata;
+    bool m_hasMapInfoData = false;
+
+    bool m_hasgraph = false;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 2 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
+
   public:
     void moveData(ShapeMap &other) {
         m_shapes = std::move(other.m_shapes);
-        m_hasgraph = other.m_hasgraph;
         m_connectors = std::move(other.m_connectors);
         m_links = std::move(other.m_links);
         m_unlinks = std::move(other.m_unlinks);
@@ -90,6 +101,7 @@ class ShapeMap : public AttributeMap {
         m_cols = other.m_cols;
         m_region = std::move(other.m_region);
         m_mapType = other.m_mapType;
+        m_hasgraph = other.m_hasgraph;
     }
 
   public:
@@ -299,10 +311,6 @@ class ShapeMap : public AttributeMap {
 
     const std::map<int, SalaShape> getShapesInRegion(const Region4f &r) const;
 
-  protected:
-    bool m_hasMapInfoData = false;
-    MapInfoData m_mapinfodata;
-
   public:
     bool hasMapInfoData() const { return m_hasMapInfoData; }
     int loadMifMap(std::istream &miffile, std::istream &midfile);
@@ -342,10 +350,6 @@ class ShapeMap : public AttributeMap {
     //
     bool output(std::ofstream &stream, char delimiter = '\t');
     //
-    // links and unlinks
-  protected:
-    std::vector<OrderedSizeTPair> m_links;
-    std::vector<OrderedSizeTPair> m_unlinks;
 
   public:
     bool clearLinks();

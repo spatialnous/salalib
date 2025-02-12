@@ -25,9 +25,9 @@
 
 PointMap::PointMap(const Region4f &parentRegion, const std::string &name)
     : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())), m_name(name),
-      m_parentRegion(&parentRegion), m_points(0, 0), m_filledPointCount(0), m_spacing(0.0),
-      m_initialised(false), m_blockedlines(false), m_processed(false), m_boundarygraph(false),
-      m_undocounter(0) {
+      m_parentRegion(&parentRegion), m_points(0, 0), m_spacing(0.0), m_filledPointCount(0),
+      m_undocounter(0), m_initialised(false), m_blockedlines(false), m_processed(false),
+      m_boundarygraph(false) {
 
     m_cols = 0;
     m_rows = 0;

@@ -6,15 +6,18 @@
 #pragma once
 
 #include "regiontree.h"
+#include <cstdint>
 
 class Poly {
   protected:
-    int m_lineSegments;
     RegionTree *m_pRoot;
-
+    int m_lineSegments;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
   public:
-    Poly() : m_lineSegments(0), m_pRoot(nullptr) {}
-    Poly(const Poly &p) : m_lineSegments(p.m_lineSegments), m_pRoot(copy_region_tree(p.m_pRoot)) {}
+    Poly() : m_pRoot(nullptr), m_lineSegments(0) {}
+    Poly(const Poly &p) : m_pRoot(copy_region_tree(p.m_pRoot)), m_lineSegments(p.m_lineSegments) {}
     Poly &operator=(const Poly &p) {
         if (this != &p) {
             m_lineSegments = p.m_lineSegments;

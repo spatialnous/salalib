@@ -90,14 +90,14 @@ class SpacePixel : public PixelBase {
     mutable bool m_newline;
 
   protected:
-    PafColor m_color;
-    int m_style; // allows for bold / dotted lines etc
-    std::string m_name = "Default";
     bool m_show;
     bool m_edit;
+    PafColor m_color;
+    int m_ref;
+    int m_style; // allows for bold / dotted lines etc
+    std::string m_name = "Default";
     depthmapX::RowMatrix<std::vector<int>> m_pixelLines;
 
-    int m_ref;
     std::map<int, LineTest> m_lines;
     //
     // for screen drawing

@@ -30,10 +30,16 @@ class MapInfoData {
   protected:
     std::string m_version;
     std::string m_charset;
-    char m_delimiter;
     std::string m_index;
     std::string m_coordsys;
     std::string m_bounds;
+    char m_delimiter;
+
+  private:
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
     //
     // no longer use columnheads and table
     // -- where possible, added directly to the data

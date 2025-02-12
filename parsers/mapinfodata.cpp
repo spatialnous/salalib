@@ -377,8 +377,8 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
 ///////////////////////////////////////////////////////////////////////
 
 MapInfoData::MapInfoData()
-    : m_version("Version 300"), m_charset("Charset \"WindowsLatin1\""), m_delimiter(','),
-      m_index("Index 1"), m_coordsys("CoordSys NonEarth Units \"m\" ") {
+    : m_version("Version 300"), m_charset("Charset \"WindowsLatin1\""), m_index("Index 1"),
+      m_coordsys("CoordSys NonEarth Units \"m\" "), m_delimiter(',') {
 
     // note: m_bounds is filled in later
 }

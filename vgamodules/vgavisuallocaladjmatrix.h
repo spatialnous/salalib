@@ -13,10 +13,13 @@
 class VGAVisualLocalAdjMatrix : public IAnalysis {
   private:
     PointMap &m_map;
-    bool m_gatesOnly;
     std::optional<int> m_limitToThreads;
+    bool m_gatesOnly;
     bool m_forceCommUpdatesMasterThread = false;
-
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 2 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
     struct DataPoint {
         float cluster, control, controllability;
     };
@@ -34,7 +37,7 @@ class VGAVisualLocalAdjMatrix : public IAnalysis {
     VGAVisualLocalAdjMatrix(PointMap &map, bool gatesOnly,
                             std::optional<int> limitToThreads = std::nullopt,
                             bool forceCommUpdatesMasterThread = false)
-        : m_map(map), m_gatesOnly(gatesOnly), m_limitToThreads(limitToThreads),
+        : m_map(map), m_limitToThreads(limitToThreads), m_gatesOnly(gatesOnly),
           m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
     std::string getAnalysisName() const override {
         return "Local Visibility Analysis (Adj. Matrix)";

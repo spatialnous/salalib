@@ -34,7 +34,6 @@ class NtfLayer {
     size_t m_lineCount;
 
   public:
-    int pad1 : 32;
     std::vector<NtfGeometry> geometries;
     NtfLayer(const std::string &name = std::string()) : m_name(name), m_lineCount(0) {}
     size_t getLineCount() { return m_lineCount; }
@@ -47,9 +46,9 @@ class NtfMap {
     enum { NTF_UNKNOWN, NTF_LANDLINE, NTF_MERIDIAN };
 
   protected:
+    int m_lineCount;
     NtfPoint m_offset; // note: in metres
     Region4f m_region; // made in metres, although points are in cm
-    int m_lineCount;
 
   public:
     NtfMap() {}

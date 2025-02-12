@@ -29,12 +29,11 @@ class SalaShape {
     friend class ShapeMap;
 
   protected:
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-    unsigned : 3 * 8; // padding
-#endif
-
     uint8_t m_type;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
     Point2f m_centroid; // centre of mass, but also used as for point if object is a point
     Line4f m_region;    // bounding box, but also used as a line if object is a line, hence type
     double m_area;

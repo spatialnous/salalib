@@ -15,10 +15,10 @@ struct ShapeRef {
     enum { SHAPE_REF_NULL = 0xFFFFFFFF };
     enum { SHAPE_L = 0x01, SHAPE_B = 0x02, SHAPE_R = 0x04, SHAPE_T = 0x08 };
     enum { SHAPE_EDGE = 0x0f, SHAPE_INTERNAL_EDGE = 0x10, SHAPE_CENTRE = 0x20, SHAPE_OPEN = 0x40 };
+    uint8_t tags;
 #ifdef USE_EXPLICIT_PADDING
     unsigned : 3 * 8; // padding
 #endif
-    uint8_t tags;
     unsigned int shapeRef;
     std::vector<short> polyrefs;
     ShapeRef(unsigned int sref = SHAPE_REF_NULL, uint8_t tagsIn = 0x00)

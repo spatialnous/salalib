@@ -16,7 +16,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             -Wunused-macros -Wmissing-noreturn -Wmissing-declarations
             -Wold-style-cast
             # yes eventually
-            -Wno-float-equal -Wno-double-promotion -Wno-reserved-macro-identifier
+            -Wno-float-equal -Wno-double-promotion
             -Wno-switch-enum -Wno-effc++
             # maybe
             -Wno-global-constructors -Wno-weak-vtables -Wno-non-virtual-dtor
@@ -29,7 +29,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             set(COMPILE_WARNINGS "${COMPILE_WARNINGS}"
                 -Wunreachable-code-break -Wextra-semi-stmt
                 -Wreserved-identifier -Wmissing-prototypes
-                -Wsuggest-destructor-override
+                -Wsuggest-destructor-override -Wreserved-macro-identifier
             )
         endif()
 

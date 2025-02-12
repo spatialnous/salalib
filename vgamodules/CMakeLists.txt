@@ -5,11 +5,11 @@
 
 target_sources(salalib
     PRIVATE
-       ivga.h
-       ivgatraversing.h
-       ivgaangular.h
-       ivgametric.h
-       ivgavisual.h
+       ivga.hpp
+       ivgatraversing.hpp
+       ivgaangular.hpp
+       ivgametric.hpp
+       ivgavisual.hpp
        vgaisovist.cpp
        vgaangular.cpp
        vgametric.cpp
@@ -32,25 +32,25 @@ target_sources(salalib
        vgaangularshortestpath.cpp
        extractlinkdata.cpp
     PUBLIC
-       vgaangular.h
-       vgametric.h
-       vgavisualglobal.h
-       vgaangulardepth.h
-       vgametricdepth.h
-       vgavisualglobaldepth.h
-       vgaisovist.h
-       vgathroughvision.h
-       vgavisuallocal.h
-       vgaangularopenmp.h
-       vgametricopenmp.h
-       vgavisualglobalopenmp.h
-       vgavisuallocaladjmatrix.h
-       vgavisuallocalopenmp.h
-       vgavisualshortestpath.h
-       vgametricshortestpathtomany.h
-       vgametricshortestpath.h
-       vgametricdepthlinkcost.h
-       vgaisovistzone.h
-       vgaangularshortestpath.h
-       extractlinkdata.h
+       vgaangular.hpp
+       vgametric.hpp
+       vgavisualglobal.hpp
+       vgaangulardepth.hpp
+       vgametricdepth.hpp
+       vgavisualglobaldepth.hpp
+       vgaisovist.hpp
+       vgathroughvision.hpp
+       vgavisuallocal.hpp
+       vgaangularopenmp.hpp
+       vgametricopenmp.hpp
+       vgavisualglobalopenmp.hpp
+       vgavisuallocaladjmatrix.hpp
+       vgavisuallocalopenmp.hpp
+       vgavisualshortestpath.hpp
+       vgametricshortestpathtomany.hpp
+       vgametricshortestpath.hpp
+       vgametricdepthlinkcost.hpp
+       vgaisovistzone.hpp
+       vgaangularshortestpath.hpp
+       extractlinkdata.hpp
 )

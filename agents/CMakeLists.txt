@@ -5,10 +5,10 @@
 
 target_sources(salalib
     PUBLIC
-        agent.h
-        agentprogram.h
-        agentga.h
-        agentanalysis.h
+        agent.hpp
+        agentprogram.hpp
+        agentga.hpp
+        agentanalysis.hpp
     PRIVATE
         agent.cpp
         agentprogram.cpp

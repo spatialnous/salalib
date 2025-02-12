@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "point2f.h"
+#include "point2f.hpp"
 
 // an event is a point plus time (as in spacetime technical language)
 class Event2f : public Point2f {

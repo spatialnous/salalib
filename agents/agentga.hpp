@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "agentprogram.h"
+#include "agentprogram.hpp"
 
 const int POPSIZE = 500;
 // redo ASSAYs -- assaysize * assays (3 * 200 = 600 evaluations total)

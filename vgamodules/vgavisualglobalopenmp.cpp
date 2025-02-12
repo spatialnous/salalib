@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vgavisualglobalopenmp.h"
+#include "vgavisualglobalopenmp.hpp"
 
 #if defined(_OPENMP)
 #include <omp.h>

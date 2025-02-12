@@ -4,18 +4,18 @@
 
 // Point data
 
-#include "pointmap.h"
+#include "pointmap.hpp"
 
-#include "attributetable.h"
-#include "ngraph.h"
-#include "parsers/mapinfodata.h" // for mapinfo interface
-#include "salashape.h"
-#include "shapemap.h"
+#include "attributetable.hpp"
+#include "ngraph.hpp"
+#include "parsers/mapinfodata.hpp" // for mapinfo interface
+#include "salashape.hpp"
+#include "shapemap.hpp"
 
-#include "genlib/comm.h" // for communicator
-#include "genlib/containerutils.h"
-#include "genlib/pflipper.h"
-#include "genlib/stringutils.h"
+#include "genlib/comm.hpp" // for communicator
+#include "genlib/containerutils.hpp"
+#include "genlib/pflipper.hpp"
+#include "genlib/stringutils.hpp"
 
 #include <cmath>
 #include <numeric>
@@ -896,7 +896,7 @@ size_t PointMap::tagState(bool settag) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "sparksieve2.h"
+#include "sparksieve2.hpp"
 
 // The fast way to generate graphs... attempt 2
 // This uses the new points line segments to allow quick overlap comparisons

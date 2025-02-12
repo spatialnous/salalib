@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "connector.h"
-#include "shapemap.h"
+#include "connector.hpp"
+#include "shapemap.hpp"
 
-#include "genlib/comm.h"
+#include "genlib/comm.hpp"
 
 #include <set>
 

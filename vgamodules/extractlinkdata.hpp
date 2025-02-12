@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "../ianalysis.h"
-#include "../pointmap.h"
+#include "../ianalysis.hpp"
+#include "../pointmap.hpp"
 
 class ExtractLinkData : public IAnalysis {
   private:

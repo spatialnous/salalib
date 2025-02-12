@@ -6,14 +6,14 @@
 
 #pragma once
 
-#include "alllinemap.h"
-#include "fileproperties.h"
-#include "metagraph.h"
-#include "pointmap.h"
-#include "shapegraph.h"
+#include "alllinemap.hpp"
+#include "fileproperties.hpp"
+#include "metagraph.hpp"
+#include "pointmap.hpp"
+#include "shapegraph.hpp"
 
-#include "genlib/exceptions.h"
-#include "shapemapgroupdata.h"
+#include "genlib/exceptions.hpp"
+#include "shapemapgroupdata.hpp"
 
 #include <istream>
 
@@ -165,4 +165,4 @@ namespace MetaGraphReadWrite {
         const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
 } // namespace MetaGraphReadWrite
 
-// #include "metagraphreadwrite_impl.h"
+// #include "metagraphreadwrite_impl.hpp"

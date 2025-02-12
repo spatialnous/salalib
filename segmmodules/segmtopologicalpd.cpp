@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "segmtopologicalpd.h"
+#include "segmtopologicalpd.hpp"
 
-#include "segmhelpers.h"
+#include "segmhelpers.hpp"
 
 AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
 

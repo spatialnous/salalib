@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "segmtulip.h"
+#include "segmtulip.hpp"
 
-#include "../genlib/stringutils.h"
+#include "../genlib/stringutils.hpp"
 
 std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
                                                           std::vector<double> radii) {

@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "isovistdef.h"
+#include "isovistdef.hpp"
 
-#include "genlib/exceptions.h"
-#include "genlib/line4f.h"
+#include "genlib/exceptions.hpp"
+#include "genlib/line4f.hpp"
 
 #include <iostream>
 #include <string>

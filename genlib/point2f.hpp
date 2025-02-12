@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "pafmath.h"
+#include "pafmath.hpp"
 
 #include <algorithm>
 

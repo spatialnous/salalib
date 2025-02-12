@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "attributetable.h"
-#include "attributetableindex.h"
+#include "attributetable.hpp"
+#include "attributetableindex.hpp"
 
 #include <functional>
 

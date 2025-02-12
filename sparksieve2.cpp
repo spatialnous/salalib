@@ -8,7 +8,7 @@
 
 // New spark sieve implemementation (more accurate)
 
-#include "sparksieve2.h"
+#include "sparksieve2.hpp"
 
 #include <algorithm>
 #include <cmath>

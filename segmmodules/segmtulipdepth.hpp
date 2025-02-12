@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "../isegment.h"
+#include "../isegment.hpp"
 
 class SegmentTulipDepth : ISegment {
     std::set<int> &m_originRefs;

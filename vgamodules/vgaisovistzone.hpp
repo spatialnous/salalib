@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "../ianalysis.h"
-#include "../pixelref.h"
-#include "../pointmap.h"
+#include "../ianalysis.hpp"
+#include "../pixelref.hpp"
+#include "../pointmap.hpp"
 
 #include <iomanip>
 

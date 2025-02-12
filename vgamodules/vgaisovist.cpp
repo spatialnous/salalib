@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vgaisovist.h"
+#include "vgaisovist.hpp"
 
-#include "../isovist.h"
+#include "../isovist.hpp"
 
 AnalysisResult VGAIsovist::run(Communicator *comm) {
 

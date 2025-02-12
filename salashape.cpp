@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "salashape.h"
+#include "salashape.hpp"
 
-#include "genlib/readwritehelpers.h"
+#include "genlib/readwritehelpers.hpp"
 
 bool SalaShape::read(std::istream &stream) {
     // defaults

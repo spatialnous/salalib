@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "displayparams.h"
-#include "layermanager.h"
+#include "displayparams.hpp"
+#include "layermanager.hpp"
 
 #include <algorithm>
 #include <iterator>

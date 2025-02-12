@@ -3,7 +3,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "region4f.h"
+#include "region4f.hpp"
 
 // EdgeU is used for polygon clipping to viewports
 // get the actual point from an EdgeU

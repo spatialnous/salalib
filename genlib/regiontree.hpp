@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "line4f.h"
+#include "line4f.hpp"
 // not sure if this code is used any more:
 
 // Now the difficult bit: making the line segments into polygons...

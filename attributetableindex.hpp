@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "attributetable.h"
+#include "attributetable.hpp"
 
 #include <algorithm>
 

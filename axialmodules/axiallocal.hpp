@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "../iaxial.h"
+#include "../iaxial.hpp"
 
 class AxialLocal : IAxial {
   public:

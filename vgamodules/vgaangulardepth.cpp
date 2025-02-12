@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vgaangulardepth.h"
+#include "vgaangulardepth.hpp"
 
 AnalysisResult VGAAngularDepth::run(Communicator *) {
 

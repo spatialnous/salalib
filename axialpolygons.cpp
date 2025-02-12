@@ -3,12 +3,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "axialpolygons.h"
+#include "axialpolygons.hpp"
 
-#include "tidylines.h"
-#include "tolerances.h"
+#include "tidylines.hpp"
+#include "tolerances.hpp"
 
-#include "genlib/containerutils.h"
+#include "genlib/containerutils.hpp"
 
 AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Point2f &openspace) {
     auto vertPossIter =

@@ -4,11 +4,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "shapemapgroupdata.h"
+#include "shapemapgroupdata.hpp"
 
-#include "shapemap.h"
+#include "shapemap.hpp"
 
-#include "genlib/stringutils.h"
+#include "genlib/stringutils.hpp"
 
 bool ShapeMapGroupData::readInNameAndRegion(std::istream &stream) {
     name = dXstring::readString(stream);

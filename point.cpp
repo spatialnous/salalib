@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "point.h"
+#include "point.hpp"
 
-#include "ngraph.h"
+#include "ngraph.hpp"
 
 float Point::getBinDistance(int i) { return m_node->bindistance(i); }
 

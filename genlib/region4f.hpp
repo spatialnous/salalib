@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "edgeu.h"
-#include "point2f.h"
+#include "edgeu.hpp"
+#include "point2f.hpp"
 
 class Region4f {
   public:

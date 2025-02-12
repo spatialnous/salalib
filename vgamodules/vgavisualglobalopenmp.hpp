@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "ivgavisual.h"
+#include "ivgavisual.hpp"
 
-#include "../genlib/stringutils.h"
-#include "../pointmap.h"
+#include "../genlib/stringutils.hpp"
+#include "../pointmap.hpp"
 
 class VGAVisualGlobalOpenMP : public IVGAVisual {
   private:

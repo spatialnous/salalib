@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "agentprogram.h"
+#include "agentprogram.hpp"
 
-#include "../ianalysis.h"
-#include "../pointmap.h"
-#include "agent.h"
+#include "../ianalysis.hpp"
+#include "../pointmap.hpp"
+#include "agent.hpp"
 #include <bitset>
 #include <cstring>
 

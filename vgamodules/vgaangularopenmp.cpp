@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vgaangularopenmp.h"
+#include "vgaangularopenmp.hpp"
 #if defined(_OPENMP)
 #include <omp.h>
 #endif

@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vgavisualglobaldepth.h"
+#include "vgavisualglobaldepth.hpp"
 
 AnalysisResult VGAVisualGlobalDepth::run(Communicator *) {
 

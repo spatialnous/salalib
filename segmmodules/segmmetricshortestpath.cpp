@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "segmmetricshortestpath.h"
+#include "segmmetricshortestpath.hpp"
 
-#include "segmhelpers.h"
+#include "segmhelpers.hpp"
 
 AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
 

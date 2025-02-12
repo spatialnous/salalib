@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "ivgaangular.h"
+#include "ivgaangular.hpp"
 
-#include "../pixelref.h"
-#include "../pointmap.h"
+#include "../pixelref.hpp"
+#include "../pointmap.hpp"
 
 class VGAAngularShortestPath : public IVGAAngular {
   private:

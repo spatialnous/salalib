@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "pointmap.h"
-#include "shapegraph.h"
-#include "shapemap.h"
+#include "pointmap.hpp"
+#include "shapegraph.hpp"
+#include "shapemap.hpp"
 
 namespace PushValues {
     enum class Func {

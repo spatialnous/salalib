@@ -4,11 +4,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "agentanalysis.h"
+#include "agentanalysis.hpp"
 
-#include "agent.h"
+#include "agent.hpp"
 
-#include "../pushvalues.h"
+#include "../pushvalues.hpp"
 
 void AgentAnalysis::init(std::vector<Agent> &agents, std::vector<PixelRef> &releaseLocations,
                          size_t agent, int trailNum) {

@@ -5,11 +5,11 @@
 
 // Quick OS land-line NTF parser
 
-#include "ntfp.h"
+#include "ntfp.hpp"
 
-#include "../genlib/comm.h" // for communicator
-#include "../genlib/containerutils.h"
-#include "../genlib/stringutils.h"
+#include "../genlib/comm.hpp" // for communicator
+#include "../genlib/containerutils.hpp"
+#include "../genlib/stringutils.hpp"
 
 #include <fstream>
 #include <iostream>

@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "genlib/simplematrix.h"
+#include "genlib/simplematrix.hpp"
 
-#include "pointmap.h"
-#include "shapegraph.h"
-#include "shapemap.h"
+#include "pointmap.hpp"
+#include "shapegraph.hpp"
+#include "shapemap.hpp"
 
 #include <algorithm>
 #include <string>

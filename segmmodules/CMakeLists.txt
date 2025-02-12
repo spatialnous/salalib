@@ -16,14 +16,15 @@ target_sources(salalib
         segmtopologicalshortestpath.cpp
         segmtulipshortestpath.cpp
     PUBLIC
-        segmangular.h
-        segmmetric.h
-        segmtopological.h
-        segmtulip.h
-        segmhelpers.h
-        segmmetricpd.h
-        segmtopologicalpd.h
-        segmtulipdepth.h
-        segmmetricshortestpath.h
-        segmtopologicalshortestpath.h
-        segmtulipshortestpath.h)
+        segmangular.hpp
+        segmmetric.hpp
+        segmtopological.hpp
+        segmtulip.hpp
+        segmhelpers.hpp
+        segmmetricpd.hpp
+        segmtopologicalpd.hpp
+        segmtulipdepth.hpp
+        segmmetricshortestpath.hpp
+        segmtopologicalshortestpath.hpp
+        segmtulipshortestpath.hpp
+    )

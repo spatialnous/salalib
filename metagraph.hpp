@@ -8,8 +8,8 @@
 
 // Interface: the meta graph loads and holds all sorts of arbitrary data...
 
-#include "fileproperties.h"
-#include "shapemap.h"
+#include "fileproperties.hpp"
+#include "shapemap.hpp"
 
 #include <memory>
 #include <mutex>

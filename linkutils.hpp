@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "pointmap.h"
+#include "pointmap.hpp"
 
-#include "genlib/exceptions.h"
+#include "genlib/exceptions.hpp"
 
 #include <vector>
 

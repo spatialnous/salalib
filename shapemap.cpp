@@ -4,18 +4,18 @@
 
 // This is my code to make a set of axial lines from a set of boundary lines
 
-#include "shapemap.h"
+#include "shapemap.hpp"
 
-#include "attributetable.h"
-#include "attributetablehelpers.h"
-#include "parsers/mapinfodata.h" // for mapinfo interface
-#include "pointmap.h"
-#include "tolerances.h"
+#include "attributetable.hpp"
+#include "attributetablehelpers.hpp"
+#include "parsers/mapinfodata.hpp" // for mapinfo interface
+#include "pointmap.hpp"
+#include "tolerances.hpp"
 
-#include "genlib/containerutils.h"
-#include "genlib/exceptions.h"
-#include "genlib/readwritehelpers.h"
-#include "genlib/stringutils.h"
+#include "genlib/containerutils.hpp"
+#include "genlib/exceptions.hpp"
+#include "genlib/readwritehelpers.hpp"
+#include "genlib/stringutils.hpp"
 
 #include <cmath>
 #include <float.h>

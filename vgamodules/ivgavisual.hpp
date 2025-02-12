@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "ivgatraversing.h"
+#include "ivgatraversing.hpp"
 
 class IVGAVisual : public IVGATraversing {
   protected:

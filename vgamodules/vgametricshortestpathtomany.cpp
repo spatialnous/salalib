@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vgametricshortestpathtomany.h"
+#include "vgametricshortestpathtomany.hpp"
 
 AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
 

@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "segmtulipdepth.h"
+#include "segmtulipdepth.hpp"
 
 // revised to use tulip bins for faster analysis of large spaces
 

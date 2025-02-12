@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "../attributetable.h"
-#include "../layermanagerimpl.h"
+#include "../attributetable.hpp"
+#include "../layermanagerimpl.hpp"
 
-#include "../genlib/region4f.h"
+#include "../genlib/region4f.hpp"
 
 #include <istream>
 #include <ostream>

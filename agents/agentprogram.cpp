@@ -4,10 +4,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "agentprogram.h"
+#include "agentprogram.hpp"
 
-#include "../genlib/pafmath.h"
-#include "../genlib/stringutils.h"
+#include "../genlib/pafmath.hpp"
+#include "../genlib/stringutils.hpp"
 
 #include <fstream>
 

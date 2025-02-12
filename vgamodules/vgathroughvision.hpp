@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "ivga.h"
+#include "ivga.hpp"
 
-#include "../pointmap.h"
+#include "../pointmap.hpp"
 
 class VGAThroughVision : public IVGA {
   protected:

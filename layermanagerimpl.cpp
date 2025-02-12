@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "layermanagerimpl.h"
+#include "layermanagerimpl.hpp"
 
-#include "genlib/stringutils.h"
+#include "genlib/stringutils.hpp"
 
 LayerManagerImpl::LayerManagerImpl() : m_visibleLayers(1) {
     m_layers.push_back("Everything");

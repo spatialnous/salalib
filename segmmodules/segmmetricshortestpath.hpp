@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "../ianalysis.h"
-#include "../shapegraph.h"
+#include "../ianalysis.hpp"
+#include "../shapegraph.hpp"
 
 class SegmentMetricShortestPath : public IAnalysis {
   private:

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "regiontree.h"
+#include "regiontree.hpp"
 #include <cstdint>
 
 class Poly {

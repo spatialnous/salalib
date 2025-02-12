@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "dxfp.h"
+#include "dxfp.hpp"
 
-#include "../genlib/comm.h" // for communicator
-#include "../genlib/stringutils.h"
+#include "../genlib/comm.hpp" // for communicator
+#include "../genlib/stringutils.hpp"
 
 #include <algorithm>
 #include <fstream>

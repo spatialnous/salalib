@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "../genlib/stringutils.h"
-#include "../iaxial.h"
+#include "../genlib/stringutils.hpp"
+#include "../iaxial.hpp"
 
 class AxialIntegration : IAxial {
   private:

@@ -6,10 +6,10 @@
 
 // Interface to handle different kinds of Axial analysis
 
-#include "analysisresult.h"
-#include "shapegraph.h"
+#include "analysisresult.hpp"
+#include "shapegraph.hpp"
 
-#include "genlib/comm.h"
+#include "genlib/comm.hpp"
 
 #include <string>
 

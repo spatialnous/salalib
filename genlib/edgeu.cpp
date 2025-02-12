@@ -3,7 +3,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "edgeu.h"
+#include "edgeu.hpp"
 
 // TODO: Unused function
 // EdgeU is used for polygon clipping to viewports

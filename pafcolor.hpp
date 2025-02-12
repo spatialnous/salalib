@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "displayparams.h"
+#include "displayparams.hpp"
 
-#include "genlib/point2f.h"
+#include "genlib/point2f.hpp"
 
 #include <cstdint>
 

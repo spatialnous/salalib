@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "connector.h"
+#include "connector.hpp"
 
-#include "genlib/containerutils.h"
-#include "genlib/readwritehelpers.h"
+#include "genlib/containerutils.hpp"
+#include "genlib/readwritehelpers.hpp"
 
 #include <fstream>
 #include <time.h>

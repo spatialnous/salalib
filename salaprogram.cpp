@@ -20,11 +20,11 @@
 // User defined functions are not included yet, but should be fairly easy using
 // a global function stack alongside the global variable stack
 
-#include "salaprogram.h"
-#include "connector.h"
-#include "ngraph.h"
-#include "pointmap.h"
-#include "shapemap.h"
+#include "salaprogram.hpp"
+#include "connector.hpp"
+#include "ngraph.hpp"
+#include "pointmap.hpp"
+#include "shapemap.hpp"
 
 #include <cmath>
 #include <cstring>

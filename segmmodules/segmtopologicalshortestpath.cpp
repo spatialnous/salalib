@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "segmtopologicalshortestpath.h"
+#include "segmtopologicalshortestpath.hpp"
 
-#include "segmhelpers.h"
+#include "segmhelpers.hpp"
 
 AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
 

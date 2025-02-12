@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include "ivga.h"
+#include "ivga.hpp"
 
-#include "../isovist.h"
-#include "../pointmap.h"
+#include "../isovist.hpp"
+#include "../pointmap.hpp"
 
-#include "../genlib/bsptree.h"
+#include "../genlib/bsptree.hpp"
 
 class VGAIsovist : public IVGA {
     const std::vector<SalaShape> &m_boundaryShapes;

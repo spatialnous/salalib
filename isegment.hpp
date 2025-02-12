@@ -6,12 +6,12 @@
 
 // Interface to handle different kinds of VGA analysis
 
-#include "analysisresult.h"
-#include "radiustype.h"
-#include "shapegraph.h"
+#include "analysisresult.hpp"
+#include "radiustype.hpp"
+#include "shapegraph.hpp"
 
-#include "genlib/comm.h"
-#include "genlib/stringutils.h"
+#include "genlib/comm.hpp"
+#include "genlib/stringutils.hpp"
 
 #include <string>
 

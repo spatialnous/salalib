@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "../genlib/event2f.h"
+#include "../genlib/event2f.hpp"
 
 #include <string>
 #include <vector>

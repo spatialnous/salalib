@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "point2f.h"
+#include "point2f.hpp"
 
 class Point3f {
   public:

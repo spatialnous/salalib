@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "axialpolygons.h"
-#include "shapegraph.h"
+#include "axialpolygons.hpp"
+#include "shapegraph.hpp"
 
 struct ValueTriplet {
     int value1;

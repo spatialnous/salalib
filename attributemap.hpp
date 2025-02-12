@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "attributetable.h"
-#include "attributetableview.h"
-#include "layermanagerimpl.h"
-#include "spacepix.h"
+#include "attributetable.hpp"
+#include "attributetableview.hpp"
+#include "layermanagerimpl.hpp"
+#include "spacepix.hpp"
 
 class AttributeMap : public PixelBase {
 

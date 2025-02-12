@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "pafcolor.h" // <- sala actually includes vertex.h for us
+#include "pafcolor.hpp" // <- sala actually includes vertex.h for us
 
 #include <cmath>
 #include <float.h> // _finite support

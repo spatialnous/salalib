@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "ngraph.h"
-#include "pixelref.h"
+#include "ngraph.hpp"
+#include "pixelref.hpp"
 
-#include "genlib/line4f.h"
+#include "genlib/line4f.hpp"
 
 #include <map>
 #include <memory>

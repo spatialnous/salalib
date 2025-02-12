@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include "agentprogram.h"
+#include "agentprogram.hpp"
 
-#include "../pixelref.h"
-#include "../pointmap.h"
+#include "../pixelref.hpp"
+#include "../pointmap.hpp"
 
-#include "../genlib/pflipper.h"
+#include "../genlib/pflipper.hpp"
 
 class Agent {
   public:

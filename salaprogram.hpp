@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "attributetable.h"
+#include "attributetable.hpp"
 
-#include "genlib/stringutils.h"
+#include "genlib/stringutils.hpp"
 
 #include <cmath>
 #include <map>

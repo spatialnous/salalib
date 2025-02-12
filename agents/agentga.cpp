@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "agentga.h"
+#include "agentga.hpp"
 
-#include "../genlib/pafmath.h"
+#include "../genlib/pafmath.hpp"
 namespace {
     static int rankselect(int popsize) {
         auto num = static_cast<int>(pafmath::prandom() * popsize * (popsize + 1) * 0.5);

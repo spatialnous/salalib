@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "pafcolor.h"
-#include "pixelref.h"
+#include "pafcolor.hpp"
+#include "pixelref.hpp"
 
-#include "genlib/line4f.h"
-#include "genlib/simplematrix.h"
+#include "genlib/line4f.hpp"
+#include "genlib/simplematrix.hpp"
 
 #include <deque>
 #include <map>

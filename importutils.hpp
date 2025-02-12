@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "importtypedefs.h"
-#include "parsers/dxfp.h"
-#include "shapemap.h"
+#include "importtypedefs.hpp"
+#include "parsers/dxfp.hpp"
+#include "shapemap.hpp"
 
 #include <map>
 #include <vector>

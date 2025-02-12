@@ -6,8 +6,8 @@
 
 // Interface to handle different kinds of VGA analysis
 
-#include "../ianalysis.h"
-#include "../pointmap.h"
+#include "../ianalysis.hpp"
+#include "../pointmap.hpp"
 
 #include <numeric>
 #include <string>

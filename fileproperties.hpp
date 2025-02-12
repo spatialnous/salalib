@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "genlib/stringutils.h"
+#include "genlib/stringutils.hpp"
 
 class FileProperties {
   protected:

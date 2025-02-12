@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "salaedgeu.h"
+#include "salaedgeu.hpp"
 
-#include "genlib/line4f.h"
+#include "genlib/line4f.hpp"
 
 #include <cstdint>
 #include <istream>

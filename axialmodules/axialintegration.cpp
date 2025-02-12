@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "axialintegration.h"
+#include "axialintegration.hpp"
 
-#include "../genlib/pflipper.h"
+#include "../genlib/pflipper.hpp"
 
 std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> radii,
                                                               std::string weightingColName,

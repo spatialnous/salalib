@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "pushvalues.h"
+#include "pushvalues.hpp"
 
-#include "attributetable.h"
+#include "attributetable.hpp"
 
 void PushValues::pushValue(double &val, int &count, double thisval, Func pushFunc) {
     if (thisval != -1) {

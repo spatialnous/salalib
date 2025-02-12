@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "attributetable.h"
-#include "attributetableview.h"
-#include "mgraph_consts.h"
-#include "pafcolor.h"
+#include "attributetable.hpp"
+#include "attributetableview.hpp"
+#include "mgraph_consts.hpp"
+#include "pafcolor.hpp"
 
 #include <set>
 

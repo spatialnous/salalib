@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "ngraph.h"
+#include "ngraph.hpp"
 
-#include "pointmap.h"
+#include "pointmap.hpp"
 
-#include "genlib/containerutils.h"
-#include "genlib/readwritehelpers.h"
+#include "genlib/containerutils.hpp"
+#include "genlib/readwritehelpers.hpp"
 
 void Node::make(const PixelRef pix, PixelRefVector *bins, float *binFarDists, int qOctants) {
     m_pixel = pix;

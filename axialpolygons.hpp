@@ -5,11 +5,11 @@
 
 #pragma once
 
-#include "connector.h"
-#include "shapegraph.h"
-#include "spacepix.h"
+#include "connector.hpp"
+#include "shapegraph.hpp"
+#include "spacepix.hpp"
 
-#include "genlib/simplematrix.h"
+#include "genlib/simplematrix.hpp"
 
 struct AxialVertexKey {
     int refKey;

@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "mapinfodata.h"
+#include "mapinfodata.hpp"
 
-#include "../pointmap.h"
-#include "../shapemap.h"
+#include "../pointmap.hpp"
+#include "../shapemap.hpp"
 
-#include "../genlib/stringutils.h"
+#include "../genlib/stringutils.hpp"
 
 #include <numeric>
 

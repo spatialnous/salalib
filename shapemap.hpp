@@ -6,21 +6,21 @@
 
 #pragma once
 
-#include "attributemap.h"
-#include "attributetable.h"
-#include "attributetablehelpers.h"
-#include "attributetableview.h"
-#include "connector.h"
-#include "importtypedefs.h"
-#include "layermanagerimpl.h"
-#include "parsers/mapinfodata.h"
-#include "salaevent.h"
-#include "salashape.h"
-#include "shaperef.h"
-#include "spacepix.h"
+#include "attributemap.hpp"
+#include "attributetable.hpp"
+#include "attributetablehelpers.hpp"
+#include "attributetableview.hpp"
+#include "connector.hpp"
+#include "importtypedefs.hpp"
+#include "layermanagerimpl.hpp"
+#include "parsers/mapinfodata.hpp"
+#include "salaevent.hpp"
+#include "salashape.hpp"
+#include "shaperef.hpp"
+#include "spacepix.hpp"
 
-#include "genlib/containerutils.h"
-#include "genlib/simpleline.h"
+#include "genlib/containerutils.hpp"
+#include "genlib/simpleline.hpp"
 
 #include <map>
 #include <optional>

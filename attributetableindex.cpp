@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "attributetableindex.h"
+#include "attributetableindex.hpp"
 
 std::vector<ConstAttributeIndexItem> makeAttributeIndex(const AttributeTable &table, int colIndex) {
     std::vector<ConstAttributeIndexItem> index;

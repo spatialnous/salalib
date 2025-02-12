@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "ivgametric.h"
+#include "ivgametric.hpp"
 
-#include "../pointmap.h"
+#include "../pointmap.hpp"
 
 class VGAMetricDepth : public IVGAMetric {
 

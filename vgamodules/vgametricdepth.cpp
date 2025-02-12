@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vgametricdepth.h"
+#include "vgametricdepth.hpp"
 
 AnalysisResult VGAMetricDepth::run(Communicator *) {
 

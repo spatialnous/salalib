@@ -4,7 +4,7 @@
 
 // a collection of math functions
 
-#include "pafmath.h"
+#include "pafmath.hpp"
 
 #include <inttypes.h>
 

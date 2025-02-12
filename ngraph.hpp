@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "pixelref.h"
+#include "pixelref.hpp"
 
 #include <cstdint>
 #include <iostream>

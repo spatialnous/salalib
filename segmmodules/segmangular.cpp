@@ -4,7 +4,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "segmangular.h"
+#include "segmangular.hpp"
 
 AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
     AnalysisResult result;

@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "ivgametric.h"
+#include "ivgametric.hpp"
 
-#include "../pixelref.h"
-#include "../pointmap.h"
+#include "../pixelref.hpp"
+#include "../pointmap.hpp"
 
 class VGAMetricDepthLinkCost : public IVGAMetric {
 

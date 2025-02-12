@@ -10,7 +10,8 @@ target_sources(salalib
         mapinfodata.cpp
         tigerp.cpp
     PUBLIC
-        dxfp.h
-        ntfp.h
-        mapinfodata.h
-        tigerp.h)
+        dxfp.hpp
+        ntfp.hpp
+        mapinfodata.hpp
+        tigerp.hpp
+    )

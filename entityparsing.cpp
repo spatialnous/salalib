@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "entityparsing.h"
+#include "entityparsing.hpp"
 
-#include "genlib/stringutils.h"
+#include "genlib/stringutils.hpp"
 
 #include <algorithm>
 #include <cstdlib>

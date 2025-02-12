@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "ivgaangular.h"
+#include "ivgaangular.hpp"
 
-#include "../pointmap.h"
+#include "../pointmap.hpp"
 
 class VGAAngularDepth : public IVGAAngular {
 

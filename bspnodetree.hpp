@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "genlib/bsptree.h"
+#include "genlib/bsptree.hpp"
 
 class BSPNodeTree {
     BSPNode *m_root = nullptr;

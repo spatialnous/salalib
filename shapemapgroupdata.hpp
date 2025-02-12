@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "shapemap.h"
+#include "shapemap.hpp"
 
 #include <string>
 

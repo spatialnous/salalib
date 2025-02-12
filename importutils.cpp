@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "importutils.h"
+#include "importutils.hpp"
 
-#include "genlib/stringutils.h"
-#include "parsers/ntfp.h"
-#include "parsers/tigerp.h"
+#include "genlib/stringutils.hpp"
+#include "parsers/ntfp.hpp"
+#include "parsers/tigerp.hpp"
 
 #include <sstream>
 

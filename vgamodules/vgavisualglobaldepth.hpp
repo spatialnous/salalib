@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "ivgavisual.h"
+#include "ivgavisual.hpp"
 
-#include "../pixelref.h"
-#include "../pointmap.h"
+#include "../pixelref.hpp"
+#include "../pointmap.hpp"
 
 class VGAVisualGlobalDepth : public IVGAVisual {
 

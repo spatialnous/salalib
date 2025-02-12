@@ -4,17 +4,17 @@
 
 #pragma once
 
-#include "attributemap.h"
-#include "attributetable.h"
-#include "attributetableview.h"
-#include "layermanagerimpl.h"
-#include "point.h"
-#include "shapemap.h"
-#include "sparksieve2.h"
+#include "attributemap.hpp"
+#include "attributetable.hpp"
+#include "attributetableview.hpp"
+#include "layermanagerimpl.hpp"
+#include "point.hpp"
+#include "shapemap.hpp"
+#include "sparksieve2.hpp"
 
-#include "genlib/comm.h"
-#include "genlib/exceptions.h"
-#include "genlib/simplematrix.h"
+#include "genlib/comm.hpp"
+#include "genlib/exceptions.hpp"
+#include "genlib/simplematrix.hpp"
 
 #include <deque>
 #include <set>

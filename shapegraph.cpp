@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "shapegraph.h"
+#include "shapegraph.hpp"
 
-#include "axialpolygons.h"
-#include "parsers/mapinfodata.h"
-#include "tolerances.h"
+#include "axialpolygons.hpp"
+#include "parsers/mapinfodata.hpp"
+#include "tolerances.hpp"
 
-#include "genlib/comm.h" // For communicator
-#include "genlib/containerutils.h"
-#include "genlib/readwritehelpers.h"
+#include "genlib/comm.hpp" // For communicator
+#include "genlib/containerutils.hpp"
+#include "genlib/readwritehelpers.hpp"
 
 #include <cmath>
 #include <float.h>

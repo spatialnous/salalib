@@ -5,12 +5,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "mapconverter.h"
+#include "mapconverter.hpp"
 
-#include "tidylines.h"
+#include "tidylines.hpp"
 
-#include "genlib/exceptions.h"
-#include "genlib/stringutils.h"
+#include "genlib/exceptions.hpp"
+#include "genlib/stringutils.hpp"
 
 #include <numeric>
 

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "genlib/bsptree.h"
+#include "genlib/bsptree.hpp"
 
 #include <set>
 

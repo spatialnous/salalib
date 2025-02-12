@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "genlib/exceptions.h"
+#include "genlib/exceptions.hpp"
 
 #include <cstdint>
 #include <iostream>

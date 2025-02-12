@@ -3,8 +3,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "isovist.h"
-#include "salalib/tolerances.h"
+#include "isovist.hpp"
+#include "salalib/tolerances.hpp"
 
 #include <cmath>
 #include <float.h>

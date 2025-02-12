@@ -4,14 +4,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "metagraphreadwrite.h"
+#include "metagraphreadwrite.hpp"
 
-#include "alllinemap.h"
-#include "mgraph_consts.h"
-#include "shapemapgroupdata.h"
+#include "alllinemap.hpp"
+#include "mgraph_consts.hpp"
+#include "shapemapgroupdata.hpp"
 
-#include "genlib/readwritehelpers.h"
-#include "genlib/stringutils.h"
+#include "genlib/readwritehelpers.hpp"
+#include "genlib/stringutils.hpp"
 
 #include <fstream>
 

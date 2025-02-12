@@ -3,9 +3,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "axialminimiser.h"
+#include "axialminimiser.hpp"
 
-#include "tolerances.h"
+#include "tolerances.hpp"
 
 static int compareValueTriplet(const void *p1, const void *p2) {
     auto vp1 = static_cast<const ValueTriplet *>(p1);

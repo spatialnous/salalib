@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "line4f.h"
+#include "line4f.hpp"
 
 // plain 2-point line without regions
 struct SimpleLine {

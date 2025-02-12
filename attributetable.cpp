@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "attributetable.h"
+#include "attributetable.hpp"
 
-#include "displayparams.h"
+#include "displayparams.hpp"
 
-#include "genlib/readwritehelpers.h"
-#include "genlib/stringutils.h"
+#include "genlib/readwritehelpers.hpp"
+#include "genlib/stringutils.hpp"
 
 #include <numeric>
 #include <sstream>

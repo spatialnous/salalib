@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "shapegraph.h"
-#include "shapemap.h"
+#include "shapegraph.hpp"
+#include "shapemap.hpp"
 
-#include "genlib/comm.h"
+#include "genlib/comm.hpp"
 
 namespace MapConverter {
 

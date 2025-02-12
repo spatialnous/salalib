@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "region4f.h"
+#include "region4f.hpp"
 
 // Lines are stored left to right as regions,
 // the parity tells us whether the region should be inverted

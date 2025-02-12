@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "bspnodetree.h"
-#include "isovist.h"
-#include "shapemap.h"
+#include "bspnodetree.hpp"
+#include "isovist.hpp"
+#include "shapemap.hpp"
 
 namespace IsovistUtils {
 

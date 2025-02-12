@@ -4,12 +4,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "alllinemap.h"
+#include "alllinemap.hpp"
 
-#include "axialminimiser.h"
-#include "tolerances.h"
+#include "axialminimiser.hpp"
+#include "tolerances.hpp"
 
-#include "genlib/exceptions.h"
+#include "genlib/exceptions.hpp"
 
 #include <iomanip>
 #include <time.h>

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "salashape.h"
+#include "salashape.hpp"
 
 struct SalaEvent {
     enum { SALA_NULL_EVENT, SALA_CREATED, SALA_DELETED, SALA_MOVED };

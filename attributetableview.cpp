@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "attributetableview.h"
+#include "attributetableview.hpp"
 
 AttributeTableView::AttributeTableView(const AttributeTable &tableIn)
     : table(tableIn), m_displayColumn(-1) {}

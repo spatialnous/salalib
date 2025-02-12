@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "analysisresult.h"
+#include "analysisresult.hpp"
 
-#include "genlib/comm.h"
+#include "genlib/comm.hpp"
 
 #include <set>
 #include <string>

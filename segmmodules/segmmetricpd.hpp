@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "../isegment.h"
+#include "../isegment.hpp"
 
 class SegmentMetricPD : ISegment {
 

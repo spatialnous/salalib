@@ -6,11 +6,11 @@
 
 // spatial data
 
-#include "spacepix.h"
+#include "spacepix.hpp"
 
-#include "genlib/containerutils.h"
-#include "genlib/readwritehelpers.h"
-#include "genlib/stringutils.h"
+#include "genlib/containerutils.hpp"
+#include "genlib/readwritehelpers.hpp"
+#include "genlib/stringutils.hpp"
 
 #include <cmath>
 #include <float.h>

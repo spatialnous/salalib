@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "comm.h"
-#include "line4f.h"
+#include "comm.hpp"
+#include "line4f.hpp"
 
 #include <memory>
 

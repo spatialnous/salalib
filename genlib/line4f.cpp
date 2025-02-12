@@ -3,7 +3,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "line4f.h"
+#include "line4f.hpp"
 
 // line set up
 

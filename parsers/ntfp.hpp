@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "../genlib/comm.h"
-#include "../genlib/line4f.h"
+#include "../genlib/comm.hpp"
+#include "../genlib/line4f.hpp"
 
 #include <string>
 #include <vector>

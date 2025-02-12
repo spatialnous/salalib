@@ -6,7 +6,7 @@
 
 // Interface to handle different kinds of VGA analysis
 
-#include "ivga.h"
+#include "ivga.hpp"
 
 #include <numeric>
 #include <string>

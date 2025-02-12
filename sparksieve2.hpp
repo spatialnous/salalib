@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "genlib/line4f.h"
+#include "genlib/line4f.hpp"
 
 #include <cstdint>
 #include <float.h>

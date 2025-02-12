@@ -3,9 +3,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "tidylines.h"
+#include "tidylines.hpp"
 
-#include "tolerances.h"
+#include "tolerances.hpp"
 
 // helper -- a little class to tidy up a set of lines
 

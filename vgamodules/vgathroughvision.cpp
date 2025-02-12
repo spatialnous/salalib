@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vgathroughvision.h"
+#include "vgathroughvision.hpp"
 
-#include "../agents/agentanalysis.h"
+#include "../agents/agentanalysis.hpp"
 
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes

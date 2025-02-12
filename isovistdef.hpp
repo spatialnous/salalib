@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "genlib/point2f.h"
+#include "genlib/point2f.hpp"
 
 #include <cmath>
 

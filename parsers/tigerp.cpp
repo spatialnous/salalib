@@ -7,9 +7,9 @@
 
 // Quick Tiger line parser (type 1 records)
 
-#include "tigerp.h"
+#include "tigerp.hpp"
 
-#include "../genlib/comm.h"
+#include "../genlib/comm.hpp"
 
 #include <fstream>
 #include <iostream>

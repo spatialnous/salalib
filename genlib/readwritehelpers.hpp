@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "exceptions.h"
+#include "exceptions.hpp"
 
 #include <iostream>
 #include <map>

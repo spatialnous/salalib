@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "segmmetricpd.h"
+#include "segmmetricpd.hpp"
 
-#include "segmhelpers.h"
+#include "segmhelpers.hpp"
 
 AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
 

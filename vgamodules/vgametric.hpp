@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "ivgametric.h"
+#include "ivgametric.hpp"
 
-#include "../pointmap.h"
+#include "../pointmap.hpp"
 
-#include "../genlib/stringutils.h"
+#include "../genlib/stringutils.hpp"
 
 class VGAMetric : public IVGAMetric {
   private:

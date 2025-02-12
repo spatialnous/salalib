@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "vgaisovistzone.h"
+#include "vgaisovistzone.hpp"
 
-#include "../salaprogram.h"
+#include "../salaprogram.hpp"
 
 AnalysisResult VGAIsovistZone::run(Communicator *) {
 

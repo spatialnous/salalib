@@ -9,6 +9,7 @@ target_sources(salalib
         axiallocal.cpp
         axialstepdepth.cpp
     PUBLIC
-        axialintegration.h
-        axiallocal.h
-        axialstepdepth.h)
+        axialintegration.hpp
+        axiallocal.hpp
+        axialstepdepth.hpp
+    )

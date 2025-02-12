@@ -4,9 +4,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "agent.h"
+#include "agent.hpp"
 
-#include "agentanalysis.h"
+#include "agentanalysis.hpp"
 
 Agent::Agent(AgentProgram *program, PointMap *pointmap, int outputMode)
     : m_program(program), m_pointmap(pointmap), m_outputMode(outputMode), m_trailNum(-1) {}

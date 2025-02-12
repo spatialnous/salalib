@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "geometrygenerators.h"
+#include "geometrygenerators.hpp"
 
 std::vector<Point2f> GeometryGenerators::generateDiskTriangles(size_t sides, float radius,
                                                                Point2f position) {

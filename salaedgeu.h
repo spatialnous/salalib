@@ -13,6 +13,11 @@
 struct SalaEdgeU : public EdgeU {
     int index;
     bool entry; // or exit
+
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+#endif
+
     SalaEdgeU() : EdgeU(), index(-1), entry(false) {}
     SalaEdgeU(int i, bool e, const EdgeU &eu) : EdgeU(eu), index(i), entry(e) {}
 };

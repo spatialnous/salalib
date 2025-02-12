@@ -28,6 +28,10 @@ class IVGAAngular : public IVGATraversing {
         AnalysisData &ad;
         float angle;
         std::optional<PixelRef> lastPixel;
+#ifdef USE_EXPLICIT_PADDING
+        unsigned : 2 * 8; // padding
+        unsigned : 4 * 8; // padding
+#endif
         AngularSearchData(AnalysisData &p, float a = 0.0f,
                           std::optional<PixelRef> lp = std::nullopt)
             : ad(p), angle(a), lastPixel(lp) {}

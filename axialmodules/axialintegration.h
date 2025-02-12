@@ -16,6 +16,10 @@ class AxialIntegration : IAxial {
     bool m_choice;
     bool m_fulloutput;
     bool m_forceLegacyColumnOrder = false;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 1 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
 
   public:
     struct Normalisation {

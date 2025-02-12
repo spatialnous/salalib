@@ -111,6 +111,9 @@ inline int binsbetween(int bin1, int bin2) {
 struct wpair {
     double weight;
     int node;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
     wpair(double w = 0.0, int n = -1) : weight(w), node(n) {}
 };
 

@@ -15,7 +15,10 @@ class VGAVisualLocalOpenMP : public IAnalysis {
     PointMap &m_map;
     std::optional<int> m_limitToThreads;
     bool m_forceCommUpdatesMasterThread = false;
-
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
     struct DataPoint {
         float cluster, control, controllability;
     };

@@ -55,6 +55,10 @@ class Communicator {
   protected:
     mutable bool m_cancelled;
     bool m_deleteFlag;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 2 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
     // nb. converted to Win32 UTF-16 Unicode path (AT 31.01.11) Linux, MacOS use UTF-8 (AT 29.04.11)
     std::string m_infilename;
     std::ifstream *m_infile;

@@ -25,7 +25,9 @@ namespace depthmapX {
     class PointMapException : public depthmapX::RuntimeException {
       private:
         PointMapExceptionType m_errorType;
-
+#ifdef USE_EXPLICIT_PADDING
+        unsigned : 4 * 8; // padding
+#endif
       public:
         PointMapException(PointMapExceptionType errorType, std::string message)
             : depthmapX::RuntimeException(message), m_errorType(errorType) {}

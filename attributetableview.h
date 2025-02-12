@@ -30,6 +30,9 @@ class AttributeTableView {
   private:
     ConstIndex m_index;
     int m_displayColumn;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
 };
 
 class AttributeTableHandle : public AttributeTableView {

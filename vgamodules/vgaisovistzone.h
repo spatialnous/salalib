@@ -36,6 +36,10 @@ class VGAIsovistZone : public IAnalysis {
     std::map<std::string, std::set<PixelRef>> m_originPointSets;
     float m_restrictDistance;
 
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
+
     struct MetricPoint {
         Point *point = nullptr;
     };

@@ -17,7 +17,9 @@ struct BSPNode {
   private:
     Line4f m_line;
     int m_tag = -1;
-
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
   public:
     enum { BSPLEFT, BSPRIGHT };
     std::unique_ptr<BSPNode> left;

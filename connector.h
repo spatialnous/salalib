@@ -61,6 +61,9 @@ inline bool operator!=(SegmentData a, SegmentData b) { return a.metricdepth != b
 struct Connector {
     //  if this is a segment, this is the key for the axial line:
     int segmentAxialref;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
     // use one or other of these
     std::vector<size_t> connections;
     //

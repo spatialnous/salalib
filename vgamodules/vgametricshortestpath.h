@@ -16,6 +16,10 @@ class VGAMetricShortestPath : public IVGAMetric {
     std::set<PixelRef> m_pixelsFrom;
     PixelRef m_pixelTo;
 
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
+
   public:
     struct Column {
         inline static const std::string                                                    //

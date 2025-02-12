@@ -62,6 +62,10 @@ struct AnalysisResult {
 
 struct AppendableAnalysisResult : public AnalysisResult {
     bool firstRun = true;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
     void append(const AnalysisResult &other) {
         if (firstRun) {
             completed = other.completed;

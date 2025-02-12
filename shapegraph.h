@@ -21,6 +21,10 @@ struct AnalysisInfo {
     // lists used for multiple radius analysis
     bool leaf;
     bool choicecovered;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 2 * 8; // padding
+#endif
+
     SegmentRef previous;
     int depth;
     double choice;
@@ -51,6 +55,9 @@ class ShapeGraph : public ShapeMap {
   protected:
     KeyVertices m_keyvertices; // but still need to return keyvertices here
     int m_keyvertexcount;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
 
   public: // known columns
     struct Column {

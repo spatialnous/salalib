@@ -14,6 +14,10 @@
 struct xmlelement {
     std::string name;
     bool closetag;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
     std::map<std::string, std::string> attributes;
     std::vector<xmlelement> subelements;
     xmlelement() : closetag(false) {}

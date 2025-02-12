@@ -26,6 +26,9 @@ class ConstAttributeIndexItem {
     }
 
     AttributeKey key;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
     double value;
     const AttributeRow *row;
 };

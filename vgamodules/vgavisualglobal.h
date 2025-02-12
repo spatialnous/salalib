@@ -22,6 +22,11 @@ class VGAVisualGlobal : public IVGAVisual {
     // write the last "misc" values back to the points
     bool m_legacyWriteMiscs = false;
 
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 1 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
+
   public:
     struct Column {
         inline static const std::string                             //

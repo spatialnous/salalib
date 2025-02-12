@@ -35,6 +35,9 @@ inline bool isalpha_(char c) {
 
 struct SalaError {
     int lineno;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
     std::string message;
     SalaError(const std::string &m = std::string(), int li = -1) : lineno(li), message(m) {}
 };
@@ -82,6 +85,9 @@ struct SalaGrf {
         PointMap *point; // vga
         ShapeMap *shape; // everything else
     };
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
     Map map;
 
   public:
@@ -206,7 +212,9 @@ class SalaObj {
     };
     Data m_data{};
     Type m_type;
-
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
   public:
     SalaObj() : m_type(S_NONE) {}
     // Two usages: (a) used for brackets (=groups of things, hence the count) and commas
@@ -955,6 +963,9 @@ struct SalaBuffer {
 
 struct SalaFuncLabel {
     SalaObj::Func func;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
     std::string name;
     std::string desc;
     SalaFuncLabel(SalaObj::Func f = SalaObj::S_FNULL, const std::string &str = std::string(),
@@ -964,6 +975,9 @@ struct SalaFuncLabel {
 
 struct SalaMemberFuncLabel : public SalaFuncLabel {
     SalaObj::Type type;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
     SalaMemberFuncLabel(SalaObj::Type t = SalaObj::S_NONE, SalaObj::Func f = SalaObj::S_FNULL,
                         const std::string &str = std::string(),
                         const std::string &des = std::string())

@@ -297,7 +297,9 @@ class AttributeTable : public AttributeColumnManager {
     std::vector<AttributeColumnImpl> m_columns;
     KeyColumn m_keyColumn;
     DisplayParams m_displayParams;
-
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
   private:
     void checkColumnIndex(size_t index) const;
     size_t addColumnInternal(const std::string &name, const std::string &formula);

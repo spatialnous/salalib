@@ -17,6 +17,11 @@ class VGAMetric : public IVGAMetric {
     double m_radius;
     bool m_gatesOnly;
 
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
+
   public:
     struct Column {
         inline static const std::string                                                //

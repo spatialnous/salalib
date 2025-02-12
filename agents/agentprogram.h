@@ -53,7 +53,10 @@ struct AgentProgram {
     // simple long range destinations:
     bool destinationDirected;
     bool losSqrd;
-    //
+
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 2 * 8; // padding
+#endif
     // if it is going to evolved, then have it remember its fitness:
     double fitness;
     //

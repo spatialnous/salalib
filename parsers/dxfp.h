@@ -152,6 +152,10 @@ class DxfVertex : public DxfEntity {
 class DxfRegion {
   protected:
     bool m_first;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
     DxfVertex m_min;
     DxfVertex m_max;
 
@@ -243,6 +247,9 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
     enum { CLOSED = 1 }; // CLOSED = closed polygon
   protected:
     int m_attributes;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
     size_t m_vertexCount;
     std::vector<DxfVertex> m_vertices;
 
@@ -280,10 +287,12 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
 
 class DxfLwPolyLine : public DxfPolyLine {
     friend class DxfParser;
-    //
+
   protected:
     int m_expectedVertexCount;
-
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
   public:
     DxfLwPolyLine(int tag = -1);
     void clear(); // for reuse when parsing

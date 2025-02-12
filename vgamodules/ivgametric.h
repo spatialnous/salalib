@@ -41,6 +41,10 @@ class IVGAMetric : public IVGATraversing {
         AnalysisData &ad;
         float dist;
         std::optional<PixelRef> lastPixel;
+#ifdef USE_EXPLICIT_PADDING
+        unsigned : 2 * 8; // padding
+        unsigned : 4 * 8; // padding
+#endif
         MetricSearchData(AnalysisData &p, float d = 0.0f, std::optional<PixelRef> lp = std::nullopt)
             : ad(p), dist(d), lastPixel(lp) {}
         bool operator==(const MetricSearchData &mp2) const {

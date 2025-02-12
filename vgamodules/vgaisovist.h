@@ -16,7 +16,10 @@
 class VGAIsovist : public IVGA {
     const std::vector<SalaShape> &m_boundaryShapes;
     bool m_simpleVersion = false;
-
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 3 * 8; // padding
+    unsigned : 4 * 8; // padding
+#endif
   public:
     struct Column {
         inline static const std::string                          //

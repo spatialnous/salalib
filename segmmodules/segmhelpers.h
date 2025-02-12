@@ -27,5 +27,8 @@ struct TopoMetSegmentChoice {
 struct SegInfo {
     double length;
     int layer;
+#ifdef USE_EXPLICIT_PADDING
+    unsigned : 4 * 8; // padding
+#endif
     SegInfo() : length(0.0f), layer(0) {}
 };

@@ -348,6 +348,10 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
         const Line4f &line;
         Connector &connector;
         int index;
+#ifdef USE_EXPLICIT_PADDING
+        unsigned : 4 * 8; // padding
+#endif
+
         LineConnector(const Line4f &lineIn, Connector &connectorIn, int indexIn)
             : line(lineIn), connector(connectorIn), index(indexIn) {}
     };

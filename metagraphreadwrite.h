@@ -61,6 +61,7 @@ namespace MetaGraphReadWrite {
             bool showGrid = false, showText = false;
             bool displayedPointMapProcessed = false; // P.K: never written but read. Old files?
 #ifdef USE_EXPLICIT_PADDING
+            unsigned : 1 * 8; // padding
             unsigned : 4 * 8; // padding
 #endif
             std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap;

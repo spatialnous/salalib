@@ -51,6 +51,7 @@ class Agent {
     bool m_atDestination = false;
 
 #ifdef USE_EXPLICIT_PADDING
+    unsigned : 2 * 8; // padding
     unsigned : 4 * 8; // padding
 #endif
 

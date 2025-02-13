@@ -119,11 +119,19 @@ inline double angle(const PixelRef a, const PixelRef b, const PixelRef c) {
     if (c == NoPixel) {
         return 0.0;
     } else {
-        // n.b. 1e-12 required for floating point error
-        return acos(static_cast<double>((a.x - b.x) * (b.x - c.x) + (a.y - b.y) * (b.y - c.y)) /
-                    (sqrt(pafmath::sqr(a.x - b.x) + pafmath::sqr(a.y - b.y)) *
-                         sqrt(pafmath::sqr(b.x - c.x) + pafmath::sqr(b.y - c.y)) +
-                     1e-12));
+        long double ax = a.x;
+        long double ay = a.y;
+        long double bx = b.x;
+        long double by = b.y;
+        long double cx = c.x;
+        long double cy = c.y;
+        auto axbx = ax - bx;
+        auto bxcx = bx - cx;
+        auto ayby = ay - by;
+        auto bycy = by - cy;
+        return static_cast<double>(
+            acosl(axbx * bxcx + ayby * bycy) /
+            (sqrtl(axbx * axbx + ayby * ayby) * sqrtl(bxcx * bxcx + bycy * bycy)));
     }
 }
 

@@ -537,7 +537,7 @@ void PointMap::outputSummary(std::ostream &myout, char delimiter) {
         myout << delimiter << m_attributes->getColumnName(idx);
     }
 
-    myout << std::endl;
+    myout << std::fixed << std::endl;
     myout.precision(8);
 
     for (auto iter = m_attributes->begin(); iter != m_attributes->end(); iter++) {

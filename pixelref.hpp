@@ -129,10 +129,9 @@ inline double angle(const PixelRef a, const PixelRef b, const PixelRef c) {
         auto bxcx = bx - cx;
         auto ayby = ay - by;
         auto bycy = by - cy;
-        // n.b. 1e-12 required for floating point error
         return static_cast<double>(
-            acosl((axbx * bxcx + ayby * bycy) /
-                  (sqrtl(axbx * axbx + ayby * ayby) * sqrtl(bxcx * bxcx + bycy * bycy) + 1e-12)));
+            acosl(axbx * bxcx + ayby * bycy) /
+            (sqrtl(axbx * axbx + ayby * ayby) * sqrtl(bxcx * bxcx + bycy * bycy)));
     }
 }
 

@@ -23,12 +23,11 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 
-PointMap::PointMap(const Region4f &parentRegion, const std::string &name)
+PointMap::PointMap(Region4f region, const std::string &name)
     : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())), m_name(name),
-      m_parentRegion(&parentRegion), m_points(0, 0), m_spacing(0.0), m_filledPointCount(0),
-      m_undocounter(0), m_initialised(false), m_blockedlines(false), m_processed(false),
-      m_boundarygraph(false) {
-
+      m_points(0, 0), m_spacing(0.0), m_filledPointCount(0), m_undocounter(0), m_initialised(false),
+      m_blockedlines(false), m_processed(false), m_boundarygraph(false) {
+    m_region = region;
     m_cols = 0;
     m_rows = 0;
 }
@@ -36,7 +35,6 @@ PointMap::PointMap(const Region4f &parentRegion, const std::string &name)
 void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattributes) {
     m_name = sourcemap.getName();
     m_region = sourcemap.getRegion();
-    m_parentRegion = sourcemap.m_parentRegion;
 
     m_cols = sourcemap.getCols();
     m_rows = sourcemap.getRows();
@@ -101,8 +99,8 @@ void PointMap::communicate(time_t &atime, Communicator *comm, size_t record) {
 bool PointMap::setGrid(double spacing, const Point2f &offset) {
     m_spacing = spacing;
     // note, the internal offset is the offset from the bottom left
-    double xoffset = fmod(m_parentRegion->bottomLeft.x + offset.x, m_spacing);
-    double yoffset = fmod(m_parentRegion->bottomLeft.y + offset.y, m_spacing);
+    double xoffset = fmod(m_region.bottomLeft.x + offset.x, m_spacing);
+    double yoffset = fmod(m_region.bottomLeft.y + offset.y, m_spacing);
     if (xoffset < m_spacing / 2.0)
         xoffset += m_spacing;
     if (xoffset > m_spacing / 2.0)
@@ -121,11 +119,10 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
                        // this you can't undo
 
     // A grid at the required spacing:
-    m_cols = static_cast<size_t>(floor((xoffset + m_parentRegion->width()) / m_spacing + 0.5) + 1);
-    m_rows = static_cast<size_t>(floor((yoffset + m_parentRegion->height()) / m_spacing + 0.5) + 1);
+    m_cols = static_cast<size_t>(floor((xoffset + m_region.width()) / m_spacing + 0.5) + 1);
+    m_rows = static_cast<size_t>(floor((yoffset + m_region.height()) / m_spacing + 0.5) + 1);
 
-    m_bottomLeft = Point2f(m_parentRegion->bottomLeft.x + m_offset.x,
-                           m_parentRegion->bottomLeft.y + m_offset.y);
+    m_bottomLeft = Point2f(m_region.bottomLeft.x + m_offset.x, m_region.bottomLeft.y + m_offset.y);
 
     m_region = Region4f(
         Point2f(m_bottomLeft.x - m_spacing / 2.0, m_bottomLeft.y - m_spacing / 2.0),

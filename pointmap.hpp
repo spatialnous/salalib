@@ -55,7 +55,6 @@ class PointMap : public AttributeMap {
 
   protected: // members
     std::string m_name;
-    const Region4f *m_parentRegion;
     depthmapX::ColumnMatrix<Point> m_points; // will contain the graph reference when created
     std::vector<PixelRefPair> m_mergeLines;
     double m_spacing;
@@ -80,7 +79,7 @@ class PointMap : public AttributeMap {
     };
 
   public: // ctors
-    PointMap(const Region4f &parentRegion, const std::string &name = std::string("VGA Map"));
+    PointMap(Region4f region, const std::string &name = std::string("VGA Map"));
     ~PointMap() override {}
     void copy(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
     const std::string &getName() const { return m_name; }
@@ -90,11 +89,12 @@ class PointMap : public AttributeMap {
     PointMap(PointMap &&other)
         : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
                        std::move(other.m_layers)),
-          m_parentRegion(std::move(other.m_parentRegion)), m_points(std::move(other.m_points)) {
+          m_points(std::move(other.m_points)) {
+        m_region = std::move(other.m_region);
         copy(other);
     }
     PointMap &operator=(PointMap &&other) {
-        m_parentRegion = std::move(other.m_parentRegion);
+        m_region = std::move(other.m_region);
         m_points = std::move(other.m_points);
         m_attributes = std::move(other.m_attributes);
         m_attribHandle = std::move(other.m_attribHandle);

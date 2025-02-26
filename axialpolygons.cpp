@@ -495,6 +495,10 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                 if (winner == -1) {
                     // this happens when you follow a false trail -- go back the way you
                     // came!
+                    if (wayback < 0) {
+                        throw new depthmapX::RuntimeException(
+                            "Error traversing when making polygons");
+                    }
                     winner = wayback;
                 }
                 newHandledList[static_cast<size_t>(

@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "bsptree.hpp"
+#include "salalib/genlib/exceptions.hpp"
 
 #include <stack>
 
@@ -121,6 +122,9 @@ BSPTree::makeLines(Communicator *, time_t, const std::vector<Line4f> &lines, BSP
     int chosen = -1;
     if (lines.size() > 3) {
         chosen = BSPTree::pickMidpointLine(lines, base->parent);
+        if (chosen < 0) {
+            throw new depthmapX::RuntimeException("Error, failed to pick midpoint line");
+        }
     } else {
         // TODO: This was originally `chosen = pafrand() % lines.size();`, but was making the
         // isovists non-reproducible. Just pick the first line for the moment. Figure out later

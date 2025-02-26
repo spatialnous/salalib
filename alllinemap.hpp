@@ -28,7 +28,7 @@ namespace AllLine {
                   Region4f &region, const Point2f &seed);
     ShapeGraph createAllLineMap(const std::string &name = "All-Line Map");
     std::tuple<ShapeGraph, ShapeGraph> extractFewestLineMaps(Communicator *comm, ShapeGraph &map,
-                                                             MapData &mapData);
+                                                             MapData &mapData, unsigned int seed);
     void makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &polyconnections,
                        const std::vector<RadialLine> &radiallines,
                        std::map<RadialKey, std::set<int>> &radialdivisions,

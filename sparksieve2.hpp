@@ -20,11 +20,14 @@ class sparkSieve2 {
         double start;
         double end;
         bool remove;
-#ifdef USE_EXPLICIT_PADDING
-        unsigned : 3 * 8; // padding
-        unsigned : 4 * 8; // padding
-#endif
-        sparkZone2(double s = 0.0, double e = 0.0) : start(s), end(e), remove(false) {}
+
+      private:
+        [[maybe_unused]] unsigned _padding0 : 3 * 8;
+        [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
+      public:
+        sparkZone2(double s = 0.0, double e = 0.0)
+            : start(s), end(e), remove(false), _padding0(0), _padding1(0) {}
         // to allow ordered lists:
         friend bool operator==(const sparkZone2 &a, const sparkZone2 &b);
         friend bool operator!=(const sparkZone2 &a, const sparkZone2 &b);

@@ -35,9 +35,11 @@ inline bool isalpha_(char c) {
 
 struct SalaError {
     int lineno;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  public:
     std::string message;
     SalaError(const std::string &m = std::string(), int li = -1) : lineno(li), message(m) {}
 };
@@ -85,12 +87,13 @@ struct SalaGrf {
         PointMap *point; // vga
         ShapeMap *shape; // everything else
     };
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
-    Map map;
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
   public:
+    Map map;
+
     SalaGrf() : map() {}
 };
 
@@ -212,9 +215,10 @@ class SalaObj {
     };
     Data m_data{};
     Type m_type;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
   public:
     SalaObj() : m_type(S_NONE) {}
     // Two usages: (a) used for brackets (=groups of things, hence the count) and commas
@@ -341,9 +345,11 @@ class SalaCommand {
     std::vector<SalaObj> m_funcStack;
     //
     SalaObj m_forIter; // object used in a for loop
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  protected:
     // useful for debugging to know which line this command starts on
     int m_line;
     // occassionally useful in debugging if the user does something unsyntactical
@@ -379,9 +385,9 @@ class SalaProgram {
     //
     bool m_marked; // this is used to tell the program that a node has been "marked" -- all marks
                    // are cleared at the end of the execution
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 3 * 8; // padding
-#endif
+
+    [[maybe_unused]] unsigned _padding0 : 3 * 8;
+
     // m_thisobj stores contextual information (which attribute table, node etc)
     // NB ! -- this can be messed with by SalaCommand!
     SalaObj m_thisobj;
@@ -969,9 +975,11 @@ struct SalaBuffer {
 
 struct SalaFuncLabel {
     SalaObj::Func func;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  public:
     std::string name;
     std::string desc;
     SalaFuncLabel(SalaObj::Func f = SalaObj::S_FNULL, const std::string &str = std::string(),
@@ -981,9 +989,11 @@ struct SalaFuncLabel {
 
 struct SalaMemberFuncLabel : public SalaFuncLabel {
     SalaObj::Type type;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  public:
     SalaMemberFuncLabel(SalaObj::Type t = SalaObj::S_NONE, SalaObj::Func f = SalaObj::S_FNULL,
                         const std::string &str = std::string(),
                         const std::string &des = std::string())

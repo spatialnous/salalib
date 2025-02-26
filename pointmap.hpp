@@ -25,9 +25,9 @@ namespace depthmapX {
     class PointMapException : public depthmapX::RuntimeException {
       private:
         PointMapExceptionType m_errorType;
-#ifdef USE_EXPLICIT_PADDING
-        unsigned : 4 * 8; // padding
-#endif
+
+        [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
       public:
         PointMapException(PointMapExceptionType errorType, std::string message)
             : depthmapX::RuntimeException(message), m_errorType(errorType) {}
@@ -67,9 +67,10 @@ class PointMap : public AttributeMap {
     bool m_blockedlines;
     bool m_processed;
     bool m_boundarygraph;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
   public: // known columns
     struct Column {
         inline static const std::string                  //

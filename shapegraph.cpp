@@ -348,12 +348,13 @@ void ShapeGraph::makeNewSegMap(Communicator *comm) {
         const Line4f &line;
         Connector &connector;
         int index;
-#ifdef USE_EXPLICIT_PADDING
-        unsigned : 4 * 8; // padding
-#endif
 
+      private:
+        [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+      public:
         LineConnector(const Line4f &lineIn, Connector &connectorIn, int indexIn)
-            : line(lineIn), connector(connectorIn), index(indexIn) {}
+            : line(lineIn), connector(connectorIn), index(indexIn), _padding0(0) {}
     };
 
     std::vector<Connector> connectionset;

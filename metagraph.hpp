@@ -21,9 +21,11 @@ struct MetaGraph {
     std::string name = "";
     FileProperties fileProperties;
     int version = -1;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  public:
     MetaGraph(std::string nameIn = "") : name(nameIn), version(-1) {
 
         // <- if unsaved, file version is -1

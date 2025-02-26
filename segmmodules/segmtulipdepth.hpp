@@ -11,9 +11,8 @@
 class SegmentTulipDepth : ISegment {
     std::set<int> &m_originRefs;
     int m_tulipBins = 1024;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
   public:
     struct Column {

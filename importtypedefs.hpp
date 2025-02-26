@@ -18,10 +18,12 @@ namespace depthmapX {
       public:
         std::vector<Point2f> vertices;
         bool closed = false;
-#ifdef USE_EXPLICIT_PADDING
-        unsigned : 3 * 8; // padding
-        unsigned : 4 * 8; // padding
-#endif
+
+      private:
+        [[maybe_unused]] unsigned _padding0 : 3 * 8;
+        [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
+      public:
         Polyline(std::vector<Point2f> verticesIn, bool isClosed)
             : vertices(verticesIn), closed(isClosed) {}
     };

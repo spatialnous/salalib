@@ -47,9 +47,11 @@ struct AxialVertex : public AxialVertexKey {
     bool convex;
     bool initialised;
     bool axial;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  public:
     AxialVertex(const AxialVertexKey &vertexKey = NoVertex, const Point2f &p = Point2f(),
                 const Point2f &opsp = Point2f())
         : AxialVertexKey(vertexKey), point(p), openspace(opsp), initialised(false), axial(false) {}

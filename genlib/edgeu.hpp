@@ -9,11 +9,13 @@
 
 struct EdgeU {
     int edge;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  public:
     double u;
-    EdgeU(int e = -1, double nu = 0.0) : edge(e), u(nu) {}
-    EdgeU(const EdgeU &eu) : edge(eu.edge), u(eu.u) {}
+    EdgeU(int e = -1, double nu = 0.0) : edge(e), _padding0(0), u(nu) {}
+    EdgeU(const EdgeU &eu) : edge(eu.edge), _padding0(0), u(eu.u) {}
     bool ccwEdgeU(const EdgeU &b, const EdgeU &c) const;
 };

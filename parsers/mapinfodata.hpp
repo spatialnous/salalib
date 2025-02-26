@@ -36,10 +36,8 @@ class MapInfoData {
     char m_delimiter;
 
   private:
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 3 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+    [[maybe_unused]] unsigned _padding0 : 3 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
     //
     // no longer use columnheads and table
     // -- where possible, added directly to the data

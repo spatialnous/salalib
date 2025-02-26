@@ -54,9 +54,10 @@ struct AgentProgram {
     bool destinationDirected;
     bool losSqrd;
 
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 2 * 8; // padding
-#endif
+  private:
+    [[maybe_unused]] unsigned : 2 * 8;
+
+  public:
     // if it is going to evolved, then have it remember its fitness:
     double fitness;
     //

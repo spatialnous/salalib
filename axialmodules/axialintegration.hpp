@@ -10,16 +10,14 @@
 #include "../iaxial.hpp"
 
 class AxialIntegration : IAxial {
-  private:
     std::set<double> m_radiusSet;
     std::optional<size_t> m_weightedMeasureCol;
     bool m_choice;
     bool m_fulloutput;
     bool m_forceLegacyColumnOrder = false;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 1 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+
+    [[maybe_unused]] unsigned _padding0 : 1 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
   public:
     struct Normalisation {

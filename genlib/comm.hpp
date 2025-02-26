@@ -55,10 +55,12 @@ class Communicator {
   protected:
     mutable bool m_cancelled;
     bool m_deleteFlag;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 2 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 2 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
+  protected:
     // nb. converted to Win32 UTF-16 Unicode path (AT 31.01.11) Linux, MacOS use UTF-8 (AT 29.04.11)
     std::string m_infilename;
     std::ifstream *m_infile;
@@ -66,6 +68,7 @@ class Communicator {
     std::ofstream *m_outfile;
     // nb. converted to Win32 UTF-16 Unicode path (AT 31.01.11) Linux, MacOS use UTF-8 (AT 29.04.11)
     std::vector<std::string> m_fileset; // <- sometimes you want to load a whole set of files
+
   public:
     Communicator()
         : m_cancelled(false), m_deleteFlag(false), m_infile(nullptr), m_infile2(nullptr),

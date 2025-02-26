@@ -12,13 +12,10 @@
 #include "ivgametric.hpp"
 
 class VGAMetricShortestPath : public IVGAMetric {
-  private:
     std::set<PixelRef> m_pixelsFrom;
     PixelRef m_pixelTo;
 
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
   public:
     struct Column {

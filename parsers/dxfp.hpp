@@ -51,10 +51,10 @@ class DxfToken {
     std::string data;
     int code;
 
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
+  public:
     DxfToken();
     friend std::istream &operator>>(std::istream &stream, DxfToken &token);
 };
@@ -94,9 +94,10 @@ class DxfEntity {
     DxfLineType *m_pLineType = nullptr;
     DxfLayer *m_pLayer = nullptr;
     int m_tag;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
   public:
     DxfEntity(int tag = -1);
     void clear(); // for reuse when parsing
@@ -158,10 +159,12 @@ class DxfVertex : public DxfEntity {
 class DxfRegion {
   protected:
     bool m_first;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 3 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 3 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
+  protected:
     DxfVertex m_min;
     DxfVertex m_max;
 
@@ -253,9 +256,11 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
     enum { CLOSED = 1 }; // CLOSED = closed polygon
   protected:
     int m_attributes;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  protected:
     size_t m_vertexCount;
     std::vector<DxfVertex> m_vertices;
 
@@ -296,9 +301,10 @@ class DxfLwPolyLine : public DxfPolyLine {
 
   protected:
     int m_expectedVertexCount;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
   public:
     DxfLwPolyLine(int tag = -1);
     void clear(); // for reuse when parsing

@@ -13,14 +13,11 @@
 #include "../genlib/stringutils.hpp"
 
 class VGAMetric : public IVGAMetric {
-  private:
     double m_radius;
     bool m_gatesOnly;
 
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 3 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+    [[maybe_unused]] unsigned _padding0 : 3 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
   public:
     struct Column {

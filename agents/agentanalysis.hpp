@@ -31,9 +31,9 @@ class AgentAnalysis : public IAnalysis {
     size_t m_agentLifetime = 5000;
     int m_agentAlgorithm = AgentProgram::SEL_STANDARD;
     unsigned short m_agentFOV = 15;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 2 * 8; // padding
-#endif
+
+    [[maybe_unused]] unsigned : 2 * 8; // padding
+
     size_t m_agentStepsToDecision = 3;
     std::optional<size_t> m_randomReleaseLocationsSeed = 0;
     const std::vector<Point2f> &m_specificReleasePoints;

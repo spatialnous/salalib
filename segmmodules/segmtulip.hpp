@@ -20,9 +20,8 @@ class SegmentTulip : ISegment {
     bool m_choice;
     bool m_interactive;
     bool m_forceLegacyColumnOrder = false;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 1 * 8; // padding
-#endif
+
+    [[maybe_unused]] unsigned _padding0 : 1 * 8;
 
   public:
     struct Column {

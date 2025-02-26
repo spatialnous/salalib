@@ -47,10 +47,12 @@ class Bin {
 
   public:
     int8_t dir;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 1 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 1 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
+  public:
     std::vector<PixelVec> pixelVecs;
     Bin() : m_distance(0.0f), m_occDistance(0.0f), m_nodeCount(0), dir(PixelRef::NODIR) {}
 

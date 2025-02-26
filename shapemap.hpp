@@ -84,10 +84,10 @@ class ShapeMap : public AttributeMap {
     bool m_hasMapInfoData = false;
 
     bool m_hasgraph = false;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 2 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 2 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
   public:
     void moveData(ShapeMap &other) {

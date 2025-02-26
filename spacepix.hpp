@@ -50,10 +50,13 @@ class PixelBase {
 struct LineTest {
     Line4f line;
     unsigned int test;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
-    LineTest(const Line4f &l = Line4f(), int t = -1) : line(l), test(static_cast<unsigned int>(t)) {
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  public:
+    LineTest(const Line4f &l = Line4f(), int t = -1)
+        : line(l), test(static_cast<unsigned int>(t)), _padding0(0) {
 
         // TODO: Shouldn't be casting an int with a known
         // default value of -1
@@ -65,9 +68,11 @@ struct LineKey {
     unsigned int file : 4;
     unsigned int layer : 6;
     unsigned int lineref : 20;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned char : 2; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned char _padding0 : 2;
+
+  public:
     operator int() { return *reinterpret_cast<int *>(this); }
     LineKey(int value = 0) { *reinterpret_cast<int *>(this) = value; }
     friend bool operator<(LineKey a, LineKey b);

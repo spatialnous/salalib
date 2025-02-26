@@ -28,13 +28,15 @@ class IVGAAngular : public IVGATraversing {
         AnalysisData &ad;
         float angle;
         std::optional<PixelRef> lastPixel;
-#ifdef USE_EXPLICIT_PADDING
-        unsigned : 2 * 8; // padding
-        unsigned : 4 * 8; // padding
-#endif
+
+      private:
+        [[maybe_unused]] unsigned _padding0 : 2 * 8;
+        [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
+      public:
         AngularSearchData(AnalysisData &p, float a = 0.0f,
                           std::optional<PixelRef> lp = std::nullopt)
-            : ad(p), angle(a), lastPixel(lp) {}
+            : ad(p), angle(a), lastPixel(lp), _padding0(0), _padding1(0) {}
         bool operator==(const AngularSearchData &mp2) const {
             return (angle == mp2.angle && ad.ref == mp2.ad.ref);
         }

@@ -60,9 +60,10 @@ class Point {
     mutable float dummyCumangle;
     // used to speed up graph analysis (not sure whether or not it breaks it!)
     mutable PixelRef dummyExtent;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
   protected:
     std::unique_ptr<Node> m_node; // graph links
     Point2f m_location; // note: this is large, but it helps allow loading of non-standard grid
@@ -80,9 +81,9 @@ class Point {
     int m_state;
     int8_t m_gridConnections; // this is a standard set of grid connections, with bits set for
                               // E,NE,N,NW,W,SW,S,SE
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 3 * 8; // padding
-#endif
+  private:
+    [[maybe_unused]] unsigned _padding1 : 3 * 8;
+
   public:
     Point()
         : m_node(nullptr), m_merge(NoPixel), m_processflag(0), m_block(0), m_state(EMPTY),

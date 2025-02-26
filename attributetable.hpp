@@ -138,9 +138,9 @@ class AttributeColumnImpl : public AttributeColumn, AttributeColumnStats {
     DisplayParams m_displayParams;
     bool m_locked;
     bool m_hidden;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 2 * 8; // padding
-#endif
+
+    [[maybe_unused]] unsigned _padding0 : 2 * 8;
+
     std::string m_formula;
 };
 
@@ -300,9 +300,9 @@ class AttributeTable : public AttributeColumnManager {
     std::vector<AttributeColumnImpl> m_columns;
     KeyColumn m_keyColumn;
     DisplayParams m_displayParams;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
   private:
     void checkColumnIndex(size_t index) const;
     size_t addColumnInternal(const std::string &name, const std::string &formula);
@@ -329,7 +329,7 @@ class AttributeTable : public AttributeColumnManager {
     // iterator
     template <typename iterator_type> class iterator_item_impl : public iterator_item {
       public:
-        iterator_item_impl(const iterator_type &iter_tp) : iter(iter_tp) {}
+        iterator_item_impl(const iterator_type &iterTp) : iter(iterTp) {}
         template <typename other_type>
         iterator_item_impl(const iterator_item_impl<other_type> &other) : iter(other.iter) {}
 

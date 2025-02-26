@@ -11,9 +11,8 @@ template <class T> class pflipper {
     T m_contents[2];
     short m_parity;
 
-#ifdef USE_EXPLICIT_PADDING
-    std::byte _padding[8 - ((sizeof(T) * 2) + 2) % 8]; // padding
-#endif
+  private:
+    [[maybe_unused]] std::byte _padding0[8 - ((sizeof(T) * 2) + 2) % 8];
 
   public:
     pflipper() : m_parity(0) {}

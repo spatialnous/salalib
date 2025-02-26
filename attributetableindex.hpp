@@ -11,10 +11,10 @@
 class ConstAttributeIndexItem {
   public:
     ConstAttributeIndexItem(const AttributeKey &k, double v, const AttributeRow &r)
-        : key(k), value(v), row(&r) {}
+        : key(k), _padding0(0), value(v), row(&r) {}
 
     ConstAttributeIndexItem(const ConstAttributeIndexItem &other)
-        : key(other.key), value(other.value), row(other.row) {}
+        : key(other.key), _padding0(0), value(other.value), row(other.row) {}
     ConstAttributeIndexItem &operator=(const ConstAttributeIndexItem &other) {
         if (this == &other) {
             return *this;
@@ -26,9 +26,11 @@ class ConstAttributeIndexItem {
     }
 
     AttributeKey key;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8; // padding
+
+  public:
     double value;
     const AttributeRow *row;
 };

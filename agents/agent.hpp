@@ -50,10 +50,9 @@ class Agent {
     // a long term goal:
     bool m_atDestination = false;
 
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 2 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+  private:
+    [[maybe_unused]] unsigned : 2 * 8;
+    [[maybe_unused]] unsigned : 4 * 8;
 
     // for occlusion memory
     pflipper<PixelRefVector> m_occMemory;
@@ -115,9 +114,11 @@ inline int binsbetween(int bin1, int bin2) {
 struct wpair {
     double weight;
     int node;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned : 4 * 8;
+
+  public:
     wpair(double w = 0.0, int n = -1) : weight(w), node(n) {}
 };
 

@@ -13,11 +13,13 @@ struct TopoMetSegmentRef {
     int dir;
     int previous;
     bool done;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 3 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 3 * 8;
+
+  public:
     TopoMetSegmentRef(int r = -1, int d = -1, double di = 0.0, int p = -1)
-        : dist(di), ref(r), dir(d), previous(p), done(false) {}
+        : dist(di), ref(r), dir(d), previous(p), done(false), _padding0(0) {}
 };
 
 // should be double not float!
@@ -31,8 +33,10 @@ struct TopoMetSegmentChoice {
 struct SegInfo {
     double length;
     int layer;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+  public:
     SegInfo() : length(0.0f), layer(0) {}
 };

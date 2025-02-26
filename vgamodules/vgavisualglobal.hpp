@@ -13,7 +13,6 @@
 #include "../genlib/stringutils.hpp"
 
 class VGAVisualGlobal : public IVGAVisual {
-  private:
     double m_radius;
     bool m_gatesOnly;
     bool m_simpleVersion = false;
@@ -22,10 +21,8 @@ class VGAVisualGlobal : public IVGAVisual {
     // write the last "misc" values back to the points
     bool m_legacyWriteMiscs = false;
 
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 1 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+    [[maybe_unused]] unsigned _padding0 : 1 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
   public:
     struct Column {

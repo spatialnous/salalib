@@ -33,10 +33,11 @@ class TigerMap {
   protected:
     Region4f m_region;
     bool m_init;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 3 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 3 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
   public:
     std::map<std::string, TigerCategory> categories;
     TigerMap() : m_init(false) {}

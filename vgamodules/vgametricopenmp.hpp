@@ -11,7 +11,6 @@
 #include "ivgametric.hpp"
 
 class VGAMetricOpenMP : public IVGAMetric {
-  private:
     double m_radius;
 
     std::optional<int> m_limitToThreads;
@@ -23,10 +22,8 @@ class VGAMetricOpenMP : public IVGAMetric {
     // write the last "misc" values back to the points
     bool m_legacyWriteMiscs = false;
 
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 1 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+    [[maybe_unused]] unsigned _padding0 : 1 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
     struct DataPoint {
         float mspa, mspl, dist, count;

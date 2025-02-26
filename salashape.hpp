@@ -30,10 +30,12 @@ class SalaShape {
 
   protected:
     uint8_t m_type;
-#ifdef USE_EXPLICIT_PADDING
-    unsigned : 3 * 8; // padding
-    unsigned : 4 * 8; // padding
-#endif
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 3 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
+  protected:
     Point2f m_centroid; // centre of mass, but also used as for point if object is a point
     Line4f m_region;    // bounding box, but also used as a line if object is a line, hence type
     double m_area;

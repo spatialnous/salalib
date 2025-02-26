@@ -615,7 +615,7 @@ bool DxfTableRow::parse(const DxfToken &token, DxfParser *) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfEntity::DxfEntity(int tag) : m_tag(tag) {}
+DxfEntity::DxfEntity(int tag) : m_tag(tag), _padding0(0) {}
 
 void DxfEntity::clear() { m_tag = -1; }
 

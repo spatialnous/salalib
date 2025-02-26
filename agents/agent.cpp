@@ -365,12 +365,19 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
         if (choices == 0) {
             if (!wholeisovist) {
                 return onStandardLook(false);
-            } else {
-                m_stuck = true;
-                m_targetPix = m_node;
-                m_target = m_loc;
-                return Point2f(0, 0);
             }
+            // Originally here the agents could be put to the
+            // stuck state, however at a point it was decided
+            // that it should instead revert to the Standard
+            // look. With an earlier check for wholeisovist this
+            // check will never be entered, but left here for
+            // reference
+            // else {
+            //     m_stuck = true;
+            //     m_targetPix = m_node;
+            //     m_target = m_loc;
+            //     return Point2f(0, 0);
+            // }
         } else {
             size_t chosen = pafmath::pafrand() % static_cast<unsigned int>(choices);
             for (; chosen >= node.occlusionBins[directionbin % 32].size(); directionbin++) {
@@ -433,11 +440,18 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
         if (weightmap.size() == 0) {
             if (!wholeisovist) {
                 return onStandardLook(false);
-            } else {
-                m_stuck = true;
-                m_target = m_loc;
-                return Point2f(0, 0);
             }
+            // Originally here the agents could be put to the
+            // stuck state, however at a point it was decided
+            // that it should instead revert to the Standard
+            // look. With an earlier check for wholeisovist this
+            // check will never be entered, but left here for
+            // reference
+            // else {
+            //     m_stuck = true;
+            //     m_target = m_loc;
+            //     return Point2f(0, 0);
+            // }
         } else {
             double chosen = pafmath::prandomr() * weight;
             for (size_t i = 0; i < weightmap.size(); i++) {

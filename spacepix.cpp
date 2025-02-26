@@ -362,45 +362,6 @@ PixelRef SpacePixel::pixelate(const Point2f &p, bool constrain, int) const {
     return r;
 }
 
-void SpacePixel::makeViewportLines(const Region4f &viewport) const {
-    if (m_displayLines.empty() || m_newline) {
-        m_displayLines = std::vector<int>(m_lines.size());
-        m_newline = false;
-        std::fill(m_displayLines.begin(), m_displayLines.end(), 0);
-    }
-
-    m_current = -1; // note: findNext expects first to be labelled -1
-
-    /*
-    // Fixing bounding rectangle: normalisation removed
-    Region4f r_viewport = viewport;
-
-    r_viewport.normalScale( m_region );
-    */
-
-    PixelRef bl = pixelate(viewport.bottomLeft);
-    PixelRef tr = pixelate(viewport.topRight);
-
-    for (int i = bl.x; i <= tr.x; i++) {
-        for (int j = bl.y; j <= tr.y; j++) {
-            auto &pixelLines = m_pixelLines(static_cast<size_t>(j), static_cast<size_t>(i));
-            for (int pixelLine : pixelLines) {
-                m_displayLines[static_cast<size_t>(
-                    depthmapX::findIndexFromKey(m_lines, pixelLine))] = 1;
-            }
-        }
-    }
-}
-
-const Line4f &SpacePixel::getNextLine() const {
-    m_displayLines[static_cast<size_t>(m_current)] = 0; // You've drawn it
-    /*
-    // Fixing: removed rectangle scaling
-    l.denormalScale( m_region );
-    */
-    return m_lines.find(m_current)->second.line;
-}
-
 void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, double density) {
     m_displayLines.clear();
     m_lines.clear();

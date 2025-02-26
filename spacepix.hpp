@@ -131,9 +131,6 @@ class SpacePixel : public PixelBase {
     //
     int addLineDynamic(const Line4f &l);
 
-    virtual void makeViewportLines(const Region4f &viewport) const;
-    virtual const Line4f &getNextLine() const;
-    //
     bool intersect(const Line4f &l, double tolerance = 0.0);
     bool intersect_exclude(const Line4f &l, double tolerance = 0.0);
 

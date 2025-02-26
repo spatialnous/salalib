@@ -169,7 +169,7 @@ class DxfRegion {
     DxfVertex m_max;
 
   public:
-    DxfRegion() : m_first(true) {}
+    DxfRegion() : m_first(true), _padding0(0), _padding1(0) {}
     void add(const DxfVertex &v) {
         if (m_first) {
             m_min = v;

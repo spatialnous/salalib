@@ -116,10 +116,10 @@ struct wpair {
     int node;
 
   private:
-    [[maybe_unused]] unsigned : 4 * 8;
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
   public:
-    wpair(double w = 0.0, int n = -1) : weight(w), node(n) {}
+    wpair(double w = 0.0, int n = -1) : weight(w), node(n), _padding0(0) {}
 };
 
 // convert an x / y difference to it's corresponding connection direction

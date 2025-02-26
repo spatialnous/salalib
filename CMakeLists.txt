@@ -5,8 +5,6 @@
 
 set(salalib salalib)
 
-#set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
-
 if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
         "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -31,6 +29,13 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
                 -Wreserved-identifier -Wmissing-prototypes
                 -Wsuggest-destructor-override -Wreserved-macro-identifier
             )
+            # enable clang-tidy
+            find_program(CLANG_TIDY_COMMAND NAMES clang-tidy)
+            if(CLANG_TIDY_COMMAND)
+                set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
+            else()
+                message(WARNING "clang-tidy not found!")
+            endif()
         endif()
 
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

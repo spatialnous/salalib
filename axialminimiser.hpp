@@ -23,7 +23,6 @@ class AxialMinimiser {
     bool *m_affected;
     bool *m_vital;
     int *m_radialsegcounts;
-    int *m_keyvertexcounts;
     std::vector<Connector>
         m_axialconns; // <- uses a copy of axial lines as it will remove connections
   public:

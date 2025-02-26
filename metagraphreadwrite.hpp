@@ -43,7 +43,7 @@ namespace MetaGraphReadWrite {
 
     struct MetaGraphData {
         ReadWriteStatus readWriteStatus = ReadWriteStatus::NOT_READ_YET;
-        int version;
+        int version = 0;
         MetaGraph metaGraph;
         std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> drawingFiles;
         std::vector<PointMap> pointMaps;

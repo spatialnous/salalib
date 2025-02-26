@@ -72,7 +72,7 @@ struct Connector {
     std::map<SegmentRef, float> backSegconns;
     std::map<SegmentRef, float> forwardSegconns;
     //
-    Connector(int axialref = -1) : segmentAxialref(axialref) {}
+    Connector(int axialref = -1) : segmentAxialref(axialref), _padding0(0) {}
     void clear() {
         connections.clear();
         backSegconns.clear();

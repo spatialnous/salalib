@@ -15,7 +15,7 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
     if (m_originPointSets.empty()) {
         return result;
     }
-    for (auto originPointSet : m_originPointSets) {
+    for (const auto &originPointSet : m_originPointSets) {
         std::string originPointSetName = originPointSet.first;
 
         std::string zoneColumnName = getFormattedColumn( //
@@ -23,12 +23,12 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
         std::string inverseZoneColumnName = getFormattedColumn( //
             Column::ISOVIST_ZONE_INV_SQ_DISTANCE, originPointSetName, m_restrictDistance);
 
-        auto originPoints = originPointSet.second;
+        const auto &originPoints = originPointSet.second;
 
         auto zoneColumnIndex = attributes.insertOrResetColumn(zoneColumnName);
         result.addAttribute(zoneColumnName);
 
-        for (PixelRef ref : originPoints) {
+        for (const PixelRef ref : originPoints) {
             AttributeRow &row = attributes.getRow(AttributeKey(ref));
             row.setValue(zoneColumnIndex, 0);
             Point &lp = m_map.getPoint(ref);

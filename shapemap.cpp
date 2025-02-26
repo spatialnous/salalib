@@ -2347,7 +2347,7 @@ bool ShapeMap::output(std::ofstream &stream, char delimiter) {
         int key = iter->getKey().value;
         if (isObjectVisible(m_layers, iter->getRow())) {
             stream << key;
-            auto shape = m_shapes[key];
+            const auto &shape = m_shapes[key];
             if ((m_mapType & LINEMAP) == 0) {
                 stream << delimiter << shape.m_centroid.x << delimiter << shape.m_centroid.y;
             } else {

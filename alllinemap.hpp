@@ -11,7 +11,7 @@
 
 namespace AllLine {
     struct MapData {
-        size_t index;
+        size_t index = 0;
         AxialPolygons polygons;
         std::vector<PolyConnector> polyConnections;
         std::vector<RadialLine> radialLines;

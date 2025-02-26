@@ -493,7 +493,7 @@ void ShapeGraph::makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connecto
 
     auto iter = m_shapes.begin();
     for (size_t i = 0; i < m_connectors.size(); i++) {
-        auto shape = iter->second;
+        const auto &shape = iter->second;
         int axialRef = iter->first;
         iter++;
         if (!shape.isLine()) {
@@ -512,7 +512,7 @@ void ShapeGraph::makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connecto
         for (size_t j = 0; j < connections.size(); j++) {
             // find the intersection point and add...
             // note: more than one break at the same place allowed
-            auto shapeJ =
+            const auto &shapeJ =
                 depthmapX::getMapAtIndex(m_shapes, static_cast<size_t>(connections[j]))->second;
             if (i != connections[j] && shapeJ.isLine()) {
                 breaks.push_back(std::make_pair(

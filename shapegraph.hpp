@@ -106,7 +106,7 @@ class ShapeGraph : public ShapeMap {
     void setKeyVertexCount(int keyvertexcount) { m_keyvertexcount = keyvertexcount; }
     auto getKeyVertexCount() { return m_keyvertexcount; }
     auto &getKeyVertices() { return m_keyvertices; }
-    auto getShapesAtPixel(PixelRef ref) {
+    const auto &getShapesAtPixel(PixelRef ref) {
         return m_pixelShapes(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x));
     }
 };

@@ -243,7 +243,7 @@ class ShapeMap : public AttributeMap {
     // this version simply finds the closest vertex to the point
     Point2f getClosestVertex(const Point2f &p) const;
     // Connect a particular shape into the graph
-    size_t connectIntersected(int rowid, bool linegraph);
+    size_t connectIntersected(size_t rowid, bool linegraph);
     // Get the connections for a particular line
     std::vector<size_t> getLineConnections(int lineref, double tolerance);
     // Get arbitrary shape connections for a particular shape

@@ -209,13 +209,17 @@ int ShapeMap::makeLineShapeWithRef(const Line4f &line, int shapeRef, bool throug
     if (throughUi) {
         // manually add connections:
         if (m_hasgraph) {
-            int rowid = static_cast<int>(depthmapX::findIndexFromKey(m_shapes, shapeRef));
+            auto rowid = depthmapX::findIndexFromKey(m_shapes, shapeRef);
+            if (rowid < 0) {
+                throw new depthmapX::RuntimeException(
+                    "Shape reference " + std::to_string(shapeRef) + " not found to make line");
+            }
             if (isAxialMap()) {
                 connectIntersected(
-                    rowid,
+                    static_cast<size_t>(rowid),
                     true); // "true" means line-line intersections only will be applied
             } else {
-                connectIntersected(rowid, false);
+                connectIntersected(static_cast<size_t>(rowid), false);
             }
         }
         // if through ui, set undo counter:
@@ -1903,9 +1907,8 @@ Point2f ShapeMap::getClosestVertex(const Point2f &p) const {
 }
 
 // code to add intersections when shapes are added to the graph one by one:
-size_t ShapeMap::connectIntersected(int rowid, bool linegraph) {
-    auto urowid = static_cast<size_t>(rowid);
-    auto shaperefIter = depthmapX::getMapAtIndex(m_shapes, urowid);
+size_t ShapeMap::connectIntersected(size_t rowid, bool linegraph) {
+    auto shaperefIter = depthmapX::getMapAtIndex(m_shapes, rowid);
     auto connCol = m_attributes->getOrInsertLockedColumn("Connectivity");
     size_t lengCol = 0;
     if (linegraph) {
@@ -1917,28 +1920,28 @@ size_t ShapeMap::connectIntersected(int rowid, bool linegraph) {
     while (m_connectors.size() < m_shapes.size()) {
         m_connectors.push_back(Connector());
     }
-    m_connectors[urowid].connections =
+    m_connectors[rowid].connections =
         linegraph
             ? getLineConnections(shaperefIter->first,
                                  TOLERANCE_B * std::max(m_region.height(), m_region.width()))
             : getShapeConnections(shaperefIter->first,
                                   TOLERANCE_B * std::max(m_region.height(), m_region.width()));
 
-    auto &row = getAttributeRowFromShapeIndex(urowid);
-    row.setValue(connCol, static_cast<float>(m_connectors[urowid].connections.size()));
+    auto &row = getAttributeRowFromShapeIndex(rowid);
+    row.setValue(connCol, static_cast<float>(m_connectors[rowid].connections.size()));
     if (linegraph) {
         row.setValue(lengCol, static_cast<float>(shaperefIter->second.getLength()));
     }
     // now go through our connections, and add ourself:
-    const auto &connections = m_connectors[urowid].connections;
+    const auto &connections = m_connectors[rowid].connections;
     for (auto connection : connections) {
-        if (connection != urowid) { // <- exclude self!
-            depthmapX::insert_sorted(m_connectors[connection].connections, urowid);
+        if (connection != rowid) { // <- exclude self!
+            depthmapX::insert_sorted(m_connectors[connection].connections, rowid);
             auto &connectionRow = getAttributeRowFromShapeIndex(connection);
             connectionRow.incrValue(connCol);
         }
     }
-    return m_connectors[urowid].connections.size();
+    return m_connectors[rowid].connections.size();
 }
 
 // this assumes this is a line map (to speed up axial map creation)
@@ -2604,7 +2607,15 @@ bool ShapeMap::linkShapes(const Point2f &p, PixelRef p2) {
 
 bool ShapeMap::linkShapesFromRefs(int ref1, int ref2) {
     auto index1 = depthmapX::findIndexFromKey(m_shapes, ref1);
+    if (index1 < 0) {
+        throw new depthmapX::RuntimeException("Shape reference " + std::to_string(ref1) +
+                                              " not found to link shapes");
+    }
     auto index2 = depthmapX::findIndexFromKey(m_shapes, ref2);
+    if (index2 < 0) {
+        throw new depthmapX::RuntimeException("Shape reference " + std::to_string(ref2) +
+                                              " not found to link shapes");
+    }
     return linkShapes(static_cast<size_t>(index1), static_cast<size_t>(index2));
 }
 
@@ -2714,7 +2725,15 @@ bool ShapeMap::unlinkShapes(const Point2f &p1, const Point2f &p2) {
 
 bool ShapeMap::unlinkShapesFromRefs(int ref1, int ref2) {
     auto index1 = depthmapX::findIndexFromKey(m_shapes, ref1);
+    if (index1 < 0) {
+        throw new depthmapX::RuntimeException("Shape reference " + std::to_string(ref1) +
+                                              " not found to unlink shapes");
+    }
     auto index2 = depthmapX::findIndexFromKey(m_shapes, ref2);
+    if (index2 < 0) {
+        throw new depthmapX::RuntimeException("Shape reference " + std::to_string(ref2) +
+                                              " not found to unlink shapes");
+    }
     return unlinkShapes(static_cast<size_t>(index1), static_cast<size_t>(index2));
 }
 

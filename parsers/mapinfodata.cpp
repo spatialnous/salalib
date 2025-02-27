@@ -256,6 +256,7 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
     // write the mif table
     writetable(miffile, midfile, points.getAttributeTable(), points.getLayers());
 
+    auto const streamFlags = miffile.flags();
     miffile.precision(12);
 
     for (auto iter = points.getAttributeTable().begin(); iter != points.getAttributeTable().end();
@@ -265,7 +266,7 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
         miffile << "Point " << p.x << " " << p.y << std::endl;
         miffile << "    Symbol (32,0,10)" << std::endl;
     }
-
+    miffile.flags(streamFlags);
     return true;
 }
 
@@ -279,6 +280,8 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
         m_bounds = bounds;
     }
 
+    auto const mifFlags = miffile.flags();
+    auto const midFlags = midfile.flags();
     miffile.precision(8);
     midfile.precision(8);
 
@@ -325,7 +328,8 @@ bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const
             }
         }
     }
-
+    miffile.flags(mifFlags);
+    midfile.flags(midFlags);
     return true;
 }
 
@@ -355,6 +359,7 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
     // write the mid table
     writetable(miffile, midfile, attributes, layers);
 
+    auto const mifFlags = miffile.flags();
     miffile.precision(12);
     for (auto &polygon : polygons) {
         Point2f centre;
@@ -370,6 +375,7 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
         centre /= static_cast<double>(polygon.size());
         miffile << "    Center " << centre.x << " " << centre.y << std::endl;
     }
+    miffile.flags(mifFlags);
 
     return true;
 }

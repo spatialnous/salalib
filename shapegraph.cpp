@@ -201,6 +201,7 @@ bool ShapeGraph::write(std::ostream &stream, const std::tuple<bool, bool, int> &
 void ShapeGraph::writeAxialConnectionsAsDotGraph(std::ostream &stream) {
     const std::vector<Connector> &connectors = ShapeMap::getConnections();
 
+    auto const streamFlags = stream.flags();
     stream << "strict graph {" << std::endl;
 
     stream.precision(12);
@@ -212,9 +213,11 @@ void ShapeGraph::writeAxialConnectionsAsDotGraph(std::ostream &stream) {
         }
     }
     stream << "}" << std::endl;
+    stream.flags(streamFlags);
 }
 
 void ShapeGraph::writeLinksUnlinksAsPairsCSV(std::ostream &stream, char delimiter) {
+    auto const streamFlags = stream.flags();
     stream.precision(12);
 
     stream << "refA" << delimiter << "refB" << delimiter << "link" << std::endl;
@@ -232,11 +235,13 @@ void ShapeGraph::writeLinksUnlinksAsPairsCSV(std::ostream &stream, char delimite
                << depthmapX::getMapAtIndex(m_shapes, static_cast<size_t>(unlink.b))->first
                << delimiter << "0" << std::endl;
     }
+    stream.flags(streamFlags);
 }
 
 void ShapeGraph::writeAxialConnectionsAsPairsCSV(std::ostream &stream) {
     const std::vector<Connector> &connectors = ShapeMap::getConnections();
 
+    auto const streamFlags = stream.flags();
     stream.precision(12);
 
     stream << "refA,refB" << std::endl;
@@ -251,11 +256,13 @@ void ShapeGraph::writeAxialConnectionsAsPairsCSV(std::ostream &stream) {
             stream << i << "," << *iter;
         }
     }
+    stream.flags(streamFlags);
 }
 
 void ShapeGraph::writeSegmentConnectionsAsPairsCSV(std::ostream &stream) {
     const std::vector<Connector> &connectors = ShapeMap::getConnections();
 
+    auto const streamFlags = stream.flags();
     stream.precision(12);
 
     stream << "refA,refB,ss_weight,for_back,dir";
@@ -274,6 +281,7 @@ void ShapeGraph::writeSegmentConnectionsAsPairsCSV(std::ostream &stream) {
                    << "," << static_cast<int>(segconn.first.dir);
         }
     }
+    stream.flags(streamFlags);
 }
 
 void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {

@@ -486,6 +486,7 @@ int PointMap::expand(const PixelRef p1, const PixelRef p2, PixelRefVector &list,
 }
 
 void PointMap::outputPoints(std::ostream &stream, char delim) {
+    auto const streamFlags = stream.flags();
     stream << "Ref" << delim << "x" << delim << "y" << std::endl;
     stream.precision(12);
 
@@ -501,9 +502,11 @@ void PointMap::outputPoints(std::ostream &stream, char delim) {
             }
         }
     }
+    stream.flags(streamFlags);
 }
 
 void PointMap::outputMergeLines(std::ostream &stream, char delim) {
+    auto const streamFlags = stream.flags();
     stream << "x1" << delim << "y1" << delim << "x2" << delim << "y2" << std::endl;
 
     stream.precision(12);
@@ -514,6 +517,7 @@ void PointMap::outputMergeLines(std::ostream &stream, char delim) {
         stream << li.start().x << delim << li.start().y << delim << li.end().x << delim
                << li.end().y << std::endl;
     }
+    stream.flags(streamFlags);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -534,6 +538,8 @@ void PointMap::outputSummary(std::ostream &myout, char delimiter) {
         myout << delimiter << m_attributes->getColumnName(idx);
     }
 
+    auto const streamFlags = myout.flags();
+
     myout << std::fixed << std::endl;
     myout.precision(8);
 
@@ -549,6 +555,7 @@ void PointMap::outputSummary(std::ostream &myout, char delimiter) {
             myout << std::endl;
         }
     }
+    myout.flags(streamFlags);
 }
 
 void PointMap::outputMif(std::ostream &miffile, std::ostream &midfile) {

@@ -2324,6 +2324,7 @@ bool ShapeMap::write(std::ostream &stream, const std::tuple<bool, bool, int> &di
 }
 
 bool ShapeMap::output(std::ofstream &stream, char delimiter) {
+    auto const streamFlags = stream.flags();
     stream << "Ref";
     if ((m_mapType & LINEMAP) == 0) {
         stream << delimiter << "cx" << delimiter << "cy";
@@ -2366,6 +2367,7 @@ bool ShapeMap::output(std::ofstream &stream, char delimiter) {
             stream << std::endl;
         }
     }
+    stream.flags(streamFlags);
     return true;
 }
 
@@ -2908,6 +2910,7 @@ std::vector<Point2f> ShapeMap::getAllUnlinkPoints() {
 }
 
 void ShapeMap::outputUnlinkPoints(std::ofstream &stream, char delim) {
+    auto const streamFlags = stream.flags();
     stream << "x" << delim << "y" << std::endl;
 
     stream.precision(12);
@@ -2920,6 +2923,7 @@ void ShapeMap::outputUnlinkPoints(std::ofstream &stream, char delim) {
                             TOLERANCE_A);
         stream << p.x << delim << p.y << std::endl;
     }
+    stream.flags(streamFlags);
 }
 
 std::vector<Line4f> ShapeMap::getAllShapesAsLines() const {

@@ -73,7 +73,16 @@ namespace MetaGraphReadWrite {
             std::vector<ShapeMapDisplayData> perDataMap;
             std::optional<unsigned int> displayedShapeGraph = std::nullopt;
             std::vector<ShapeMapDisplayData> perShapeGraph;
+            DisplayData()
+                : _padding0(0), _padding1(0), perDrawingMap(), displayedPointMap(std::nullopt),
+                  perPointMap(), displayedDataMap(std::nullopt), perDataMap(),
+                  displayedShapeGraph(std::nullopt), perShapeGraph() {}
         } displayData;
+
+        MetaGraphData()
+            : readWriteStatus(ReadWriteStatus::NOT_READ_YET), version(0), metaGraph(),
+              drawingFiles(), pointMaps(), dataMaps(), shapeGraphs(), allLineMapData(),
+              displayData() {}
     };
 
     Region4f readRegion(std::istream &stream);

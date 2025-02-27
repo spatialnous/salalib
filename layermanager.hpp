@@ -54,6 +54,7 @@ class LayerAware {
 
   protected:
     LayerManager::KeyType m_layerKey;
+    LayerAware() : m_layerKey() {}
 };
 
 inline bool isObjectVisible(const LayerManager &manager, const LayerAware &object) {

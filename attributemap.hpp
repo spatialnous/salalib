@@ -26,7 +26,7 @@ class AttributeMap : public PixelBase {
           m_layers(std::move(layers)) {}
     AttributeMap(std::unique_ptr<AttributeTable> attributes)
         : m_attributes(std::move(attributes)),
-          m_attribHandle(new AttributeTableHandle(*m_attributes)) {}
+          m_attribHandle(new AttributeTableHandle(*m_attributes)), m_layers() {}
     ~AttributeMap() override {}
 
   public:

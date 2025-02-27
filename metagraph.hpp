@@ -26,7 +26,8 @@ struct MetaGraph {
     [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
   public:
-    MetaGraph(std::string nameIn = "") : name(nameIn), version(-1) {
+    MetaGraph(std::string nameIn = "")
+        : region(), name(nameIn), fileProperties(), version(-1), _padding0(0) {
 
         // <- if unsaved, file version is -1
     }

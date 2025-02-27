@@ -14,7 +14,7 @@
 class Line4f : public Region4f {
   protected:
     struct Bits {
-        Bits() : xDummy(0), yDummy(0), zDummy(0) {}
+        Bits() : parity(0), direction(0), xDummy(0), yDummy(0), zDummy(0) {}
         int8_t parity : 8;    // 1 ... positive, 0 ... negative
         int8_t direction : 8; // 1 ... positive, 0 ... negative
 
@@ -29,7 +29,7 @@ class Line4f : public Region4f {
   public:
     Line4f();
     Line4f(const Point2f &a, const Point2f &b);
-    Line4f(const Region4f &r) : Region4f(r) {
+    Line4f(const Region4f &r) : Region4f(r), m_bits() {
         m_bits.parity = 1;
         m_bits.direction = 1;
     }

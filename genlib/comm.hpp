@@ -24,7 +24,7 @@ struct FilePath {
     std::string path;
     std::string name;
     std::string ext;
-    FilePath(const std::string &pathname) {
+    FilePath(const std::string &pathname) : path(), name(), ext() {
         size_t dot = pathname.find_last_of('.');
 #ifdef _WIN32
         size_t slash = pathname.find_last_of('\\'); // WIN32
@@ -71,8 +71,8 @@ class Communicator {
 
   public:
     Communicator()
-        : m_cancelled(false), m_deleteFlag(false), m_infile(nullptr), m_infile2(nullptr),
-          m_outfile(nullptr) {}
+        : m_cancelled(false), m_deleteFlag(false), _padding0(0), _padding1(0), m_infilename(),
+          m_infile(nullptr), m_infile2(nullptr), m_outfile(nullptr), m_fileset() {}
     //
     bool GetDeleteFlag() // used by ICommunicator and IComm together
     {
@@ -153,7 +153,7 @@ class ICommunicator : public Communicator {
     mutable size_t m_record;
     //
   public:
-    ICommunicator() {
+    ICommunicator() : m_numSteps(0), m_numRecords(0), m_step(0), m_record(0) {
         m_deleteFlag = true;
     } // note: an ICommunicator lets IComm know that it should delete it
     ~ICommunicator() override {}

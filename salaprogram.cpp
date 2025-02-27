@@ -117,7 +117,9 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-SalaProgram::SalaProgram(SalaObj context) {
+SalaProgram::SalaProgram(SalaObj context)
+    : m_rootCommand(), m_varStack(), m_errorStack(), m_col(), m_marked(), _padding0(0), m_thisobj(),
+      m_marks() {
     if (!g_sala_loaded) {
         loadSalaProgram();
     }
@@ -378,7 +380,9 @@ std::string SalaProgram::getLastErrorMessage() const {
 ////////////////////////////////////////////////////////////////////////////
 
 SalaCommand::SalaCommand(SalaProgram *program, SalaCommand *parent, int indent, Command command)
-    : m_program(program), m_parent(parent), m_command(command), m_indent(indent), m_line(0) {}
+    : m_program(program), m_parent(parent), m_children(), m_varNames(), m_command(command),
+      m_indent(indent), m_evalStack(), m_funcStack(), m_forIter(), _padding0(0), m_line(0),
+      m_lastString() {}
 
 int SalaCommand::parse(std::istream &program, int line) {
     m_funcStack.clear();

@@ -15,6 +15,7 @@ namespace AllLine {
         AxialPolygons polygons;
         std::vector<PolyConnector> polyConnections;
         std::vector<RadialLine> radialLines;
+        MapData() : index(0), polygons(), polyConnections(), radialLines() {}
     };
     MapData generate(Communicator *comm, ShapeGraph &map,
                      const std::vector<std::reference_wrapper<const ShapeMap>> &drawingLayers,

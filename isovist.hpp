@@ -25,7 +25,8 @@ struct IsoSeg {
     Point2f startpoint;
     Point2f endpoint;
     IsoSeg(double start = 0.0, double end = 0.0, int8_t q = 0, int t = -1)
-        : tagdelete(false), quadrant(q), _padding0(0), tag(t), startangle(start), endangle(end) {}
+        : tagdelete(false), quadrant(q), _padding0(0), tag(t), startangle(start), endangle(end),
+          startpoint(), endpoint() {}
     IsoSeg(double start, double end, const Point2f &pstart, Point2f &pend, int t = -1)
         : tagdelete(false), quadrant(0), _padding0(0), tag(t), startangle(start), endangle(end),
           startpoint(pstart), endpoint(pend) {}
@@ -67,7 +68,9 @@ class Isovist {
     double m_minRadial;
 
   public:
-    Isovist() {}
+    Isovist()
+        : m_centre(), m_blocks(), m_gaps(), m_poly(), m_occlusionPoints(), m_perimeter(),
+          m_occludedPerimeter(), m_maxRadial(), m_minRadial() {}
     const std::vector<Point2f> &getPolygon() const { return m_poly; }
     const std::vector<PointDist> &getOcclusionPoints() const { return m_occlusionPoints; }
     const Point2f &getCentre() const { return m_centre; }

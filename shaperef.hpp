@@ -24,7 +24,7 @@ struct ShapeRef {
     unsigned int shapeRef;
     std::vector<short> polyrefs;
     ShapeRef(unsigned int sref = SHAPE_REF_NULL, uint8_t tagsIn = 0x00)
-        : tags(tagsIn), _padding0(0), shapeRef(sref) {}
+        : tags(tagsIn), _padding0(0), shapeRef(sref), polyrefs() {}
     friend bool operator==(const ShapeRef &a, const ShapeRef &b);
     friend bool operator!=(const ShapeRef &a, const ShapeRef &b);
     friend bool operator<(const ShapeRef &a, const ShapeRef &b);

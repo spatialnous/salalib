@@ -86,8 +86,9 @@ class Point {
 
   public:
     Point()
-        : m_node(nullptr), m_merge(NoPixel), m_processflag(0), m_block(0), m_state(EMPTY),
-          m_gridConnections(0) {
+        : undoCounter(), dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), _padding0(0),
+          m_node(nullptr), m_location(), m_color(), m_merge(NoPixel), m_lines(), m_processflag(0),
+          m_block(0), m_state(EMPTY), m_gridConnections(0), _padding1(0) {
 
         //        m_misc = 0;
     }
@@ -109,9 +110,10 @@ class Point {
         return *this;
     }
     Point(const Point &p)
-        : m_location(p.m_location), m_color(p.m_color), m_merge(p.m_merge), m_lines(p.m_lines),
-          m_processflag(p.m_processflag), m_block(p.m_block), m_state(p.m_state),
-          m_gridConnections(p.m_gridConnections) {
+        : undoCounter(), dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), _padding0(0),
+          m_node(), m_location(p.m_location), m_color(p.m_color), m_merge(p.m_merge),
+          m_lines(p.m_lines), m_processflag(p.m_processflag), m_block(p.m_block),
+          m_state(p.m_state), m_gridConnections(p.m_gridConnections), _padding1(0) {
 
         //        m_misc = p.m_misc;
 

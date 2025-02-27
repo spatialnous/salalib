@@ -13,10 +13,8 @@
 #include <set>
 
 struct PixelVec {
-    PixelVec(const PixelRef start = NoPixel, const PixelRef end = NoPixel) {
-        m_start = static_cast<int>(start);
-        m_end = static_cast<int>(end);
-    }
+    PixelVec(const PixelRef start = NoPixel, const PixelRef end = NoPixel)
+        : m_start(static_cast<int>(start)), m_end(static_cast<int>(end)) {}
     PixelRef start() const { return m_start; }
     PixelRef end() const { return m_end; } //
     void setStart(PixelRef start) { m_start = start; }
@@ -54,7 +52,9 @@ class Bin {
 
   public:
     std::vector<PixelVec> pixelVecs;
-    Bin() : m_distance(0.0f), m_occDistance(0.0f), m_nodeCount(0), dir(PixelRef::NODIR) {}
+    Bin()
+        : m_distance(0.0f), m_occDistance(0.0f), m_curvec(), m_curpix(), m_nodeCount(0),
+          dir(PixelRef::NODIR), _padding0(0), _padding1(0), pixelVecs() {}
 
     void make(const PixelRefVector &pixels, int8_t onDir);
 
@@ -87,6 +87,7 @@ class Node {
     Bin m_bins[32];
 
   public:
+    Node() : m_curbin(), m_pixel(), m_bins() {}
     // testing some agent stuff:
     std::vector<PixelRef> occlusionBins[32];
 

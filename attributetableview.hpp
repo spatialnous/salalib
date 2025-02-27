@@ -37,7 +37,7 @@ class AttributeTableView {
 class AttributeTableHandle : public AttributeTableView {
   public:
     AttributeTableHandle(AttributeTable &tablIn)
-        : AttributeTableView(tablIn), m_mutableTable(tablIn) {}
+        : AttributeTableView(tablIn), m_mutableTable(tablIn), m_mutableIndex() {}
     virtual ~AttributeTableHandle() {}
     typedef std::vector<AttributeIndexItem> Index;
     const Index &getTableIndex() const { return m_mutableIndex; }

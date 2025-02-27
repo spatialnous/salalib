@@ -46,14 +46,17 @@ class SalaShape {
     mutable int m_draworder = -1;
 
   public:
-    SalaShape(uint8_t type = 0) : m_type(type), m_area(0.0), m_perimeter(0.0), m_draworder(-1) {}
+    SalaShape(uint8_t type = 0)
+        : points(), m_type(type), _padding0(0), _padding1(0), m_centroid(), m_region(), m_area(0.0),
+          m_perimeter(0.0), m_draworder(-1) {}
     SalaShape(const Point2f &point)
-        : m_type(SHAPE_POINT), m_centroid(point), m_area(0.0), m_perimeter(0.0), m_draworder(-1) {
+        : points(), m_type(SHAPE_POINT), _padding0(0), _padding1(0), m_centroid(point), m_region(),
+          m_area(0.0), m_perimeter(0.0), m_draworder(-1) {
         m_region = Line4f(point, point);
     }
     SalaShape(const Line4f &line)
-        : m_type(SHAPE_LINE), m_region(line), m_area(0.0), m_perimeter(line.length()),
-          m_draworder(-1) {
+        : points(), m_type(SHAPE_LINE), _padding0(0), _padding1(0), m_centroid(), m_region(line),
+          m_area(0.0), m_perimeter(line.length()), m_draworder(-1) {
         m_centroid = m_region.getCentre();
     }
     bool operator==(const SalaShape &other) const {

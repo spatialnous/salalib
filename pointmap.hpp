@@ -30,7 +30,7 @@ namespace depthmapX {
 
       public:
         PointMapException(PointMapExceptionType errorType, std::string message)
-            : depthmapX::RuntimeException(message), m_errorType(errorType) {}
+            : depthmapX::RuntimeException(message), m_errorType(errorType), _padding0(0) {}
         PointMapExceptionType getErrorType() const { return m_errorType; }
     };
 } // namespace depthmapX
@@ -89,7 +89,9 @@ class PointMap : public AttributeMap {
     PointMap(PointMap &&other)
         : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
                        std::move(other.m_layers)),
-          m_points(std::move(other.m_points)) {
+          m_name(), m_points(std::move(other.m_points)), m_mergeLines(), m_spacing(), m_offset(),
+          m_bottomLeft(), m_filledPointCount(), m_undocounter(), m_initialised(), m_blockedlines(),
+          m_processed(), m_boundarygraph(), _padding0(0) {
         m_region = std::move(other.m_region);
         copy(other);
     }

@@ -41,7 +41,8 @@ struct SalaError {
 
   public:
     std::string message;
-    SalaError(const std::string &m = std::string(), int li = -1) : lineno(li), message(m) {}
+    SalaError(const std::string &m = std::string(), int li = -1)
+        : lineno(li), _padding0(0), message(m) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +95,7 @@ struct SalaGrf {
   public:
     Map map;
 
-    SalaGrf() : map() {}
+    SalaGrf() : _padding0(0), map() {}
 };
 
 // SalaObj is 16 bytes, which is larger than I intended, but it appears
@@ -220,10 +221,10 @@ class SalaObj {
     [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
   public:
-    SalaObj() : m_type(S_NONE) {}
+    SalaObj() : m_type(S_NONE), _padding0(0) {}
     // Two usages: (a) used for brackets (=groups of things, hence the count) and commas
     //             (b) used for lists
-    SalaObj(Type t) : m_type(t) {
+    SalaObj(Type t) : m_type(t), _padding0(0) {
 
         if (t & S_LIST) {
             m_data.list.refcount = new int(1);
@@ -234,7 +235,7 @@ class SalaObj {
     }
     // Two usages: (a) used to address variable or user function tables
     //             (b) used for lists
-    SalaObj(Type t, int v) : m_type(t) {
+    SalaObj(Type t, int v) : m_type(t), _padding0(0) {
 
         if (t & S_LIST) {
             m_data.list.refcount = new int(1);
@@ -244,18 +245,18 @@ class SalaObj {
         }
     }
     // other constructors
-    SalaObj(bool a) : m_type(S_BOOL) { m_data.b = a; }
-    SalaObj(int a) : m_type(S_INT) { m_data.i = a; }
-    SalaObj(double a) : m_type(S_DOUBLE) { m_data.f = a; }
-    SalaObj(Func f) : m_type(S_FUNCTION) { m_data.func = f; }
-    SalaObj(const std::string &a) : m_type(S_STRING) {
+    SalaObj(bool a) : m_type(S_BOOL), _padding0(0) { m_data.b = a; }
+    SalaObj(int a) : m_type(S_INT), _padding0(0) { m_data.i = a; }
+    SalaObj(double a) : m_type(S_DOUBLE), _padding0(0) { m_data.f = a; }
+    SalaObj(Func f) : m_type(S_FUNCTION), _padding0(0) { m_data.func = f; }
+    SalaObj(const std::string &a) : m_type(S_STRING), _padding0(0) {
 
         m_data.str.refcount = new int(1);
         m_data.str.string = new std::string(a);
     }
     // note, type required here as sometimes this will be an axial map, sometimes segment map,
     // sometimes point map, also not fully filled in until runtime, but still required by parse
-    SalaObj(Type t, SalaGrf graph) : m_type(t) { m_data.graph = graph; }
+    SalaObj(Type t, SalaGrf graph) : m_type(t), _padding0(0) { m_data.graph = graph; }
     //
     SalaObj(const SalaObj &obj);
     SalaObj &operator=(const SalaObj &obj);
@@ -358,7 +359,10 @@ class SalaCommand {
     char read(std::istream &program) { return static_cast<char>(program.get()); }
 
   public:
-    SalaCommand() : m_program(nullptr), m_parent(nullptr), m_command(SC_NONE), m_indent(0) {}
+    SalaCommand()
+        : m_program(nullptr), m_parent(nullptr), m_children(), m_varNames(), m_command(SC_NONE),
+          m_indent(0), m_evalStack(), m_funcStack(), m_forIter(), _padding0(0), m_line(),
+          m_lastString() {}
     SalaCommand(SalaProgram *program, SalaCommand *parent, int indent, Command command = SC_NONE);
 
   protected:
@@ -405,7 +409,7 @@ class SalaProgram {
     std::string getLastErrorMessage() const;
 };
 
-inline SalaObj::SalaObj(const SalaObj &obj) : m_type(obj.m_type) {
+inline SalaObj::SalaObj(const SalaObj &obj) : m_type(obj.m_type), _padding0(0) {
 
     switch (obj.m_type) {
     case S_FUNCTION:
@@ -984,7 +988,7 @@ struct SalaFuncLabel {
     std::string desc;
     SalaFuncLabel(SalaObj::Func f = SalaObj::S_FNULL, const std::string &str = std::string(),
                   const std::string &des = std::string())
-        : func(f), name(str), desc(des) {}
+        : func(f), _padding0(0), name(str), desc(des) {}
 };
 
 struct SalaMemberFuncLabel : public SalaFuncLabel {
@@ -997,7 +1001,7 @@ struct SalaMemberFuncLabel : public SalaFuncLabel {
     SalaMemberFuncLabel(SalaObj::Type t = SalaObj::S_NONE, SalaObj::Func f = SalaObj::S_FNULL,
                         const std::string &str = std::string(),
                         const std::string &des = std::string())
-        : type(t) {
+        : type(t), _padding0(0) {
 
         func = f;
         name = str;

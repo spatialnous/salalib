@@ -106,9 +106,12 @@ class AttributeColumnImpl : public AttributeColumn, AttributeColumnStats {
     // AttributeColumn interface
   public:
     AttributeColumnImpl(const std::string &name, const std::string &formula = std::string())
-        : m_name(name), m_locked(false), m_hidden(false), m_formula(formula) {}
+        : stats(), m_name(name), m_displayParams(), m_locked(false), m_hidden(false), _padding0(0),
+          m_formula(formula) {}
 
-    AttributeColumnImpl() : m_locked(false), m_hidden(false) {}
+    AttributeColumnImpl()
+        : stats(), m_name(), m_displayParams(), m_locked(false), m_hidden(false), _padding0(0),
+          m_formula() {}
     const std::string &getName() const override;
     bool isLocked() const override;
     void setLock(bool lock) override;
@@ -207,7 +210,9 @@ struct AttributeKey {
 class AttributeTable : public AttributeColumnManager {
     // AttributeTable "interface" - the actual table handling
   public:
-    AttributeTable() {}
+    AttributeTable()
+        : m_rows(), m_columnMapping(), m_columns(), m_keyColumn(), m_displayParams(), _padding0(0) {
+    }
     virtual ~AttributeTable() {}
     AttributeTable(AttributeTable &&) = default;
     AttributeTable &operator=(AttributeTable &&) = default;

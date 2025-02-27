@@ -19,7 +19,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 ShapeGraph::ShapeGraph(const std::string &name, int type)
-    : ShapeMap(name, type), m_keyvertexcount(0) {
+    : ShapeMap(name, type), m_keyvertices(), m_keyvertexcount(0), _padding0(0) {
 
     m_hasgraph = true;
 }

@@ -50,19 +50,7 @@ struct PafColor {
               | ((static_cast<unsigned char>(g * 255.0)) << 8)  //
               | ((static_cast<unsigned char>(b * 255.0))))) {}
 
-    PafColor(const Point2f &vec, double a = 1.0) {
-        color = static_cast<unsigned int>(                    //
-            0x00000000                                        //
-            | ((static_cast<unsigned char>(a * 255.0)) << 24) //
-            | ((static_cast<unsigned char>(                   //
-                   vec.dot(Point2f(1.0, 0.0)) * 255.0))
-               << 16)                       //
-            | ((static_cast<unsigned char>( //
-                   vec.dot(Point2f(-0.5, 0.86602540378443864676372317075294)) * 255.0))
-               << 8)                        //
-            | ((static_cast<unsigned char>( //
-                  vec.dot(Point2f(-0.5, -0.86602540378443864676372317075294)) * 255.0))));
-    }
+    PafColor(const Point2f &vec, double a = 1.0) : color(fromVecA(vec, a)) {}
 
     operator unsigned int() { return color & 0x00ffffff; }
     friend bool operator==(const PafColor &a, const PafColor &b);
@@ -75,6 +63,20 @@ struct PafColor {
     PafColor &makeMonochrome(double field);
     PafColor &makeDepthmapClassic(double field, double blue, double red);
     PafColor &makeColor(double field, DisplayParams dp); // <- note, make copy to play around with
+  private:
+    unsigned int fromVecA(const Point2f &vec, double a = 1.0) {
+        return static_cast<unsigned int>(                     //
+            0x00000000                                        //
+            | ((static_cast<unsigned char>(a * 255.0)) << 24) //
+            | ((static_cast<unsigned char>(                   //
+                   vec.dot(Point2f(1.0, 0.0)) * 255.0))
+               << 16)                       //
+            | ((static_cast<unsigned char>( //
+                   vec.dot(Point2f(-0.5, 0.86602540378443864676372317075294)) * 255.0))
+               << 8)                        //
+            | ((static_cast<unsigned char>( //
+                  vec.dot(Point2f(-0.5, -0.86602540378443864676372317075294)) * 255.0))));
+    }
 };
 inline bool operator==(const PafColor &a, const PafColor &b) { return (a.color == b.color); }
 inline bool operator!=(const PafColor &a, const PafColor &b) { return (a.color != b.color); }

@@ -11,7 +11,7 @@
 namespace depthmapX {
     class BaseException : public std::exception {
       public:
-        BaseException() {}
+        BaseException() : m_message() {}
         BaseException(std::string message) : m_message(message) {}
         const char *what() const noexcept override { return m_message.c_str(); }
 

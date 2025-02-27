@@ -14,7 +14,7 @@ struct ShapeMapGroupData {
     std::string name; // <- file name
     Region4f region;
 
-    ShapeMapGroupData(const std::string &nameIn = std::string()) : name(nameIn) {}
+    ShapeMapGroupData(const std::string &nameIn = std::string()) : name(nameIn), region() {}
 
     bool readInNameAndRegion(std::istream &stream);
     bool writeOutNameAndRegion(std::ostream &stream) const;

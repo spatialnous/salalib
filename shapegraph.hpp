@@ -32,8 +32,8 @@ struct AnalysisInfo {
     double weightedChoice;
     double weightedChoice2; // EFEF
     AnalysisInfo()
-        : leaf(true), choicecovered(false), depth(0), choice(0.0), weightedChoice(0.0),
-          weightedChoice2(0.0) {
+        : leaf(true), choicecovered(false), _padding0(0), previous(), depth(0), choice(0.0),
+          weightedChoice(0.0), weightedChoice2(0.0) {
 
         previous = SegmentRef();
     }

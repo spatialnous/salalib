@@ -14,5 +14,5 @@ struct SalaEvent {
     int shapeRef;
     SalaShape geometry;
     SalaEvent(int actionIn = SALA_NULL_EVENT, int shapeRefIn = -1)
-        : action(actionIn), shapeRef(shapeRefIn) {}
+        : action(actionIn), shapeRef(shapeRefIn), geometry() {}
 };

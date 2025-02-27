@@ -54,7 +54,8 @@ struct AxialVertex : public AxialVertexKey {
   public:
     AxialVertex(const AxialVertexKey &vertexKey = NoVertex, const Point2f &p = Point2f(),
                 const Point2f &opsp = Point2f())
-        : AxialVertexKey(vertexKey), point(p), openspace(opsp), initialised(false), axial(false) {}
+        : AxialVertexKey(vertexKey), point(p), openspace(opsp), a(), b(), clockwise(false),
+          convex(false), initialised(false), axial(false), _padding0(0) {}
 };
 
 struct RadialKey {
@@ -88,7 +89,8 @@ struct RadialLine : public RadialKey {
     Point2f openspace;
     Point2f keyvertex;
     Point2f nextvertex;
-    RadialLine(const RadialKey &rk = RadialKey()) : RadialKey(rk) {}
+    RadialLine(const RadialKey &rk = RadialKey())
+        : RadialKey(rk), openspace(), keyvertex(), nextvertex() {}
     RadialLine(const AxialVertexKey &v, bool se, const Point2f &o, const Point2f &k,
                const Point2f &n)
         : openspace(o), keyvertex(k), nextvertex(n) {
@@ -107,9 +109,9 @@ struct RadialSegment {
     std::set<int> indices;
     RadialKey radialB;
 
-    RadialSegment(RadialKey &rb) : radialB(rb) {}
-    RadialSegment(const RadialKey &rb) : radialB(rb) {}
-    RadialSegment() { radialB = RadialKey(); }
+    RadialSegment(RadialKey &rb) : indices(), radialB(rb) {}
+    RadialSegment(const RadialKey &rb) : indices(), radialB(rb) {}
+    RadialSegment() : indices(), radialB() {}
 };
 
 struct PolyConnector {
@@ -126,7 +128,7 @@ class AxialPolygons : public SpacePixel {
     depthmapX::ColumnMatrix<std::vector<int>> m_pixelPolys;
 
   public:
-    AxialPolygons() : m_pixelPolys(0, 0) {}
+    AxialPolygons() : m_vertexPolys(), m_pixelPolys(0, 0), handledList(), vertexPossibles() {}
     std::set<AxialVertex> handledList;
     std::map<Point2f, std::vector<Point2f>> vertexPossibles;
     void clear();

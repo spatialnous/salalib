@@ -26,7 +26,7 @@ class PixelBase {
     Region4f m_region;
 
   public:
-    PixelBase() {}
+    PixelBase() : m_rows(), m_cols(), m_region() {}
     virtual ~PixelBase() {}
     // constrain is constrain to bounding box (i.e., in row / col bounds)
     virtual PixelRef pixelate(const Point2f &, bool constrain = true,
@@ -74,7 +74,9 @@ struct LineKey {
 
   public:
     operator int() { return *reinterpret_cast<int *>(this); }
-    LineKey(int value = 0) { *reinterpret_cast<int *>(this) = value; }
+    LineKey(int value = 0) : file(), layer(), lineref(), _padding0(0) {
+        *reinterpret_cast<int *>(this) = value;
+    }
     friend bool operator<(LineKey a, LineKey b);
     friend bool operator>(LineKey a, LineKey b);
     friend bool operator==(LineKey a, LineKey b);

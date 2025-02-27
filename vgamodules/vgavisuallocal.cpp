@@ -67,7 +67,9 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                             }
                             retpt.getNode().next();
                         }
-                        control += 1.0f / static_cast<float>(retroSize);
+                        if (retroSize > 0) {
+                            control += 1.0f / static_cast<float>(retroSize);
+                        }
                         cluster += intersectSize;
                     }
                 }

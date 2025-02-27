@@ -46,7 +46,9 @@ AnalysisResult AxialLocal::run(Communicator *comm, ShapeGraph &map, bool) {
                 retroSize++;
                 depthmapX::addIfNotExists(totalneighbourhood, retconnector);
             }
-            control += 1.0 / static_cast<double>(retroSize);
+            if (retroSize > 0) {
+                control += 1.0 / static_cast<double>(retroSize);
+            }
             //}
         }
 

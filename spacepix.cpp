@@ -259,8 +259,10 @@ PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) const {
         polarity = 2;
     }
 
-    dx /= t;
-    dy /= t;
+    if (polarity != 0) {
+        dx /= t;
+        dy /= t;
+    }
     double ppx = p.x + 0.5;
     double ppy = p.y + 0.5;
 

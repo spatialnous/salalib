@@ -308,7 +308,11 @@ std::pair<Point2f, double> Isovist::getCentroidArea() {
             m_minRadial = dline;
         }
     }
-    centroid.scale(2.0 / fabs(area));
+    if (area == 0.0) {
+        centroid.scale(0);
+    } else {
+        centroid.scale(2.0 / fabs(area));
+    }
     return std::make_pair(centroid, area);
 }
 

@@ -12,7 +12,7 @@
 #include <fstream>
 
 AgentProgram::AgentProgram()
-    : selType(SEL_LOS), steps(3), vbin(7), vahead(), aheadThreshold(), feelerThreshold(),
+    : selType(SEL_LOS), steps(3), vbin(7), vahead(0), aheadThreshold(), feelerThreshold(),
       feelerProbability(), destinationDirected(false), losSqrd(false), fitness(), trails() {}
 
 void AgentProgram::mutate() {

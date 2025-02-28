@@ -362,7 +362,7 @@ class SalaCommand {
   public:
     SalaCommand()
         : m_program(nullptr), m_parent(nullptr), m_children(), m_varNames(), m_command(SC_NONE),
-          m_indent(0), m_evalStack(), m_funcStack(), m_forIter(), _padding0(0), m_line(),
+          m_indent(0), m_evalStack(), m_funcStack(), m_forIter(), _padding0(0), m_line(0),
           m_lastString() {}
     SalaCommand(SalaProgram *program, SalaCommand *parent, int indent, Command command = SC_NONE);
     SalaCommand(const SalaCommand &) = default;

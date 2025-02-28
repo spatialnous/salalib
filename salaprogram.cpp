@@ -118,8 +118,8 @@ namespace {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 SalaProgram::SalaProgram(SalaObj context)
-    : m_rootCommand(), m_varStack(), m_errorStack(), m_col(), m_marked(), _padding0(0), m_thisobj(),
-      m_marks() {
+    : m_rootCommand(), m_varStack(), m_errorStack(), m_col(), m_marked(false), _padding0(0),
+      m_thisobj(), m_marks() {
     if (!g_sala_loaded) {
         loadSalaProgram();
     }

@@ -378,7 +378,7 @@ std::istream &PixelVec::read(std::istream &stream, const int8_t dir) {
 
 std::ostream &PixelVec::write(std::ostream &stream, const int8_t dir) {
     stream.write(reinterpret_cast<const char *>(&m_start), sizeof(m_start));
-    unsigned short runlength;
+    unsigned short runlength = 0;
     switch (dir) {
     case PixelRef::HORIZONTAL:
     case PixelRef::POSDIAGONAL:
@@ -424,6 +424,8 @@ std::istream &PixelVec::read(std::istream &stream, const int8_t dir, const Pixel
 
 std::ostream &PixelVec::write(std::ostream &stream, const int8_t dir, const PixelVec &context) {
     ShiftLength shiftlength;
+    shiftlength.runlength = 0;
+    shiftlength.shift = 0;
     switch (dir) {
     case PixelRef::HORIZONTAL:
         stream.write(reinterpret_cast<const char *>(&(m_start.x)), sizeof(m_start.x));

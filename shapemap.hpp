@@ -116,7 +116,7 @@ class ShapeMap : public AttributeMap {
         : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
                        std::move(other.m_layers)),
           m_name(std::move(other.m_name)), m_pixelShapes(std::move(other.m_pixelShapes)),
-          m_shapes(), m_undobuffer(), m_connectors(), m_tolerance(), m_links(), m_unlinks(),
+          m_shapes(), m_undobuffer(), m_connectors(), m_tolerance(0), m_links(), m_unlinks(),
           m_mapinfodata(), _padding0(0), _padding1(0) {
         moveData(other);
     }

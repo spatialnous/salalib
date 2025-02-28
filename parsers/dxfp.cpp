@@ -34,7 +34,8 @@ bool operator==(const DxfTableRow &a, const DxfTableRow &b) // for hash table
 ///////////////////////////////////////////////////////////////////////////////
 
 DxfParser::DxfParser(Communicator *comm /* = NULL */)
-    : m_time(0), m_size(0), m_communicator(comm) {}
+    : m_time(0), m_region(), m_layers(), m_blocks(), m_lineTypes(), m_size(0),
+      m_communicator(comm) {}
 
 const DxfVertex &DxfParser::getExtMin() const { return m_region.getExtMin(); }
 
@@ -687,7 +688,7 @@ bool DxfVertex::parse(const DxfToken &token, DxfParser *parser) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfLine::DxfLine(int tag) : DxfEntity(tag) {}
+DxfLine::DxfLine(int tag) : DxfEntity(tag), m_start(), m_end() {}
 
 void DxfLine::clear() {
     DxfRegion::clear();
@@ -730,7 +731,10 @@ bool DxfLine::parse(const DxfToken &token, DxfParser *parser) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfPolyLine::DxfPolyLine(int tag) : DxfEntity(tag) { clear(); }
+DxfPolyLine::DxfPolyLine(int tag)
+    : DxfEntity(tag), m_attributes(), _padding0(0), m_vertexCount(), m_vertices() {
+    clear();
+}
 
 void DxfPolyLine::clear() {
     m_vertexCount = 0;
@@ -787,7 +791,9 @@ int DxfPolyLine::getAttributes() const { return m_attributes; }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfLwPolyLine::DxfLwPolyLine(int tag) : DxfPolyLine(tag) { clear(); }
+DxfLwPolyLine::DxfLwPolyLine(int tag) : DxfPolyLine(tag), m_expectedVertexCount(), _padding0(0) {
+    clear();
+}
 
 void DxfLwPolyLine::clear() {
     m_expectedVertexCount = 0;
@@ -840,7 +846,7 @@ bool DxfLwPolyLine::parse(const DxfToken &token, DxfParser *parser) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfArc::DxfArc(int tag) : DxfEntity(tag) {}
+DxfArc::DxfArc(int tag) : DxfEntity(tag), m_centre() {}
 
 void DxfArc::clear() {
     m_start = 0.0;
@@ -941,7 +947,8 @@ void DxfArc::reflect(double x, double y) {
     }
 }
 
-DxfEllipse::DxfEllipse(int tag) : DxfEntity(tag) {}
+DxfEllipse::DxfEllipse(int tag)
+    : DxfEntity(tag), m_centre(), m_majorAxisEndPoint(), m_extrusionDirection() {}
 
 void DxfEllipse::clear() {
     m_start = 0.0;
@@ -1073,7 +1080,7 @@ void DxfEllipse::reflect(double x, double y) {
 
 ///////////////////////////////////////////////////////////////////////////
 
-DxfCircle::DxfCircle(int tag) : DxfEntity(tag) {}
+DxfCircle::DxfCircle(int tag) : DxfEntity(tag), m_centre() {}
 
 void DxfCircle::clear() {
     DxfRegion::clear();
@@ -1138,7 +1145,11 @@ void DxfCircle::reflect(double, double) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfSpline::DxfSpline(int tag) : DxfEntity(tag) { clear(); }
+DxfSpline::DxfSpline(int tag)
+    : DxfEntity(tag), m_xyz(), m_attributes(), m_ctrlPtCount(), m_knotCount(), m_ctrlPts(),
+      m_knots() {
+    clear();
+}
 
 void DxfSpline::clear() {
     m_xyz = 0;
@@ -1211,7 +1222,10 @@ int DxfSpline::getAttributes() const { return m_attributes; }
 
 // note: inserts are flattened on way through
 
-DxfInsert::DxfInsert(int tag) : DxfEntity(tag) { clear(); }
+DxfInsert::DxfInsert(int tag)
+    : DxfEntity(tag), m_blockName(), m_translation(), m_scale(), m_rotation() {
+    clear();
+}
 
 void DxfInsert::clear() {
     m_blockName = "";
@@ -1291,7 +1305,9 @@ const DxfVertex &DxfLine::getEnd() const { return static_cast<const DxfVertex &>
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfLayer::DxfLayer(const std::string &name) : DxfTableRow(name), m_totalPointCount(0) {}
+DxfLayer::DxfLayer(const std::string &name)
+    : DxfTableRow(name), m_points(), m_lines(), m_polyLines(), m_arcs(), m_ellipses(), m_circles(),
+      m_splines(), m_inserts(), m_totalPointCount(0) {}
 
 bool DxfLayer::parse(const DxfToken &token, DxfParser *parser) {
     bool parsed = false;
@@ -1425,7 +1441,7 @@ void DxfLayer::insert(DxfInsert &insert, DxfParser *parser) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfBlock::DxfBlock(const std::string &name) : DxfLayer(name) {}
+DxfBlock::DxfBlock(const std::string &name) : DxfLayer(name), m_basePoint() {}
 
 bool DxfBlock::parse(const DxfToken &token, DxfParser *parser) {
     bool parsed = false;
@@ -1442,7 +1458,7 @@ bool DxfBlock::parse(const DxfToken &token, DxfParser *parser) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-DxfToken::DxfToken() : size(0), code(-1) {}
+DxfToken::DxfToken() : size(0), data(), code(-1), _padding0(0) {}
 
 std::istream &operator>>(std::istream &stream, DxfToken &token) {
     std::string codeInputLine;

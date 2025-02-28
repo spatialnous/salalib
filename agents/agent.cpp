@@ -9,7 +9,8 @@
 #include "agentanalysis.hpp"
 
 Agent::Agent(AgentProgram *program, PointMap *pointmap, int outputMode)
-    : m_program(program), m_pointmap(pointmap), m_outputMode(outputMode), m_trailNum(-1) {}
+    : m_program(program), m_pointmap(pointmap), m_node(), m_outputMode(outputMode), m_trailNum(-1),
+      m_loc(), m_target(), m_vector(), m_destination(), m_targetPix(), m_occMemory() {}
 
 void Agent::onInit(PixelRef node, int trailNum) {
     m_node = node;

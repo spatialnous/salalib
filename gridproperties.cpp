@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-GridProperties::GridProperties(double maxDimension) {
+GridProperties::GridProperties(double maxDimension) : m_max(), m_min(), m_default() {
     int maxexponent = static_cast<int>(floor(log10(maxDimension)) - 1);
     int minexponent = maxexponent - 2;
     int mantissa =

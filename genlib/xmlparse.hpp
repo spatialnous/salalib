@@ -22,7 +22,8 @@ struct xmlelement {
   public:
     std::map<std::string, std::string> attributes;
     std::vector<xmlelement> subelements;
-    xmlelement() : closetag(false) {}
+    xmlelement()
+        : name(), closetag(false), _padding0(0), _padding1(0), attributes(), subelements() {}
     bool parse(std::ifstream &stream, bool parsesubelements = false);
     friend std::ostream &operator<<(std::ostream &stream, const xmlelement &elem);
 

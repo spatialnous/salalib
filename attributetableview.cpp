@@ -5,7 +5,7 @@
 #include "attributetableview.hpp"
 
 AttributeTableView::AttributeTableView(const AttributeTable &tableIn)
-    : table(tableIn), m_displayColumn(-1) {}
+    : table(tableIn), m_index(), m_displayColumn(-1), _padding0(0) {}
 
 void AttributeTableView::setDisplayColIndex(int columnIndex) {
     if (columnIndex < -1) {

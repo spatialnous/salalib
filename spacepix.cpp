@@ -289,8 +289,8 @@ PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) const {
 }
 
 SpacePixel::SpacePixel(const std::string &name)
-    : m_newline(false), m_show(true), m_edit(false), m_ref(-1), m_style(0), m_name(name),
-      m_pixelLines(0, 0), m_test(0) {
+    : m_lock(), m_newline(false), m_show(true), m_edit(false), m_color(), m_ref(-1), m_style(0),
+      m_name(name), m_pixelLines(0, 0), m_lines(), m_displayLines(), m_current(), m_test(0) {
 
     m_cols = 0;
     m_rows = 0;
@@ -299,7 +299,9 @@ SpacePixel::SpacePixel(const std::string &name)
 }
 
 SpacePixel::SpacePixel(const SpacePixel &spacepixel)
-    : m_pixelLines(spacepixel.m_pixelLines.rows(), spacepixel.m_pixelLines.columns()) {
+    : m_lock(), m_newline(), m_show(), m_edit(), m_color(), m_ref(), m_style(),
+      m_pixelLines(spacepixel.m_pixelLines.rows(), spacepixel.m_pixelLines.columns()), m_lines(),
+      m_displayLines(), m_current(), m_test() {
     // n.b., not strictly allowed
     construct(spacepixel);
 }

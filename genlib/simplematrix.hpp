@@ -37,6 +37,7 @@ namespace depthmapX {
 
       public:
         virtual ~BaseMatrix() { delete[] m_data; }
+        BaseMatrix &operator=(const BaseMatrix &) = default;
 
         /**
          * @brief Fill all values of the matrix with a default value

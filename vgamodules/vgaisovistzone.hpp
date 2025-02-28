@@ -77,7 +77,8 @@ class VGAIsovistZone : public IAnalysis {
   public:
     VGAIsovistZone(PointMap &map, std::map<std::string, std::set<PixelRef>> originPointSets,
                    float restrictDistance = -1)
-        : m_map(map), m_originPointSets(originPointSets), m_restrictDistance(restrictDistance) {}
+        : m_map(map), m_originPointSets(originPointSets), m_restrictDistance(restrictDistance),
+          _padding0(0) {}
     std::string getAnalysisName() const override { return "Path Zone"; }
     AnalysisResult run(Communicator *) override;
 };

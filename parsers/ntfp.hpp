@@ -23,7 +23,7 @@ struct NtfPoint {
 class NtfGeometry {
   public:
     std::vector<Line4f> lines;
-    NtfGeometry() {}
+    NtfGeometry() : lines() {}
 };
 
 class NtfLayer {
@@ -35,7 +35,8 @@ class NtfLayer {
 
   public:
     std::vector<NtfGeometry> geometries;
-    NtfLayer(const std::string &name = std::string()) : m_name(name), m_lineCount(0) {}
+    NtfLayer(const std::string &name = std::string())
+        : m_name(name), m_lineCount(0), geometries() {}
     size_t getLineCount() { return m_lineCount; }
     std::string getName() { return m_name; }
 };
@@ -51,7 +52,7 @@ class NtfMap {
     Region4f m_region; // made in metres, although points are in cm
 
   public:
-    NtfMap() {}
+    NtfMap() : layers(), m_lineCount(), m_offset(), m_region() {}
     Line4f makeLine(const NtfPoint &a, const NtfPoint &b);
 
     void open(const std::vector<std::string> &fileset, Communicator *comm);

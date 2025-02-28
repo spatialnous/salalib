@@ -281,8 +281,9 @@ class SalaObj {
     friend SalaObj operator/(SalaObj &a, SalaObj &b);
     friend SalaObj operator*(SalaObj &a, SalaObj &b);
     friend SalaObj operator%(SalaObj &a, SalaObj &b);
-    friend bool operator||(SalaObj &a, SalaObj &b);
-    friend bool operator&&(SalaObj &a, SalaObj &b);
+    // These do not seem to be used, removing to allow enabling "-Weffc++"
+    //    friend bool operator||(SalaObj &a, SalaObj &b);
+    //    friend bool operator&&(SalaObj &a, SalaObj &b);
     friend bool operator!(SalaObj &a);
     friend bool operator==(SalaObj &a, SalaObj &b);
     friend bool operator!=(SalaObj &a, SalaObj &b);
@@ -364,6 +365,8 @@ class SalaCommand {
           m_indent(0), m_evalStack(), m_funcStack(), m_forIter(), _padding0(0), m_line(),
           m_lastString() {}
     SalaCommand(SalaProgram *program, SalaCommand *parent, int indent, Command command = SC_NONE);
+    SalaCommand(const SalaCommand &) = default;
+    SalaCommand &operator=(const SalaCommand &) = default;
 
   protected:
     int parse(std::istream &program, int line);
@@ -700,10 +703,13 @@ inline SalaObj operator/(SalaObj &a, SalaObj &b) {
                         std::string(" by ") + a.getTypeIndefArt() + b.getTypeStr());
     }
 }
-// assume already bools (use convert to bool first)
-inline bool operator&&(SalaObj &a, SalaObj &b) { return a.m_data.b && b.m_data.b; }
-// assume already bools (use convert to bool first)
-inline bool operator||(SalaObj &a, SalaObj &b) { return a.m_data.b || b.m_data.b; }
+
+// These do not seem to be used, removing to allow enabling "-Weffc++"
+//// assume already bools (use convert to bool first)
+// inline bool operator&&(SalaObj &a, SalaObj &b) { return a.m_data.b && b.m_data.b; }
+//// assume already bools (use convert to bool first)
+// inline bool operator||(SalaObj &a, SalaObj &b) { return a.m_data.b || b.m_data.b; }
+
 // assume already bools (use convert to bool first)
 inline bool operator!(SalaObj &a) { return !a.m_data.b; }
 inline bool operator==(SalaObj &a, SalaObj &b) {

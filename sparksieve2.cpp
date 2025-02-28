@@ -14,7 +14,7 @@
 #include <cmath>
 
 sparkSieve2::sparkSieve2(const Point2f &centre, double maxdist)
-    : m_centre(centre), m_maxdist(maxdist) {
+    : m_centre(centre), m_maxdist(maxdist), m_blocks(), gaps() {
 
     gaps.push_back(sparkZone2(0.0, 1.0));
 }

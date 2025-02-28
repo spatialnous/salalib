@@ -47,7 +47,7 @@ class VGAVisualGlobal : public IVGAVisual {
 
   public:
     VGAVisualGlobal(const PointMap &map, double radius, bool gatesOnly)
-        : IVGAVisual(map), m_radius(radius), m_gatesOnly(gatesOnly) {}
+        : IVGAVisual(map), m_radius(radius), m_gatesOnly(gatesOnly), _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Global Visibility Analysis"; }
     AnalysisResult run(Communicator *comm) override;
 

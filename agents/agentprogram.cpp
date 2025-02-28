@@ -12,7 +12,8 @@
 #include <fstream>
 
 AgentProgram::AgentProgram()
-    : selType(SEL_LOS), steps(3), vbin(7), destinationDirected(false), losSqrd(false) {}
+    : selType(SEL_LOS), steps(3), vbin(7), vahead(), aheadThreshold(), feelerThreshold(),
+      feelerProbability(), destinationDirected(false), losSqrd(false), fitness(), trails() {}
 
 void AgentProgram::mutate() {
     // do mutate rule order occassionally:

@@ -29,6 +29,9 @@ struct BSPNode {
     BSPNode(BSPNode *p = nullptr)
         : m_line(), m_tag(-1), _padding0(0), left(nullptr), right(nullptr), parent(p) {}
     bool isLeaf() { return left == nullptr && right == nullptr; }
+    BSPNode(const BSPNode &) = delete;
+    BSPNode(BSPNode &&) = default;
+    BSPNode &operator=(BSPNode &) = delete;
     int classify(const Point2f &p) {
         Point2f v0 = m_line.end() - m_line.start();
         v0.normalise();

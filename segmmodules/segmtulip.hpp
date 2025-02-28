@@ -94,7 +94,7 @@ class SegmentTulip : ISegment {
         : m_radiusSet(radiusSet), m_selSet(selSet), m_tulipBins(tulipBins),
           m_weightedMeasureCol(weightedMeasureCol), m_weightedMeasureCol2(weightedMeasureCol2),
           m_routeweightCol(routeweightCol), m_radiusType(radiusType), m_choice(choice),
-          m_interactive(interactive) {}
+          m_interactive(interactive), _padding0(0) {}
     void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
         m_forceLegacyColumnOrder = forceLegacyColumnOrder;
     }

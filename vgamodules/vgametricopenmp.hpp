@@ -55,7 +55,8 @@ class VGAMetricOpenMP : public IVGAMetric {
                     std::optional<int> limitToThreads = std::nullopt,
                     bool forceCommUpdatesMasterThread = false)
         : IVGAMetric(map), m_radius(radius), m_limitToThreads(limitToThreads),
-          m_gatesOnly(gatesOnly), m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
+          m_gatesOnly(gatesOnly), m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread),
+          _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Metric Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *comm) override;
 

@@ -25,7 +25,7 @@ AxialMinimiser::AxialMinimiser(const ShapeGraph &alllinemap, size_t noOfAxsegcut
     : m_alllinemap(static_cast<const ShapeGraph *>(&alllinemap)),
       m_vps(new ValueTriplet[noOfAxsegcuts]), m_removed(new bool[noOfAxsegcuts]),
       m_affected(new bool[noOfAxsegcuts]), m_vital(new bool[noOfAxsegcuts]),
-      m_radialsegcounts(new int[noOfRadialsegs]) {}
+      m_radialsegcounts(new int[noOfRadialsegs]), m_axialconns() {}
 
 AxialMinimiser::~AxialMinimiser() {
     delete[] m_vital;

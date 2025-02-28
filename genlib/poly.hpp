@@ -17,8 +17,9 @@ class Poly {
     [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
   public:
-    Poly() : m_pRoot(nullptr), m_lineSegments(0) {}
-    Poly(const Poly &p) : m_pRoot(copy_region_tree(p.m_pRoot)), m_lineSegments(p.m_lineSegments) {}
+    Poly() : m_pRoot(nullptr), m_lineSegments(0), _padding0(0) {}
+    Poly(const Poly &p)
+        : m_pRoot(copy_region_tree(p.m_pRoot)), m_lineSegments(p.m_lineSegments), _padding0(0) {}
     Poly &operator=(const Poly &p) {
         if (this != &p) {
             m_lineSegments = p.m_lineSegments;

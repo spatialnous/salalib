@@ -6,7 +6,7 @@
 
 #include "genlib/stringutils.hpp"
 
-LayerManagerImpl::LayerManagerImpl() : m_visibleLayers(1) {
+LayerManagerImpl::LayerManagerImpl() : m_visibleLayers(1), m_layers(), m_layerLookup() {
     m_layers.push_back("Everything");
     m_layerLookup["Everything"] = 0;
 }

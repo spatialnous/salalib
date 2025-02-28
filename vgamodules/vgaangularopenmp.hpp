@@ -53,7 +53,8 @@ class VGAAngularOpenMP : public IVGAAngular {
                      std::optional<int> limitToThreads = std::nullopt,
                      bool forceCommUpdatesMasterThread = false)
         : IVGAAngular(map), m_radius(radius), m_limitToThreads(limitToThreads),
-          m_gatesOnly(gatesOnly), m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
+          m_gatesOnly(gatesOnly), m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread),
+          _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Angular Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *comm) override;
 

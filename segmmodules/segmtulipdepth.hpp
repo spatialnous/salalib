@@ -22,7 +22,7 @@ class SegmentTulipDepth : ISegment {
 
   public:
     SegmentTulipDepth(int tulipBins, std::set<int> &originRefs)
-        : m_originRefs(originRefs), m_tulipBins(tulipBins) {}
+        : m_originRefs(originRefs), m_tulipBins(tulipBins), _padding0(0) {}
     std::string getAnalysisName() const override { return "Tulip Analysis"; }
     AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
 };

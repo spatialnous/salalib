@@ -52,7 +52,8 @@ class VGAVisualGlobalOpenMP : public IVGAVisual {
                           std::optional<int> limitToThreads = std::nullopt,
                           bool forceCommUpdatesMasterThread = false)
         : IVGAVisual(map), m_radius(radius), m_limitToThreads(limitToThreads),
-          m_gatesOnly(gatesOnly), m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
+          m_gatesOnly(gatesOnly), m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread),
+          _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Global Visibility Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *) override;
 

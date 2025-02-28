@@ -36,7 +36,8 @@ class VGAVisualLocalOpenMP : public IAnalysis {
     VGAVisualLocalOpenMP(PointMap &map, std::optional<int> limitToThreads = std::nullopt,
                          bool forceCommUpdatesMasterThread = false)
         : m_map(map), m_limitToThreads(limitToThreads),
-          m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread) {}
+          m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread), _padding0(0), _padding1(0) {
+    }
     std::string getAnalysisName() const override { return "Local Visibility Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *comm) override;
 };

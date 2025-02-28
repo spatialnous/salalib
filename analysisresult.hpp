@@ -51,8 +51,9 @@ struct AnalysisResult {
 
     AnalysisResult(std::vector<std::string> &&attributeNames = std::vector<std::string>(),
                    size_t rowCount = 0, double defValue = -1.0f)
-        : m_newAttributes(attributeNames),
-          m_attributeDatata(depthmapX::RowMatrix<double>(rowCount, attributeNames.size())) {
+        : _padding0(0), _padding1(0), m_newAttributes(attributeNames),
+          m_attributeDatata(depthmapX::RowMatrix<double>(rowCount, attributeNames.size())),
+          m_newShapeMaps(), m_newPointMaps(), m_newShapeGraphs() {
         m_attributeDatata.initialiseValues(defValue);
     }
 
@@ -61,9 +62,9 @@ struct AnalysisResult {
   protected:
     std::vector<std::string> m_newAttributes = std::vector<std::string>();
     depthmapX::RowMatrix<double> m_attributeDatata;
-    std::vector<ShapeMap> m_newShapeMapsps;
-    std::vector<PointMap> m_newPointMapsps;
-    std::vector<ShapeGraph> m_newShapeGraphshs;
+    std::vector<ShapeMap> m_newShapeMaps;
+    std::vector<PointMap> m_newPointMaps;
+    std::vector<ShapeGraph> m_newShapeGraphs;
 };
 
 struct AppendableAnalysisResult : public AnalysisResult {

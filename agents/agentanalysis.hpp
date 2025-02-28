@@ -69,8 +69,9 @@ class AgentAnalysis : public IAnalysis {
                   const std::vector<Point2f> &specificReleasePoints,
                   const std::optional<std::reference_wrapper<ShapeMap>> &gateLayer,
                   std::optional<TrailRecordOptions> recordTrails)
-        : m_pointMap(pointMap), m_systemTimesteps(systemTimesteps), m_releaseRate(releaseRate),
-          m_agentLifetime(agentLifetime), m_agentAlgorithm(agentAlgorithm), m_agentFOV(agentFOV),
+        : m_pointMap(pointMap), m_agentProgram(), m_systemTimesteps(systemTimesteps),
+          m_releaseRate(releaseRate), m_agentLifetime(agentLifetime),
+          m_agentAlgorithm(agentAlgorithm), m_agentFOV(agentFOV),
           m_agentStepsToDecision(agentStepsToDecision),
           m_randomReleaseLocationsSeed(randomReleaseLocationsSeed),
           m_specificReleasePoints(specificReleasePoints), m_gateLayer(gateLayer),

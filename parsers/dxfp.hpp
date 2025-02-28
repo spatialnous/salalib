@@ -100,6 +100,8 @@ class DxfEntity {
 
   public:
     DxfEntity(int tag = -1);
+    DxfEntity(const DxfEntity &) = default;
+    DxfEntity &operator=(const DxfEntity &) = default;
     void clear(); // for reuse when parsing
     virtual ~DxfEntity() {}
 
@@ -169,7 +171,7 @@ class DxfRegion {
     DxfVertex m_max;
 
   public:
-    DxfRegion() : m_first(true), _padding0(0), _padding1(0) {}
+    DxfRegion() : m_first(true), _padding0(0), _padding1(0), m_min(), m_max() {}
     void add(const DxfVertex &v) {
         if (m_first) {
             m_min = v;
@@ -640,6 +642,8 @@ class DxfParser {
 
   public:
     DxfParser(Communicator *comm = nullptr);
+    DxfParser(const DxfParser &) = default;
+    DxfParser &operator=(const DxfParser &) = default;
     //
     std::istream &open(std::istream &stream);
     //

@@ -58,8 +58,12 @@ class Agent {
     pflipper<PixelRefVector> m_occMemory;
 
   public:
-    Agent() : m_program(nullptr), m_pointmap(nullptr), m_outputMode(OUTPUT_NOTHING) {}
+    Agent()
+        : m_program(nullptr), m_pointmap(nullptr), m_node(), m_outputMode(OUTPUT_NOTHING), m_loc(),
+          m_target(), m_vector(), m_destination(), m_targetPix(), m_occMemory() {}
     Agent(AgentProgram *program, PointMap *pointmap, int outputMode = OUTPUT_NOTHING);
+    Agent(const Agent &) = default;
+    Agent &operator=(const Agent &) = default;
     void onInit(PixelRef node, int trailNum = -1);
     void onClose();
     Point2f onLook(bool wholeisovist);

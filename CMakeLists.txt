@@ -15,7 +15,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             -Wold-style-cast
             # yes eventually
             -Wno-float-equal -Wno-double-promotion
-            -Wno-switch-enum -Wno-effc++
+            -Wno-switch-enum -Weffc++
             # maybe
             -Wno-global-constructors -Wno-weak-vtables -Wno-non-virtual-dtor
             -Wno-cast-qual -Wno-deprecated-copy-with-user-provided-dtor

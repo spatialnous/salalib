@@ -9,13 +9,13 @@
 
 // default: nothing:
 
-Line4f::Line4f() {
+Line4f::Line4f() : m_bits() {
     m_bits.parity = 0;
     m_bits.direction = 0;
     // Points automatically assigned to 0,0
 }
 
-Line4f::Line4f(const Point2f &a, const Point2f &b) {
+Line4f::Line4f(const Point2f &a, const Point2f &b) : m_bits() {
     if (a.x == b.x) {
         bottomLeft.x = a.x;
         topRight.x = b.x;

@@ -33,7 +33,7 @@ class IAnalysis {
         }
 
       public:
-        AnalysisColumn(size_t n = 0, float defValue = 0) : m_data(n, defValue) {}
+        AnalysisColumn(size_t n = 0, float defValue = 0) : m_stats(), m_data(n, defValue) {}
         void setValue(size_t index, float newValue, bool updateColumnStats = false) {
             if (updateColumnStats) {
                 float oldVal = m_data[index];

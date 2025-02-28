@@ -20,13 +20,13 @@
 class TigerChain {
   public:
     std::vector<Line4f> lines;
-    TigerChain() {}
+    TigerChain() : lines() {}
 };
 
 class TigerCategory {
   public:
     std::vector<TigerChain> chains;
-    TigerCategory() {}
+    TigerCategory() : chains() {}
 };
 
 class TigerMap {
@@ -40,7 +40,7 @@ class TigerMap {
 
   public:
     std::map<std::string, TigerCategory> categories;
-    TigerMap() : m_init(false) {}
+    TigerMap() : m_region(), m_init(false), _padding0(0), _padding1(0), categories() {}
 
     void parse(const std::vector<std::string> &fileset, Communicator *communicator);
 

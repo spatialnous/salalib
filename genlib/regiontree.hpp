@@ -19,6 +19,8 @@ class RegionTree {
 
   public:
     RegionTree() : m_pRegion(nullptr), m_pLeft(this), m_pRight(this) {}
+    RegionTree(const RegionTree &) = default;
+    RegionTree &operator=(const RegionTree &) = default;
     virtual ~RegionTree() {
         if (m_pRegion)
             delete m_pRegion;

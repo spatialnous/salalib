@@ -73,6 +73,8 @@ class Communicator {
     Communicator()
         : m_cancelled(false), m_deleteFlag(false), _padding0(0), _padding1(0), m_infilename(),
           m_infile(nullptr), m_infile2(nullptr), m_outfile(nullptr), m_fileset() {}
+    Communicator(const Communicator &) = default;
+    Communicator &operator=(Communicator &) = default;
     //
     bool GetDeleteFlag() // used by ICommunicator and IComm together
     {

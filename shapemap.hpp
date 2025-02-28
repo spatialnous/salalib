@@ -320,9 +320,6 @@ class ShapeMap : public AttributeMap {
     const MapInfoData &getMapInfoData() const { return m_mapinfodata; }
 
   public:
-    // Screen
-    std::vector<size_t> makeViewportShapes(const Region4f &viewport) const;
-    //
     double getLocationValue(const Point2f &point, std::optional<size_t> attributeIdx) const;
 
     double getSpacing() const {

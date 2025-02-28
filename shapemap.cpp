@@ -761,6 +761,10 @@ void ShapeMap::removeShape(int shaperef, bool undoing) {
     removePolyPixels(shaperef); // done first, as all interface references use this list
 
     auto shapeIter = m_shapes.find(shaperef);
+    if (shapeIter == m_shapes.end()) {
+        throw depthmapX::RuntimeException("Shape with ref " + std::to_string(shaperef) +
+                                          " not found when trying to remove it");
+    }
     size_t rowid = static_cast<size_t>(std::distance(m_shapes.begin(), shapeIter));
 
     if (!undoing) { // <- if not currently undoing another event, then add to the
@@ -924,7 +928,12 @@ void ShapeMap::makePolyPixels(int polyref) {
     ShapeRef shapeRef = ShapeRef(static_cast<unsigned int>(polyref));
     // first add into pixels, and ensure you have a bl, tr for the set (useful for
     // testing later)
-    SalaShape &poly = m_shapes.find(polyref)->second;
+    auto shapeIter = m_shapes.find(polyref);
+    if (shapeIter == m_shapes.end()) {
+        throw depthmapX::RuntimeException("Shape " + std::to_string(polyref) +
+                                          " not found when making poly pixels");
+    }
+    SalaShape &poly = shapeIter->second;
     if (poly.isClosed()) {
         std::map<int, int> relations;
         for (size_t k = 0; k < poly.points.size(); k++) {
@@ -1102,7 +1111,7 @@ void ShapeMap::shapePixelBorder(std::map<int, int> &relations, int polyref, int 
         return;
     }
     auto relation = relations.find(currpix);
-    if (relation->second & side) {
+    if (relation != relations.end() && (relation->second & side)) {
         std::vector<ShapeRef> &pixShapes =
             m_pixelShapes(static_cast<size_t>(currpix.y), static_cast<size_t>(currpix.x));
         const auto iter =
@@ -1135,7 +1144,7 @@ void ShapeMap::pointPixelBorder(const PointMap &pointmap, std::map<int, int> &re
         return;
     }
     auto relation = relations.find(currpix);
-    if (relation->second & side) {
+    if (relation != relations.end() && (relation->second & side)) {
         poly.points.push_back(pointmap.depixelate(currpix) + pointOffset(pointmap, side));
         relation->second &= ~side; // <- clear to check all have been done later
         side <<= 1;
@@ -1365,6 +1374,11 @@ std::vector<size_t> ShapeMap::lineInPolyList(const Line4f &liOrig, std::optional
                     shape.tags & (ShapeRef::SHAPE_EDGE | ShapeRef::SHAPE_INTERNAL_EDGE |
                                   ShapeRef::SHAPE_OPEN)) {
                     auto shapeIter = m_shapes.find(static_cast<int>(shape.shapeRef));
+                    if (shapeIter == m_shapes.end()) {
+                        throw depthmapX::RuntimeException(
+                            "Shape " + std::to_string(shape.shapeRef) +
+                            " not found when checking if line in poly list");
+                    }
                     const SalaShape &poly = shapeIter->second;
                     switch (poly.m_type & (SalaShape::SHAPE_LINE | SalaShape::SHAPE_POLY)) {
                     case SalaShape::SHAPE_LINE:
@@ -1456,6 +1470,11 @@ std::vector<size_t> ShapeMap::polyInPolyList(int polyref, double tolerance) cons
                             if (shaperef != shaperefb && iter == testedlist.end()) {
                                 auto shapeIter =
                                     m_shapes.find(static_cast<int>(shaperefb.shapeRef));
+                                if (shapeIter == m_shapes.end()) {
+                                    throw depthmapX::RuntimeException(
+                                        "Shape " + std::to_string(shaperefb.shapeRef) +
+                                        " not found when checking if point in poly list");
+                                }
                                 size_t indexb =
                                     static_cast<size_t>(std::distance(m_shapes.begin(), shapeIter));
                                 const SalaShape &polyb = shapeIter->second;
@@ -1635,6 +1654,10 @@ std::optional<size_t> ShapeMap::testPointInPoly(const Point2f &p, const ShapeRef
     // check not an open shape (cannot be inside)
     else if ((shape.tags & ShapeRef::SHAPE_OPEN) == 0) {
         auto tempShapeIter = m_shapes.find(static_cast<int>(shape.shapeRef));
+        if (tempShapeIter == m_shapes.end()) {
+            throw depthmapX::RuntimeException("Shape " + std::to_string(shape.shapeRef) +
+                                              " not found when testing if a point is in a polygon");
+        }
         const SalaShape &poly = tempShapeIter->second;
         if (poly.m_region.contains_touch(p)) {
             // next simplest, on the outside border:
@@ -1814,6 +1837,11 @@ int ShapeMap::getClosestOpenGeom(const Point2f &p) const {
         if (ref.tags & ShapeRef::SHAPE_OPEN) {
             double thisdist = -1.0;
             auto tempShapeIter = m_shapes.find(static_cast<int>(ref.shapeRef));
+            if (tempShapeIter == m_shapes.end()) {
+                throw depthmapX::RuntimeException(
+                    "Shape " + std::to_string(ref.shapeRef) +
+                    " not found when getting the closest open geometry");
+            }
             const SalaShape &poly = tempShapeIter->second;
             switch (poly.m_type) {
             case SalaShape::SHAPE_POINT:
@@ -1863,7 +1891,12 @@ Point2f ShapeMap::getClosestVertex(const Point2f &p) const {
     for (const ShapeRef &ref : shapeRefs) {
         double thisdist = -1.0;
         Point2f thisvertex;
-        const SalaShape &poly = m_shapes.find(static_cast<int>(ref.shapeRef))->second;
+        auto shapeIter = m_shapes.find(static_cast<int>(ref.shapeRef));
+        if (shapeIter == m_shapes.end()) {
+            throw depthmapX::RuntimeException("Shape " + std::to_string(ref.shapeRef) +
+                                              " not found when trying to get the closest vertex");
+        }
+        const SalaShape &poly = shapeIter->second;
         switch (poly.m_type) {
         case SalaShape::SHAPE_POINT:
             thisvertex = poly.m_centroid;
@@ -1953,7 +1986,12 @@ size_t ShapeMap::connectIntersected(size_t rowid, bool linegraph) {
 std::vector<size_t> ShapeMap::getLineConnections(int lineref, double tolerance) {
     std::vector<size_t> connections;
 
-    SalaShape &poly = m_shapes.find(lineref)->second;
+    auto shapeIter = m_shapes.find(lineref);
+    if (shapeIter == m_shapes.end()) {
+        throw depthmapX::RuntimeException("Shape " + std::to_string(lineref) +
+                                          " not found when getting line connections");
+    }
+    SalaShape &poly = shapeIter->second;
     if (!poly.isLine()) {
         return std::vector<size_t>();
     }
@@ -1981,7 +2019,12 @@ std::vector<size_t> ShapeMap::getLineConnections(int lineref, double tolerance) 
     }
     for (const ShapeRef &shape : shapesToTest) {
         if ((shape.tags & ShapeRef::SHAPE_OPEN) == ShapeRef::SHAPE_OPEN) {
-            const Line4f &line = m_shapes.find(static_cast<int>(shape.shapeRef))->second.getLine();
+            auto shapeIter1 = m_shapes.find(static_cast<int>(shape.shapeRef));
+            if (shapeIter1 == m_shapes.end()) {
+                throw depthmapX::RuntimeException("Shape " + std::to_string(shape.shapeRef) +
+                                                  " not found while testing line connections");
+            }
+            const Line4f &line = shapeIter1->second.getLine();
             if (line.Region4f::intersects(l, line.length() * tolerance)) {
                 // n.b. originally this followed the logic that we must normalise
                 // intersect_line properly: tolerance * line length one * line length

@@ -472,6 +472,11 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
             Point2f last = key;
             while (curr != key) {
                 auto vertPossIter = vertexPossibles.find(curr);
+                if (vertPossIter == vertexPossibles.end()) {
+                    throw depthmapX::RuntimeException("Point " + std::to_string(curr.x) + ", " +
+                                                      std::to_string(curr.y) +
+                                                      " not found when making polygons");
+                }
                 polygon.push_back(curr);
                 // hunt down left most
                 int winner = -1, wayback = -1;

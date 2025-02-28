@@ -299,8 +299,18 @@ bool AxialMinimiser::checkVital(int checkindex, std::set<int> &axSegCut,
             auto radialSegIter = depthmapX::getMapAtIndex(radialsegs, static_cast<size_t>(cut));
             const RadialKey &key = radialSegIter->first;
             RadialSegment &seg = radialSegIter->second;
-            std::set<int> &divisorsa = rlds.find(key)->second;
-            std::set<int> &divisorsb = rlds.find(seg.radialB)->second;
+            auto keyIter = rlds.find(key);
+            if (keyIter == rlds.end()) {
+                throw depthmapX::RuntimeException(
+                    "RadialKey A not found when checking for vital axial lines");
+            }
+            std::set<int> &divisorsa = keyIter->second;
+            auto radialBIter = rlds.find(seg.radialB);
+            if (radialBIter == rlds.end()) {
+                throw depthmapX::RuntimeException(
+                    "RadialKey B not found when checking for vital axial lines");
+            }
+            std::set<int> &divisorsb = radialBIter->second;
             auto iterKey = std::find(radialLines.begin(), radialLines.end(), key);
             if (iterKey == radialLines.end()) {
                 throw depthmapX::RuntimeException("Radial key not found in radial lines");

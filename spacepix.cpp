@@ -8,7 +8,6 @@
 
 #include "spacepix.hpp"
 
-#include "genlib/containerutils.hpp"
 #include "genlib/readwritehelpers.hpp"
 #include "genlib/stringutils.hpp"
 
@@ -499,7 +498,12 @@ bool SpacePixel::intersect(const Line4f &l, double tolerance) {
         auto &pixelLines =
             m_pixelLines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x));
         for (int lineref : pixelLines) {
-            LineTest &linetest = m_lines.find(lineref)->second;
+            const auto &lineIt = m_lines.find(lineref);
+            if (lineIt == m_lines.end()) {
+                throw depthmapX::RuntimeException("Line " + std::to_string(lineref) +
+                                                  " not found when looking for intersections");
+            }
+            LineTest &linetest = lineIt->second;
             if (linetest.test != m_test) {
                 if (linetest.line.Region4f::intersects(l, tolerance)) {
                     if (linetest.line.Line4f::intersects(l, tolerance)) {
@@ -524,7 +528,12 @@ bool SpacePixel::intersect_exclude(const Line4f &l, double tolerance) {
         auto &pixelLines =
             m_pixelLines(static_cast<size_t>(list[i].y), static_cast<size_t>(list[i].x));
         for (int lineref : pixelLines) {
-            LineTest &linetest = m_lines.find(lineref)->second;
+            const auto &lineIt = m_lines.find(lineref);
+            if (lineIt == m_lines.end()) {
+                throw depthmapX::RuntimeException("Line " + std::to_string(lineref) +
+                                                  " not found when looking for intersections");
+            }
+            LineTest &linetest = lineIt->second;
             if (linetest.test != m_test) {
                 if (linetest.line.Region4f::intersects(l, tolerance)) {
                     if (linetest.line.Line4f::intersects(l, tolerance)) {
@@ -568,8 +577,13 @@ void SpacePixel::cutLine(Line4f &l, short dir) {
         PixelRef pix = (dir == l.direction()) ? vec[i] : vec[vec.size() - 1 - i];
         auto &pixelLines = m_pixelLines(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
         for (int lineref : pixelLines) {
-            // try {
-            LineTest &linetest = m_lines.find(lineref)->second;
+            const auto &lineIt = m_lines.find(lineref);
+            if (lineIt == m_lines.end()) {
+                // the lineref may have been deleted -- this is supposed to be tidied up
+                // just ignore...
+                std::cerr << "cut line exception -- missing line?" << std::endl;
+            }
+            LineTest &linetest = lineIt->second;
             if (linetest.test != m_test) {
                 if (linetest.line.Region4f::intersects(l, tolerance * linetest.line.length())) {
                     switch (linetest.line.Line4f::intersects_distinguish(
@@ -640,12 +654,6 @@ void SpacePixel::cutLine(Line4f &l, short dir) {
                 }
                 linetest.test = m_test;
             }
-            //}
-            // catch (pexception) {
-            // the lineref may have been deleted -- this is supposed to be tidied up
-            // just ignore...
-            //   cerr << "cut line exception -- missing line?" << endl;
-            //}
         }
         if (loc.size()) {
             // there's no guarantee the loc actually happened in this pixel...

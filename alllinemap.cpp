@@ -334,6 +334,9 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
         PixelRefVector pixels = map.pixelateLine(polyconnections[i].line);
         std::vector<size_t> testedshapes;
         auto connIter = radialdivisions.find(polyconnections[i].key);
+        if (connIter == radialdivisions.end()) {
+            throw depthmapX::RuntimeException("Connection not found when making divisions");
+        }
         auto connindex = static_cast<int>(std::distance(radialdivisions.begin(), connIter));
         for (size_t j = 0; j < pixels.size(); j++) {
             PixelRef pix = pixels[j];
@@ -344,8 +347,12 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                     continue;
                 }
                 testedshapes.insert(iter, shape.shapeRef);
-                const Line4f &line =
-                    map.getAllShapes().find(static_cast<int>(shape.shapeRef))->second.getLine();
+                auto shapeIter = map.getAllShapes().find(static_cast<int>(shape.shapeRef));
+                if (shapeIter == map.getAllShapes().end()) {
+                    throw depthmapX::RuntimeException("Shape " + std::to_string(shape.shapeRef) +
+                                                      " not found when making divisions");
+                }
+                const Line4f &line = shapeIter->second.getLine();
                 //
                 if (line.Region4f::intersects(polyconnections[i].line,
                                               static_cast<double>(tolerance * line.length()))) {

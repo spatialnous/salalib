@@ -260,6 +260,7 @@ class SalaObj {
     //
     SalaObj(const SalaObj &obj);
     SalaObj &operator=(const SalaObj &obj);
+    //    SalaObj &operator=(SalaObj &&) = default;
     ~SalaObj();
     void reset();
     void uninit() {

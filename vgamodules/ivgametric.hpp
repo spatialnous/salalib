@@ -162,7 +162,7 @@ class IVGAMetric : public IVGATraversing {
                 }
             }
         }
-        return {pathAngleCol, pathLengthCol, euclidDistCol};
+        return {std::move(pathAngleCol), std::move(pathLengthCol), std::move(euclidDistCol)};
     }
 
     std::tuple<std::map<PixelRef, PixelRef>>
@@ -230,9 +230,8 @@ class IVGAMetric : public IVGATraversing {
     traverseFindMany(std::vector<AnalysisData> &analysisData,
                      const std::vector<ADRefVector<AnalysisData>> &graph,
                      const std::vector<PixelRef> &refs, const std::set<PixelRef> sourceRefs,
-                     const std::set<PixelRef> targetRefs) {
+                     std::set<PixelRef> targetRefs) {
 
-        std::set<PixelRef> targetRefsConsumable = targetRefs;
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
         std::set<MetricSearchData> searchList; // contains root point
 
@@ -277,12 +276,12 @@ class IVGAMetric : public IVGATraversing {
             }
             newPixels.insert(mergePixels.begin(), mergePixels.end());
             for (auto &pixel : newPixels) {
-                auto it = targetRefsConsumable.find(pixel.ad.ref);
-                if (it != targetRefsConsumable.end()) {
-                    targetRefsConsumable.erase(it);
+                auto it = targetRefs.find(pixel.ad.ref);
+                if (it != targetRefs.end()) {
+                    targetRefs.erase(it);
                 }
             }
-            if (targetRefsConsumable.size() != 0)
+            if (targetRefs.size() != 0)
                 searchList.insert(newPixels.begin(), newPixels.end());
         }
         return std::make_tuple(parents);

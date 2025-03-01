@@ -97,7 +97,7 @@ namespace MetaGraphReadWrite {
 
     template <typename ShapeGraphOrRef>
     bool writeShapeGraphs(std::ostream &stream, const std::vector<ShapeGraphOrRef> &shapeGraphs,
-                          const std::optional<AllLine::MapData> allLineMapData,
+                          const std::optional<AllLine::MapData> &allLineMapData,
                           const std::vector<std::tuple<bool, bool, int>> perShapeGraph,
                           const std::optional<unsigned int> displayedMap);
 
@@ -138,7 +138,7 @@ namespace MetaGraphReadWrite {
         const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
         const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
         const std::vector<ShapeGraphOrRef> &shapeGraphs,
-        const std::optional<AllLine::MapData> allLineMapData,
+        const std::optional<AllLine::MapData> &allLineMapData,
         // display data
         const int state = 0, const int viewClass = 0, const bool showGrid = true,
         const bool showText = true,
@@ -162,7 +162,7 @@ namespace MetaGraphReadWrite {
         const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
         const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
         const std::vector<ShapeGraphOrRef> &shapeGraphs,
-        const std::optional<AllLine::MapData> allLineMapData,
+        const std::optional<AllLine::MapData> &allLineMapData,
         // display data
         const int state = 0, const int viewClass = 0, const bool showGrid = true,
         const bool showText = true,

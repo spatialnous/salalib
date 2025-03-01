@@ -118,7 +118,7 @@ class IVGAAngular : public IVGATraversing {
                 }
             }
         }
-        return {angularDepthCol};
+        return {std::move(angularDepthCol)};
     }
 
     std::tuple<float, int> traverseSum(std::vector<AnalysisData> &analysisData,

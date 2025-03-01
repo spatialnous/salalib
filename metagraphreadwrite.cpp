@@ -427,16 +427,16 @@ MetaGraphReadWrite::readShapeGraphs(std::istream &stream) {
         stream.read(reinterpret_cast<char *>(&length), sizeof(unsigned int));
         stream.read(reinterpret_cast<char *>(&length), sizeof(unsigned int));
     }
-    return std::make_tuple(std::move(shapeGraphs), allLineMapData, std::move(displayData),
-                           displayedMap < 0
-                               ? std::nullopt
-                               : std::make_optional(static_cast<unsigned int>(displayedMap)));
+    return std::make_tuple(
+        std::move(shapeGraphs), std::move(allLineMapData), std::move(displayData),
+        displayedMap < 0 ? std::nullopt
+                         : std::make_optional(static_cast<unsigned int>(displayedMap)));
 }
 
 template <typename ShapeGraphOrRef>
 bool MetaGraphReadWrite::writeShapeGraphs(
     std::ostream &stream, const std::vector<ShapeGraphOrRef> &shapeGraphs,
-    const std::optional<AllLine::MapData> allLineMapData,
+    const std::optional<AllLine::MapData> &allLineMapData,
     const std::vector<std::tuple<bool, bool, int>> displayData,
     const std::optional<unsigned int> displayedMap) {
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
@@ -478,7 +478,7 @@ MetaGraphReadWrite::ReadWriteStatus MetaGraphReadWrite::writeToFile(
     const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
     const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
     const std::vector<ShapeGraphOrRef> &shapeGraphs,
-    const std::optional<AllLine::MapData> allLineMapData,
+    const std::optional<AllLine::MapData> &allLineMapData,
     // display data
     const int state, const int viewClass, const bool showGrid, const bool showText,
     const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
@@ -520,7 +520,7 @@ MetaGraphReadWrite::ReadWriteStatus MetaGraphReadWrite::writeToStream(
     const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
     const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
     const std::vector<ShapeGraphOrRef> &shapeGraphs,
-    const std::optional<AllLine::MapData> allLineMapData,
+    const std::optional<AllLine::MapData> &allLineMapData,
     // display data
     const int state, const int viewClass, const bool showGrid, const bool showText,
     const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
@@ -629,7 +629,7 @@ MetaGraphReadWrite::writeToFile<PointMap, ShapeMap, ShapeGraph>(
     const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> &drawingFiles,
     const std::vector<PointMap> &pointMaps, const std::vector<ShapeMap> &dataMaps,
     const std::vector<ShapeGraph> &shapeGraphs,
-    const std::optional<AllLine::MapData> allLineMapData,
+    const std::optional<AllLine::MapData> &allLineMapData,
     // display data
     const int state, const int viewClass, const bool showGrid, const bool showText,
     const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
@@ -651,7 +651,7 @@ MetaGraphReadWrite::writeToFile<std::reference_wrapper<PointMap>, std::reference
     const std::vector<std::reference_wrapper<PointMap>> &pointMaps,
     const std::vector<std::reference_wrapper<ShapeMap>> &dataMaps,
     const std::vector<std::reference_wrapper<ShapeGraph>> &shapeGraphs,
-    const std::optional<AllLine::MapData> allLineMapData,
+    const std::optional<AllLine::MapData> &allLineMapData,
     // display data
     const int state, const int viewClass, const bool showGrid, const bool showText,
     const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
@@ -670,7 +670,7 @@ MetaGraphReadWrite::writeToStream<PointMap, ShapeMap, ShapeGraph>(
     const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> &drawingFiles,
     const std::vector<PointMap> &pointMaps, const std::vector<ShapeMap> &dataMaps,
     const std::vector<ShapeGraph> &shapeGraphs,
-    const std::optional<AllLine::MapData> allLineMapData,
+    const std::optional<AllLine::MapData> &allLineMapData,
     // display data
     const int state, const int viewClass, const bool showGrid, const bool showText,
     const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,
@@ -693,7 +693,7 @@ MetaGraphReadWrite::writeToStream<std::reference_wrapper<PointMap>,
     const std::vector<std::reference_wrapper<PointMap>> &pointMaps,
     const std::vector<std::reference_wrapper<ShapeMap>> &dataMaps,
     const std::vector<std::reference_wrapper<ShapeGraph>> &shapeGraphs,
-    const std::optional<AllLine::MapData> allLineMapData,
+    const std::optional<AllLine::MapData> &allLineMapData,
     // display data
     const int state, const int viewClass, const bool showGrid, const bool showText,
     const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap,

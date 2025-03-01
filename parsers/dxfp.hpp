@@ -102,6 +102,7 @@ class DxfEntity {
     DxfEntity(int tag = -1);
     DxfEntity(const DxfEntity &) = default;
     DxfEntity &operator=(const DxfEntity &) = default;
+    DxfEntity &operator=(DxfEntity &&) = default;
     void clear(); // for reuse when parsing
     virtual ~DxfEntity() {}
 

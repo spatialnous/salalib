@@ -30,7 +30,8 @@ namespace depthmapX {
 
       public:
         PointMapException(PointMapExceptionType errorType, std::string message)
-            : depthmapX::RuntimeException(message), m_errorType(errorType), _padding0(0) {}
+            : depthmapX::RuntimeException(std::move(message)), m_errorType(errorType),
+              _padding0(0) {}
         PointMapExceptionType getErrorType() const { return m_errorType; }
     };
 } // namespace depthmapX

@@ -11,13 +11,11 @@ AnalysisResult VGAMetricDepthLinkCost::run(Communicator *) {
     auto &attributes = m_map.getAttributeTable();
 
     // custom linking costs from the attribute table
-    std::string linkMetricCostColName = Column::LINK_METRIC_COST;
-    std::string pathLengthColName = Column::METRIC_STEP_DEPTH;
-    AnalysisResult result({pathLengthColName}, attributes.getNumRows());
+    AnalysisResult result({Column::METRIC_STEP_DEPTH}, attributes.getNumRows());
 
-    auto pathLengthColIdx = result.getColumnIndex(pathLengthColName);
+    auto pathLengthColIdx = result.getColumnIndex(Column::METRIC_STEP_DEPTH);
 
-    std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
+    std::vector<AnalysisData> analysisData = getAnalysisData(attributes, Column::LINK_METRIC_COST);
     const auto refs = getRefVector(analysisData);
     const auto graph = getGraph(analysisData, refs, true);
 

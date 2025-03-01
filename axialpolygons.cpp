@@ -512,7 +512,7 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                 last = curr;
                 curr = vertPossIter->second.at(static_cast<size_t>(winner));
             }
-            polygons.push_back(polygon);
+            polygons.push_back(std::move(polygon));
         }
     }
 }

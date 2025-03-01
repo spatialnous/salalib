@@ -12,18 +12,14 @@ AnalysisResult ExtractLinkData::run(Communicator *) {
 
     auto &attributes = m_map.getAttributeTable();
 
-    std::string angularCostColName = Column::LINK_ANGULAR_COST;
-    auto angularCostCol = attributes.insertOrResetColumn(angularCostColName);
-    result.addAttribute(angularCostColName);
-    std::string metricCostColName = Column::LINK_METRIC_COST;
-    auto metricCostCol = attributes.insertOrResetColumn(metricCostColName);
-    result.addAttribute(metricCostColName);
-    std::string linkToColName = Column::LINK_TO;
-    auto linkToCol = attributes.insertOrResetColumn(linkToColName);
-    result.addAttribute(linkToColName);
-    std::string visualCostColName = Column::LINK_VISUAL_COST;
-    auto visualCostCol = attributes.insertOrResetColumn(visualCostColName);
-    result.addAttribute(visualCostColName);
+    auto angularCostCol = attributes.insertOrResetColumn(Column::LINK_ANGULAR_COST);
+    result.addAttribute(Column::LINK_ANGULAR_COST);
+    auto metricCostCol = attributes.insertOrResetColumn(Column::LINK_METRIC_COST);
+    result.addAttribute(Column::LINK_METRIC_COST);
+    auto linkToCol = attributes.insertOrResetColumn(Column::LINK_TO);
+    result.addAttribute(Column::LINK_TO);
+    auto visualCostCol = attributes.insertOrResetColumn(Column::LINK_VISUAL_COST);
+    result.addAttribute(Column::LINK_VISUAL_COST);
 
     for (auto &row : attributes) {
         PixelRef pix = PixelRef(row.getKey().value);

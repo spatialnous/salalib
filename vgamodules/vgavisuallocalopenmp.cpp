@@ -144,15 +144,12 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
 
     AnalysisResult result;
 
-    std::string clusterColName = Column::VISUAL_CLUSTERING_COEFFICIENT;
-    std::string controlColName = Column::VISUAL_CONTROL;
-    std::string controllabilityColName = Column::VISUAL_CONTROLLABILITY;
-    auto clusterCol = attributes.insertOrResetColumn(clusterColName);
-    result.addAttribute(clusterColName);
-    auto controlCol = attributes.insertOrResetColumn(controlColName);
-    result.addAttribute(controlColName);
-    auto controllabilityCol = attributes.insertOrResetColumn(controllabilityColName);
-    result.addAttribute(controllabilityColName);
+    auto clusterCol = attributes.insertOrResetColumn(Column::VISUAL_CLUSTERING_COEFFICIENT);
+    result.addAttribute(Column::VISUAL_CLUSTERING_COEFFICIENT);
+    auto controlCol = attributes.insertOrResetColumn(Column::VISUAL_CONTROL);
+    result.addAttribute(Column::VISUAL_CONTROL);
+    auto controllabilityCol = attributes.insertOrResetColumn(Column::VISUAL_CONTROLLABILITY);
+    result.addAttribute(Column::VISUAL_CONTROLLABILITY);
 
     auto dataIter = colData.begin();
     for (auto row : rows) {

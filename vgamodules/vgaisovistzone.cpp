@@ -51,7 +51,7 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
         auto inverseZoneColumnIndex = attributes.insertOrResetColumn(inverseZoneColumnName);
         setColumnFormulaAndUpdate(m_map, inverseZoneColumnIndex,
                                   "1/((value(\"" + zoneColumnName + "\") + 1) ^ 2)", std::nullopt);
-        result.addAttribute(inverseZoneColumnName);
+        result.addAttribute(std::move(inverseZoneColumnName));
     }
 
     result.completed = true;
@@ -59,7 +59,7 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
     return result;
 }
 
-void VGAIsovistZone::extractMetric(Node n, std::set<MetricTriple> &pixels, PointMap &map,
+void VGAIsovistZone::extractMetric(Node &n, std::set<MetricTriple> &pixels, PointMap &map,
                                    const MetricTriple &curs) {
     for (int i = 0; i < 32; i++) {
         Bin &bin = n.bin(i);
@@ -101,5 +101,5 @@ void VGAIsovistZone::setColumnFormulaAndUpdate(PointMap &pointmap, size_t column
                                               proggy.getLastErrorMessage());
         }
     }
-    programContext.getTable()->getColumn(columnIndex).setFormula(formula);
+    programContext.getTable()->getColumn(columnIndex).setFormula(std::move(formula));
 }

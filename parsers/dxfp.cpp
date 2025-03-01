@@ -1470,7 +1470,7 @@ std::istream &operator>>(std::istream &stream, DxfToken &token) {
     dXstring::ltrim(dataInputLine, '\n');
     dXstring::rtrim(dataInputLine, '\r');
     dXstring::rtrim(dataInputLine, '\n');
-    token.data = dataInputLine;
+    token.data = std::move(dataInputLine);
     token.size = codeInputLine.length() + token.data.length() +
                  2; // might be missing a few end line characters --- never mind
     return stream;

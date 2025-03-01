@@ -12,7 +12,7 @@ namespace depthmapX {
     class BaseException : public std::exception {
       public:
         BaseException() : m_message() {}
-        BaseException(std::string message) : m_message(message) {}
+        BaseException(std::string message) : m_message(std::move(message)) {}
         const char *what() const noexcept override { return m_message.c_str(); }
 
       private:
@@ -21,6 +21,6 @@ namespace depthmapX {
 
     class RuntimeException : public BaseException {
       public:
-        RuntimeException(std::string message) : BaseException(message) {}
+        RuntimeException(std::string message) : BaseException(std::move(message)) {}
     };
 } // namespace depthmapX

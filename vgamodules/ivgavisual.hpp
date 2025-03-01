@@ -81,7 +81,7 @@ class IVGAVisual : public IVGATraversing {
             }
             level++;
         }
-        return {sd};
+        return {std::move(sd)};
     }
 
     std::tuple<int, int, std::vector<int>>

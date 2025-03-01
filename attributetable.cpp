@@ -22,7 +22,7 @@ bool AttributeColumnImpl::isHidden() const { return m_hidden; }
 
 void AttributeColumnImpl::setHidden(bool hidden) { m_hidden = hidden; }
 
-void AttributeColumnImpl::setFormula(std::string newFormula) { m_formula = newFormula; }
+void AttributeColumnImpl::setFormula(std::string newFormula) { m_formula = std::move(newFormula); }
 
 const std::string &AttributeColumnImpl::getFormula() const { return m_formula; }
 

@@ -44,7 +44,7 @@ class VGAIsovistZone : public IAnalysis {
     MetricPoint &getMetricPoint(depthmapX::ColumnMatrix<MetricPoint> &metricPoints, PixelRef ref) {
         return (metricPoints(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x)));
     }
-    void extractMetric(Node n, std::set<MetricTriple> &pixels, PointMap &map,
+    void extractMetric(Node &n, std::set<MetricTriple> &pixels, PointMap &map,
                        const MetricTriple &curs);
     void setColumnFormulaAndUpdate(PointMap &pointmap, size_t columnIndex, std::string formula,
                                    std::optional<const std::set<int>> selectionSet);

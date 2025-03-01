@@ -72,8 +72,8 @@ class AxialIntegration : IAxial {
     static size_t getFormattedColumnIdx(AttributeTable &attributes, std::string column, int radius,
                                         std::optional<std::string> weightingColName = std::nullopt,
                                         std::optional<std::string> normalisation = std::nullopt) {
-        return attributes.getColumnIndex(
-            getFormattedColumn(column, radius, weightingColName, normalisation));
+        return attributes.getColumnIndex(getFormattedColumn(
+            std::move(column), radius, std::move(weightingColName), std::move(normalisation)));
     }
 
   private:
@@ -84,7 +84,7 @@ class AxialIntegration : IAxial {
   public:
     AxialIntegration(std::set<double> radiusSet, int weightedMeasureCol, bool choice,
                      bool fulloutput)
-        : m_radiusSet(radiusSet),
+        : m_radiusSet(std::move(radiusSet)),
           m_weightedMeasureCol(weightedMeasureCol < 0 ? std::nullopt
                                                       : std::make_optional(weightedMeasureCol)),
           m_choice(choice), m_fulloutput(fulloutput), _padding0(0), _padding1(0) {}

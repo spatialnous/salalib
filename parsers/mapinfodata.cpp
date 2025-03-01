@@ -357,7 +357,7 @@ bool MapInfoData::exportPolygons(std::ostream &miffile, std::ostream &midfile,
     LayerManagerImpl layers;
 
     // write the mid table
-    writetable(miffile, midfile, attributes, layers);
+    writetable(miffile, midfile, attributes, std::move(layers));
 
     auto const mifFlags = miffile.flags();
     miffile.precision(12);
@@ -426,7 +426,7 @@ bool MapInfoData::readheader(std::istream &miffile) {
             m_coordsys = line.substr(0, boundIndex);
             m_bounds = line.substr(boundIndex);
         } else {
-            m_coordsys = line;
+            m_coordsys = std::move(line);
             m_bounds = "";
         }
     } else {

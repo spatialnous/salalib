@@ -12,10 +12,10 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
             -Wunused-macros -Wmissing-noreturn -Wmissing-declarations
-            -Wold-style-cast
+            -Wold-style-cast -Weffc++
             # yes eventually
             -Wno-float-equal -Wno-double-promotion
-            -Wno-switch-enum -Weffc++
+            -Wno-switch-enum
             # maybe
             -Wno-global-constructors -Wno-weak-vtables -Wno-non-virtual-dtor
             -Wno-cast-qual -Wno-deprecated-copy-with-user-provided-dtor

@@ -203,9 +203,11 @@ bool SalaProgram::parse(std::istream &program) {
                 parent = parent->m_parent;
             }
 
-            parent->m_children.push_back(SalaCommand(this, parent, indent));
+            auto &children = parent->m_children;
 
-            SalaCommand &thiscommand = parent->m_children.back();
+            children.push_back(SalaCommand(this, parent, indent));
+
+            SalaCommand &thiscommand = children.back();
 
             try {
                 line = thiscommand.parse(program, line);

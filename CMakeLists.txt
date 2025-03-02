@@ -12,7 +12,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
             -Wunused-macros -Wmissing-noreturn -Wmissing-declarations
-            -Wold-style-cast -Weffc++
+            -Wold-style-cast -Weffc++ -Wpadded
             # yes eventually
             -Wno-float-equal -Wno-double-promotion
             -Wno-switch-enum
@@ -51,14 +51,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
-endif()
-
-option(WITH_EXPLICIT_PADDING "Enable explicit padding in structs" ON)
-if(WITH_EXPLICIT_PADDING)
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
-        "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-        set(COMPILE_WARNINGS "${COMPILE_WARNINGS}" -Wpadded)
-    endif()
 endif()
 
 set(salalib_HDRS

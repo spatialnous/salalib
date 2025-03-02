@@ -665,7 +665,7 @@ int Agent::onGibsonianRule(int rule) {
     } else if (option == 0x11 &&
                m_program->ruleProbability[0] > pafmath::prandomr() * pafmath::prandomr()) {
         // note, use random * random event as there are two ways to do this
-        dir = (rand() % 2) ? -1 : +1;
+        dir = (pafmath::pafrand() % 2) ? -1 : +1;
     }
     return dir;
 }

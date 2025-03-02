@@ -925,7 +925,6 @@ void ShapeMap::undo() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ShapeMap::makePolyPixels(int polyref) {
-    ShapeRef shapeRef = ShapeRef(static_cast<unsigned int>(polyref));
     // first add into pixels, and ensure you have a bl, tr for the set (useful for
     // testing later)
     auto shapeIter = m_shapes.find(polyref);
@@ -935,6 +934,7 @@ void ShapeMap::makePolyPixels(int polyref) {
     }
     SalaShape &poly = shapeIter->second;
     if (poly.isClosed()) {
+        ShapeRef shapeRef = ShapeRef(static_cast<unsigned int>(polyref));
         std::map<int, int> relations;
         for (size_t k = 0; k < poly.points.size(); k++) {
             int nextk = static_cast<int>((k + 1) % poly.points.size());
@@ -1055,13 +1055,15 @@ void ShapeMap::makePolyPixels(int polyref) {
             PixelRef pix = pixelate(poly.m_centroid);
             std::vector<ShapeRef> &pixShapes =
                 m_pixelShapes(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
-            const auto it = depthmapX::findBinary(pixShapes, shapeRef);
+            const auto it =
+                depthmapX::findBinary(pixShapes, ShapeRef(static_cast<unsigned int>(polyref)));
             if (it == pixShapes.end()) {
                 pixShapes.push_back(
                     ShapeRef(static_cast<unsigned int>(polyref), ShapeRef::SHAPE_OPEN));
             }
         } break;
         case SalaShape::SHAPE_LINE: {
+            ShapeRef shapeRef = ShapeRef(static_cast<unsigned int>(polyref));
             PixelRefVector pixels = pixelateLine(poly.m_region);
             for (size_t i = 0; i < pixels.size(); i++) {
                 PixelRef pix = pixels[i];
@@ -1074,7 +1076,8 @@ void ShapeMap::makePolyPixels(int polyref) {
                 }
             }
         } break;
-        case SalaShape::SHAPE_POLY:
+        case SalaShape::SHAPE_POLY: {
+            ShapeRef shapeRef = ShapeRef(static_cast<unsigned int>(polyref));
             for (size_t k = 0; k < poly.points.size() - 1; k++) {
                 auto nextk = (k + 1);
                 Line4f li(poly.points[k], poly.points[nextk]);
@@ -1098,6 +1101,7 @@ void ShapeMap::makePolyPixels(int polyref) {
                 }
             }
             break;
+        }
         }
     }
 }

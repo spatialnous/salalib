@@ -10,8 +10,8 @@
 
 class SegmentTulip : ISegment {
   private:
-    std::set<double> m_radiusSet;
-    std::optional<const std::set<int>> m_selSet;
+    const std::set<double> &m_radiusSet;
+    const std::optional<const std::set<int>> &m_selSet;
     int m_tulipBins;
     int m_weightedMeasureCol;
     int m_weightedMeasureCol2;
@@ -89,10 +89,11 @@ class SegmentTulip : ISegment {
     std::vector<std::string> getRequiredColumns(ShapeGraph &map, std::vector<double> radii);
 
   public:
-    SegmentTulip(std::set<double> radiusSet, std::optional<const std::set<int>> selSet,
-                 int tulipBins, int weightedMeasureCol, RadiusType radiusType, bool choice,
+    SegmentTulip(const std::set<double> &radiusSet,
+                 const std::optional<const std::set<int>> &selSet, int tulipBins,
+                 int weightedMeasureCol, RadiusType radiusType, bool choice,
                  bool interactive = false, int weightedMeasureCol2 = -1, int routeweightCol = -1)
-        : m_radiusSet(radiusSet), m_selSet(std::move(selSet)), m_tulipBins(tulipBins),
+        : m_radiusSet(radiusSet), m_selSet(selSet), m_tulipBins(tulipBins),
           m_weightedMeasureCol(weightedMeasureCol), m_weightedMeasureCol2(weightedMeasureCol2),
           m_routeweightCol(routeweightCol), m_radiusType(radiusType), m_choice(choice),
           m_interactive(interactive), _padding0(0) {}

@@ -286,8 +286,8 @@ MetaGraphReadWrite::readPointMaps(std::istream &stream, Region4f defaultRegion) 
 template <typename PointMapOrRef>
 bool MetaGraphReadWrite::writePointMaps(std::ostream &stream,
                                         const std::vector<PointMapOrRef> &pointMaps,
-                                        const std::vector<int> displayData,
-                                        const std::optional<unsigned int> displayedMap) {
+                                        const std::vector<int> &displayData,
+                                        const std::optional<unsigned int> &displayedMap) {
     int displayedPointmap = displayedMap.has_value() ? static_cast<int>(*displayedMap) : -1;
     stream.write(reinterpret_cast<const char *>(&displayedPointmap), sizeof(displayedPointmap));
     auto count = pointMaps.size();
@@ -331,8 +331,8 @@ MetaGraphReadWrite::readDataMaps(std::istream &stream) {
 template <typename ShapeMapOrRef>
 bool MetaGraphReadWrite::writeDataMaps(std::ostream &stream,
                                        const std::vector<ShapeMapOrRef> &dataMaps,
-                                       const std::vector<ShapeMapDisplayData> displayData,
-                                       const std::optional<unsigned int> displayedMap) {
+                                       const std::vector<ShapeMapDisplayData> &displayData,
+                                       const std::optional<unsigned int> &displayedMap) {
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
     int displayedDataMap = displayedMap.has_value() ? static_cast<int>(*displayedMap) : -1;
@@ -355,7 +355,7 @@ bool MetaGraphReadWrite::writeDataMaps(std::ostream &stream,
 template <typename ShapeMapOrRef>
 bool MetaGraphReadWrite::writeSpacePixels(
     std::ostream &stream, const std::vector<ShapeMapOrRef> &spacePixels,
-    const std::vector<std::tuple<bool, bool, int>> displayData) {
+    const std::vector<std::tuple<bool, bool, int>> &displayData) {
 
     int count = static_cast<int>(spacePixels.size());
     stream.write(reinterpret_cast<const char *>(&count), sizeof(count));
@@ -437,8 +437,8 @@ template <typename ShapeGraphOrRef>
 bool MetaGraphReadWrite::writeShapeGraphs(
     std::ostream &stream, const std::vector<ShapeGraphOrRef> &shapeGraphs,
     const std::optional<AllLine::MapData> &allLineMapData,
-    const std::vector<std::tuple<bool, bool, int>> displayData,
-    const std::optional<unsigned int> displayedMap) {
+    const std::vector<std::tuple<bool, bool, int>> &displayData,
+    const std::optional<unsigned int> &displayedMap) {
     // n.b. -- do not change to size_t as will cause 32-bit to 64-bit conversion
     // problems
     int displayedShapeGraph = displayedMap.has_value() ? static_cast<int>(*displayedMap) : -1;

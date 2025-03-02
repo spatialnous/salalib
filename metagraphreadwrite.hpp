@@ -98,8 +98,8 @@ namespace MetaGraphReadWrite {
     template <typename ShapeGraphOrRef>
     bool writeShapeGraphs(std::ostream &stream, const std::vector<ShapeGraphOrRef> &shapeGraphs,
                           const std::optional<AllLine::MapData> &allLineMapData,
-                          const std::vector<std::tuple<bool, bool, int>> perShapeGraph,
-                          const std::optional<unsigned int> displayedMap);
+                          const std::vector<std::tuple<bool, bool, int>> &perShapeGraph,
+                          const std::optional<unsigned int> &displayedMap);
 
     std::tuple<std::vector<ShapeMap>, std::vector<std::tuple<bool, bool, int>>,
                std::optional<unsigned int>>
@@ -108,20 +108,20 @@ namespace MetaGraphReadWrite {
     template <typename ShapeMapOrRef>
     bool writeDataMaps(
         std::ostream &stream, const std::vector<ShapeMapOrRef> &dataMaps,
-        const std::vector<ShapeMapDisplayData> displayData = std::vector<ShapeMapDisplayData>(),
-        const std::optional<unsigned int> displayedMap = 0);
+        const std::vector<ShapeMapDisplayData> &displayData = std::vector<ShapeMapDisplayData>(),
+        const std::optional<unsigned int> &displayedMap = 0);
 
     std::tuple<std::vector<PointMap>, std::vector<int>, std::optional<unsigned int>>
     readPointMaps(std::istream &stream, Region4f defaultRegion);
 
     template <typename PointMapOrRef>
     bool writePointMaps(std::ostream &stream, const std::vector<PointMapOrRef> &pointMaps,
-                        const std::vector<int> displayData = std::vector<int>(),
-                        const std::optional<unsigned int> displayedMap = 0);
+                        const std::vector<int> &displayData = std::vector<int>(),
+                        const std::optional<unsigned int> &displayedMap = 0);
 
     template <typename ShapeMapOrRef>
     bool writeSpacePixels(std::ostream &stream, const std::vector<ShapeMapOrRef> &spacePixels,
-                          const std::vector<std::tuple<bool, bool, int>> displayData);
+                          const std::vector<std::tuple<bool, bool, int>> &displayData);
     std::streampos skipVirtualMem(std::istream &stream);
 
     MetaGraphData readFromFile(const std::string &filename);

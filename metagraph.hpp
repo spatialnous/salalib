@@ -27,7 +27,7 @@ struct MetaGraph {
 
   public:
     MetaGraph(std::string nameIn = "")
-        : region(), name(nameIn), fileProperties(), version(-1), _padding0(0) {
+        : region(), name(std::move(nameIn)), fileProperties(), version(-1), _padding0(0) {
 
         // <- if unsaved, file version is -1
     }

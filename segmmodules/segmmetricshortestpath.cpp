@@ -15,12 +15,10 @@ AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
     AttributeTable &attributes = m_map.getAttributeTable();
     size_t shapeCount = m_map.getShapeCount();
 
-    std::string colText = Column::METRIC_SHORTEST_PATH_DISTANCE;
-    size_t distCol = attributes.insertOrResetColumn(colText);
-    result.addAttribute(colText);
-    colText = Column::METRIC_SHORTEST_PATH_ORDER;
-    size_t pathCol = attributes.insertOrResetColumn(colText);
-    result.addAttribute(colText);
+    size_t distCol = attributes.insertOrResetColumn(Column::METRIC_SHORTEST_PATH_DISTANCE);
+    result.addAttribute(Column::METRIC_SHORTEST_PATH_DISTANCE);
+    size_t pathCol = attributes.insertOrResetColumn(Column::METRIC_SHORTEST_PATH_ORDER);
+    result.addAttribute(Column::METRIC_SHORTEST_PATH_ORDER);
 
     // record axial line refs for topological analysis
     std::vector<int> axialrefs;

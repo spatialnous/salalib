@@ -24,7 +24,7 @@ class SegmentTopological : ISegment {
             TOPOLOGICAL_TOTAL_NODES = "Topological Total Nodes",         //
             TOPOLOGICAL_TOTAL_LENGTH = "Topological Total Length";       //
     };
-    static std::string getFormattedColumn(std::string column, double radius) {
+    static std::string getFormattedColumn(const std::string &column, double radius) {
         std::string colName = column;
         if (radius != -1.0) {
             // TODO: This should end in "topological" not "metric"
@@ -35,7 +35,7 @@ class SegmentTopological : ISegment {
 
   public:
     SegmentTopological(double radius, std::optional<const std::set<int>> selSet)
-        : m_radius(radius), m_selSet(selSet) {}
+        : m_radius(radius), m_selSet(std::move(selSet)) {}
     std::string getAnalysisName() const override { return "Topological Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool) override;
 };

@@ -14,7 +14,7 @@ namespace depthmapX {
 
     class InvalidLinkException : public depthmapX::BaseException {
       public:
-        InvalidLinkException(std::string message) : depthmapX::BaseException(message) {}
+        InvalidLinkException(std::string message) : depthmapX::BaseException(std::move(message)) {}
     };
     std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line4f> &mergeLines,
                                                  PointMap &currentMap);

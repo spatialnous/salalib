@@ -16,7 +16,7 @@ namespace depthmapX {
 
     class ImportError : public BaseException {
       public:
-        ImportError(std::string message) : BaseException(message) {}
+        ImportError(std::string message) : BaseException(std::move(message)) {}
     };
 
     std::vector<ShapeMap> importFile(std::istream &stream, Communicator *communicator,
@@ -515,8 +515,9 @@ namespace depthmapX {
                 DxfVertex v = poly.getVertex(m);
                 vertices.push_back(Point2f(v.x, v.y));
             }
-            polylines.push_back(depthmapX::Polyline(
-                vertices, (poly.getAttributes() & DxfPolyLine::CLOSED) == DxfPolyLine::CLOSED));
+            polylines.push_back(depthmapX::Polyline(std::move(vertices),
+                                                    (poly.getAttributes() & DxfPolyLine::CLOSED) ==
+                                                        DxfPolyLine::CLOSED));
         }
 
         for (size_t l = 0; l < dxfLayer.numSplines(); l++) {
@@ -526,8 +527,9 @@ namespace depthmapX {
                 DxfVertex v = poly.getVertex(m);
                 vertices.push_back(Point2f(v.x, v.y));
             }
-            polylines.push_back(depthmapX::Polyline(
-                vertices, (poly.getAttributes() & DxfPolyLine::CLOSED) == DxfPolyLine::CLOSED));
+            polylines.push_back(depthmapX::Polyline(std::move(vertices),
+                                                    (poly.getAttributes() & DxfPolyLine::CLOSED) ==
+                                                        DxfPolyLine::CLOSED));
         }
 
         for (size_t n = 0; n < dxfLayer.numArcs(); n++) {
@@ -540,7 +542,7 @@ namespace depthmapX {
                     vertices.push_back(Point2f(v.x, v.y));
                 }
             }
-            polylines.push_back(depthmapX::Polyline(vertices, false));
+            polylines.push_back(depthmapX::Polyline(std::move(vertices), false));
         }
 
         for (size_t n = 0; n < dxfLayer.numEllipses(); n++) {
@@ -553,7 +555,7 @@ namespace depthmapX {
                     vertices.push_back(Point2f(v.x, v.y));
                 }
             }
-            polylines.push_back(depthmapX::Polyline(vertices, false));
+            polylines.push_back(depthmapX::Polyline(std::move(vertices), false));
         }
 
         for (size_t nc = 0; nc < dxfLayer.numCircles(); nc++) {
@@ -563,7 +565,7 @@ namespace depthmapX {
                 DxfVertex v = circ.getVertex(m, DXFCIRCLERES);
                 vertices.push_back(Point2f(v.x, v.y));
             }
-            polylines.push_back(depthmapX::Polyline(vertices, true));
+            polylines.push_back(depthmapX::Polyline(std::move(vertices), true));
         }
         DxfVertex layerMin = dxfLayer.getExtMin();
         DxfVertex layerMax = dxfLayer.getExtMax();

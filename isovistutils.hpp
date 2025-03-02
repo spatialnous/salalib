@@ -12,8 +12,8 @@
 
 namespace IsovistUtils {
 
-    std::set<std::string> setIsovistData(Isovist &isovist, AttributeTable &table,
-                                         AttributeRow &row) {
+    static std::set<std::string> setIsovistData(Isovist &isovist, AttributeTable &table,
+                                                AttributeRow &row) {
         std::set<std::string> newColumns;
         auto [centroid, area] = isovist.getCentroidArea();
         auto [driftmag, driftang] = isovist.getDriftData();
@@ -56,14 +56,14 @@ namespace IsovistUtils {
 
         colText = "Isovist Perimeter";
         col = table.getOrInsertColumn(colText);
-        newColumns.insert(colText);
+        newColumns.insert(std::move(colText));
         row.setValue(col, static_cast<float>(perimeter));
 
         return newColumns;
     }
 
-    void createIsovistInMap(BSPNodeTree &bspNodeTree, const Region4f &bounds, ShapeMap &map,
-                            const Point2f &p, double startangle, double endangle) {
+    static void createIsovistInMap(BSPNodeTree &bspNodeTree, const Region4f &bounds, ShapeMap &map,
+                                   const Point2f &p, double startangle, double endangle) {
 
         Isovist iso;
         iso.makeit(bspNodeTree.getRoot(), p, bounds, startangle, endangle);

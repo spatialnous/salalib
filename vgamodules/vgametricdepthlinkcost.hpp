@@ -14,7 +14,7 @@
 class VGAMetricDepthLinkCost : public IVGAMetric {
 
   private:
-    std::set<PixelRef> m_pixelsFrom;
+    std::set<PixelRef> &m_pixelsFrom;
 
   public:
     struct Column {
@@ -26,6 +26,6 @@ class VGAMetricDepthLinkCost : public IVGAMetric {
   public:
     std::string getAnalysisName() const override { return "Metric Depth"; }
     AnalysisResult run(Communicator *) override;
-    VGAMetricDepthLinkCost(PointMap &map, std::set<PixelRef> pixelsFrom)
+    VGAMetricDepthLinkCost(PointMap &map, std::set<PixelRef> &pixelsFrom)
         : IVGAMetric(map), m_pixelsFrom(pixelsFrom) {}
 };

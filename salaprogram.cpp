@@ -214,7 +214,7 @@ bool SalaProgram::parse(std::istream &program) {
             } catch (SalaError e) {
                 if (e.lineno == -1)
                     e.lineno = line;
-                m_errorStack.push_back(e);
+                m_errorStack.push_back(std::move(e));
                 return false;
             }
 
@@ -776,7 +776,7 @@ int SalaCommand::decode(std::string string) // string copied as makelower applie
     }
     if (retvar == SP_COMMAND) {
         //
-        m_lastString = string; // make a copy for debugging purposes
+        m_lastString = std::move(string); // make a copy for debugging purposes
         return retvar;
     }
 
@@ -785,7 +785,7 @@ int SalaCommand::decode(std::string string) // string copied as makelower applie
         if (string[string.length() - 1] == 'e') {
             // handle later... at the moment we have hit + or - in 9.999e+99
             // or 9.999e-99
-            m_lastString = string; // make a copy for debugging purposes
+            m_lastString = std::move(string); // make a copy for debugging purposes
             return SP_NUMBER;
         }
         if (string.find_first_of('.') != std::string::npos ||
@@ -914,7 +914,7 @@ int SalaCommand::decode(std::string string) // string copied as makelower applie
         m_command = SC_EXPR;
     }
 
-    m_lastString = string; // make a copy for debugging purposes
+    m_lastString = std::move(string); // make a copy for debugging purposes
 
     return retvar;
 }

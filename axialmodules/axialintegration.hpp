@@ -45,9 +45,9 @@ class AxialIntegration : IAxial {
             TOTAL_DEPTH = "Total Depth";                 //
     };
     static std::string
-    getFormattedColumn(std::string column, int radius,
-                       std::optional<std::string> weightingColName = std::nullopt,
-                       std::optional<std::string> normalisation = std::nullopt) {
+    getFormattedColumn(const std::string &column, int radius,
+                       const std::optional<std::string> &weightingColName = std::nullopt,
+                       const std::optional<std::string> &normalisation = std::nullopt) {
         std::string colName = column;
         bool spaceAdded = false;
         if (weightingColName.has_value() && column == Column::TOTAL) {
@@ -69,11 +69,12 @@ class AxialIntegration : IAxial {
         }
         return colName;
     }
-    static size_t getFormattedColumnIdx(AttributeTable &attributes, std::string column, int radius,
-                                        std::optional<std::string> weightingColName = std::nullopt,
-                                        std::optional<std::string> normalisation = std::nullopt) {
-        return attributes.getColumnIndex(getFormattedColumn(
-            std::move(column), radius, std::move(weightingColName), std::move(normalisation)));
+    static size_t
+    getFormattedColumnIdx(const AttributeTable &attributes, const std::string &column, int radius,
+                          const std::optional<std::string> &weightingColName = std::nullopt,
+                          const std::optional<std::string> &normalisation = std::nullopt) {
+        return attributes.getColumnIndex(
+            getFormattedColumn(column, radius, weightingColName, normalisation));
     }
 
   private:

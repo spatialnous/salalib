@@ -15,12 +15,10 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
     AttributeTable &attributes = m_map.getAttributeTable();
     size_t shapeCount = m_map.getShapeCount();
 
-    std::string colText = Column::TOPOLOGICAL_SHORTEST_PATH_DEPTH;
-    size_t depthCol = attributes.insertOrResetColumn(colText);
-    result.addAttribute(colText);
-    colText = Column::TOPOLOGICAL_SHORTEST_PATH_ORDER;
-    size_t pathCol = attributes.insertOrResetColumn(colText);
-    result.addAttribute(colText);
+    size_t depthCol = attributes.insertOrResetColumn(Column::TOPOLOGICAL_SHORTEST_PATH_DEPTH);
+    result.addAttribute(Column::TOPOLOGICAL_SHORTEST_PATH_DEPTH);
+    size_t pathCol = attributes.insertOrResetColumn(Column::TOPOLOGICAL_SHORTEST_PATH_ORDER);
+    result.addAttribute(Column::TOPOLOGICAL_SHORTEST_PATH_ORDER);
 
     // record axial line refs for topological analysis
     std::vector<int> axialrefs;

@@ -24,7 +24,7 @@ class SegmentMetric : ISegment {
             METRIC_TOTAL_NODES = "Metric Total Nodes",         //
             METRIC_TOTAL_LENGTH = "Metric Total Length";       //
     };
-    static std::string getFormattedColumn(std::string column, double radius) {
+    static std::string getFormattedColumn(const std::string &column, double radius) {
         std::string colName = column;
         if (radius != -1.0) {
             colName += dXstring::formatString(radius, " R%.f metric");
@@ -34,7 +34,7 @@ class SegmentMetric : ISegment {
 
   public:
     SegmentMetric(double radius, std::optional<const std::set<int>> selSet)
-        : m_radius(radius), m_selSet(selSet) {}
+        : m_radius(radius), m_selSet(std::move(selSet)) {}
     std::string getAnalysisName() const override { return "Metric Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool) override;
 };

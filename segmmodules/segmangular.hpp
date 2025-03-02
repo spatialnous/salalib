@@ -19,7 +19,7 @@ class SegmentAngular : ISegment {
             ANGULAR_NODE_COUNT = "Angular Node Count",   //
             ANGULAR_TOTAL_DEPTH = "Angular Total Depth"; //
     };
-    static std::string getFormattedColumn(std::string column, double radius) {
+    static std::string getFormattedColumn(const std::string &column, double radius) {
         std::string colName = column;
         if (radius != -1.0) {
             colName += makeRadiusText(RadiusType::ANGULAR, radius);
@@ -30,5 +30,5 @@ class SegmentAngular : ISegment {
   public:
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool) override;
-    SegmentAngular(std::set<double> radiusSet) : m_radiusSet(radiusSet) {}
+    SegmentAngular(std::set<double> radiusSet) : m_radiusSet(std::move(radiusSet)) {}
 };

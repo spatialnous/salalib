@@ -14,12 +14,10 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
 
     AttributeTable &attributes = m_map.getAttributeTable();
 
-    std::string colText = Column::ANGULAR_SHORTEST_PATH_ANGLE;
-    size_t angleCol = attributes.insertOrResetColumn(colText);
-    result.addAttribute(colText);
-    colText = Column::ANGULAR_SHORTEST_PATH_ORDER;
-    size_t pathCol = attributes.insertOrResetColumn(colText);
-    result.addAttribute(colText);
+    size_t angleCol = attributes.insertOrResetColumn(Column::ANGULAR_SHORTEST_PATH_ANGLE);
+    result.addAttribute(Column::ANGULAR_SHORTEST_PATH_ANGLE);
+    size_t pathCol = attributes.insertOrResetColumn(Column::ANGULAR_SHORTEST_PATH_ORDER);
+    result.addAttribute(Column::ANGULAR_SHORTEST_PATH_ORDER);
 
     size_t tulipBins = m_tulipBins;
 

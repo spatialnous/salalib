@@ -25,7 +25,7 @@ namespace depthmapX {
 
       public:
         Polyline(std::vector<Point2f> verticesIn, bool isClosed)
-            : vertices(verticesIn), closed(isClosed), _padding0(0), _padding1(0) {}
+            : vertices(std::move(verticesIn)), closed(isClosed), _padding0(0), _padding1(0) {}
     };
 
     enum ImportType { DRAWINGMAP, DATAMAP };

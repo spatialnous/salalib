@@ -41,14 +41,14 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
     // first enter table values
     for (auto radius : radii) {
         std::string depthColText = getFormattedColumn(Column::ANGULAR_MEAN_DEPTH, radius);
-        attributes.insertOrResetColumn(depthColText.c_str());
-        result.addAttribute(depthColText);
+        attributes.insertOrResetColumn(depthColText);
+        result.addAttribute(std::move(depthColText));
         std::string countColText = getFormattedColumn(Column::ANGULAR_NODE_COUNT, radius);
-        attributes.insertOrResetColumn(countColText.c_str());
-        result.addAttribute(countColText);
+        attributes.insertOrResetColumn(countColText);
+        result.addAttribute(std::move(countColText));
         std::string totalColText = getFormattedColumn(Column::ANGULAR_TOTAL_DEPTH, radius);
-        attributes.insertOrResetColumn(totalColText.c_str());
-        result.addAttribute(totalColText);
+        attributes.insertOrResetColumn(totalColText);
+        result.addAttribute(std::move(totalColText));
     }
 
     for (auto radius : radii) {

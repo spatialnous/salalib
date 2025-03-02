@@ -2424,7 +2424,7 @@ bool ShapeMap::importPoints(const std::vector<Point2f> &points, const depthmapX:
         shapeRefs.push_back(makePointShape(point));
     }
 
-    return importData(data, shapeRefs);
+    return importData(data, std::move(shapeRefs));
 }
 
 bool ShapeMap::importPointsWithRefs(const std::map<int, Point2f> &points,
@@ -2437,7 +2437,7 @@ bool ShapeMap::importPointsWithRefs(const std::map<int, Point2f> &points,
         shapeRefs.push_back(makePointShapeWithRef(point.second, point.first));
     }
 
-    return importData(data, shapeRefs);
+    return importData(data, std::move(shapeRefs));
 }
 
 bool ShapeMap::importLines(const std::vector<Line4f> &lines, const depthmapX::Table &data) {
@@ -2449,7 +2449,7 @@ bool ShapeMap::importLines(const std::vector<Line4f> &lines, const depthmapX::Ta
         shapeRefs.push_back(makeLineShape(line));
     }
 
-    return importData(data, shapeRefs);
+    return importData(data, std::move(shapeRefs));
 }
 
 bool ShapeMap::importLinesWithRefs(const std::map<int, Line4f> &lines,
@@ -2462,7 +2462,7 @@ bool ShapeMap::importLinesWithRefs(const std::map<int, Line4f> &lines,
         shapeRefs.push_back(makeLineShapeWithRef(line.second, line.first));
     }
 
-    return importData(data, shapeRefs);
+    return importData(data, std::move(shapeRefs));
 }
 
 bool ShapeMap::importPolylines(const std::vector<depthmapX::Polyline> &polylines,
@@ -2475,7 +2475,7 @@ bool ShapeMap::importPolylines(const std::vector<depthmapX::Polyline> &polylines
         shapeRefs.push_back(makePolyShape(polyline.vertices, !polyline.closed));
     }
 
-    return importData(data, shapeRefs);
+    return importData(data, std::move(shapeRefs));
 }
 
 bool ShapeMap::importPolylinesWithRefs(const std::map<int, depthmapX::Polyline> &polylines,
@@ -2489,9 +2489,7 @@ bool ShapeMap::importPolylinesWithRefs(const std::map<int, depthmapX::Polyline> 
                                                  polyline.first));
     }
 
-    bool dataImported = importData(data, shapeRefs);
-
-    return dataImported;
+    return importData(data, std::move(shapeRefs));
 }
 
 bool ShapeMap::importData(const depthmapX::Table &data, std::vector<int> shapeRefs) {

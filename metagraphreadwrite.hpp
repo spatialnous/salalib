@@ -35,7 +35,7 @@ namespace MetaGraphReadWrite {
 
     class MetaGraphReadError : public depthmapX::BaseException {
       public:
-        MetaGraphReadError(std::string message) : BaseException(message) {}
+        MetaGraphReadError(std::string message) : BaseException(std::move(message)) {}
     };
 
     // editable, show, displayed attribute
@@ -142,14 +142,14 @@ namespace MetaGraphReadWrite {
         // display data
         const int state = 0, const int viewClass = 0, const bool showGrid = true,
         const bool showText = true,
-        const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap =
+        const std::vector<std::vector<ShapeMapDisplayData>> &perDrawingMap =
             std::vector<std::vector<ShapeMapDisplayData>>(),
-        const std::optional<unsigned int> displayedPointMap = std::nullopt,
-        const std::vector<int> perPointMap = std::vector<int>(),
-        const std::optional<unsigned int> displayedDataMap = std::nullopt,
-        const std::vector<ShapeMapDisplayData> perDataMap = std::vector<ShapeMapDisplayData>(),
-        const std::optional<unsigned int> displayedShapeGraph = std::nullopt,
-        const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
+        const std::optional<unsigned int> &displayedPointMap = std::nullopt,
+        const std::vector<int> &perPointMap = std::vector<int>(),
+        const std::optional<unsigned int> &displayedDataMap = std::nullopt,
+        const std::vector<ShapeMapDisplayData> &perDataMap = std::vector<ShapeMapDisplayData>(),
+        const std::optional<unsigned int> &displayedShapeGraph = std::nullopt,
+        const std::vector<ShapeMapDisplayData> &perShapeGraph = std::vector<ShapeMapDisplayData>());
 
     ReadWriteStatus writeToStream(std::ostream &stream, const MetaGraphData &mgd);
 
@@ -166,14 +166,14 @@ namespace MetaGraphReadWrite {
         // display data
         const int state = 0, const int viewClass = 0, const bool showGrid = true,
         const bool showText = true,
-        const std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap =
+        const std::vector<std::vector<ShapeMapDisplayData>> &perDrawingMap =
             std::vector<std::vector<ShapeMapDisplayData>>(),
-        const std::optional<unsigned int> displayedPointMap = std::nullopt,
-        const std::vector<int> perPointMap = std::vector<int>(),
-        const std::optional<unsigned int> displayedDataMap = std::nullopt,
-        const std::vector<ShapeMapDisplayData> perDataMap = std::vector<ShapeMapDisplayData>(),
-        const std::optional<unsigned int> displayedShapeGraph = std::nullopt,
-        const std::vector<ShapeMapDisplayData> perShapeGraph = std::vector<ShapeMapDisplayData>());
+        const std::optional<unsigned int> &displayedPointMap = std::nullopt,
+        const std::vector<int> &perPointMap = std::vector<int>(),
+        const std::optional<unsigned int> &displayedDataMap = std::nullopt,
+        const std::vector<ShapeMapDisplayData> &perDataMap = std::vector<ShapeMapDisplayData>(),
+        const std::optional<unsigned int> &displayedShapeGraph = std::nullopt,
+        const std::vector<ShapeMapDisplayData> &perShapeGraph = std::vector<ShapeMapDisplayData>());
 } // namespace MetaGraphReadWrite
 
 // #include "metagraphreadwrite_impl.hpp"

@@ -92,7 +92,7 @@ class SegmentTulip : ISegment {
     SegmentTulip(const std::set<double> &radiusSet,
                  const std::optional<const std::set<int>> &selSet, int tulipBins,
                  int weightedMeasureCol, RadiusType radiusType, bool choice,
-                 bool interactive = false, int weightedMeasureCol2 = -1, int routeweightCol = -1)
+                 int weightedMeasureCol2 = -1, int routeweightCol = -1, bool interactive = false)
         : m_radiusSet(radiusSet), m_selSet(selSet), m_tulipBins(tulipBins),
           m_weightedMeasureCol(weightedMeasureCol), m_weightedMeasureCol2(weightedMeasureCol2),
           m_routeweightCol(routeweightCol), m_radiusType(radiusType), m_choice(choice),

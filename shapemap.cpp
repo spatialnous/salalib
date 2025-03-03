@@ -3048,3 +3048,29 @@ ShapeMap::getAllPointsWithColour(const std::set<int> &selSet) {
     }
     return colouredPoints;
 }
+
+std::vector<size_t> ShapeMap::makeViewportShapes(const Region4f &viewport) const {
+
+    PixelRef bl = pixelate(viewport.bottomLeft);
+    PixelRef tr = pixelate(viewport.topRight);
+
+    std::vector<size_t> displayShapes(m_shapes.size(), static_cast<size_t>(-1));
+    for (int i = bl.x; i <= tr.x; i++) {
+        for (int j = bl.y; j <= tr.y; j++) {
+            const std::vector<ShapeRef> &shapeRefs =
+                m_pixelShapes(static_cast<size_t>(j), static_cast<size_t>(i));
+            for (const ShapeRef &shape : shapeRefs) {
+                // copy the index to the correct draworder position (draworder is
+                // formatted on display attribute)
+                auto x = std::distance(m_shapes.begin(),
+                                       m_shapes.find(static_cast<int>(shape.shapeRef)));
+                AttributeKey shapeRefKey(static_cast<int>(shape.shapeRef));
+                if (isObjectVisible(m_layers, m_attributes->getRow(shapeRefKey))) {
+                    displayShapes[static_cast<size_t>(m_attribHandle->findInIndex(shapeRefKey))] =
+                        static_cast<size_t>(x);
+                }
+            }
+        }
+    }
+    return displayShapes;
+}

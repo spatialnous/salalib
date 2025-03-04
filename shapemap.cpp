@@ -3066,8 +3066,13 @@ std::vector<size_t> ShapeMap::makeViewportShapes(const Region4f &viewport) const
                                        m_shapes.find(static_cast<int>(shape.shapeRef)));
                 AttributeKey shapeRefKey(static_cast<int>(shape.shapeRef));
                 if (isObjectVisible(m_layers, m_attributes->getRow(shapeRefKey))) {
-                    displayShapes[static_cast<size_t>(m_attribHandle->findInIndex(shapeRefKey))] =
-                        static_cast<size_t>(x);
+                    auto shapeIdx = m_attribHandle->findInIndex(shapeRefKey);
+                    if (shapeIdx == -1) {
+                        throw new depthmapX::RuntimeException(
+                            "Shape " + std::to_string(shape.shapeRef) +
+                            " not found when making viewport shapes");
+                    }
+                    displayShapes[static_cast<size_t>(shapeIdx)] = static_cast<size_t>(x);
                 }
             }
         }

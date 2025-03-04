@@ -28,6 +28,8 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
                 -Wunreachable-code-break -Wextra-semi-stmt
                 -Wreserved-identifier -Wmissing-prototypes
                 -Wsuggest-destructor-override -Wreserved-macro-identifier
+                # yes eventually
+                # -Wunsafe-buffer-usage
             )
             # enable clang-tidy
             find_program(CLANG_TIDY_COMMAND NAMES clang-tidy)

@@ -83,7 +83,7 @@ class AxialIntegration : IAxial {
                                                 std::string weightingColName, bool simpleVersion);
 
   public:
-    AxialIntegration(std::set<double> &radiusSet, int weightedMeasureCol, bool choice,
+    AxialIntegration(std::set<double> radiusSet, int weightedMeasureCol, bool choice,
                      bool fulloutput)
         : m_radiusSet(std::move(radiusSet)),
           m_weightedMeasureCol(weightedMeasureCol < 0 ? std::nullopt

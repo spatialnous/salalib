@@ -108,6 +108,11 @@ struct SalaGrf {
 
 // note lists are stored by reference.  I'm not sure if this is a good idea!
 
+// TODO (PK): Coverity here suggests that the class could benefit from a move
+// operator, however enabling it creates all sorts of issues. Since this is a
+// neglacted piece of code, we'll disable the warning until a closer look is
+// taken on all of salapgrogam.hpp/.cpp
+/* coverity[missing_move_assignment] */
 class SalaObj {
     friend class SalaProgram;
     friend class SalaCommand;

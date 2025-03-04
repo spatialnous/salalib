@@ -203,11 +203,14 @@ bool SalaProgram::parse(std::istream &program) {
                 parent = parent->m_parent;
             }
 
-            auto &children = parent->m_children;
+            parent->m_children.push_back(SalaCommand(this, parent, indent));
 
-            children.push_back(SalaCommand(this, parent, indent));
-
-            SalaCommand &thiscommand = children.back();
+            // TODO (PK): Coverity here suggests that .back() creates a use-after-free
+            // issue because the above push_back invalidates m_children. Since this is a
+            // neglacted piece of code, we'll disable the warning until a closer look is
+            // taken on all of salapgrogam.hpp/.cpp
+            /* coverity[use_after_free] */
+            SalaCommand &thiscommand = parent->m_children.back();
 
             try {
                 line = thiscommand.parse(program, line);

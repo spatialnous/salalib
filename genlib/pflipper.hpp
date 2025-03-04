@@ -16,7 +16,9 @@ template <class T> class pflipper {
     [[maybe_unused]] std::byte _padding0[8 - ((sizeof(T) * 2) + 2) % 8];
 
   public:
-    pflipper() : m_parity(0) {}
+    pflipper() : m_parity(0), _padding0() {
+        std::memset(_padding0, 0, sizeof(_padding0)); // Zero out the padding
+    }
     pflipper(const T &a, const T &b) : m_parity(0), _padding0() {
         m_contents[0] = a;
         m_contents[1] = b;

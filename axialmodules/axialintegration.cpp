@@ -277,9 +277,10 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
 
     // for choice
     AnalysisInfo **audittrail = nullptr;
+    auto nshapes = map.getShapeCount();
     if (m_choice) {
-        audittrail = new AnalysisInfo *[map.getShapeCount()];
-        for (size_t i = 0; i < map.getShapeCount(); i++) {
+        audittrail = new AnalysisInfo *[nshapes];
+        for (size_t i = 0; i < nshapes; i++) {
             audittrail[i] = new AnalysisInfo[radii.size()];
         }
     }
@@ -288,16 +289,16 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
     // has already failed due to this!  when intro hand drawn fewest line (where user may have
     // deleted) it's going to get worse...
 
-    bool *covered = new bool[map.getShapeCount()];
+    bool *covered = new bool[nshapes];
 
     size_t i = 0;
     for (auto &iter : attributes) {
         AttributeRow &row = iter.getRow();
-        for (size_t j = 0; j < map.getShapeCount(); j++) {
+        for (size_t j = 0; j < nshapes; j++) {
             covered[j] = false;
         }
         if (m_choice) {
-            for (size_t k = 0; k < map.getShapeCount(); k++) {
+            for (size_t k = 0; k < nshapes; k++) {
                 audittrail[k][0].previous.ref =
                     -1; // note, 0th member used as radius doesn't matter
                 // note, choice columns are not cleared, but cummulative over all shortest path
@@ -554,8 +555,15 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 }
             }
             i++;
+            // This check should not be necessary because we iterate on
+            // the attribute rows which should be the same size as the
+            // shapes. However to be super safe and to satisfy the clang
+            // analyser we can also add a sanity check here
+            if (i >= nshapes) {
+                break;
+            }
         }
-        for (size_t j = 0; j < map.getShapeCount(); j++) {
+        for (size_t j = 0; j < nshapes; j++) {
             // TODO: At this moment, GCC triggers a warning here. Find
             // a better solution rather than disabling the warnind
             delete[] audittrail[j];

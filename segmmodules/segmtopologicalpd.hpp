@@ -9,8 +9,7 @@
 #include "../isegment.hpp"
 
 class SegmentTopologicalPD : ISegment {
-
-    std::set<int> &m_originRefs;
+    std::set<int> m_originRefs;
 
   public:
     struct Column {
@@ -19,7 +18,7 @@ class SegmentTopologicalPD : ISegment {
     };
 
   public:
-    SegmentTopologicalPD(std::set<int> &originRefs) : m_originRefs(originRefs) {}
+    SegmentTopologicalPD(std::set<int> originRefs) : m_originRefs(std::move(originRefs)) {}
     std::string getAnalysisName() const override { return "Topological Analysis"; }
     AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
 };

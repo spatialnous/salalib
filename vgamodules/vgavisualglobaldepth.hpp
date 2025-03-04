@@ -13,7 +13,7 @@
 
 class VGAVisualGlobalDepth : public IVGAVisual {
 
-    const std::set<PixelRef> &m_originRefs;
+    std::set<PixelRef> m_originRefs;
 
   public:
     struct Column {
@@ -22,8 +22,8 @@ class VGAVisualGlobalDepth : public IVGAVisual {
     };
 
   public:
-    VGAVisualGlobalDepth(const PointMap &map, std::set<PixelRef> &originRefs)
-        : IVGAVisual(map), m_originRefs(originRefs) {}
+    VGAVisualGlobalDepth(const PointMap &map, std::set<PixelRef> originRefs)
+        : IVGAVisual(map), m_originRefs(std::move(originRefs)) {}
     std::string getAnalysisName() const override { return "Global Visibility Depth"; }
     AnalysisResult run(Communicator *comm) override;
 };

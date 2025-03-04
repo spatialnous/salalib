@@ -9,9 +9,8 @@
 #include "../isegment.hpp"
 
 class SegmentTopological : ISegment {
-  private:
     double m_radius;
-    std::optional<const std::set<int>> m_selSet;
+    std::optional<std::set<int>> m_selSet;
 
   public:
     struct Column {
@@ -34,7 +33,7 @@ class SegmentTopological : ISegment {
     }
 
   public:
-    SegmentTopological(double radius, std::optional<const std::set<int>> selSet)
+    SegmentTopological(double radius, std::optional<std::set<int>> selSet)
         : m_radius(radius), m_selSet(std::move(selSet)) {}
     std::string getAnalysisName() const override { return "Topological Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool) override;

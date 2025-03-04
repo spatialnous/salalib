@@ -10,7 +10,7 @@
 
 class SegmentMetricPD : ISegment {
 
-    std::set<int> &m_originRefs;
+    std::set<int> m_originRefs;
 
   public:
     struct Column {
@@ -19,7 +19,7 @@ class SegmentMetricPD : ISegment {
     };
 
   public:
-    SegmentMetricPD(std::set<int> &originRefs) : m_originRefs(originRefs) {}
+    SegmentMetricPD(std::set<int> originRefs) : m_originRefs(std::move(originRefs)) {}
     std::string getAnalysisName() const override { return "Metric Analysis"; }
     AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
 };

@@ -10,7 +10,7 @@
 
 class AxialStepDepth : IAxial {
 
-    std::set<int> &m_originRefs;
+    std::set<int> m_originRefs;
 
   public:
     struct Column {
@@ -19,7 +19,7 @@ class AxialStepDepth : IAxial {
     };
 
   public:
-    AxialStepDepth(std::set<int> &originRefs) : m_originRefs(originRefs) {}
+    AxialStepDepth(std::set<int> originRefs) : m_originRefs(std::move(originRefs)) {}
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool simpleVersion) override;
 };

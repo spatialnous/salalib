@@ -10,8 +10,8 @@
 #include "../iaxial.hpp"
 
 class AxialIntegration : IAxial {
-    const std::set<double> &m_radiusSet;
-    const std::optional<size_t> m_weightedMeasureCol;
+    std::set<double> m_radiusSet;
+    std::optional<size_t> m_weightedMeasureCol;
     bool m_choice;
     bool m_fulloutput;
     bool m_forceLegacyColumnOrder = false;
@@ -83,9 +83,9 @@ class AxialIntegration : IAxial {
                                                 std::string weightingColName, bool simpleVersion);
 
   public:
-    AxialIntegration(const std::set<double> &radiusSet, int weightedMeasureCol, bool choice,
+    AxialIntegration(std::set<double> &radiusSet, int weightedMeasureCol, bool choice,
                      bool fulloutput)
-        : m_radiusSet(radiusSet),
+        : m_radiusSet(std::move(radiusSet)),
           m_weightedMeasureCol(weightedMeasureCol < 0 ? std::nullopt
                                                       : std::make_optional(weightedMeasureCol)),
           m_choice(choice), m_fulloutput(fulloutput), _padding0(0), _padding1(0) {}

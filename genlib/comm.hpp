@@ -10,14 +10,6 @@
 #include <sys/types.h>
 #include <vector>
 
-#ifdef _WIN32
-// Quick mod - TV
-#pragma warning(disable : 4244)
-#pragma warning(disable : 4100)
-#else
-
-#endif
-
 const char *const g_default_file_set = "File set";
 
 struct FilePath {

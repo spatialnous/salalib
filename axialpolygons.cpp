@@ -28,7 +28,8 @@ AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Poi
     // double equality...
     std::map<double, int> anglemap;
     for (size_t i = 0; i < pointlist.size(); ++i) {
-        anglemap.insert(std::make_pair(openspace.angle(av.point, pointlist[i]), i));
+        anglemap.insert(
+            std::make_pair(openspace.angle(av.point, pointlist[i]), static_cast<int>(i)));
     }
 
     av.refA = static_cast<short>(anglemap.begin()->second);

@@ -525,7 +525,7 @@ void ShapeGraph::makeSegmentMap(std::vector<Line4f> &lines, std::vector<Connecto
             if (i != connections[j] && shapeJ.isLine()) {
                 breaks.push_back(std::make_pair(
                     parity * line.intersection_point(shapeJ.getLine(), axis, TOLERANCE_A),
-                    connections[j]));
+                    static_cast<int>(connections[j])));
             }
         }
         std::sort(breaks.begin(), breaks.end());

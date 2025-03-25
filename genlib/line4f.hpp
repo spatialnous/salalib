@@ -7,6 +7,8 @@
 
 #include "region4f.hpp"
 
+#include <cstdint>
+
 // Lines are stored left to right as regions,
 // the parity tells us whether the region should be inverted
 // top to bottom to get the line

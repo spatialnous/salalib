@@ -7,7 +7,6 @@
 #include "genlib/exceptions.hpp"
 
 #include <cstdint>
-#include <iostream>
 #include <string>
 
 class LayerManager {

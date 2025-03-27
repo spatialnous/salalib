@@ -9,7 +9,6 @@
 #include "genlib/exceptions.hpp"
 #include "genlib/line4f.hpp"
 
-#include <iostream>
 #include <string>
 #include <vector>
 

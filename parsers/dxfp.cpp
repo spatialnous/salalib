@@ -7,9 +7,6 @@
 #include "../genlib/comm.hpp" // for communicator
 #include "../genlib/stringutils.hpp"
 
-#include <algorithm>
-#include <fstream>
-#include <iostream>
 #include <string>
 
 static int counter = 0;
@@ -369,7 +366,8 @@ void DxfParser::openBlocks(std::istream &stream) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *block) {
+void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *block,
+                             Communicator *comm) {
     int subsection = UNIDENTIFIED;
     if (token.code == 0) {
         // a block must always pass it's first token:
@@ -419,7 +417,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case POINT:
             stream >> token;
             m_size += token.size;
-            if (point.parse(token, this)) {
+            if (point.parse(token, this, comm)) {
                 DxfLayer *layer = block;
                 if (layer == nullptr) {
                     layer = point.m_pLayer;
@@ -434,7 +432,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case LINE:
             stream >> token;
             m_size += token.size;
-            if (line.parse(token, this)) {
+            if (line.parse(token, this, comm)) {
                 if (line.m_start != line.m_end) {
                     DxfLayer *layer = block;
                     if (layer == nullptr) {
@@ -451,7 +449,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case POLYLINE:
             stream >> token;
             m_size += token.size;
-            if (polyLine.parse(token, this)) {
+            if (polyLine.parse(token, this, comm)) {
                 if (polyLine.m_vertexCount > 0) {
                     DxfLayer *layer = block;
                     if (layer == nullptr) {
@@ -472,7 +470,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case LWPOLYLINE:
             stream >> token;
             m_size += token.size;
-            if (lwPolyLine.parse(token, this)) {
+            if (lwPolyLine.parse(token, this, comm)) {
                 if (lwPolyLine.m_vertexCount > 0) {
                     DxfLayer *layer = block;
                     if (layer == nullptr) {
@@ -492,7 +490,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case ARC:
             stream >> token;
             m_size += token.size;
-            if (arc.parse(token, this)) {
+            if (arc.parse(token, this, comm)) {
                 DxfLayer *layer = block;
                 if (layer == nullptr) {
                     layer = arc.m_pLayer;
@@ -506,7 +504,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case ELLIPSE:
             stream >> token;
             m_size += token.size;
-            if (ellipse.parse(token, this)) {
+            if (ellipse.parse(token, this, comm)) {
                 DxfLayer *layer = block;
                 if (layer == nullptr) {
                     layer = ellipse.m_pLayer;
@@ -520,7 +518,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case CIRCLE:
             stream >> token;
             m_size += token.size;
-            if (circle.parse(token, this)) {
+            if (circle.parse(token, this, comm)) {
                 DxfLayer *layer = block;
                 if (layer == nullptr) {
                     layer = circle.m_pLayer;
@@ -534,7 +532,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case SPLINE:
             stream >> token;
             m_size += token.size;
-            if (spline.parse(token, this)) {
+            if (spline.parse(token, this, comm)) {
                 if (spline.numVertices() > 0) {
                     DxfLayer *layer = block;
                     if (layer == nullptr) {
@@ -554,7 +552,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
         case INSERT:
             stream >> token;
             m_size += token.size;
-            if (insert.parse(token, this)) {
+            if (insert.parse(token, this, comm)) {
                 if (insert.m_blockName.length()) {
                     DxfLayer *layer = block;
                     if (layer == nullptr) {
@@ -598,7 +596,7 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
 
 DxfTableRow::DxfTableRow(const std::string &name) : m_name(name) {}
 
-bool DxfTableRow::parse(const DxfToken &token, DxfParser *) {
+bool DxfTableRow::parse(const DxfToken &token, DxfParser *, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -620,7 +618,7 @@ DxfEntity::DxfEntity(int tag) : m_tag(tag), _padding0(0) {}
 
 void DxfEntity::clear() { m_tag = -1; }
 
-bool DxfEntity::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfEntity::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -662,7 +660,7 @@ bool operator!=(const DxfVertex &a, const DxfVertex &b) {
     return (a.x != b.x || a.y != b.y || a.z != b.z);
 }
 
-bool DxfVertex::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfVertex::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -695,7 +693,7 @@ void DxfLine::clear() {
     DxfEntity::clear();
 }
 
-bool DxfLine::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfLine::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -745,7 +743,7 @@ void DxfPolyLine::clear() {
     DxfEntity::clear();
 }
 
-bool DxfPolyLine::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfPolyLine::parse(const DxfToken &token, DxfParser *parser, Communicator *comm) {
     bool parsed = false;
 
     static DxfVertex vertex;
@@ -754,7 +752,8 @@ bool DxfPolyLine::parse(const DxfToken &token, DxfParser *parser) {
         if (vertex.parse(token, parser)) {
             add(vertex); // <- add to region
             if (m_min.x == 0) {
-                std::cerr << "problem" << std::endl;
+                if (comm)
+                    comm->logWarning("problem");
             }
             m_vertices.push_back(vertex);
             if (token.data == "VERTEX") { // Another vertex...
@@ -801,7 +800,7 @@ void DxfLwPolyLine::clear() {
     DxfPolyLine::clear();
 }
 
-bool DxfLwPolyLine::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfLwPolyLine::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     static DxfVertex vertex;
@@ -856,7 +855,7 @@ void DxfArc::clear() {
     DxfEntity::clear();
 }
 
-bool DxfArc::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfArc::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -958,7 +957,7 @@ void DxfEllipse::clear() {
     DxfEntity::clear();
 }
 
-bool DxfEllipse::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfEllipse::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -1087,7 +1086,7 @@ void DxfCircle::clear() {
     DxfEntity::clear();
 }
 
-bool DxfCircle::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfCircle::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -1163,7 +1162,7 @@ void DxfSpline::clear() {
     DxfEntity::clear();
 }
 
-bool DxfSpline::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfSpline::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     static DxfVertex vertex;
@@ -1243,7 +1242,7 @@ void DxfInsert::clear() {
     DxfEntity::clear();
 }
 
-bool DxfInsert::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfInsert::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -1286,7 +1285,7 @@ bool DxfInsert::parse(const DxfToken &token, DxfParser *parser) {
 
 DxfLineType::DxfLineType(const std::string &name) : DxfTableRow(name) {}
 
-bool DxfLineType::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfLineType::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -1309,7 +1308,7 @@ DxfLayer::DxfLayer(const std::string &name)
     : DxfTableRow(name), m_points(), m_lines(), m_polyLines(), m_arcs(), m_ellipses(), m_circles(),
       m_splines(), m_inserts(), m_totalPointCount(0) {}
 
-bool DxfLayer::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfLayer::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {
@@ -1443,7 +1442,7 @@ void DxfLayer::insert(DxfInsert &insert, DxfParser *parser) {
 
 DxfBlock::DxfBlock(const std::string &name) : DxfLayer(name), m_basePoint() {}
 
-bool DxfBlock::parse(const DxfToken &token, DxfParser *parser) {
+bool DxfBlock::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
     switch (token.code) {

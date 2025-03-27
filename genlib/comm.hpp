@@ -6,6 +6,7 @@
 
 #include <chrono>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <sys/types.h>
 #include <vector>
@@ -132,6 +133,9 @@ class Communicator {
     //
     virtual void CommPostMessage(size_t m,
                                  size_t x) const = 0; // Override for specific operating system
+    virtual void logError(const std::string &message) const = 0;
+    virtual void logWarning(const std::string &message) const = 0;
+    virtual void logInfo(const std::string &message) const = 0;
 };
 
 // this is a simple version of the Communicator which can be used for
@@ -152,6 +156,12 @@ class ICommunicator : public Communicator {
     } // note: an ICommunicator lets IComm know that it should delete it
     ~ICommunicator() override {}
     void CommPostMessage(size_t m, size_t x) const override;
+
+    void logError(const std::string &message) const override { std::cerr << message << std::endl; }
+    void logWarning(const std::string &message) const override {
+        std::cerr << message << std::endl;
+    }
+    void logInfo(const std::string &message) const override { std::cout << message << std::endl; }
 };
 
 inline void ICommunicator::CommPostMessage(size_t m, size_t x) const {

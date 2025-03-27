@@ -101,7 +101,7 @@ class ShapeGraph : public ShapeMap {
     void writeAxialConnectionsAsPairsCSV(std::ostream &stream);
     void writeSegmentConnectionsAsPairsCSV(std::ostream &stream);
     void writeLinksUnlinksAsPairsCSV(std::ostream &stream, char delimiter = ',');
-    void unlinkAtPoint(const Point2f &unlinkPoint);
+    void unlinkAtPoint(const Point2f &unlinkPoint, Communicator *comm = nullptr);
     void unlinkFromShapeMap(const ShapeMap &shapemap);
     void setKeyVertexCount(int keyvertexcount) { m_keyvertexcount = keyvertexcount; }
     auto getKeyVertexCount() { return m_keyvertexcount; }

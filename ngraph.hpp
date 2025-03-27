@@ -9,8 +9,7 @@
 #include "pixelref.hpp"
 
 #include <cstdint>
-#include <iostream>
-#include <set>
+#include <istream>
 
 struct PixelVec {
     PixelVec(const PixelRef start = NoPixel, const PixelRef end = NoPixel)

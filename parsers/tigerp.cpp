@@ -12,7 +12,6 @@
 #include "../genlib/comm.hpp"
 
 #include <fstream>
-#include <iostream>
 
 // at some point will need to extend to parsing record type 2 (chains) as well as record type 1
 // (node to node)

@@ -12,7 +12,6 @@
 #include "genlib/stringutils.hpp"
 
 #include <cmath>
-#include <float.h>
 #include <fstream>
 #include <set>
 
@@ -552,7 +551,7 @@ bool SpacePixel::intersect_exclude(const Line4f &l, double tolerance) {
     return false;
 }
 
-void SpacePixel::cutLine(Line4f &l, short dir) {
+void SpacePixel::cutLine(Line4f &l, short dir, Communicator *comm) {
     m_test++;
 
     double tolerance = l.length() * 1e-9;
@@ -581,7 +580,8 @@ void SpacePixel::cutLine(Line4f &l, short dir) {
             if (lineIt == m_lines.end()) {
                 // the lineref may have been deleted -- this is supposed to be tidied up
                 // just ignore...
-                std::cerr << "cut line exception -- missing line?" << std::endl;
+                if (comm)
+                    comm->logWarning("cut line exception -- missing line?");
             }
             LineTest &linetest = lineIt->second;
             if (linetest.test != m_test) {
@@ -637,8 +637,8 @@ void SpacePixel::cutLine(Line4f &l, short dir) {
                                             } else {
                                                 // parallel with both lines ... this shouldn't
                                                 // happen...
-                                                std::cerr << "couldn't chop at boundary"
-                                                          << std::endl;
+                                                if (comm)
+                                                    comm->logWarning("couldn't chop at boundary");
                                             }
                                         }
                                     }

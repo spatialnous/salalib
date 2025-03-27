@@ -7,8 +7,6 @@
 #include "salalib/tolerances.hpp"
 
 #include <cmath>
-#include <float.h>
-#include <iostream>
 #include <time.h>
 
 ///////////////////////////////////////////////////////////////////////

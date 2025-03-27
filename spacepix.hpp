@@ -12,6 +12,7 @@
 
 #include "genlib/line4f.hpp"
 #include "genlib/simplematrix.hpp"
+#include "salalib/genlib/comm.hpp"
 
 #include <deque>
 #include <map>
@@ -136,7 +137,7 @@ class SpacePixel : public PixelBase {
     bool intersect(const Line4f &l, double tolerance = 0.0);
     bool intersect_exclude(const Line4f &l, double tolerance = 0.0);
 
-    void cutLine(Line4f &l, short dir);
+    void cutLine(Line4f &l, short dir, Communicator *comm = nullptr);
 
     const Region4f &getRegion() const { return static_cast<const Region4f &>(m_region); }
 

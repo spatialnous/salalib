@@ -13,7 +13,8 @@
 AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 
 #if !defined(_OPENMP)
-    std::cerr << "OpenMP NOT available, only running on a single core" << std::endl;
+    if (comm)
+        comm->logWarning("OpenMP NOT available, only running on a single core");
     m_forceCommUpdatesMasterThread = false;
 #else
     if (m_limitToThreads.has_value()) {
@@ -66,7 +67,9 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
 #if defined(_OPENMP)
 #pragma omp critical(dumpNeighbourhood)
 #endif
-        { dumpNeighbourhood(p.getNode(), neighbourhood); }
+        {
+            dumpNeighbourhood(p.getNode(), neighbourhood);
+        }
         for (auto &neighbour : neighbourhood) {
             if (m_map.getPoint(neighbour).hasNode()) {
                 hoods[static_cast<size_t>(i * n + refToFilled[neighbour])] = true;

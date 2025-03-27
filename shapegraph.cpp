@@ -284,7 +284,7 @@ void ShapeGraph::writeSegmentConnectionsAsPairsCSV(std::ostream &stream) {
     stream.flags(streamFlags);
 }
 
-void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {
+void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint, Communicator *comm) {
     std::vector<Point2f> closepoints;
     std::vector<std::pair<size_t, size_t>> intersections;
     PixelRef pix = pixelate(unlinkPoint);
@@ -321,7 +321,8 @@ void ShapeGraph::unlinkAtPoint(const Point2f &unlinkPoint) {
         auto &intersection = intersections[static_cast<size_t>(minpair)];
         unlinkShapes(intersection.first, intersection.second);
     } else {
-        std::cerr << "eek!";
+        if (comm)
+            comm->logWarning("eek!");
     }
 }
 ////////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2018 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2018-2025 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,11 +10,10 @@
 #include "pafcolor.hpp"
 #include "pixelref.hpp"
 
+#include "genlib/comm.hpp"
 #include "genlib/line4f.hpp"
 #include "genlib/simplematrix.hpp"
-#include "salalib/genlib/comm.hpp"
 
-#include <deque>
 #include <map>
 #include <string>
 

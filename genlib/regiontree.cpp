@@ -3,7 +3,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "salalib/genlib/regiontree.hpp"
+#include "regiontree.hpp"
 #include <vector>
 
 RegionTree *RegionTree::copy() const {

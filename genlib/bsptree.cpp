@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "bsptree.hpp"
-#include "salalib/genlib/exceptions.hpp"
+#include "exceptions.hpp"
 
 #include <stack>
 

@@ -13,7 +13,7 @@
 // The parser reads in vertices, lines and polylines, and stores them in the
 // defined layers.  It also reads in any line types defined.
 
-#include "salalib/genlib/comm.hpp"
+#include "../genlib/comm.hpp"
 #include <cmath>
 #include <map>
 #include <vector>

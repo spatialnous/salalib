@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "isovist.hpp"
-#include "salalib/tolerances.hpp"
+#include "tolerances.hpp"
 
 #include <cmath>
 #include <time.h>

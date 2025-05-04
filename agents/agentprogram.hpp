@@ -55,7 +55,7 @@ struct AgentProgram {
     bool losSqrd;
 
   private:
-    [[maybe_unused]] unsigned : 2 * 8;
+    [[maybe_unused]] unsigned _padding0 : 2 * 8;
 
   public:
     // if it is going to evolved, then have it remember its fitness:

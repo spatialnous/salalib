@@ -51,8 +51,8 @@ class Agent {
     bool m_atDestination = false;
 
   private:
-    [[maybe_unused]] unsigned : 2 * 8;
-    [[maybe_unused]] unsigned : 4 * 8;
+    [[maybe_unused]] unsigned _padding0 : 2 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
     // for occlusion memory
     pflipper<PixelRefVector> m_occMemory;
@@ -60,7 +60,8 @@ class Agent {
   public:
     Agent()
         : m_program(nullptr), m_pointmap(nullptr), m_node(), m_outputMode(OUTPUT_NOTHING), m_loc(),
-          m_target(), m_vector(), m_destination(), m_targetPix(), m_occMemory() {}
+          m_target(), m_vector(), m_destination(), m_targetPix(), _padding0(0), _padding1(0),
+          m_occMemory() {}
     Agent(AgentProgram *program, PointMap *pointmap, int outputMode = OUTPUT_NOTHING);
     Agent(const Agent &) = default;
     Agent &operator=(const Agent &) = default;

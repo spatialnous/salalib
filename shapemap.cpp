@@ -1483,12 +1483,14 @@ std::vector<size_t> ShapeMap::polyInPolyList(int polyref, double tolerance) cons
                                     static_cast<size_t>(std::distance(m_shapes.begin(), shapeIter));
                                 const SalaShape &polyb = shapeIter->second;
                                 if (polyb.isPoint()) {
-                                    if (testPointInPoly(polyb.getPoint(), shaperef) != -1) {
+                                    if (testPointInPoly(polyb.getPoint(), shaperef).has_value()) {
                                         shapeindexlist.push_back(static_cast<size_t>(indexb));
                                     }
                                 } else if (polyb.isLine()) {
-                                    if (testPointInPoly(polyb.getLine().start(), shaperef) != -1 ||
-                                        testPointInPoly(polyb.getLine().end(), shaperef) != -1) {
+                                    if (testPointInPoly(polyb.getLine().start(), shaperef)
+                                            .has_value() ||
+                                        testPointInPoly(polyb.getLine().end(), shaperef)
+                                            .has_value()) {
                                         testedlist.insert(iter, shaperefb.shapeRef);
                                         shapeindexlist.push_back(static_cast<size_t>(indexb));
                                     } else {
@@ -1513,7 +1515,8 @@ std::vector<size_t> ShapeMap::polyInPolyList(int polyref, double tolerance) cons
                                 } else if (polyb.isPolyLine()) {
                                     if (testPointInPoly(polyb.points[static_cast<size_t>(
                                                             shaperefb.polyrefs[0])],
-                                                        shaperef) != -1) {
+                                                        shaperef)
+                                            .has_value()) {
                                         testedlist.insert(iter, shaperefb.shapeRef);
                                         shapeindexlist.push_back(static_cast<size_t>(indexb));
                                     } else {
@@ -1560,14 +1563,16 @@ std::vector<size_t> ShapeMap::polyInPolyList(int polyref, double tolerance) cons
                                                       static_cast<short>(y)) &&
                                          testPointInPoly(polyb.points[static_cast<size_t>(
                                                              shaperefb.polyrefs[0])],
-                                                         shaperef) != -1) ||
+                                                         shaperef)
+                                             .has_value()) ||
                                         (pixelate(poly.points[static_cast<size_t>(
                                              shaperef.polyrefs[0])]) ==
                                              PixelRef(static_cast<short>(x),
                                                       static_cast<short>(y)) &&
                                          testPointInPoly(
                                              poly.points[static_cast<size_t>(shaperef.polyrefs[0])],
-                                             shaperefb) != -1)) {
+                                             shaperefb)
+                                             .has_value())) {
                                         testedlist.insert(iter, shaperefb.shapeRef);
                                         shapeindexlist.push_back(static_cast<size_t>(indexb));
                                     } else {

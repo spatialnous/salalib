@@ -17,19 +17,22 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             -Wno-float-equal -Wno-double-promotion
             -Wno-switch-enum
             # maybe
-            -Wno-global-constructors -Wno-weak-vtables -Wno-non-virtual-dtor
-            -Wno-cast-qual -Wno-deprecated-copy-with-user-provided-dtor
+            -Wno-non-virtual-dtor -Wno-cast-qual
             -Wno-exit-time-destructors -Wno-format-nonliteral
-            # no
-            -Wno-c++98-compat)
+            )
         if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
             # Clang-specific
             set(COMPILE_WARNINGS "${COMPILE_WARNINGS}"
                 -Wunreachable-code-break -Wextra-semi-stmt
-                -Wreserved-identifier -Wmissing-prototypes
+                -Wreserved-identifier -Wmissing-prototypes -Wattributes
                 -Wsuggest-destructor-override -Wreserved-macro-identifier
                 # yes eventually
                 # -Wunsafe-buffer-usage
+                # maybe
+                # -Wno-exit-time-destructors -Wno-deprecated-copy-with-user-provided-dtor
+                # -Wno-weak-vtables -Wno-global-constructors
+                # no
+                # -Wno-c++98-compat
             )
             # enable clang-tidy
             find_program(CLANG_TIDY_COMMAND NAMES clang-tidy)
@@ -38,6 +41,12 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             else()
                 message(WARNING "clang-tidy not found!")
             endif()
+        else()
+            # GCC-specific
+            set(COMPILE_WARNINGS
+                # explicitly disabled
+                -Wno-attributes
+                )
         endif()
 
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

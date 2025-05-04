@@ -12,13 +12,13 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
             -Wunused-macros -Wmissing-noreturn -Wmissing-declarations
-            -Wold-style-cast -Weffc++ -Wpadded
+            -Wold-style-cast -Weffc++ -Wpadded -Warray-bounds
             # yes eventually
             -Wno-float-equal -Wno-double-promotion
             -Wno-switch-enum
             # maybe
             -Wno-non-virtual-dtor -Wno-cast-qual
-            -Wno-exit-time-destructors -Wno-format-nonliteral
+            -Wno-format-nonliteral
             )
         if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
             # Clang-specific

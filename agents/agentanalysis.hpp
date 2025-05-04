@@ -11,7 +11,6 @@
 #include "../ianalysis.hpp"
 #include "../pointmap.hpp"
 #include "agent.hpp"
-#include <bitset>
 #include <cstring>
 
 class AgentAnalysis : public IAnalysis {

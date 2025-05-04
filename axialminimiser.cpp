@@ -331,8 +331,8 @@ bool AxialMinimiser::checkVital(int checkindex, std::set<int> &axSegCut,
                         continue;
                     }
                     auto &connections = m_axialconns[static_cast<size_t>(diva)].connections;
-                    if (std::find(connections.begin(), connections.end(), divb) !=
-                        connections.end()) {
+                    if (std::find(connections.begin(), connections.end(),
+                                  static_cast<size_t>(divb)) != connections.end()) {
                         // as a further challenge, they must link within in the zone of
                         // interest, not on the far side of it... arg!
                         Point2f p = axiallines.at(diva).getLine().intersection_point(

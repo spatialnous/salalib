@@ -1312,7 +1312,7 @@ bool ShapeMap::pointInPoly(const Point2f &p, int polyref) const {
         m_pixelShapes(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
     const auto iter = depthmapX::findBinary(shapes, ShapeRef(static_cast<unsigned int>(polyref)));
     if (iter != shapes.end()) {
-        return (testPointInPoly(p, *iter) != -1);
+        return (testPointInPoly(p, *iter).has_value());
     }
     return false;
 }

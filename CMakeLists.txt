@@ -43,7 +43,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             endif()
         else()
             # GCC-specific
-            set(COMPILE_WARNINGS
+            set(COMPILE_WARNINGS "${COMPILE_WARNINGS}"
                 # explicitly disabled
                 -Wno-attributes
                 )

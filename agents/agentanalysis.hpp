@@ -11,7 +11,6 @@
 #include "../ianalysis.hpp"
 #include "../pointmap.hpp"
 #include "agent.hpp"
-#include <bitset>
 #include <cstring>
 
 class AgentAnalysis : public IAnalysis {
@@ -32,7 +31,7 @@ class AgentAnalysis : public IAnalysis {
     int m_agentAlgorithm = AgentProgram::SEL_STANDARD;
     unsigned short m_agentFOV = 15;
 
-    [[maybe_unused]] unsigned : 2 * 8; // padding
+    [[maybe_unused]] unsigned _padding0 : 2 * 8; // padding
 
     size_t m_agentStepsToDecision = 3;
     std::optional<size_t> m_randomReleaseLocationsSeed = 0;
@@ -71,7 +70,7 @@ class AgentAnalysis : public IAnalysis {
                   std::optional<TrailRecordOptions> recordTrails)
         : m_pointMap(pointMap), m_agentProgram(), m_systemTimesteps(systemTimesteps),
           m_releaseRate(releaseRate), m_agentLifetime(agentLifetime),
-          m_agentAlgorithm(agentAlgorithm), m_agentFOV(agentFOV),
+          m_agentAlgorithm(agentAlgorithm), m_agentFOV(agentFOV), _padding0(0),
           m_agentStepsToDecision(agentStepsToDecision),
           m_randomReleaseLocationsSeed(randomReleaseLocationsSeed),
           m_specificReleasePoints(specificReleasePoints), m_gateLayer(gateLayer),

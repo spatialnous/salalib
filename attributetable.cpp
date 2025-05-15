@@ -9,6 +9,7 @@
 #include "genlib/readwritehelpers.hpp"
 #include "genlib/stringutils.hpp"
 
+#include <algorithm>
 #include <numeric>
 #include <sstream>
 

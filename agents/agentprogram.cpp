@@ -13,7 +13,8 @@
 
 AgentProgram::AgentProgram()
     : selType(SEL_LOS), steps(3), vbin(7), vahead(0), aheadThreshold(), feelerThreshold(),
-      feelerProbability(), destinationDirected(false), losSqrd(false), fitness(), trails() {}
+      feelerProbability(), destinationDirected(false), losSqrd(false), _padding0(0), fitness(),
+      trails() {}
 
 void AgentProgram::mutate() {
     // do mutate rule order occassionally:

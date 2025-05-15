@@ -11,6 +11,7 @@
 #include "shapemap.hpp"
 
 #include <algorithm>
+#include <sstream>
 #include <string>
 #include <vector>
 

@@ -5,6 +5,7 @@
 #include "stringutils.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <cstring>
 #include <ctype.h>
 #include <memory>

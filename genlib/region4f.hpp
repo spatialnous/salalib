@@ -12,6 +12,9 @@ class Region4f {
   public:
     Point2f bottomLeft;
     Point2f topRight;
+    Region4f(const double xbl, const double ybl,
+             const double xtr, const double ytr)
+        : bottomLeft(xbl, ybl), topRight(xtr, ytr) {}
     Region4f(const Point2f &bl = Point2f(), const Point2f &tr = Point2f())
         : bottomLeft(bl), topRight(tr) {}
     Region4f(const Region4f &r) : bottomLeft(r.bottomLeft), topRight(r.topRight) {}

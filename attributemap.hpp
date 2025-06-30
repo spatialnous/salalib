@@ -9,7 +9,7 @@
 #include "attributetable.hpp"
 #include "attributetableview.hpp"
 #include "layermanagerimpl.hpp"
-#include "spacepix.hpp"
+#include "pixelbase.hpp"
 
 class AttributeMap : public PixelBase {
 
@@ -20,12 +20,12 @@ class AttributeMap : public PixelBase {
     LayerManagerImpl m_layers;
 
   public:
-    AttributeMap(std::unique_ptr<AttributeTable> attributes,
+    AttributeMap(std::string name, std::unique_ptr<AttributeTable> attributes,
                  std::unique_ptr<AttributeTableHandle> attribHandle, LayerManagerImpl layers)
-        : m_attributes(std::move(attributes)), m_attribHandle(std::move(attribHandle)),
-          m_layers(std::move(layers)) {}
-    AttributeMap(std::unique_ptr<AttributeTable> attributes)
-        : m_attributes(std::move(attributes)),
+        : PixelBase(name), m_attributes(std::move(attributes)),
+          m_attribHandle(std::move(attribHandle)), m_layers(std::move(layers)) {}
+    AttributeMap(std::string name, std::unique_ptr<AttributeTable> attributes)
+        : PixelBase(name), m_attributes(std::move(attributes)),
           m_attribHandle(new AttributeTableHandle(*m_attributes)), m_layers() {}
     ~AttributeMap() override {}
 

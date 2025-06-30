@@ -8,7 +8,7 @@
 #pragma once
 
 #include "pafcolor.hpp"
-#include "pixelref.hpp"
+#include "pixelbase.hpp"
 
 #include "genlib/comm.hpp"
 #include "genlib/line4f.hpp"
@@ -16,34 +16,6 @@
 
 #include <map>
 #include <string>
-
-class SalaShape;
-
-class PixelBase {
-  protected:
-    size_t m_rows;
-    size_t m_cols;
-    Region4f m_region;
-
-  public:
-    PixelBase() : m_rows(), m_cols(), m_region() {}
-    virtual ~PixelBase() {}
-    // constrain is constrain to bounding box (i.e., in row / col bounds)
-    virtual PixelRef pixelate(const Point2f &, bool constrain = true,
-                              int scalefactor = 1) const = 0;
-    PixelRefVector pixelateLine(Line4f l, int scalefactor = 1) const;
-    PixelRefVector pixelateLineTouching(Line4f l, double tolerance) const;
-    PixelRefVector quickPixelateLine(PixelRef p, PixelRef q) const;
-    bool includes(const PixelRef pix) const {
-        return (pix.x >= 0 && pix.x < static_cast<short>(m_cols) && pix.y >= 0 &&
-                pix.y < static_cast<short>(m_rows));
-    }
-    size_t getCols() const { return m_cols; }
-    size_t getRows() const { return m_rows; }
-    const Region4f &getRegion() const { return m_region; }
-};
-
-/////////////////////////////////////////////
 
 // couple of quick helpers
 
@@ -102,7 +74,6 @@ class SpacePixel : public PixelBase {
     PafColor m_color;
     int m_ref;
     int m_style; // allows for bold / dotted lines etc
-    std::string m_name = "Default";
     depthmapX::RowMatrix<std::vector<int>> m_pixelLines;
 
     std::map<int, LineTest> m_lines;
@@ -149,8 +120,6 @@ class SpacePixel : public PixelBase {
     }
     //
     // For easy layer manipulation:
-    void setName(const std::string &name) { m_name = name; }
-    std::string getName() { return m_name; }
     void setShow(bool show = true) { m_show = show; }
     bool isShown() const { return m_show; }
     void setEditable(bool edit = true) { m_edit = edit; }

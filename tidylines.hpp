@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "spacepix.hpp"
+#include "spacepixel.hpp"
 
 // helpers... a class to tidy up ugly maps people may give me...
 

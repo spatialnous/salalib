@@ -5,8 +5,6 @@
 #pragma once
 
 #include "attributemap.hpp"
-#include "attributetable.hpp"
-#include "attributetableview.hpp"
 #include "layermanagerimpl.hpp"
 #include "point.hpp"
 #include "shapemap.hpp"
@@ -16,7 +14,6 @@
 #include "genlib/exceptions.hpp"
 #include "genlib/simplematrix.hpp"
 
-#include <deque>
 #include <set>
 #include <vector>
 
@@ -54,8 +51,7 @@ class PointMap : public AttributeMap {
         return false;
     }
 
-  protected: // members
-    std::string m_name;
+  protected:
     depthmapX::ColumnMatrix<Point> m_points; // will contain the graph reference when created
     std::vector<PixelRefPair> m_mergeLines;
     double m_spacing;
@@ -88,9 +84,9 @@ class PointMap : public AttributeMap {
     void resetBlockedLines() { m_blockedlines = false; }
 
     PointMap(PointMap &&other)
-        : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
-                       std::move(other.m_layers)),
-          m_name(), m_points(std::move(other.m_points)), m_mergeLines(), m_spacing(), m_offset(),
+        : AttributeMap(std::move(other.m_name), std::move(other.m_attributes),
+                       std::move(other.m_attribHandle), std::move(other.m_layers)),
+          m_points(std::move(other.m_points)), m_mergeLines(), m_spacing(), m_offset(),
           m_bottomLeft(), m_filledPointCount(), m_undocounter(), m_initialised(), m_blockedlines(),
           m_processed(), m_boundarygraph(), _padding0(0) {
         m_region = std::move(other.m_region);

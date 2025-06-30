@@ -24,10 +24,10 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 PointMap::PointMap(Region4f region, const std::string &name)
-    : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())), m_name(name),
-      m_points(0, 0), m_mergeLines(), m_spacing(0.0), m_offset(), m_bottomLeft(),
-      m_filledPointCount(0), m_undocounter(0), m_initialised(false), m_blockedlines(false),
-      m_processed(false), m_boundarygraph(false), _padding0(0) {
+    : AttributeMap(name, std::unique_ptr<AttributeTable>(new AttributeTable())), m_points(0, 0),
+      m_mergeLines(), m_spacing(0.0), m_offset(), m_bottomLeft(), m_filledPointCount(0),
+      m_undocounter(0), m_initialised(false), m_blockedlines(false), m_processed(false),
+      m_boundarygraph(false), _padding0(0) {
     m_region = region;
     m_cols = 0;
     m_rows = 0;
@@ -991,9 +991,9 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
                         comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
                     }
                 } // if (comm)
-            }     // if ( getPoint( curs ).getState() & Point::FILLED )
-        }         // rows
-    }             // cols
+            } // if ( getPoint( curs ).getState() & Point::FILLED )
+        } // rows
+    } // cols
 
     tagState(false); // <- the state field has been used for tagging visited
                      // nodes... set back to a state variable

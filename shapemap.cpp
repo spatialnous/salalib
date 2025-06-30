@@ -18,7 +18,6 @@
 #include "genlib/stringutils.hpp"
 
 #include <cmath>
-#include <float.h>
 #include <numeric>
 #include <stdexcept>
 #include <time.h>
@@ -30,10 +29,10 @@
 // the replacement for datalayers
 
 ShapeMap::ShapeMap(const std::string &name, int type)
-    : AttributeMap(std::unique_ptr<AttributeTable>(new AttributeTable())), m_name(name),
-      m_mapType(type), m_objRef(-1), m_pixelShapes(0, 0), m_shapes(), m_undobuffer(),
-      m_connectors(), m_tolerance(0.0), m_links(), m_unlinks(), m_mapinfodata(),
-      m_hasMapInfoData(false), m_hasgraph(false), _padding0(0), _padding1(0) {
+    : AttributeMap(name, std::unique_ptr<AttributeTable>(new AttributeTable())), m_mapType(type),
+      m_objRef(-1), m_pixelShapes(0, 0), m_shapes(), m_undobuffer(), m_connectors(),
+      m_tolerance(0.0), m_links(), m_unlinks(), m_mapinfodata(), m_hasMapInfoData(false),
+      m_hasgraph(false), _padding0(0), _padding1(0) {
 
     // shape and object counters
 

@@ -7,7 +7,7 @@
 
 #include "connector.hpp"
 #include "shapegraph.hpp"
-#include "spacepix.hpp"
+#include "spacepixel.hpp"
 
 #include "genlib/simplematrix.hpp"
 

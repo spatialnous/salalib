@@ -17,10 +17,10 @@
 #include "salaevent.hpp"
 #include "salashape.hpp"
 #include "shaperef.hpp"
-#include "spacepix.hpp"
 
 #include "genlib/containerutils.hpp"
 #include "genlib/simpleline.hpp"
+#include "genlib/simplematrix.hpp"
 
 #include <map>
 #include <optional>
@@ -56,7 +56,6 @@ class ShapeMap : public AttributeMap {
     };
 
   protected:
-    std::string m_name;
     int m_mapType = EMPTYMAP;
     // counters
     int m_objRef = -1;
@@ -113,11 +112,10 @@ class ShapeMap : public AttributeMap {
     void copy(const ShapeMap &shapemap, int copyflags = 0, bool copyMapType = false);
 
     ShapeMap(ShapeMap &&other)
-        : AttributeMap(std::move(other.m_attributes), std::move(other.m_attribHandle),
-                       std::move(other.m_layers)),
-          m_name(std::move(other.m_name)), m_pixelShapes(std::move(other.m_pixelShapes)),
-          m_shapes(), m_undobuffer(), m_connectors(), m_tolerance(0), m_links(), m_unlinks(),
-          m_mapinfodata(), _padding0(0), _padding1(0) {
+        : AttributeMap(std::move(other.m_name), std::move(other.m_attributes),
+                       std::move(other.m_attribHandle), std::move(other.m_layers)),
+          m_pixelShapes(std::move(other.m_pixelShapes)), m_shapes(), m_undobuffer(), m_connectors(),
+          m_tolerance(0), m_links(), m_unlinks(), m_mapinfodata(), _padding0(0), _padding1(0) {
         moveData(other);
     }
     ShapeMap &operator=(ShapeMap &&other) {

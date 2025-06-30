@@ -71,6 +71,7 @@ set(salalib_HDRS
     isegment.hpp
     linkutils.hpp
     pafcolor.hpp
+    pixelbase.hpp
     shapemap.hpp
     analysisresult.hpp
     axialpolygons.hpp
@@ -84,7 +85,7 @@ set(salalib_HDRS
     isovist.hpp
     mgraph_consts.hpp
     pointmap.hpp
-    spacepix.hpp
+    spacepixel.hpp
     attributetablehelpers.hpp
     displayparams.hpp
     iaxial.hpp
@@ -128,8 +129,9 @@ set(salalib_SRCS
     ngraph.cpp
     pointmap.cpp
     salaprogram.cpp
+    pixelbase.cpp
     shapemap.cpp
-    spacepix.cpp
+    spacepixel.cpp
     sparksieve2.cpp
     entityparsing.cpp
     linkutils.cpp
@@ -161,7 +163,9 @@ add_compile_definitions(_USE_MATH_DEFINES)
 # The headers are added to the library primarily so that they appear as part
 # of this particular project to IDEs that open it
 add_library(${salalib} STATIC ${salalib_HDRS} ${salalib_SRCS}
-    ${vgamodules_SRCS} ${axialmodules_SRCS} ${segmmodules_SRCS} ${parsers_SRCS})
+    ${vgamodules_SRCS} ${axialmodules_SRCS} ${segmmodules_SRCS} ${parsers_SRCS}
+    pixelbase.hpp
+    pixelbase.cpp)
 
 target_compile_options(${salalib} PRIVATE ${COMPILE_WARNINGS})
 

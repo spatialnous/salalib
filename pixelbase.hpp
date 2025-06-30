@@ -38,5 +38,5 @@ class PixelBase {
     size_t getRows() const { return m_rows; }
     const Region4f &getRegion() const { return m_region; }
     void setName(const std::string &name) { m_name = name; }
-    std::string getName() { return m_name; }
+    std::string getName() const { return m_name; }
 };

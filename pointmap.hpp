@@ -79,7 +79,6 @@ class PointMap : public AttributeMap {
     PointMap(Region4f region, const std::string &name = std::string("VGA Map"));
     ~PointMap() override {}
     void copy(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
-    const std::string &getName() const { return m_name; }
 
     void resetBlockedLines() { m_blockedlines = false; }
 

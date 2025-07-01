@@ -50,7 +50,8 @@ class AttributeTableHandle : public AttributeTableView {
 };
 
 struct index_item_key : public std::function<bool(AttributeKey)> {
-    explicit index_item_key(const AttributeKey &baselineIn) : baseline(baselineIn) {}
+    explicit index_item_key(const AttributeKey &baselineIn)
+        : baseline(baselineIn), _padding0(0), _padding1(0) {}
     bool operator()(const AttributeIndexItem &arg) { return arg.key.value == baseline.value; }
     const AttributeKey &baseline;
 

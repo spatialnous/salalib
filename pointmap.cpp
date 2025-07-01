@@ -33,9 +33,7 @@ PointMap::PointMap(Region4f region, const std::string &name)
     m_rows = 0;
 }
 
-void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattributes) {
-    m_name = sourcemap.getName();
-    m_region = sourcemap.getRegion();
+void PointMap::copyData(const PointMap &sourcemap, bool copypoints, bool copyattributes) {
 
     m_cols = sourcemap.getCols();
     m_rows = sourcemap.getRows();
@@ -84,6 +82,13 @@ void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattribu
             }
         }
     }
+}
+
+void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattributes) {
+    m_name = sourcemap.getName();
+    m_region = sourcemap.getRegion();
+
+    copyData(sourcemap, copypoints, copyattributes);
 }
 
 void PointMap::communicate(time_t &atime, Communicator *comm, size_t record) {

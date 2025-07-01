@@ -78,6 +78,7 @@ class PointMap : public AttributeMap {
   public: // ctors
     PointMap(Region4f region, const std::string &name = std::string("VGA Map"));
     ~PointMap() override {}
+    void copyData(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
     void copy(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
 
     void resetBlockedLines() { m_blockedlines = false; }
@@ -89,7 +90,7 @@ class PointMap : public AttributeMap {
           m_bottomLeft(), m_filledPointCount(), m_undocounter(), m_initialised(), m_blockedlines(),
           m_processed(), m_boundarygraph(), _padding0(0) {
         m_region = std::move(other.m_region);
-        copy(other);
+        copyData(other);
     }
     PointMap &operator=(PointMap &&other) {
         m_region = std::move(other.m_region);
@@ -97,7 +98,7 @@ class PointMap : public AttributeMap {
         m_attributes = std::move(other.m_attributes);
         m_attribHandle = std::move(other.m_attribHandle);
         m_layers = std::move(other.m_layers);
-        copy(other);
+        copyData(other);
         return *this;
     }
     PointMap(const PointMap &) = delete;

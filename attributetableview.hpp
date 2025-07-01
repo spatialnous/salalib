@@ -53,4 +53,8 @@ struct index_item_key : public std::function<bool(AttributeKey)> {
     explicit index_item_key(const AttributeKey &baselineIn) : baseline(baselineIn) {}
     bool operator()(const AttributeIndexItem &arg) { return arg.key.value == baseline.value; }
     const AttributeKey &baseline;
+
+  private:
+    [[maybe_unused]] unsigned _padding0 : 4 * 8;
+    [[maybe_unused]] unsigned _padding1 : 4 * 8;
 };

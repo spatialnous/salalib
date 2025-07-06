@@ -74,7 +74,7 @@ class SpacePixel : public PixelBase {
     PafColor m_color;
     int m_ref;
     int m_style; // allows for bold / dotted lines etc
-    depthmapX::RowMatrix<std::vector<int>> m_pixelLines;
+    genlib::RowMatrix<std::vector<int>> m_pixelLines;
 
     std::map<int, LineTest> m_lines;
     //

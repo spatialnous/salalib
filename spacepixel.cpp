@@ -124,8 +124,8 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
     // m_pixel_height = m_region.height() / static_cast<double>(m_rows);
     // m_pixel_width  = m_region.width()  / static_cast<double>(m_cols);
 
-    m_pixelLines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
-                                                          static_cast<size_t>(m_cols));
+    m_pixelLines = genlib::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
+                                                       static_cast<size_t>(m_cols));
 }
 
 void SpacePixel::reinitLines(double density) {
@@ -142,8 +142,8 @@ void SpacePixel::reinitLines(double density) {
     if (m_cols < 1)
         m_cols = 1;
 
-    m_pixelLines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
-                                                          static_cast<size_t>(m_cols));
+    m_pixelLines = genlib::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
+                                                       static_cast<size_t>(m_cols));
 
     // now re-add the lines:
     for (const auto &line : m_lines) {
@@ -229,8 +229,8 @@ bool SpacePixel::intersect(const Line4f &l, double tolerance) {
         for (int lineref : pixelLines) {
             const auto &lineIt = m_lines.find(lineref);
             if (lineIt == m_lines.end()) {
-                throw depthmapX::RuntimeException("Line " + std::to_string(lineref) +
-                                                  " not found when looking for intersections");
+                throw genlib::RuntimeException("Line " + std::to_string(lineref) +
+                                               " not found when looking for intersections");
             }
             LineTest &linetest = lineIt->second;
             if (linetest.test != m_test) {
@@ -259,8 +259,8 @@ bool SpacePixel::intersect_exclude(const Line4f &l, double tolerance) {
         for (int lineref : pixelLines) {
             const auto &lineIt = m_lines.find(lineref);
             if (lineIt == m_lines.end()) {
-                throw depthmapX::RuntimeException("Line " + std::to_string(lineref) +
-                                                  " not found when looking for intersections");
+                throw genlib::RuntimeException("Line " + std::to_string(lineref) +
+                                               " not found when looking for intersections");
             }
             LineTest &linetest = lineIt->second;
             if (linetest.test != m_test) {
@@ -469,8 +469,8 @@ bool SpacePixel::read(std::istream &stream) {
     // m_pixel_width  = m_region.width()  / static_cast<double>(m_cols);
 
     // prepare loader:
-    m_pixelLines = depthmapX::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
-                                                          static_cast<size_t>(m_cols));
+    m_pixelLines = genlib::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
+                                                       static_cast<size_t>(m_cols));
 
     stream.read(reinterpret_cast<char *>(&m_ref), sizeof(m_ref));
     dXreadwrite::readIntoMap(stream, m_lines);

@@ -98,7 +98,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                                 rbin++;
                             }
                             if (rbin != radii.size()) {
-                                depthmapX::insert_sorted(
+                                genlib::insert_sorted(
                                     anglebins,
                                     std::make_pair(static_cast<float>(angle),
                                                    SegmentData(segconn.first, SegmentRef(), 0, 0.0,
@@ -117,7 +117,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                                 rbin++;
                             }
                             if (rbin != radii.size()) {
-                                depthmapX::insert_sorted(
+                                genlib::insert_sorted(
                                     anglebins,
                                     std::make_pair(static_cast<float>(angle),
                                                    SegmentData(segconn.first, SegmentRef(), 0, 0.0,

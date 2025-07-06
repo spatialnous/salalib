@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// salaprogram.cpp - a component of the depthmapX - spatial network analysis
+// salaprogram.cpp - a component of sala - spatial network analysis
 // platform SalaScripting language
 
 /////////////////////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ SalaObj SalaProgram::evaluate() {
     return obj;
 }
 
-// this function is called by depthmapX to run a script to update a column
+// this function is called by sala to run a script to update a column
 // the operation is on a single node / row of the database combination
 
 bool SalaProgram::runupdate(int col, const std::set<int> &selset) {
@@ -332,7 +332,7 @@ bool SalaProgram::runupdate(int col, const std::set<int> &selset) {
     return true;
 }
 
-// this function is called by depthmapX to run a script to select values
+// this function is called by sala to run a script to select values
 // the operation is on a single node / row of the database combination
 
 bool SalaProgram::runselect(std::vector<int> &selsetout, const std::set<int> &selsetin) {

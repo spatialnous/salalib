@@ -160,7 +160,7 @@ void NtfMap::open(const std::vector<std::string> &fileset, Communicator *comm) {
                     line = line.substr(0, line.length() - 3);
                     std::string code = line.substr(2, 4);
                     std::string name = line.substr(36);
-                    if (depthmapX::addIfNotExists(featcodes, stoi(code)))
+                    if (genlib::addIfNotExists(featcodes, stoi(code)))
                         layers.push_back(NtfLayer(name));
                 }
                 if (parsing == 0 && dXstring::beginsWith<std::string>(line, "23")) {

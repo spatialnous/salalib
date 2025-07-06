@@ -10,11 +10,11 @@
 
 #include <sstream>
 
-namespace depthmapX {
+namespace sala {
 
     const int DXFCIRCLERES = 36;
 
-    class ImportError : public BaseException {
+    class ImportError : public genlib::BaseException {
       public:
         ImportError(std::string message) : BaseException(std::move(message)) {}
     };
@@ -28,7 +28,7 @@ namespace depthmapX {
 
         switch (fileType) {
         case CSV: {
-            auto &shapeMap = maps.emplace_back(name, mapType == depthmapX::ImportType::DATAMAP
+            auto &shapeMap = maps.emplace_back(name, mapType == sala::ImportType::DATAMAP
                                                          ? ShapeMap::DATAMAP
                                                          : ShapeMap::DRAWINGMAP);
             parsed = importTxt(shapeMap, stream, ',');
@@ -36,7 +36,7 @@ namespace depthmapX {
             break;
         }
         case TSV: {
-            auto &shapeMap = maps.emplace_back(name, mapType == depthmapX::ImportType::DATAMAP
+            auto &shapeMap = maps.emplace_back(name, mapType == sala::ImportType::DATAMAP
                                                          ? ShapeMap::DATAMAP
                                                          : ShapeMap::DRAWINGMAP);
 
@@ -70,10 +70,9 @@ namespace depthmapX {
 
             for (auto layer : map.layers) {
 
-                auto &shapeMap =
-                    maps.emplace_back(layer.getName(), mapType == depthmapX::ImportType::DATAMAP
-                                                           ? ShapeMap::DATAMAP
-                                                           : ShapeMap::DRAWINGMAP);
+                auto &shapeMap = maps.emplace_back(
+                    layer.getName(), mapType == sala::ImportType::DATAMAP ? ShapeMap::DATAMAP
+                                                                          : ShapeMap::DRAWINGMAP);
                 shapeMap.init(layer.getLineCount(), map.getRegion());
 
                 for (const auto &geometry : layer.geometries) {
@@ -106,9 +105,9 @@ namespace depthmapX {
 
             for (auto &layer : dp.getLayers()) {
 
-                auto &shapeMap = maps.emplace_back(
-                    layer.first, mapType == depthmapX::ImportType::DATAMAP ? ShapeMap::DATAMAP
-                                                                           : ShapeMap::DRAWINGMAP);
+                auto &shapeMap = maps.emplace_back(layer.first, mapType == sala::ImportType::DATAMAP
+                                                                    ? ShapeMap::DATAMAP
+                                                                    : ShapeMap::DRAWINGMAP);
 
                 const DxfLayer &dxfLayer = layer.second;
 
@@ -189,7 +188,7 @@ namespace depthmapX {
 
         std::vector<ShapeMap> maps;
 
-        auto &shapeMap = maps.emplace_back("CATDATA", mapType == depthmapX::ImportType::DATAMAP
+        auto &shapeMap = maps.emplace_back("CATDATA", mapType == sala::ImportType::DATAMAP
                                                           ? ShapeMap::DATAMAP
                                                           : ShapeMap::DRAWINGMAP);
 
@@ -272,7 +271,7 @@ namespace depthmapX {
         // for each category
         for (const auto &val : map.categories) {
 
-            auto &shapeMap = maps.emplace_back(val.first, mapType == depthmapX::ImportType::DATAMAP
+            auto &shapeMap = maps.emplace_back(val.first, mapType == sala::ImportType::DATAMAP
                                                               ? ShapeMap::DATAMAP
                                                               : ShapeMap::DRAWINGMAP);
             shapeMap.init(val.second.chains.size(), map.getRegion());
@@ -436,7 +435,7 @@ namespace depthmapX {
                     std::stringstream message;
                     message << "Cells in line " << inputline
                             << " not the same number as the columns" << std::flush;
-                    throw RuntimeException(message.str().c_str());
+                    throw genlib::RuntimeException(message.str().c_str());
                 }
                 if (!inputStrings.size()) {
                     continue;
@@ -515,8 +514,8 @@ namespace depthmapX {
                 DxfVertex v = poly.getVertex(m);
                 vertices.push_back(Point2f(v.x, v.y));
             }
-            polylines.push_back(depthmapX::Polyline(std::move(vertices),
-                                                    (poly.getAttributes() & DxfPolyLine::CLOSED) ==
+            polylines.push_back(
+                sala::Polyline(std::move(vertices), (poly.getAttributes() & DxfPolyLine::CLOSED) ==
                                                         DxfPolyLine::CLOSED));
         }
 
@@ -527,8 +526,8 @@ namespace depthmapX {
                 DxfVertex v = poly.getVertex(m);
                 vertices.push_back(Point2f(v.x, v.y));
             }
-            polylines.push_back(depthmapX::Polyline(std::move(vertices),
-                                                    (poly.getAttributes() & DxfPolyLine::CLOSED) ==
+            polylines.push_back(
+                sala::Polyline(std::move(vertices), (poly.getAttributes() & DxfPolyLine::CLOSED) ==
                                                         DxfPolyLine::CLOSED));
         }
 
@@ -542,7 +541,7 @@ namespace depthmapX {
                     vertices.push_back(Point2f(v.x, v.y));
                 }
             }
-            polylines.push_back(depthmapX::Polyline(std::move(vertices), false));
+            polylines.push_back(sala::Polyline(std::move(vertices), false));
         }
 
         for (size_t n = 0; n < dxfLayer.numEllipses(); n++) {
@@ -555,7 +554,7 @@ namespace depthmapX {
                     vertices.push_back(Point2f(v.x, v.y));
                 }
             }
-            polylines.push_back(depthmapX::Polyline(std::move(vertices), false));
+            polylines.push_back(sala::Polyline(std::move(vertices), false));
         }
 
         for (size_t nc = 0; nc < dxfLayer.numCircles(); nc++) {
@@ -565,7 +564,7 @@ namespace depthmapX {
                 DxfVertex v = circ.getVertex(m, DXFCIRCLERES);
                 vertices.push_back(Point2f(v.x, v.y));
             }
-            polylines.push_back(depthmapX::Polyline(std::move(vertices), true));
+            polylines.push_back(sala::Polyline(std::move(vertices), true));
         }
         DxfVertex layerMin = dxfLayer.getExtMin();
         DxfVertex layerMax = dxfLayer.getExtMax();
@@ -594,13 +593,13 @@ namespace depthmapX {
                 outColumns.push_back(column.first);
         }
         if (table.size() == 0) {
-            throw RuntimeException("No usable data found in file");
+            throw genlib::RuntimeException("No usable data found in file");
         }
         if (refcol == -1) {
-            throw RuntimeException("The \"Ref\" column is reqired");
+            throw genlib::RuntimeException("The \"Ref\" column is reqired");
         }
         if (outColumns.size() < 1) {
-            throw RuntimeException("No data found to join");
+            throw genlib::RuntimeException("No data found to join");
         }
         std::vector<AttributeRow *> inRows;
         for (const auto &refInFile : table["Ref"]) {
@@ -609,7 +608,7 @@ namespace depthmapX {
             if (iter == attributes.end()) {
                 std::stringstream message;
                 message << "Key " << ref << "not found in attribute table" << std::flush;
-                throw RuntimeException(message.str().c_str());
+                throw genlib::RuntimeException(message.str().c_str());
             }
             inRows.push_back(&(iter->getRow()));
         }
@@ -627,4 +626,4 @@ namespace depthmapX {
         }
         return true;
     }
-} // namespace depthmapX
+} // namespace sala

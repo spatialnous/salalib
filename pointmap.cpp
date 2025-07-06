@@ -135,7 +135,7 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
         Point2f(m_bottomLeft.x + static_cast<double>(m_cols - 1) * m_spacing + m_spacing / 2.0,
                 m_bottomLeft.y + static_cast<double>(m_rows - 1) * m_spacing + m_spacing / 2.0));
 
-    m_points = depthmapX::ColumnMatrix<Point>(m_rows, m_cols);
+    m_points = genlib::ColumnMatrix<Point>(m_rows, m_cols);
     for (size_t j = 0; j < m_cols; j++) {
         for (size_t k = 0; k < m_rows; k++) {
             m_points(k, j).m_location =
@@ -185,7 +185,7 @@ bool PointMap::clearPointsInRange(PixelRef bl, PixelRef tr, std::set<int> &selSe
                 if (!pnt.m_merge.empty()) {
                     PixelRef p = pnt.m_merge;
                     auto &point = getPoint(p);
-                    depthmapX::findAndErase(
+                    genlib::findAndErase(
                         m_mergeLines,
                         PixelRefPair(PixelRef(static_cast<short>(i), static_cast<short>(j)), p));
                     point.m_merge = NoPixel;
@@ -402,7 +402,7 @@ bool PointMap::makePoints(const Point2f &seed, int fillType, Communicator *comm)
     }
 
     if (!m_blockedlines) {
-        throw depthmapX::RuntimeException("blockLines() not called before makePoints");
+        throw genlib::RuntimeException("blockLines() not called before makePoints");
     }
 
     m_undocounter++; // undo counter increased ready for fill...
@@ -602,7 +602,7 @@ void PointMap::outputNet(std::ostream &netfile) {
     for (auto &iter : graph) {
         PixelRefVector &list = iter.second;
         for (size_t m = 0; m < list.size(); m++) {
-            auto n = depthmapX::findIndexFromKey(graph, list[m]);
+            auto n = genlib::findIndexFromKey(graph, list[m]);
             if (n != -1 && k < static_cast<size_t>(n)) {
                 netfile << (k + 1) << " " << (n + 1) << " 1" << std::endl;
             }
@@ -782,7 +782,7 @@ bool PointMap::readMetadata(std::istream &stream) {
 bool PointMap::readPointsAndAttributes(std::istream &stream) {
     m_attributes->read(stream, m_layers);
 
-    m_points = depthmapX::ColumnMatrix<Point>(m_rows, m_cols);
+    m_points = genlib::ColumnMatrix<Point>(m_rows, m_cols);
 
     for (size_t j = 0; j < m_cols; j++) {
         for (size_t k = 0; k < m_rows; k++) {
@@ -804,10 +804,9 @@ bool PointMap::readPointsAndAttributes(std::istream &stream) {
             }
             // Add merge line if merged:
             if (!pnt.m_merge.empty()) {
-                depthmapX::addIfNotExists(
-                    m_mergeLines,
-                    PixelRefPair(PixelRef(static_cast<short>(j), static_cast<short>(k)),
-                                 pnt.m_merge));
+                genlib::addIfNotExists(m_mergeLines, PixelRefPair(PixelRef(static_cast<short>(j),
+                                                                           static_cast<short>(k)),
+                                                                  pnt.m_merge));
             }
         }
     }
@@ -927,7 +926,7 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
     // Note, graph must be fixed (i.e., having blocking pixels filled in)
 
     if (!m_blockedlines) {
-        throw depthmapX::RuntimeException("blockLines() not called before makePoints");
+        throw genlib::RuntimeException("blockLines() not called before makePoints");
     }
 
     if (boundarygraph) {
@@ -1302,7 +1301,7 @@ bool PointMap::unmergePoints(std::set<int> &firstPoints) {
 // Either of the pixels can be given here and the other will also be unmerged
 bool PointMap::unmergePixel(PixelRef a) {
     PixelRef c = getPoint(a).m_merge;
-    depthmapX::findAndErase(m_mergeLines, PixelRefPair(a, c));
+    genlib::findAndErase(m_mergeLines, PixelRefPair(a, c));
     getPoint(c).m_merge = NoPixel;
     getPoint(c).m_state &= ~Point::MERGED;
     getPoint(a).m_merge = NoPixel;

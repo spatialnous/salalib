@@ -8,7 +8,7 @@
 #include <exception>
 #include <string>
 
-namespace depthmapX {
+namespace genlib {
     class BaseException : public std::exception {
       public:
         BaseException() : m_message() {}
@@ -23,4 +23,4 @@ namespace depthmapX {
       public:
         RuntimeException(std::string message) : BaseException(std::move(message)) {}
     };
-} // namespace depthmapX
+} // namespace genlib

@@ -11,11 +11,11 @@
 #include <map>
 #include <vector>
 
-namespace depthmapX {
+namespace sala {
     std::vector<ShapeMap> importFile(std::istream &stream, Communicator *communicator,
                                      std::string name, ImportType mapType, ImportFileType fileType);
     bool importTxt(ShapeMap &shapeMap, std::istream &stream, char delimiter);
-    depthmapX::Table csvToTable(std::istream &stream, char delimiter);
+    sala::Table csvToTable(std::istream &stream, char delimiter);
     std::vector<Line4f> extractLines(ColumnData &x1col, ColumnData &y1col, ColumnData &x2col,
                                      ColumnData &y2col);
     std::map<int, Line4f> extractLinesWithRef(ColumnData &x1col, ColumnData &y1col,
@@ -29,4 +29,4 @@ namespace depthmapX {
                                   ImportType mapType);
     std::vector<ShapeMap> loadRT1(const std::vector<std::string> &fileset,
                                   Communicator *communicator, ImportType mapType);
-} // namespace depthmapX
+} // namespace sala

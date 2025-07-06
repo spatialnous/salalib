@@ -10,15 +10,15 @@
 
 #include <vector>
 
-namespace depthmapX {
+namespace sala {
 
-    class InvalidLinkException : public depthmapX::BaseException {
+    class InvalidLinkException : public genlib::BaseException {
       public:
-        InvalidLinkException(std::string message) : depthmapX::BaseException(std::move(message)) {}
+        InvalidLinkException(std::string message) : genlib::BaseException(std::move(message)) {}
     };
     std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line4f> &mergeLines,
                                                  PointMap &currentMap);
     void mergePixelPairs(const std::vector<PixelRefPair> &links, PointMap &currentMap);
     void unmergePixelPairs(const std::vector<PixelRefPair> &links, PointMap &currentMap);
     std::vector<SimpleLine> getMergedPixelsAsLines(PointMap &currentMap);
-} // namespace depthmapX
+} // namespace sala

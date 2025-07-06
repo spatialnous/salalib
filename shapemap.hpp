@@ -11,6 +11,7 @@
 #include "attributetablehelpers.hpp"
 #include "attributetableview.hpp"
 #include "connector.hpp"
+#include "genlib/containerutils.hpp"
 #include "importtypedefs.hpp"
 #include "layermanagerimpl.hpp"
 #include "parsers/mapinfodata.hpp"
@@ -18,7 +19,6 @@
 #include "salashape.hpp"
 #include "shaperef.hpp"
 
-#include "genlib/containerutils.hpp"
 #include "genlib/simpleline.hpp"
 #include "genlib/simplematrix.hpp"
 
@@ -61,7 +61,7 @@ class ShapeMap : public AttributeMap {
     int m_objRef = -1;
     //
     // quick grab for shapes
-    depthmapX::ColumnMatrix<std::vector<ShapeRef>> m_pixelShapes; // i rows of j columns
+    genlib::ColumnMatrix<std::vector<ShapeRef>> m_pixelShapes; // i rows of j columns
     //
     std::map<int, SalaShape> m_shapes;
     //
@@ -139,7 +139,7 @@ class ShapeMap : public AttributeMap {
     // that still use them are the connections of the axial/segment maps and the point
     // in polygon functions.
     const std::map<int, SalaShape>::const_iterator getShapeRefFromIndex(size_t index) const {
-        return depthmapX::getMapAtIndex(m_shapes, index);
+        return genlib::getMapAtIndex(m_shapes, index);
     }
     AttributeRow &getAttributeRowFromShapeIndex(size_t index) {
         return m_attributes->getRow(AttributeKey(getShapeRefFromIndex(index)->first));
@@ -154,10 +154,10 @@ class ShapeMap : public AttributeMap {
     // num shapes for this object (note, request by object rowid
     // -- on interrogation, this is what you will usually receive)
     size_t getShapeCount(size_t rowid) const {
-        return depthmapX::getMapAtIndex(m_shapes, rowid)->second.points.size();
+        return genlib::getMapAtIndex(m_shapes, rowid)->second.points.size();
     }
     //
-    int getIndex(size_t rowid) const { return depthmapX::getMapAtIndex(m_shapes, rowid)->first; }
+    int getIndex(size_t rowid) const { return genlib::getMapAtIndex(m_shapes, rowid)->first; }
     //
     // add shape tools
     void makePolyPixels(int shaperef);
@@ -383,16 +383,15 @@ class ShapeMap : public AttributeMap {
     std::vector<std::pair<std::vector<Point2f>, PafColor>>
     getAllPolygonsWithColour(const std::set<int> &selSet);
     std::vector<std::pair<Point2f, PafColor>> getAllPointsWithColour(const std::set<int> &selSet);
-    bool importLines(const std::vector<Line4f> &lines, const depthmapX::Table &data);
-    bool importLinesWithRefs(const std::map<int, Line4f> &lines, const depthmapX::Table &data);
-    bool importPoints(const std::vector<Point2f> &points, const depthmapX::Table &data);
-    bool importPointsWithRefs(const std::map<int, Point2f> &points, const depthmapX::Table &data);
-    bool importPolylines(const std::vector<depthmapX::Polyline> &lines,
-                         const depthmapX::Table &data);
-    bool importPolylinesWithRefs(const std::map<int, depthmapX::Polyline> &lines,
-                                 const depthmapX::Table &data);
+    bool importLines(const std::vector<Line4f> &lines, const sala::Table &data);
+    bool importLinesWithRefs(const std::map<int, Line4f> &lines, const sala::Table &data);
+    bool importPoints(const std::vector<Point2f> &points, const sala::Table &data);
+    bool importPointsWithRefs(const std::map<int, Point2f> &points, const sala::Table &data);
+    bool importPolylines(const std::vector<sala::Polyline> &lines, const sala::Table &data);
+    bool importPolylinesWithRefs(const std::map<int, sala::Polyline> &lines,
+                                 const sala::Table &data);
     void copyMapInfoBaseData(const ShapeMap &sourceMap);
 
   private:
-    bool importData(const depthmapX::Table &data, std::vector<int> shapeRefs);
+    bool importData(const sala::Table &data, std::vector<int> shapeRefs);
 };

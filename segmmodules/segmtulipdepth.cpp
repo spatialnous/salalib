@@ -29,7 +29,7 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
 
     int opencount = 0;
     for (auto &sel : m_originRefs) {
-        int row = depthmapX::getMapAtIndex(map.getAllShapes(), static_cast<size_t>(sel))->first;
+        int row = genlib::getMapAtIndex(map.getAllShapes(), static_cast<size_t>(sel))->first;
         if (row != -1) {
             bins[0].push_back(SegmentData(0, row, SegmentRef(), 0, 0.0, 0));
             opencount++;

@@ -12,7 +12,7 @@
 
 AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Point2f &openspace) {
     auto vertPossIter =
-        depthmapX::getMapAtIndex(vertexPossibles, static_cast<size_t>(vertexkey.refKey));
+        genlib::getMapAtIndex(vertexPossibles, static_cast<size_t>(vertexkey.refKey));
     AxialVertex av(vertexkey, vertPossIter->first, openspace);
 
     // n.b., at this point, vertex key m_a and m_b are unfixed
@@ -148,7 +148,7 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
     size_t i = 0;
 
     // TODO: (CS) these should be vectors, not raw pointers.
-    depthmapX::RowMatrix<int> found(2, lines.size());
+    genlib::RowMatrix<int> found(2, lines.size());
     for (i = 0; i < lines.size(); i++) {
         found(0, i) = -1;
         found(1, i) = -1;
@@ -213,11 +213,11 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
             while (addlist.size()) {
                 m_vertexPolys[static_cast<size_t>(addlist.back())] = currentPoly;
                 std::vector<Point2f> &connections =
-                    depthmapX::getMapAtIndex(vertexPossibles, static_cast<size_t>(addlist.back()))
+                    genlib::getMapAtIndex(vertexPossibles, static_cast<size_t>(addlist.back()))
                         ->second;
                 addlist.pop_back();
                 for (size_t j = 0; j < connections.size(); j++) {
-                    auto index = depthmapX::findIndexFromKey(vertexPossibles, connections[j]);
+                    auto index = genlib::findIndexFromKey(vertexPossibles, connections[j]);
                     if (index == -1) {
                         throw 3;
                     }
@@ -233,7 +233,7 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
 void AxialPolygons::makePixelPolys() {
     // record all of this onto the pixel polygons
 
-    m_pixelPolys = depthmapX::ColumnMatrix<std::vector<int>>(m_rows, m_cols);
+    m_pixelPolys = genlib::ColumnMatrix<std::vector<int>>(m_rows, m_cols);
     // now register the vertices in each pixel...
     int j = -1;
     for (const auto &vertPoss : vertexPossibles) {
@@ -261,7 +261,7 @@ AxialVertexKey AxialPolygons::seedVertex(const Point2f &seed) {
         for (int vertexref :
              m_pixelPolys(static_cast<size_t>(seedref.y), static_cast<size_t>(seedref.x))) {
             const Point2f &trialpoint =
-                depthmapX::getMapAtIndex(vertexPossibles, static_cast<size_t>(vertexref))->first;
+                genlib::getMapAtIndex(vertexPossibles, static_cast<size_t>(vertexref))->first;
             if (!intersect_exclude(Line4f(seed, trialpoint))) {
                 // yay... ...but wait... we need to see if it's a proper polygon vertex
                 // first...
@@ -475,9 +475,9 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
             while (curr != key) {
                 auto vertPossIter = vertexPossibles.find(curr);
                 if (vertPossIter == vertexPossibles.end()) {
-                    throw depthmapX::RuntimeException("Point " + std::to_string(curr.x) + ", " +
-                                                      std::to_string(curr.y) +
-                                                      " not found when making polygons");
+                    throw genlib::RuntimeException("Point " + std::to_string(curr.x) + ", " +
+                                                   std::to_string(curr.y) +
+                                                   " not found when making polygons");
                 }
                 polygon.push_back(curr);
                 // hunt down left most
@@ -503,8 +503,7 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                     // this happens when you follow a false trail -- go back the way you
                     // came!
                     if (wayback < 0) {
-                        throw new depthmapX::RuntimeException(
-                            "Error traversing when making polygons");
+                        throw new genlib::RuntimeException("Error traversing when making polygons");
                     }
                     winner = wayback;
                 }

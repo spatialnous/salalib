@@ -39,12 +39,12 @@ AnalysisResult AxialLocal::run(Communicator *comm, ShapeGraph &map, bool) {
         for (auto connection : connections) {
             // n.b., as of Depthmap 10.0, connections[j] and i cannot coexist
             // if (connections[j] != i) {
-            depthmapX::addIfNotExists(totalneighbourhood, connection);
+            genlib::addIfNotExists(totalneighbourhood, connection);
             int retroSize = 0;
             auto &retconnectors = map.getConnections()[connection].connections;
             for (auto retconnector : retconnectors) {
                 retroSize++;
-                depthmapX::addIfNotExists(totalneighbourhood, retconnector);
+                genlib::addIfNotExists(totalneighbourhood, retconnector);
             }
             if (retroSize > 0) {
                 control += 1.0 / static_cast<double>(retroSize);

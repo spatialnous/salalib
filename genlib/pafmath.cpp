@@ -32,7 +32,7 @@ void pafmath::pafsrand(unsigned int seed, int set) // = 0
 // passes all tests for at least the first 5 seeds above
 // it is also independent in at least 20 dimensions
 // It should not be used for "serious" randomness, but should be fine
-// for most things (agents in depthmapX, genetic algorithms, etc)
+// for most things (agents in sala, genetic algorithms, etc)
 
 // 25-Jul-2007: moved up to take top 32 bits
 

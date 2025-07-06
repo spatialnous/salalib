@@ -19,7 +19,7 @@ namespace PushValues {
         NONE // = -1
     };
 
-    class PushValueError : public depthmapX::BaseException {
+    class PushValueError : public genlib::BaseException {
       public:
         PushValueError(std::string message) : BaseException(std::move(message)) {}
     };

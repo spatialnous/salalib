@@ -125,7 +125,7 @@ class AxialPolygons : public SpacePixel {
 
   protected:
     std::vector<int> m_vertexPolys;
-    depthmapX::ColumnMatrix<std::vector<int>> m_pixelPolys;
+    genlib::ColumnMatrix<std::vector<int>> m_pixelPolys;
 
   public:
     AxialPolygons() : m_vertexPolys(), m_pixelPolys(0, 0), handledList(), vertexPossibles() {}

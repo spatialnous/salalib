@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace depthmapX {
+namespace sala {
     typedef std::vector<std::string> ColumnData;
     typedef std::map<std::string, ColumnData> Table;
 
@@ -31,4 +31,4 @@ namespace depthmapX {
     enum ImportType { DRAWINGMAP, DATAMAP };
 
     enum ImportFileType { CSV, TSV, DXF, CAT, RT1, NTF };
-} // namespace depthmapX
+} // namespace sala

@@ -86,8 +86,8 @@ void VGAIsovistZone::setColumnFormulaAndUpdate(PointMap &pointmap, size_t column
     std::istringstream stream(formula);
     SalaProgram proggy(programContext);
     if (!proggy.parse(stream)) {
-        throw depthmapX::RuntimeException("There was an error parsing your formula:\n\n" +
-                                          proggy.getLastErrorMessage());
+        throw genlib::RuntimeException("There was an error parsing your formula:\n\n" +
+                                       proggy.getLastErrorMessage());
     } else {
         bool programCompleted;
         if (selectionSet.has_value()) {
@@ -97,8 +97,8 @@ void VGAIsovistZone::setColumnFormulaAndUpdate(PointMap &pointmap, size_t column
             programCompleted = proggy.runupdate(static_cast<int>(columnIndex));
         }
         if (!programCompleted) {
-            throw depthmapX::RuntimeException("There was an error parsing your formula:\n\n" +
-                                              proggy.getLastErrorMessage());
+            throw genlib::RuntimeException("There was an error parsing your formula:\n\n" +
+                                           proggy.getLastErrorMessage());
         }
     }
     programContext.getTable()->getColumn(columnIndex).setFormula(std::move(formula));

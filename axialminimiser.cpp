@@ -61,7 +61,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
         m_vps[y].index = static_cast<int>(y);
         double length = static_cast<double>(m_axialconns[y].connections.size());
         m_vps[y].value1 = static_cast<int>(length);
-        length = depthmapX::getMapAtIndex(m_alllinemap->m_shapes, y)->second.getLine().length();
+        length = genlib::getMapAtIndex(m_alllinemap->m_shapes, y)->second.getLine().length();
         m_vps[y].value2 = static_cast<float>(length);
         y++;
     }
@@ -147,7 +147,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                 size_t removeindex = ii;
                 // now check removing it won't break any topological loops
                 bool presumedvital = false;
-                auto &axSegCut = depthmapX::getMapAtIndex(axsegcuts, removeindex)->second;
+                auto &axSegCut = genlib::getMapAtIndex(axsegcuts, removeindex)->second;
                 for (int cut : axSegCut) {
                     if (m_radialsegcounts[cut] <= 1) {
                         presumedvital = true;
@@ -168,7 +168,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
                     for (auto affectedconnection : affectedconnections) {
                         if (!m_removed[affectedconnection]) {
                             auto &connections = m_axialconns[affectedconnection].connections;
-                            depthmapX::findAndErase(connections, removeindex);
+                            genlib::findAndErase(connections, removeindex);
                             m_affected[affectedconnection] = true;
                         }
                     }
@@ -204,7 +204,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
             m_vps[livecount].index = static_cast<int>(y);
             m_vps[livecount].value1 = static_cast<int>(m_axialconns[y].connections.size());
             m_vps[livecount].value2 = static_cast<float>(
-                depthmapX::getMapAtIndex(m_alllinemap->m_shapes, y)->second.getLine().length());
+                genlib::getMapAtIndex(m_alllinemap->m_shapes, y)->second.getLine().length());
             livecount++;
         }
     }
@@ -232,7 +232,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
         }
         //
         bool presumedvital = false;
-        auto &axSegCut = depthmapX::getMapAtIndex(axsegcuts, static_cast<size_t>(j))->second;
+        auto &axSegCut = genlib::getMapAtIndex(axsegcuts, static_cast<size_t>(j))->second;
         for (int cut : axSegCut) {
             if (m_radialsegcounts[cut] <= 1) {
                 presumedvital = true;
@@ -264,7 +264,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
                 if (!m_removed[affectedconnection]) {
                     auto &connections =
                         m_axialconns[static_cast<size_t>(affectedconnection)].connections;
-                    depthmapX::findAndErase(connections, static_cast<size_t>(j));
+                    genlib::findAndErase(connections, static_cast<size_t>(j));
                     m_affected[affectedconnection] = true;
                 }
             }
@@ -296,30 +296,30 @@ bool AxialMinimiser::checkVital(int checkindex, std::set<int> &axSegCut,
         if (m_radialsegcounts[cut] <= 1) {
             bool nonvitalseg = false;
             vitalsegs++;
-            auto radialSegIter = depthmapX::getMapAtIndex(radialsegs, static_cast<size_t>(cut));
+            auto radialSegIter = genlib::getMapAtIndex(radialsegs, static_cast<size_t>(cut));
             const RadialKey &key = radialSegIter->first;
             RadialSegment &seg = radialSegIter->second;
             auto keyIter = rlds.find(key);
             if (keyIter == rlds.end()) {
-                throw depthmapX::RuntimeException(
+                throw genlib::RuntimeException(
                     "RadialKey A not found when checking for vital axial lines");
             }
             std::set<int> &divisorsa = keyIter->second;
             auto radialBIter = rlds.find(seg.radialB);
             if (radialBIter == rlds.end()) {
-                throw depthmapX::RuntimeException(
+                throw genlib::RuntimeException(
                     "RadialKey B not found when checking for vital axial lines");
             }
             std::set<int> &divisorsb = radialBIter->second;
             auto iterKey = std::find(radialLines.begin(), radialLines.end(), key);
             if (iterKey == radialLines.end()) {
-                throw depthmapX::RuntimeException("Radial key not found in radial lines");
+                throw genlib::RuntimeException("Radial key not found in radial lines");
             }
             const RadialLine &rlinea = *iterKey;
 
             auto iterSegB = std::find(radialLines.begin(), radialLines.end(), seg.radialB);
             if (iterSegB == radialLines.end()) {
-                throw depthmapX::RuntimeException("Radial key not found in radial lines");
+                throw genlib::RuntimeException("Radial key not found in radial lines");
             }
             const RadialLine &rlineb = *iterSegB;
             for (int diva : divisorsa) {

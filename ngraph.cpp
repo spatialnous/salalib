@@ -129,7 +129,7 @@ PixelRef Node::cursor() const { return m_bins[m_curbin].cursor(); }
 void Node::contents(PixelRefVector &hood) const {
     first();
     while (!is_tail()) {
-        depthmapX::addIfNotExists(hood, cursor());
+        genlib::addIfNotExists(hood, cursor());
         next();
     }
 }

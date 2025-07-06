@@ -53,16 +53,16 @@ struct AnalysisResult {
     AnalysisResult(std::vector<std::string> &&attributeNames = std::vector<std::string>(),
                    size_t rowCount = 0, double defValue = -1.0f)
         : _padding0(0), _padding1(0), m_newAttributes(attributeNames),
-          m_attributeDatata(depthmapX::RowMatrix<double>(rowCount, attributeNames.size())),
+          m_attributeDatata(genlib::RowMatrix<double>(rowCount, attributeNames.size())),
           m_newShapeMaps(), m_newPointMaps(), m_newShapeGraphs() {
         m_attributeDatata.initialiseValues(defValue);
     }
 
-    depthmapX::RowMatrix<double> getAttributeData() const { return m_attributeDatata; }
+    genlib::RowMatrix<double> getAttributeData() const { return m_attributeDatata; }
 
   protected:
     std::vector<std::string> m_newAttributes = std::vector<std::string>();
-    depthmapX::RowMatrix<double> m_attributeDatata;
+    genlib::RowMatrix<double> m_attributeDatata;
     std::vector<ShapeMap> m_newShapeMaps;
     std::vector<PointMap> m_newPointMaps;
     std::vector<ShapeGraph> m_newShapeGraphs;

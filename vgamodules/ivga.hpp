@@ -9,7 +9,6 @@
 #include "../ianalysis.hpp"
 #include "../pointmap.hpp"
 
-#include <numeric>
 #include <string>
 
 class IVGA : public IAnalysis {
@@ -79,7 +78,7 @@ class IVGA : public IAnalysis {
 
     virtual void
     copyResultToMap(const std::vector<std::string> &colNames,
-                    const depthmapX::RowMatrix<double> &colValues, PointMap &map,
+                    const genlib::RowMatrix<double> &colValues, PointMap &map,
                     std::optional<std::vector<AttributeColumnStats>> columnStats = std::nullopt) {
         AttributeTable &attributes = map.getAttributeTable();
 

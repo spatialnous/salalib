@@ -17,9 +17,9 @@
 #include <set>
 #include <vector>
 
-namespace depthmapX {
+namespace sala {
     enum PointMapExceptionType { NO_ISOVIST_ANALYSIS };
-    class PointMapException : public depthmapX::RuntimeException {
+    class PointMapException : public genlib::RuntimeException {
       private:
         PointMapExceptionType m_errorType;
 
@@ -27,11 +27,10 @@ namespace depthmapX {
 
       public:
         PointMapException(PointMapExceptionType errorType, std::string message)
-            : depthmapX::RuntimeException(std::move(message)), m_errorType(errorType),
-              _padding0(0) {}
+            : genlib::RuntimeException(std::move(message)), m_errorType(errorType), _padding0(0) {}
         PointMapExceptionType getErrorType() const { return m_errorType; }
     };
-} // namespace depthmapX
+} // namespace sala
 
 class PointMap : public AttributeMap {
 
@@ -52,7 +51,7 @@ class PointMap : public AttributeMap {
     }
 
   protected:
-    depthmapX::ColumnMatrix<Point> m_points; // will contain the graph reference when created
+    genlib::ColumnMatrix<Point> m_points; // will contain the graph reference when created
     std::vector<PixelRefPair> m_mergeLines;
     double m_spacing;
     Point2f m_offset;
@@ -169,8 +168,8 @@ class PointMap : public AttributeMap {
     Point &getPoint(const PixelRef &p) {
         return m_points(static_cast<size_t>(p.y), static_cast<size_t>(p.x));
     }
-    depthmapX::BaseMatrix<Point> &getPoints() { return m_points; }
-    const depthmapX::BaseMatrix<Point> &getPoints() const { return m_points; }
+    genlib::BaseMatrix<Point> &getPoints() { return m_points; }
+    const genlib::BaseMatrix<Point> &getPoints() const { return m_points; }
     const int &pointState(const PixelRef &p) const {
         return m_points(static_cast<size_t>(p.y), static_cast<size_t>(p.x)).m_state;
     }
@@ -181,9 +180,8 @@ class PointMap : public AttributeMap {
 
     void requireIsovistAnalysis() {
         if (!hasIsovistAnalysis()) {
-            throw depthmapX::PointMapException(
-                depthmapX::PointMapExceptionType::NO_ISOVIST_ANALYSIS,
-                "Current pointmap does not contain isovist analysis");
+            throw sala::PointMapException(sala::PointMapExceptionType::NO_ISOVIST_ANALYSIS,
+                                          "Current pointmap does not contain isovist analysis");
         }
     }
 

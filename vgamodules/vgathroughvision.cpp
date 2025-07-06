@@ -65,7 +65,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
                         int gate =
                             static_cast<int>(iter->getRow().getValue(agentGateColIdx.value()));
                         if (gate != -1) {
-                            auto gateIter = depthmapX::findBinary(seengates, gate);
+                            auto gateIter = genlib::findBinary(seengates, gate);
                             if (gateIter == seengates.end()) {
                                 result.incrValue(ad.attributeDataRow, agentGateCountColIdx.value());
                                 seengates.insert(gateIter, static_cast<int>(gate));

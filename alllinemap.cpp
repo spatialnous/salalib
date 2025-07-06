@@ -77,7 +77,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
 
     if (seedvertex == NoVertex) {
         // oops... can't find a visible vertex
-        throw depthmapX::RuntimeException("No visible vertices found");
+        throw genlib::RuntimeException("No visible vertices found");
     }
 
     // okay, we've got as far as finding a seed corner, now the real fun begins...
@@ -92,7 +92,7 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     AxialVertex vertex = mapData.polygons.makeVertex(seedvertex, seed);
     if (!vertex.initialised) {
         // oops... can't init for some reason
-        throw depthmapX::RuntimeException("Failed to initialise axial vertices");
+        throw genlib::RuntimeException("Failed to initialise axial vertices");
     }
 
     time_t atime = 0;
@@ -289,7 +289,7 @@ std::tuple<ShapeGraph, ShapeGraph> AllLine::extractFewestLineMaps(Communicator *
     // make new lines here (assumes line map has only lines
     for (int sk = 0; sk < static_cast<int>(map.getAllShapes().size()); sk++) {
         if (!minimiser.removed(sk)) {
-            linesM.push_back(depthmapX::getMapAtIndex(map.getAllShapes(), static_cast<size_t>(sk))
+            linesM.push_back(genlib::getMapAtIndex(map.getAllShapes(), static_cast<size_t>(sk))
                                  ->second.getLine());
         }
     }
@@ -335,22 +335,22 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
         std::vector<size_t> testedshapes;
         auto connIter = radialdivisions.find(polyconnections[i].key);
         if (connIter == radialdivisions.end()) {
-            throw depthmapX::RuntimeException("Connection not found when making divisions");
+            throw genlib::RuntimeException("Connection not found when making divisions");
         }
         auto connindex = static_cast<int>(std::distance(radialdivisions.begin(), connIter));
         for (size_t j = 0; j < pixels.size(); j++) {
             PixelRef pix = pixels[j];
             const auto &shapes = map.getShapesAtPixel(pix);
             for (const ShapeRef &shape : shapes) {
-                auto iter = depthmapX::findBinary(testedshapes, shape.shapeRef);
+                auto iter = genlib::findBinary(testedshapes, shape.shapeRef);
                 if (iter != testedshapes.end()) {
                     continue;
                 }
                 testedshapes.insert(iter, shape.shapeRef);
                 auto shapeIter = map.getAllShapes().find(static_cast<int>(shape.shapeRef));
                 if (shapeIter == map.getAllShapes().end()) {
-                    throw depthmapX::RuntimeException("Shape " + std::to_string(shape.shapeRef) +
-                                                      " not found when making divisions");
+                    throw genlib::RuntimeException("Shape " + std::to_string(shape.shapeRef) +
+                                                   " not found when making divisions");
                 }
                 const Line4f &line = shapeIter->second.getLine();
                 //
@@ -361,7 +361,7 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                     case 0:
                         break;
                     case 2: {
-                        auto index = static_cast<int>(depthmapX::findIndexFromKey(
+                        auto index = static_cast<int>(genlib::findIndexFromKey(
                             axialdividers, static_cast<int>(shape.shapeRef)));
                         if (index != static_cast<int>(shape.shapeRef)) {
                             throw 1; // for the code to work later this can't be true!
@@ -370,7 +370,7 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                         connIter->second.insert(static_cast<int>(shape.shapeRef));
                     } break;
                     case 1: {
-                        auto index = static_cast<int>(depthmapX::findIndexFromKey(
+                        auto index = static_cast<int>(genlib::findIndexFromKey(
                             axialdividers, static_cast<int>(shape.shapeRef)));
                         if (index != static_cast<int>(shape.shapeRef)) {
                             throw 1; // for the code to work later this can't be true!

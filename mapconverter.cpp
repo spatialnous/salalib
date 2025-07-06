@@ -52,7 +52,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToAxial(
     }
     if (count == 0) {
         // TODO: write a better error message
-        throw depthmapX::RuntimeException("Failed to convert lines");
+        throw genlib::RuntimeException("Failed to convert lines");
     }
 
     // quick tidy removes very short and duplicate lines, but does not merge
@@ -60,7 +60,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToAxial(
     TidyLines tidier;
     tidier.quicktidy(lines, region);
     if (lines.size() == 0) {
-        throw depthmapX::RuntimeException("No lines found after removing short and duplicates");
+        throw genlib::RuntimeException("No lines found after removing short and duplicates");
     }
 
     if (comm) {
@@ -123,7 +123,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
         }
     }
     if (lines.size() == 0) {
-        throw depthmapX::RuntimeException("No lines found in data map");
+        throw genlib::RuntimeException("No lines found in data map");
     }
 
     // quick tidy removes very short and duplicate lines, but does not merge
@@ -131,7 +131,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToAxial(Communicator *comm,
     TidyLines tidier;
     tidier.quicktidy(lines, region);
     if (lines.size() == 0) {
-        throw depthmapX::RuntimeException("No lines found after removing short and duplicates");
+        throw genlib::RuntimeException("No lines found after removing short and duplicates");
     }
 
     if (comm) {
@@ -228,7 +228,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToConvex(
         }
     }
     if (count == 0) {
-        throw depthmapX::RuntimeException("No polygons found in drawing");
+        throw genlib::RuntimeException("No polygons found in drawing");
     }
 
     return usermap;
@@ -272,7 +272,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToConvex(Communicator *,
         }
     }
     if (usermap->getShapeCount() == 0) {
-        throw depthmapX::RuntimeException("No polygons found in data map");
+        throw genlib::RuntimeException("No polygons found in data map");
     }
 
     return usermap;
@@ -318,7 +318,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToSegment(
         }
     }
     if (count == 0) {
-        throw depthmapX::RuntimeException("No lines found in drawing");
+        throw genlib::RuntimeException("No lines found in drawing");
     }
 
     // quick tidy removes very short and duplicate lines, but does not merge
@@ -326,7 +326,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDrawingToSegment(
     TidyLines tidier;
     tidier.quicktidy(lines, region);
     if (lines.size() == 0) {
-        throw depthmapX::RuntimeException("No lines found after removing short and duplicates");
+        throw genlib::RuntimeException("No lines found after removing short and duplicates");
     }
 
     if (comm) {
@@ -386,7 +386,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
         }
     }
     if (lines.size() == 0) {
-        throw depthmapX::RuntimeException("No lines found in data map");
+        throw genlib::RuntimeException("No lines found in data map");
     }
 
     // quick tidy removes very short and duplicate lines, but does not merge
@@ -395,7 +395,7 @@ std::unique_ptr<ShapeGraph> MapConverter::convertDataToSegment(Communicator *com
     tidier.quicktidy(lines, region);
 
     if (lines.size() == 0) {
-        throw depthmapX::RuntimeException("No lines found after removing short and duplicates");
+        throw genlib::RuntimeException("No lines found after removing short and duplicates");
     }
 
     if (comm) {

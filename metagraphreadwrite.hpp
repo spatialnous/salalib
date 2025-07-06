@@ -33,7 +33,7 @@ namespace MetaGraphReadWrite {
 
     std::string getReadMessage(ReadWriteStatus readStatus);
 
-    class MetaGraphReadError : public depthmapX::BaseException {
+    class MetaGraphReadError : public genlib::BaseException {
       public:
         MetaGraphReadError(std::string message) : BaseException(std::move(message)) {}
     };
@@ -55,7 +55,7 @@ namespace MetaGraphReadWrite {
         std::optional<AllLine::MapData> allLineMapData;
 
         // sala does not handle display data anymore, however they are still found in
-        // the metagraphs, thus they are provided here for depthmapX (or other guis)
+        // the metagraphs, thus they are provided here for older interfaces
         struct DisplayData {
             int state = 0, viewClass = 0;
             bool showGrid = false, showText = false;

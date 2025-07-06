@@ -123,7 +123,7 @@ BSPTree::makeLines(Communicator *, time_t, const std::vector<Line4f> &lines, BSP
     if (lines.size() > 3) {
         chosen = BSPTree::pickMidpointLine(lines, base->parent);
         if (chosen < 0) {
-            throw new depthmapX::RuntimeException("Error, failed to pick midpoint line");
+            throw new genlib::RuntimeException("Error, failed to pick midpoint line");
         }
     } else {
         // TODO: This was originally `chosen = pafrand() % lines.size();`, but was making the

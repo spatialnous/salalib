@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-namespace depthmapX {
+namespace genlib {
 
     /**
      *  Base class for 2 dimensional matrices. This can be used as reference/pointer, but you cannot
@@ -206,4 +206,4 @@ namespace depthmapX {
             return this->m_data[row + column * this->m_rows];
         }
     };
-} // namespace depthmapX
+} // namespace genlib

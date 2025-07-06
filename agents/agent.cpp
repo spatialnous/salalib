@@ -413,7 +413,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
             if (fardist != -1.0) {
                 bool cont = true;
                 if (looktype == AgentProgram::SEL_OCC_MEMORY) {
-                    depthmapX::addIfNotExists(m_occMemory.a(), nigpix);
+                    genlib::addIfNotExists(m_occMemory.a(), nigpix);
                     // the turn chance (pafrand() % 2) may have to be modified later...
                     if (!m_atTarget && std::find(m_occMemory.b().begin(), m_occMemory.b().end(),
                                                  nigpix) != m_occMemory.b().end()) {

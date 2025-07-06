@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "genlib/exceptions.hpp"
+#include "salalib/genlib/exceptions.hpp"
 
 #include <cstdint>
 #include <string>
@@ -28,18 +28,17 @@ class LayerManager {
     virtual ~LayerManager() {}
 
   public:
-    class OutOfLayersException : public depthmapX::BaseException {
+    class OutOfLayersException : public genlib::BaseException {
       public:
         OutOfLayersException() {}
-        OutOfLayersException(const std::string &message)
-            : depthmapX::BaseException(message.c_str()) {}
+        OutOfLayersException(const std::string &message) : genlib::BaseException(message.c_str()) {}
     };
 
-    class DuplicateKeyException : public depthmapX::BaseException {
+    class DuplicateKeyException : public genlib::BaseException {
       public:
         DuplicateKeyException() {}
         DuplicateKeyException(const std::string &message)
-            : depthmapX::BaseException(message.c_str()) {}
+            : genlib::BaseException(message.c_str()) {}
     };
 };
 

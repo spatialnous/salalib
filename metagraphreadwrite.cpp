@@ -16,7 +16,7 @@
 #include <fstream>
 
 namespace {
-    // old depthmapX display information, left here to allow reading
+    // old Depthmap display information, left here to allow reading
     // metagraph files
     enum {
         MG_State_NONE = 0x0000,
@@ -125,7 +125,7 @@ MetaGraphReadWrite::MetaGraphData MetaGraphReadWrite::readFromStream(std::istrea
     char type;
     stream.read(&type, 1);
     if (type == 'd') {
-        // contains deprecated datalayers. depthmapX should be able to
+        // contains deprecated datalayers. sala should be able to
         // convert them into shapemaps
         mgd.readWriteStatus = ReadWriteStatus::DEPRECATED_VERSION;
         return mgd;

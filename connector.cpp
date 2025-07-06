@@ -74,20 +74,20 @@ int Connector::getConnectedRef(const int cursor, const int mode) const {
             break;
         case SEG_CONN_ALL:
             if (ucursor < backSegconns.size()) {
-                cur = depthmapX::getMapAtIndex(backSegconns, ucursor)->first.ref;
+                cur = genlib::getMapAtIndex(backSegconns, ucursor)->first.ref;
             } else if (ucursor - backSegconns.size() < forwardSegconns.size()) {
-                cur = depthmapX::getMapAtIndex(forwardSegconns, ucursor - backSegconns.size())
+                cur = genlib::getMapAtIndex(forwardSegconns, ucursor - backSegconns.size())
                           ->first.ref;
             }
             break;
         case SEG_CONN_FW:
             if (ucursor < forwardSegconns.size()) {
-                cur = depthmapX::getMapAtIndex(forwardSegconns, ucursor)->first.ref;
+                cur = genlib::getMapAtIndex(forwardSegconns, ucursor)->first.ref;
             }
             break;
         case SEG_CONN_BK:
             if (ucursor < backSegconns.size()) {
-                cur = depthmapX::getMapAtIndex(backSegconns, ucursor)->first.ref;
+                cur = genlib::getMapAtIndex(backSegconns, ucursor)->first.ref;
             }
             break;
         }
@@ -101,17 +101,17 @@ int Connector::direction(const int cursor, const int mode) const {
         switch (mode) {
         case SEG_CONN_ALL:
             if (ucursor < backSegconns.size()) {
-                direction = depthmapX::getMapAtIndex(backSegconns, ucursor)->first.dir;
+                direction = genlib::getMapAtIndex(backSegconns, ucursor)->first.dir;
             } else if (ucursor - backSegconns.size() < forwardSegconns.size()) {
-                direction = depthmapX::getMapAtIndex(forwardSegconns, ucursor - backSegconns.size())
+                direction = genlib::getMapAtIndex(forwardSegconns, ucursor - backSegconns.size())
                                 ->first.dir;
             }
             break;
         case SEG_CONN_FW:
-            direction = depthmapX::getMapAtIndex(forwardSegconns, ucursor)->first.dir;
+            direction = genlib::getMapAtIndex(forwardSegconns, ucursor)->first.dir;
             break;
         case SEG_CONN_BK:
-            direction = depthmapX::getMapAtIndex(backSegconns, ucursor)->first.dir;
+            direction = genlib::getMapAtIndex(backSegconns, ucursor)->first.dir;
             break;
         }
     }
@@ -124,17 +124,17 @@ float Connector::weight(const int cursor, const int mode) const {
         switch (mode) {
         case SEG_CONN_ALL:
             if (ucursor < backSegconns.size()) {
-                weight = depthmapX::getMapAtIndex(backSegconns, ucursor)->second;
+                weight = genlib::getMapAtIndex(backSegconns, ucursor)->second;
             } else if (ucursor - backSegconns.size() < forwardSegconns.size()) {
-                weight = depthmapX::getMapAtIndex(forwardSegconns, ucursor - backSegconns.size())
-                             ->second;
+                weight =
+                    genlib::getMapAtIndex(forwardSegconns, ucursor - backSegconns.size())->second;
             }
             break;
         case SEG_CONN_FW:
-            weight = depthmapX::getMapAtIndex(forwardSegconns, ucursor)->second;
+            weight = genlib::getMapAtIndex(forwardSegconns, ucursor)->second;
             break;
         case SEG_CONN_BK:
-            weight = depthmapX::getMapAtIndex(backSegconns, ucursor)->second;
+            weight = genlib::getMapAtIndex(backSegconns, ucursor)->second;
             break;
         }
     }

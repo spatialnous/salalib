@@ -593,7 +593,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                                 size_t bin = (currentbin + static_cast<size_t>(tulipBins) +
                                               static_cast<size_t>(extradepth)) %
                                              static_cast<size_t>(tulipBins);
-                                depthmapX::insert_sorted(bins[bin], sd);
+                                genlib::insert_sorted(bins[bin], sd);
                                 opencount++;
                             }
                         }
@@ -656,7 +656,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                                 size_t bin = (currentbin + static_cast<size_t>(tulipBins) +
                                               static_cast<size_t>(extradepth)) %
                                              static_cast<size_t>(tulipBins);
-                                depthmapX::insert_sorted(bins[bin], sd);
+                                genlib::insert_sorted(bins[bin], sd);
                                 opencount++;
                             }
                         }
@@ -832,7 +832,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
     if (m_choice) {
         for (size_t cursor = 0; cursor < nconnections; cursor++) {
             AttributeRow &row = attributes.getRow(
-                AttributeKey(depthmapX::getMapAtIndex(map.getAllShapes(), cursor)->first));
+                AttributeKey(genlib::getMapAtIndex(map.getAllShapes(), cursor)->first));
             for (size_t r = 0; r < nradii; r++) {
                 // according to Eva's correction, total choice and total weighted choice
                 // should already have been accumulated by radius at this stage

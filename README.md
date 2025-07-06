@@ -2,7 +2,7 @@
 
 This is a C++17 spatial network analysis library originally part of [Depthmap](https://github.com/SpaceGroupUCL/Depthmap) and [depthmapX](https://github.com/SpaceGroupUCL/depthmapX).
 It has been split off to make it easier to include into other projects and it currently powers:
-- [depthmapX](https://github.com/spatialnous/depthmapX): A fork of depthmapX that follows the development of salalib
+- [depthmapQ](https://github.com/spatialnous/depthmapQ): A fork of depthmapX that follows the development of salalib
 - [alcyon](https://github.com/spatialnous/alcyon): An R package to do Spatial Network Analysis.
 
 The library is also extensively tested in the [gensalatest](https://github.com/spatialnous/gensalatest) repository. 

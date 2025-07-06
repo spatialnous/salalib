@@ -41,7 +41,7 @@ class VGAIsovistZone : public IAnalysis {
     struct MetricPoint {
         Point *point = nullptr;
     };
-    MetricPoint &getMetricPoint(depthmapX::ColumnMatrix<MetricPoint> &metricPoints, PixelRef ref) {
+    MetricPoint &getMetricPoint(genlib::ColumnMatrix<MetricPoint> &metricPoints, PixelRef ref) {
         return (metricPoints(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x)));
     }
     void extractMetric(Node &n, std::set<MetricTriple> &pixels, PointMap &map,

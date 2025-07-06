@@ -48,7 +48,7 @@ namespace dXreadwrite {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
         if (vec.size() > static_cast<size_t>(static_cast<unsigned int>(-1))) {
-            throw new depthmapX::RuntimeException("Vector exceeded max size for streaming");
+            throw new genlib::RuntimeException("Vector exceeded max size for streaming");
         }
         const unsigned int length = static_cast<const unsigned int>(vec.size());
         stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
@@ -62,7 +62,7 @@ namespace dXreadwrite {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
         if (vecF.size() > static_cast<size_t>(static_cast<unsigned int>(-1))) {
-            throw new depthmapX::RuntimeException("Vector exceeded max size for streaming");
+            throw new genlib::RuntimeException("Vector exceeded max size for streaming");
         }
         const unsigned int length = static_cast<const unsigned int>(vecF.size());
         stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
@@ -103,7 +103,7 @@ namespace dXreadwrite {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
         if (map.size() > static_cast<size_t>(static_cast<unsigned int>(-1))) {
-            throw new depthmapX::RuntimeException("Map exceeded max size for streaming");
+            throw new genlib::RuntimeException("Map exceeded max size for streaming");
         }
         const unsigned int length = static_cast<const unsigned int>(map.size());
         stream.write(reinterpret_cast<const char *>(&length), sizeof(length));

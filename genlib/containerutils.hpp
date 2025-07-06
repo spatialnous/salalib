@@ -8,7 +8,7 @@
 #include <map>
 #include <vector>
 
-namespace depthmapX {
+namespace genlib {
 
     template <typename T> void findAndErase(std::vector<T> &vec, T element) {
         auto it = std::find(vec.begin(), vec.end(), element);
@@ -79,4 +79,4 @@ namespace depthmapX {
         return vec.insert(std::upper_bound(vec.begin(), vec.end(), item), item);
     }
 
-} // namespace depthmapX
+} // namespace genlib

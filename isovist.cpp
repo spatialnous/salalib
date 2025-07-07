@@ -59,14 +59,6 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
     bool markedcentre = false;
     auto prev = m_blocks.begin();
     auto curr = m_blocks.begin();
-    auto stableDist = [](const Point2f &p1, const Point2f &p2) {
-        double xDiff = p1.x - p2.x;
-        double yDiff = p1.y - p2.y;
-        double xDiff2 = xDiff * xDiff;
-        double yDiff2 = yDiff * yDiff;
-        return sqrt(xDiff2 + yDiff2);
-    };
-
     for (; curr != m_blocks.end(); ++curr) {
         if (!complete && !markedcentre && !parity && curr->startangle == startangle) {
             // centre
@@ -77,20 +69,20 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
         if (curr != m_blocks.begin() && !prev->endpoint.approxeq(curr->startpoint, tolerance)) {
             m_poly.push_back(curr->startpoint);
             // record perimeter information:
-            double occluded = stableDist(prev->endpoint, curr->startpoint);
+            double occluded = prev->endpoint.dist(curr->startpoint);
             m_perimeter += occluded;
             m_occludedPerimeter += occluded;
             // record the near *point* for use in agent analysis
             // (as the point will not move between isovists, so can record *which*
             // occlusion this is, and spot novel ones)
-            if (stableDist(prev->endpoint, m_centre) < stableDist(curr->startpoint, m_centre)) {
+            if (prev->endpoint.dist(m_centre) < curr->startpoint.dist(m_centre)) {
                 m_occlusionPoints.push_back(PointDist(prev->endpoint, occluded));
             } else {
                 m_occlusionPoints.push_back(PointDist(curr->startpoint, occluded));
             }
         }
         m_poly.push_back(curr->endpoint);
-        m_perimeter += stableDist(curr->startpoint, curr->endpoint);
+        m_perimeter += curr->startpoint.dist(curr->endpoint);
         prev = curr;
     }
     // for some reason to do with ordering, if parity is true, the centre point
@@ -104,15 +96,15 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
         !m_blocks.rbegin()->endpoint.approxeq(m_blocks.begin()->startpoint, tolerance)) {
         m_poly.push_back(m_blocks.begin()->startpoint);
         // record perimeter information:
-        double occluded = stableDist(m_blocks.rbegin()->endpoint, m_blocks.begin()->startpoint);
+        double occluded = m_blocks.rbegin()->endpoint.dist(m_blocks.begin()->startpoint);
         m_perimeter += occluded;
         m_occludedPerimeter += occluded;
         // record the near *point* for use in agent analysis
         // (as the point will not move between isovists, so can record *which*
         // occlusion this is, and spot novel ones)
         if (occluded > 1.5) {
-            if (stableDist(m_blocks.rbegin()->endpoint, m_centre) <
-                stableDist(m_blocks.begin()->startpoint, m_centre)) {
+            if (m_blocks.rbegin()->endpoint.dist(m_centre) <
+                m_blocks.begin()->startpoint.dist(m_centre)) {
                 m_occlusionPoints.push_back(PointDist(m_blocks.rbegin()->endpoint, occluded));
             } else {
                 m_occlusionPoints.push_back(PointDist(m_blocks.begin()->startpoint, occluded));

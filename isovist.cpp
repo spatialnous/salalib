@@ -83,7 +83,7 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
             // record the near *point* for use in agent analysis
             // (as the point will not move between isovists, so can record *which*
             // occlusion this is, and spot novel ones)
-            if (prev->endpoint.dist(m_centre) < curr->startpoint.dist(m_centre)) {
+            if (stableDist(prev->endpoint, m_centre) < stableDist(curr->startpoint, m_centre)) {
                 m_occlusionPoints.push_back(PointDist(prev->endpoint, occluded));
             } else {
                 m_occlusionPoints.push_back(PointDist(curr->startpoint, occluded));
@@ -111,8 +111,8 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
         // (as the point will not move between isovists, so can record *which*
         // occlusion this is, and spot novel ones)
         if (occluded > 1.5) {
-            if (m_blocks.rbegin()->endpoint.dist(m_centre) <
-                m_blocks.begin()->startpoint.dist(m_centre)) {
+            if (stableDist(m_blocks.rbegin()->endpoint, m_centre) <
+                stableDist(m_blocks.begin()->startpoint, m_centre)) {
                 m_occlusionPoints.push_back(PointDist(m_blocks.rbegin()->endpoint, occluded));
             } else {
                 m_occlusionPoints.push_back(PointDist(m_blocks.begin()->startpoint, occluded));

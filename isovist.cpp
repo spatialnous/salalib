@@ -104,7 +104,7 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
         !m_blocks.rbegin()->endpoint.approxeq(m_blocks.begin()->startpoint, tolerance)) {
         m_poly.push_back(m_blocks.begin()->startpoint);
         // record perimeter information:
-        double occluded = m_blocks.rbegin()->endpoint.dist(m_blocks.begin()->startpoint);
+        double occluded = stableDist(m_blocks.rbegin()->endpoint, m_blocks.begin()->startpoint);
         m_perimeter += occluded;
         m_occludedPerimeter += occluded;
         // record the near *point* for use in agent analysis

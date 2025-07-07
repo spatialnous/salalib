@@ -59,6 +59,14 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
     bool markedcentre = false;
     auto prev = m_blocks.begin();
     auto curr = m_blocks.begin();
+    auto stableDist = [](const Point2f &p1, const Point2f &p2) {
+        double xDiff = p1.x - p2.x;
+        double yDiff = p1.y - p2.y;
+        double xDiff2 = xDiff * xDiff;
+        double yDiff2 = yDiff * yDiff;
+        return sqrt(xDiff2 + yDiff2);
+    };
+
     for (; curr != m_blocks.end(); ++curr) {
         if (!complete && !markedcentre && !parity && curr->startangle == startangle) {
             // centre
@@ -69,7 +77,7 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
         if (curr != m_blocks.begin() && !prev->endpoint.approxeq(curr->startpoint, tolerance)) {
             m_poly.push_back(curr->startpoint);
             // record perimeter information:
-            double occluded = prev->endpoint.dist(curr->startpoint);
+            double occluded = stableDist(prev->endpoint, curr->startpoint);
             m_perimeter += occluded;
             m_occludedPerimeter += occluded;
             // record the near *point* for use in agent analysis
@@ -82,7 +90,7 @@ void Isovist::makeit(BSPNode *root, const Point2f &p, const Region4f &region, do
             }
         }
         m_poly.push_back(curr->endpoint);
-        m_perimeter += curr->startpoint.dist(curr->endpoint);
+        m_perimeter += stableDist(curr->startpoint, curr->endpoint);
         prev = curr;
     }
     // for some reason to do with ordering, if parity is true, the centre point

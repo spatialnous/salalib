@@ -247,7 +247,7 @@ class ShapeMap : public AttributeMap {
     // Get the connections for a particular line
     std::vector<size_t> getLineConnections(int lineref, double tolerance);
     // Get arbitrary shape connections for a particular shape
-    std::vector<size_t> getShapeConnections(int polyref, double tolerance);
+    std::vector<size_t> getShapeConnections(int polyref, double tolerance) const;
     // Make all connections
     void makeShapeConnections();
     //

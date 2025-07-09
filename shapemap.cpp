@@ -2049,7 +2049,7 @@ std::vector<size_t> ShapeMap::getLineConnections(int lineref, double tolerance) 
 
 // this is only problematic as there is lots of legacy code with shape-in-shape
 // testing,
-std::vector<size_t> ShapeMap::getShapeConnections(int shaperef, double tolerance) {
+std::vector<size_t> ShapeMap::getShapeConnections(int shaperef, double tolerance) const {
     // In versions prior to 10, note that unlike getLineConnections,
     // self-connection is excluded by all of the following functions As of version
     // 10, both getShapeConnections and getLineConnections exclude self-connection
@@ -2058,7 +2058,7 @@ std::vector<size_t> ShapeMap::getShapeConnections(int shaperef, double tolerance
 
     auto shapeIter = m_shapes.find(shaperef);
     if (shapeIter != m_shapes.end()) {
-        SalaShape &shape = shapeIter->second;
+        const SalaShape &shape = shapeIter->second;
         if (shape.isPoint()) {
             // a point is simple, it never intersects itself:
             connections = pointInPolyList(shape.getPoint());

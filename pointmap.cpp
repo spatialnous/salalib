@@ -26,8 +26,7 @@
 PointMap::PointMap(Region4f region, const std::string &name)
     : AttributeMap(name, std::unique_ptr<AttributeTable>(new AttributeTable())), m_points(0, 0),
       m_mergeLines(), m_spacing(0.0), m_offset(), m_bottomLeft(), m_filledPointCount(0),
-      m_undocounter(0), m_initialised(false), m_blockedlines(false), m_processed(false),
-      m_boundarygraph(false), _padding0(0) {
+      m_initialised(false), m_blockedlines(false), m_processed(false), m_boundarygraph(false) {
     m_region = region;
     m_cols = 0;
     m_rows = 0;
@@ -45,8 +44,6 @@ void PointMap::copyData(const PointMap &sourcemap, bool copypoints, bool copyatt
     m_blockedlines = sourcemap.m_blockedlines;
     m_processed = sourcemap.m_processed;
     m_boundarygraph = sourcemap.m_boundarygraph;
-
-    m_undocounter = sourcemap.m_undocounter;
 
     m_offset = sourcemap.m_offset;
     m_bottomLeft = sourcemap.m_bottomLeft;
@@ -121,8 +118,6 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
     if (m_points.size() != 0) {
         m_filledPointCount = 0;
     }
-    m_undocounter = 0; // <- reset the undo counter... sorry... once you've done
-                       // this you can't undo
 
     // A grid at the required spacing:
     m_cols = static_cast<size_t>(floor((xoffset + m_region.width()) / m_spacing + 0.5) + 1);
@@ -156,7 +151,7 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
 bool PointMap::clearAllPoints() {
     for (auto &point : m_points) {
         if (point.filled()) {
-            point.set(Point::EMPTY, m_undocounter);
+            point.set(Point::EMPTY);
         }
     }
     m_filledPointCount = 0;
@@ -173,15 +168,12 @@ bool PointMap::clearPointsInRange(PixelRef bl, PixelRef tr, std::set<int> &selSe
     // each is a slight variation (saves a little time when there's a single
     // selection as opposed to a compound selection someday clean up
 
-    m_undocounter++;
-
-    m_undocounter++;
     for (auto i = bl.x; i <= tr.x; i++) {
         for (auto j = bl.y; j <= tr.y; j++) {
             PixelRef ref(j, i);
             Point &pnt = getPoint(ref);
             if (selSet.find(ref) != selSet.end() || (pnt.m_state & Point::FILLED)) {
-                pnt.set(Point::EMPTY, m_undocounter);
+                pnt.set(Point::EMPTY);
                 if (!pnt.m_merge.empty()) {
                     PixelRef p = pnt.m_merge;
                     auto &point = getPoint(p);
@@ -195,32 +187,6 @@ bool PointMap::clearPointsInRange(PixelRef bl, PixelRef tr, std::set<int> &selSe
             }
         }
     }
-
-    return true;
-}
-
-bool PointMap::undoPoints() {
-    if (!m_undocounter) {
-        return false;
-    }
-    for (auto &p : m_points) {
-        if (p.undoCounter == m_undocounter) {
-            if (p.m_state & Point::FILLED) {
-                p.m_state &= ~Point::FILLED;
-                p.m_state |= Point::EMPTY;
-                p.undoCounter = 0; // probably shouldn't set to 0 (can't undo)  Eventually
-                                   // will implement 'redo' counter as well
-                m_filledPointCount--;
-            } else if (p.m_state & Point::EMPTY) {
-                p.m_state |= Point::FILLED;
-                p.m_state &= ~Point::EMPTY;
-                p.undoCounter = 0; // probably shouldn't set to 0 (can't undo)  Eventually
-                                   // will implement 'redo' counter as well
-                m_filledPointCount++;
-            }
-        }
-    }
-    m_undocounter--; // reduce undo counter
 
     return true;
 }
@@ -270,16 +236,6 @@ std::set<PixelRef> PointMap::getPointsInRegion(const Region4f &r) const {
         }
     }
     return selSet;
-}
-
-void PointMap::fillLine(const Line4f &li) {
-    PixelRefVector pixels = pixelateLine(li, 1);
-    for (size_t j = 0; j < pixels.size(); j++) {
-        if (getPoint(pixels[j]).empty()) {
-            getPoint(pixels[j]).set(Point::FILLED, m_undocounter);
-            m_filledPointCount++;
-        }
-    }
 }
 
 bool PointMap::blockLines(std::vector<Line4f> &lines) {
@@ -361,10 +317,10 @@ bool PointMap::fillPoint(const Point2f &p, bool add) {
     Point &pt = getPoint(pix);
     if (add && !pt.filled()) {
         m_filledPointCount++;
-        pt.set(Point::FILLED, ++m_undocounter);
+        pt.set(Point::FILLED);
     } else if (!add && (pt.m_state & Point::FILLED)) {
         m_filledPointCount--;
-        pt.set(Point::EMPTY, ++m_undocounter);
+        pt.set(Point::EMPTY);
         if (pt.m_merge != NoPixel) {
             unmergePixel(pix);
         }
@@ -405,8 +361,6 @@ bool PointMap::makePoints(const Point2f &seed, int fillType, Communicator *comm)
         throw genlib::RuntimeException("blockLines() not called before makePoints");
     }
 
-    m_undocounter++; // undo counter increased ready for fill...
-
     // AV TV
     // int filltype = fill_type ? Point::FILLED | Point::CONTEXTFILLED :
     // Point::FILLED;
@@ -418,7 +372,7 @@ bool PointMap::makePoints(const Point2f &seed, int fillType, Communicator *comm)
     else // AUGMENT
         filltype = Point::AUGMENTED;
 
-    getPoint(seedref).set(filltype, m_undocounter);
+    getPoint(seedref).set(filltype);
     m_filledPointCount++;
 
     // Now... start making lines:
@@ -483,7 +437,7 @@ int PointMap::expand(const PixelRef p1, const PixelRef p2, PixelRefVector &list,
             return 4;
         }
     }
-    getPoint(p2).set(filltype, m_undocounter);
+    getPoint(p2).set(filltype);
     m_filledPointCount++;
     list.push_back(p2);
 

@@ -57,14 +57,10 @@ class PointMap : public AttributeMap {
     Point2f m_offset;
     Point2f m_bottomLeft;
     int m_filledPointCount;
-    int m_undocounter;
     bool m_initialised;
     bool m_blockedlines;
     bool m_processed;
     bool m_boundarygraph;
-
-  private:
-    [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
   public: // known columns
     struct Column {
@@ -86,8 +82,8 @@ class PointMap : public AttributeMap {
         : AttributeMap(std::move(other.m_name), std::move(other.m_attributes),
                        std::move(other.m_attribHandle), std::move(other.m_layers)),
           m_points(std::move(other.m_points)), m_mergeLines(), m_spacing(), m_offset(),
-          m_bottomLeft(), m_filledPointCount(), m_undocounter(), m_initialised(), m_blockedlines(),
-          m_processed(), m_boundarygraph(), _padding0(0) {
+          m_bottomLeft(), m_filledPointCount(), m_initialised(), m_blockedlines(), m_processed(),
+          m_boundarygraph() {
         m_region = std::move(other.m_region);
         copyData(other);
     }
@@ -124,7 +120,6 @@ class PointMap : public AttributeMap {
     const std::vector<PixelRefPair> &getMergeLines() const { return m_mergeLines; }
 
     bool isProcessed() const { return m_processed; }
-    void fillLine(const Line4f &li);
     bool blockLines(std::vector<Line4f> &lines);
     void blockLine(const Line4f &li);
     void unblockLines(bool clearblockedflag = true);
@@ -136,8 +131,6 @@ class PointMap : public AttributeMap {
     bool clearAllPoints();                         // Clear *selected* points
     bool clearPointsInRange(PixelRef bl, PixelRef tr,
                             std::set<int> &selSet); // Clear *selected* points
-    bool undoPoints();
-    bool canUndo() const { return !m_processed && m_undocounter != 0; }
     void outputPoints(std::ostream &stream, char delim);
     void outputMergeLines(std::ostream &stream, char delim);
     size_t tagState(bool settag);
@@ -148,6 +141,15 @@ class PointMap : public AttributeMap {
                 PixelRef curs);
     // bool makeGraph( Graph& graph, int optimization_level = 0, Communicator *comm = NULL);
     //
+    void setPointState(Point &p, int state) {
+        auto prevFilled = p.filled();
+        p.set(state);
+        if (prevFilled && !p.filled()) {
+            m_filledPointCount--;
+        } else if (!prevFilled && p.filled()) {
+            m_filledPointCount++;
+        }
+    }
     bool binDisplay(Communicator *, std::set<int> &selSet);
     bool mergePoints(const Point2f &p, Region4f &firstPointsBounds, std::set<int> &firstPoints);
     bool unmergePoints(std::set<int> &firstPoints);

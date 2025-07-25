@@ -30,9 +30,9 @@
 
 ShapeMap::ShapeMap(const std::string &name, int type)
     : AttributeMap(name, std::unique_ptr<AttributeTable>(new AttributeTable())), m_mapType(type),
-      m_objRef(-1), m_pixelShapes(0, 0), m_shapes(), m_undobuffer(), m_connectors(),
-      m_tolerance(0.0), m_links(), m_unlinks(), m_mapinfodata(), m_hasMapInfoData(false),
-      m_hasgraph(false), _padding0(0), _padding1(0) {
+      m_objRef(-1), m_pixelShapes(0, 0), m_shapes(), m_connectors(), m_tolerance(0.0), m_links(),
+      m_unlinks(), m_mapinfodata(), m_hasMapInfoData(false), m_hasgraph(false), _padding0(0),
+      _padding1(0) {
 
     // shape and object counters
 
@@ -128,7 +128,6 @@ void ShapeMap::copy(const ShapeMap &sourcemap, int copyflags, bool copyMapType) 
 // Zaps all memory structures, apart from mapinfodata
 void ShapeMap::clearAll() {
     m_shapes.clear();
-    m_undobuffer.clear();
     m_connectors.clear();
     m_attributes->clear();
     m_links.clear();
@@ -222,8 +221,6 @@ int ShapeMap::makeLineShapeWithRef(const Line4f &line, int shapeRef, bool throug
                 connectIntersected(static_cast<size_t>(rowid), false);
             }
         }
-        // if through ui, set undo counter:
-        m_undobuffer.push_back(SalaEvent(SalaEvent::SALA_CREATED, shapeRef));
     }
 
     return shapeRef;
@@ -506,7 +503,7 @@ bool ShapeMap::convertPointsToPolys(
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool ShapeMap::moveShape(int shaperef, const Line4f &line, bool undoing) {
+bool ShapeMap::moveShape(int shaperef, const Line4f &line) {
     bool boundsGood = true;
 
     auto shapeIter = m_shapes.find(shaperef);
@@ -516,12 +513,6 @@ bool ShapeMap::moveShape(int shaperef, const Line4f &line, bool undoing) {
 
     // remove shape from the pixel grid
     removePolyPixels(shaperef); // done first, as all interface references use this list
-
-    if (!undoing) {
-        // set undo counter, but only if this is not an undo itself:
-        m_undobuffer.push_back(SalaEvent(SalaEvent::SALA_MOVED, shaperef));
-        m_undobuffer.back().geometry = shapeIter->second;
-    }
 
     if (!(m_region.contains_touch(line.start()) && m_region.contains_touch(line.end()))) {
         boundsGood = false;
@@ -671,9 +662,6 @@ int ShapeMap::polyBegin(const Line4f &line) {
         m_connectors.push_back(Connector());
     }
 
-    // set undo counter:
-    m_undobuffer.push_back(SalaEvent(SalaEvent::SALA_CREATED, newShapeRef));
-
     return newShapeRef;
 }
 
@@ -747,13 +735,12 @@ bool ShapeMap::polyCancel(int shapeRef) {
         return false;
     }
 
-    m_undobuffer.pop_back();
-    removeShape(shapeRef, true);
+    removeShape(shapeRef);
 
     return true;
 }
 
-void ShapeMap::removeShape(int shaperef, bool undoing) {
+void ShapeMap::removeShape(int shaperef) {
     // remove shape from four keys: the pixel grid, the poly list, the attributes
     // and the connections
     removePolyPixels(shaperef); // done first, as all interface references use this list
@@ -764,12 +751,6 @@ void ShapeMap::removeShape(int shaperef, bool undoing) {
                                        " not found when trying to remove it");
     }
     size_t rowid = static_cast<size_t>(std::distance(m_shapes.begin(), shapeIter));
-
-    if (!undoing) { // <- if not currently undoing another event, then add to the
-                    // undo buffer:
-        m_undobuffer.push_back(SalaEvent(SalaEvent::SALA_DELETED, shaperef));
-        m_undobuffer.back().geometry = shapeIter->second;
-    }
 
     if (m_hasgraph) {
         // note that the connections have no key for speed when processing,
@@ -831,96 +812,6 @@ void ShapeMap::removeShape(int shaperef, bool undoing) {
     const AttributeKey shapeRefKey(shaperef);
     m_attributes->removeRow(shapeRefKey);
 }
-
-void ShapeMap::undo() {
-    if (m_undobuffer.size() == 0) {
-        return;
-    }
-
-    SalaEvent &event = m_undobuffer.back();
-
-    if (event.action == SalaEvent::SALA_CREATED) {
-
-        removeShape(event.shapeRef,
-                    true); // <- note, must tell remove shape it's an undo, or it
-                           // will add this remove to the undo stack!
-
-    } else if (event.action == SalaEvent::SALA_DELETED) {
-
-        makeShape(event.geometry, event.shapeRef);
-        auto rowIt = m_shapes.find(event.shapeRef);
-
-        if (rowIt != m_shapes.end() && m_hasgraph) {
-            auto rowid = static_cast<size_t>(std::distance(m_shapes.begin(), rowIt));
-            auto &row = m_attributes->getRow(AttributeKey(event.shapeRef));
-            // redo connections... n.b. TO DO this is intended to use the slower "any
-            // connection" method, so it can handle any sort of graph
-            // ...but that doesn't exist yet, so for the moment do lines:
-            //
-            // insert new connector at the row:
-            m_connectors[rowid] = Connector();
-            //
-            // now go through all connectors, ensuring they're reindexed above this
-            // one: Argh!  ...but, remember the reason we're doing this is for fast
-            // processing elsewhere
-            // -- this is a user triggered *undo*, they'll just have to wait:
-            for (size_t i = 0; i < m_connectors.size(); i++) {
-                for (size_t j = 0; j < m_connectors[i].connections.size(); j++) {
-                    if (m_connectors[i].connections[j] >= rowid) {
-                        m_connectors[i].connections[j] += 1;
-                    }
-                }
-            }
-            // it gets worse, the links and unlinks will also be all over the shop due
-            // to the inserted row:
-            size_t j;
-            for (j = 0; j < m_links.size(); j++) {
-                if (m_links[j].a >= rowid)
-                    m_links[j].a += 1;
-                if (m_links[j].b >= rowid)
-                    m_links[j].b += 1;
-            }
-            for (j = 0; j < m_unlinks.size(); j++) {
-                if (m_unlinks[j].a >= rowid)
-                    m_unlinks[j].a += 1;
-                if (m_unlinks[j].b >= rowid)
-                    m_unlinks[j].b += 1;
-            }
-            //
-            // calculate this line's connections
-            m_connectors[rowid].connections = getLineConnections(
-                event.shapeRef, TOLERANCE_B * std::max(m_region.height(), m_region.width()));
-            // update:
-            auto connCol = m_attributes->getOrInsertLockedColumn("Connectivity");
-            row.setValue(connCol, static_cast<float>(m_connectors[rowid].connections.size()));
-            //
-            if (event.geometry.isLine()) {
-                auto lengCol = m_attributes->getOrInsertLockedColumn("Line Length");
-                row.setValue(
-                    lengCol,
-                    static_cast<float>(genlib::getMapAtIndex(m_shapes, rowid)->second.getLength()));
-            }
-            //
-            // now go through our connections, and add ourself:
-            const auto &connections = m_connectors[rowid].connections;
-            for (auto connection : connections) {
-                if (connection != rowid) { // <- exclude self!
-                    genlib::insert_sorted(m_connectors[connection].connections, rowid);
-                    getAttributeRowFromShapeIndex(connection).incrValue(connCol);
-                }
-            }
-        }
-    } else if (event.action == SalaEvent::SALA_MOVED) {
-
-        moveShape(event.shapeRef, event.geometry.getLine(),
-                  true); // <- note, must tell remove shape it's an undo, or it will
-                         // add this remove to the undo stack!
-    }
-
-    m_undobuffer.pop_back();
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ShapeMap::makePolyPixels(int polyref) {
     // first add into pixels, and ensure you have a bl, tr for the set (useful for
@@ -2179,7 +2070,6 @@ bool ShapeMap::readNameType(std::istream &stream) {
     m_connectors.clear();
     m_links.clear();
     m_unlinks.clear();
-    m_undobuffer.clear();
 
     // name
     m_name = dXstring::readString(stream);

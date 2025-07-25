@@ -9,7 +9,6 @@
 
 #include "genlib/line4f.hpp"
 
-#include <map>
 #include <memory>
 
 class Point {
@@ -46,8 +45,6 @@ class Point {
         CONNECT_S = 0x40,
         CONNECT_SE = 0x80
     };
-
-    int undoCounter;
 
     // These intermediary variables were only used for storing arbitrary data during the
     // analysis. They have been replaced with analysis-local ones, and only kept here for
@@ -86,9 +83,9 @@ class Point {
 
   public:
     Point()
-        : undoCounter(), dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), _padding0(0),
-          m_node(nullptr), m_location(), m_color(), m_merge(NoPixel), m_lines(), m_processflag(0),
-          m_block(0), m_state(EMPTY), m_gridConnections(0), _padding1(0) {
+        : dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), _padding0(0), m_node(nullptr),
+          m_location(), m_color(), m_merge(NoPixel), m_lines(), m_processflag(0), m_block(0),
+          m_state(EMPTY), m_gridConnections(0), _padding1(0) {
 
         //        m_misc = 0;
     }
@@ -110,10 +107,10 @@ class Point {
         return *this;
     }
     Point(const Point &p)
-        : undoCounter(), dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), _padding0(0),
-          m_node(), m_location(p.m_location), m_color(p.m_color), m_merge(p.m_merge),
-          m_lines(p.m_lines), m_processflag(p.m_processflag), m_block(p.m_block),
-          m_state(p.m_state), m_gridConnections(p.m_gridConnections), _padding1(0) {
+        : dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), _padding0(0), m_node(),
+          m_location(p.m_location), m_color(p.m_color), m_merge(p.m_merge), m_lines(p.m_lines),
+          m_processflag(p.m_processflag), m_block(p.m_block), m_state(p.m_state),
+          m_gridConnections(p.m_gridConnections), _padding1(0) {
 
         //        m_misc = p.m_misc;
 
@@ -134,9 +131,8 @@ class Point {
     // Augmented Vis
     bool augmented() const { return (m_state & AUGMENTED) == AUGMENTED; }
     //
-    void set(int state, int undocounter = 0) {
+    void set(int state) {
         m_state = state | (m_state & Point::BLOCKED); // careful not to clear the blocked flag
-        undoCounter = undocounter;
     }
     void setBlock(bool blocked = true) {
         if (blocked)
@@ -162,12 +158,7 @@ class Point {
     //   { return m_block & 0x06600660; }
     int getState() const { return m_state; }
     int getState() { return m_state; }
-    int getUndoCounter() // used as: undocounter, in graph construction, and an agent reference,
-                         // as well as for making axial maps
-    {
-        return undoCounter;
-    }
-    void setUndoCounter(int newUndoCountValue) { undoCounter = newUndoCountValue; }
+
     // note -- set merge pixel should be done only through merge pixels
     PixelRef getMergePixel() { return m_merge; }
     PixelRef getMergePixel() const { return m_merge; }

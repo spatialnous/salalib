@@ -65,7 +65,6 @@ class ShapeMap : public AttributeMap {
     //
     std::map<int, SalaShape> m_shapes;
     //
-    std::vector<SalaEvent> m_undobuffer;
     //
     // for graph functionality
     // Note: this list is stored PACKED for optimal performance on graph analysis
@@ -114,8 +113,8 @@ class ShapeMap : public AttributeMap {
     ShapeMap(ShapeMap &&other)
         : AttributeMap(std::move(other.m_name), std::move(other.m_attributes),
                        std::move(other.m_attribHandle), std::move(other.m_layers)),
-          m_pixelShapes(std::move(other.m_pixelShapes)), m_shapes(), m_undobuffer(), m_connectors(),
-          m_tolerance(0), m_links(), m_unlinks(), m_mapinfodata(), _padding0(0), _padding1(0) {
+          m_pixelShapes(std::move(other.m_pixelShapes)), m_shapes(), m_connectors(), m_tolerance(0),
+          m_links(), m_unlinks(), m_mapinfodata(), _padding0(0), _padding1(0) {
         moveData(other);
     }
     ShapeMap &operator=(ShapeMap &&other) {
@@ -202,9 +201,9 @@ class ShapeMap : public AttributeMap {
     int makeShapeFromPointSet(const PointMap &pointmap, const std::set<int> &selSet);
     //
     // move a shape (currently only a line shape) -- in the future should use SalaShape
-    bool moveShape(int shaperef, const Line4f &line, bool undoing = false);
+    bool moveShape(int shaperef, const Line4f &line);
     // delete a shape
-    void removeShape(int shaperef, bool undoing = false);
+    void removeShape(int shaperef);
     //
     void setShapeAttributes(int rowid, const SalaShape &shape);
     //
@@ -215,9 +214,6 @@ class ShapeMap : public AttributeMap {
     bool polyCancel(int shapeRef);
     // some shape creation tools for the scripting language or DLL interface
   public:
-    bool canUndo() const { return m_undobuffer.size() != 0; }
-    void undo();
-    //
     // helpers:
     Point2f pointOffset(const PointMap &pointmap, int side);
     int moveDir(int side);
@@ -371,7 +367,9 @@ class ShapeMap : public AttributeMap {
     std::vector<SimpleLine> getAllLinkLines();
 
     const std::vector<OrderedSizeTPair> &getLinks() const { return m_links; }
+    std::vector<OrderedSizeTPair> &getLinks() { return m_links; }
     const std::vector<OrderedSizeTPair> &getUnlinks() const { return m_unlinks; }
+    std::vector<OrderedSizeTPair> &getUnlinks() { return m_unlinks; }
     std::vector<Point2f> getAllUnlinkPoints();
     void outputUnlinkPoints(std::ofstream &stream, char delim);
 

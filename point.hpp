@@ -58,9 +58,6 @@ class Point {
     // used to speed up graph analysis (not sure whether or not it breaks it!)
     mutable PixelRef dummyExtent;
 
-  private:
-    [[maybe_unused]] unsigned _padding0 : 4 * 8;
-
   protected:
     std::unique_ptr<Node> m_node; // graph links
     Point2f m_location; // note: this is large, but it helps allow loading of non-standard grid
@@ -79,13 +76,13 @@ class Point {
     int8_t m_gridConnections; // this is a standard set of grid connections, with bits set for
                               // E,NE,N,NW,W,SW,S,SE
   private:
-    [[maybe_unused]] unsigned _padding1 : 3 * 8;
+    [[maybe_unused]] unsigned _padding0 : 3 * 8;
 
   public:
     Point()
-        : dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), _padding0(0), m_node(nullptr),
-          m_location(), m_color(), m_merge(NoPixel), m_lines(), m_processflag(0), m_block(0),
-          m_state(EMPTY), m_gridConnections(0), _padding1(0) {
+        : dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), m_node(nullptr), m_location(),
+          m_color(), m_merge(NoPixel), m_lines(), m_processflag(0), m_block(0), m_state(EMPTY),
+          m_gridConnections(0), _padding0(0) {
 
         //        m_misc = 0;
     }
@@ -107,10 +104,10 @@ class Point {
         return *this;
     }
     Point(const Point &p)
-        : dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), _padding0(0), m_node(),
+        : dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), m_node(),
           m_location(p.m_location), m_color(p.m_color), m_merge(p.m_merge), m_lines(p.m_lines),
           m_processflag(p.m_processflag), m_block(p.m_block), m_state(p.m_state),
-          m_gridConnections(p.m_gridConnections), _padding1(0) {
+          m_gridConnections(p.m_gridConnections), _padding0(0) {
 
         //        m_misc = p.m_misc;
 

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "salalib/genlib/exceptions.hpp"
+#include "genlib/exceptions.hpp"
 
 #include <cstdint>
 #include <string>

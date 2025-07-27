@@ -8,8 +8,8 @@
 
 #include "attributetable.hpp"
 #include "attributetablehelpers.hpp"
+#include "latticemap.hpp"
 #include "parsers/mapinfodata.hpp" // for mapinfo interface
-#include "pointmap.hpp"
 #include "tolerances.hpp"
 
 #include "genlib/containerutils.hpp"
@@ -355,36 +355,36 @@ int ShapeMap::makeShape(const SalaShape &poly, int overrideShapeRef,
     return shapeRef;
 }
 
-int ShapeMap::makeShapeFromPointSet(const PointMap &pointmap, const std::set<int> &selSet) {
+int ShapeMap::makeShapeFromPointSet(const LatticeMap &latticemap, const std::set<int> &selSet) {
     bool boundsGood = true;
     PixelRefVector selset;
-    Point2f offset = Point2f(pointmap.getSpacing() / 2, pointmap.getSpacing() / 2);
+    Point2f offset = Point2f(latticemap.getSpacing() / 2, latticemap.getSpacing() / 2);
     for (auto &sel : selSet) {
         selset.push_back(sel);
-        if (!m_region.contains_touch(pointmap.depixelate(sel) - offset) ||
-            !m_region.contains_touch(pointmap.depixelate(sel) + offset)) {
+        if (!m_region.contains_touch(latticemap.depixelate(sel) - offset) ||
+            !m_region.contains_touch(latticemap.depixelate(sel) + offset)) {
             boundsGood = false;
         }
     }
     if (!boundsGood) {
-        Region4f r(pointmap.getRegion().bottomLeft - offset,
-                   pointmap.getRegion().topRight + offset);
+        Region4f r(latticemap.getRegion().bottomLeft - offset,
+                   latticemap.getRegion().topRight + offset);
         init(m_shapes.size(), r);
     }
     std::map<int, int> relations;
     for (size_t j = 0; j < selset.size(); j++) {
         PixelRef pix = selset[j];
         auto relation = relations.insert(std::make_pair(pix, ShapeRef::SHAPE_EDGE));
-        if (pointmap.includes(pix.right()) && selSet.find(pix.right()) != selSet.end()) {
+        if (latticemap.includes(pix.right()) && selSet.find(pix.right()) != selSet.end()) {
             relation.first->second &= ~ShapeRef::SHAPE_R;
         }
-        if (pointmap.includes(pix.up()) && selSet.find(pix.up()) != selSet.end()) {
+        if (latticemap.includes(pix.up()) && selSet.find(pix.up()) != selSet.end()) {
             relation.first->second &= ~ShapeRef::SHAPE_T;
         }
-        if (pointmap.includes(pix.down()) && selSet.find(pix.down()) != selSet.end()) {
+        if (latticemap.includes(pix.down()) && selSet.find(pix.down()) != selSet.end()) {
             relation.first->second &= ~ShapeRef::SHAPE_B;
         }
-        if (pointmap.includes(pix.left()) && selSet.find(pix.left()) != selSet.end()) {
+        if (latticemap.includes(pix.left()) && selSet.find(pix.left()) != selSet.end()) {
             relation.first->second &= ~ShapeRef::SHAPE_L;
         }
     }
@@ -401,7 +401,7 @@ int ShapeMap::makeShapeFromPointSet(const PointMap &pointmap, const std::set<int
     }
     // now follow round anticlockwise...
     SalaShape poly(SalaShape::SHAPE_POLY | SalaShape::SHAPE_CLOSED);
-    pointPixelBorder(pointmap, relations, poly, ShapeRef::SHAPE_L, minpix, minpix, true);
+    pointPixelBorder(latticemap, relations, poly, ShapeRef::SHAPE_L, minpix, minpix, true);
 
     for (auto relation : relations) {
         if (relation.second != 0) {
@@ -1029,7 +1029,7 @@ void ShapeMap::shapePixelBorder(std::map<int, int> &relations, int polyref, int 
 }
 
 // note that this is almost exactly the same as shapePixelBorder
-void ShapeMap::pointPixelBorder(const PointMap &pointmap, std::map<int, int> &relations,
+void ShapeMap::pointPixelBorder(const LatticeMap &latticemap, std::map<int, int> &relations,
                                 SalaShape &poly, int side, PixelRef currpix, PixelRef minpix,
                                 bool first) {
     if (!first && currpix == minpix && side == ShapeRef::SHAPE_L) {
@@ -1038,20 +1038,20 @@ void ShapeMap::pointPixelBorder(const PointMap &pointmap, std::map<int, int> &re
     }
     auto relation = relations.find(currpix);
     if (relation != relations.end() && (relation->second & side)) {
-        poly.points.push_back(pointmap.depixelate(currpix) + pointOffset(pointmap, side));
+        poly.points.push_back(latticemap.depixelate(currpix) + pointOffset(latticemap, side));
         relation->second &= ~side; // <- clear to check all have been done later
         side <<= 1;
         if (side > ShapeRef::SHAPE_T) {
             side = ShapeRef::SHAPE_L;
         }
-        pointPixelBorder(pointmap, relations, poly, side, currpix, minpix, false);
+        pointPixelBorder(latticemap, relations, poly, side, currpix, minpix, false);
     } else {
         currpix.move(static_cast<int8_t>(moveDir(side)));
         side >>= 1;
         if (side < ShapeRef::SHAPE_L) {
             side = ShapeRef::SHAPE_T;
         }
-        pointPixelBorder(pointmap, relations, poly, side, currpix, minpix, false);
+        pointPixelBorder(latticemap, relations, poly, side, currpix, minpix, false);
     }
 }
 
@@ -1141,20 +1141,20 @@ int ShapeMap::moveDir(int side) {
     return dir;
 }
 
-Point2f ShapeMap::pointOffset(const PointMap &pointmap, int side) {
+Point2f ShapeMap::pointOffset(const LatticeMap &map, int side) {
     Point2f p;
     switch (side) {
     case ShapeRef::SHAPE_L:
-        p = Point2f(-pointmap.getSpacing() / 2, 0.0);
+        p = Point2f(-map.getSpacing() / 2, 0.0);
         break;
     case ShapeRef::SHAPE_B:
-        p = Point2f(0.0, -pointmap.getSpacing() / 2);
+        p = Point2f(0.0, -map.getSpacing() / 2);
         break;
     case ShapeRef::SHAPE_R:
-        p = Point2f(pointmap.getSpacing() / 2, 0.0);
+        p = Point2f(map.getSpacing() / 2, 0.0);
         break;
     case ShapeRef::SHAPE_T:
-        p = Point2f(0.0, pointmap.getSpacing() / 2);
+        p = Point2f(0.0, map.getSpacing() / 2);
         break;
     }
     return p;

@@ -8,8 +8,8 @@
 
 #include "ivgametric.hpp"
 
+#include "../latticemap.hpp"
 #include "../pixelref.hpp"
-#include "../pointmap.hpp"
 
 class VGAMetricDepthLinkCost : public IVGAMetric {
 
@@ -26,6 +26,6 @@ class VGAMetricDepthLinkCost : public IVGAMetric {
   public:
     std::string getAnalysisName() const override { return "Metric Depth"; }
     AnalysisResult run(Communicator *) override;
-    VGAMetricDepthLinkCost(PointMap &map, std::set<PixelRef> &pixelsFrom)
+    VGAMetricDepthLinkCost(LatticeMap &map, std::set<PixelRef> &pixelsFrom)
         : IVGAMetric(map), m_pixelsFrom(pixelsFrom) {}
 };

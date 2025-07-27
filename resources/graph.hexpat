@@ -264,7 +264,7 @@ struct SalaPoint {
     }
     Point2f location;
 };
-struct PointMap {
+struct LatticeMap {
     FBLString name;
     double spacing;
     s32 rows;
@@ -277,10 +277,10 @@ struct PointMap {
     bool processed;
     bool boundary_graph;
 };
-struct PointMaps {
+struct LatticeMaps {
     u32 displayed_map;
     u32 count;
-    PointMap maps[count];
+    LatticeMap maps[count];
 };
 
 struct DataMaps {
@@ -292,7 +292,7 @@ struct DataMaps {
 enum MapType : char {
     LineData = 'l',
     ShapeGraphs = 'x',
-    PointMaps = 'p',
+    LatticeMaps = 'p',
     DataMaps = 's'
 };
 
@@ -305,12 +305,12 @@ struct LineDataOption {
     }
 };
 
-struct PointMapsOption {
+struct LatticeMapsOption {
     try {
         char marker;
-        if (marker != MapType::PointMaps)
+        if (marker != MapType::LatticeMaps)
             continue;
-        PointMaps pointMaps;
+        LatticeMaps latticeMaps;
     }
 };
 struct ShapeGraphsOption {
@@ -351,7 +351,7 @@ struct header {
 struct File {
     header hdr;
     LineDataOption ld;
-    PointMapsOption pm;
+    LatticeMapsOption pm;
 //    ShapeGraphsOption sg;
 //    DataMapsOption dm;
 };

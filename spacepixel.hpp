@@ -60,7 +60,7 @@ inline bool operator==(LineKey a, LineKey b) { return int(a) == int(b); }
 /////////////////////////////////////////////
 
 class SpacePixel : public PixelBase {
-    friend class PointMap;
+    friend class LatticeMap;
     friend class AxialMaps;
     friend class AxialPolygons;
     friend class ShapeMap; // for transfer to everything being ShapeMaps

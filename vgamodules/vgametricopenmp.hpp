@@ -7,7 +7,7 @@
 #pragma once
 
 #include "../genlib/stringutils.hpp"
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 #include "ivgametric.hpp"
 
 class VGAMetricOpenMP : public IVGAMetric {
@@ -51,7 +51,7 @@ class VGAMetricOpenMP : public IVGAMetric {
     }
 
   public:
-    VGAMetricOpenMP(const PointMap &map, double radius, bool gatesOnly,
+    VGAMetricOpenMP(const LatticeMap &map, double radius, bool gatesOnly,
                     std::optional<int> limitToThreads = std::nullopt,
                     bool forceCommUpdatesMasterThread = false)
         : IVGAMetric(map), m_radius(radius), m_limitToThreads(limitToThreads),

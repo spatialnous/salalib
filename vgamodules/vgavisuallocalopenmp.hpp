@@ -7,11 +7,11 @@
 #pragma once
 
 #include "../ianalysis.hpp"
+#include "../latticemap.hpp"
 #include "../pixelref.hpp"
-#include "../pointmap.hpp"
 
 class VGAVisualLocalOpenMP : public IAnalysis {
-    PointMap &m_map;
+    LatticeMap &m_map;
     std::optional<int> m_limitToThreads;
     bool m_forceCommUpdatesMasterThread = false;
 
@@ -33,7 +33,7 @@ class VGAVisualLocalOpenMP : public IAnalysis {
     };
 
   public:
-    VGAVisualLocalOpenMP(PointMap &map, std::optional<int> limitToThreads = std::nullopt,
+    VGAVisualLocalOpenMP(LatticeMap &map, std::optional<int> limitToThreads = std::nullopt,
                          bool forceCommUpdatesMasterThread = false)
         : m_map(map), m_limitToThreads(limitToThreads),
           m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread), _padding0(0), _padding1(0) {

@@ -8,8 +8,8 @@
 
 #include "ivgavisual.hpp"
 
+#include "../latticemap.hpp"
 #include "../pixelref.hpp"
-#include "../pointmap.hpp"
 
 class VGAVisualGlobalDepth : public IVGAVisual {
 
@@ -22,7 +22,7 @@ class VGAVisualGlobalDepth : public IVGAVisual {
     };
 
   public:
-    VGAVisualGlobalDepth(const PointMap &map, std::set<PixelRef> originRefs)
+    VGAVisualGlobalDepth(const LatticeMap &map, std::set<PixelRef> originRefs)
         : IVGAVisual(map), m_originRefs(std::move(originRefs)) {}
     std::string getAnalysisName() const override { return "Global Visibility Depth"; }
     AnalysisResult run(Communicator *comm) override;

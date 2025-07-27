@@ -13,7 +13,7 @@
 
 class IVGATraversing : public IVGA {
   public:
-    IVGATraversing(const PointMap &map) : IVGA(map) {}
+    IVGATraversing(const LatticeMap &map) : IVGA(map) {}
 
   protected:
     template <class T>

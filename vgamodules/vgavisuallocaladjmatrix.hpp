@@ -7,11 +7,11 @@
 #pragma once
 
 #include "../ianalysis.hpp"
+#include "../latticemap.hpp"
 #include "../pixelref.hpp"
-#include "../pointmap.hpp"
 
 class VGAVisualLocalAdjMatrix : public IAnalysis {
-    PointMap &m_map;
+    LatticeMap &m_map;
     std::optional<int> m_limitToThreads;
     bool m_gatesOnly;
     bool m_forceCommUpdatesMasterThread = false;
@@ -33,7 +33,7 @@ class VGAVisualLocalAdjMatrix : public IAnalysis {
     };
 
   public:
-    VGAVisualLocalAdjMatrix(PointMap &map, bool gatesOnly,
+    VGAVisualLocalAdjMatrix(LatticeMap &map, bool gatesOnly,
                             std::optional<int> limitToThreads = std::nullopt,
                             bool forceCommUpdatesMasterThread = false)
         : m_map(map), m_limitToThreads(limitToThreads), m_gatesOnly(gatesOnly),

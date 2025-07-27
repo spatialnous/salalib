@@ -8,8 +8,8 @@
 
 #include "alllinemap.hpp"
 #include "fileproperties.hpp"
+#include "latticemap.hpp"
 #include "metagraph.hpp"
-#include "pointmap.hpp"
 #include "shapegraph.hpp"
 
 #include "genlib/exceptions.hpp"
@@ -46,7 +46,7 @@ namespace MetaGraphReadWrite {
         int version = 0;
         MetaGraph metaGraph;
         std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMap>>> drawingFiles;
-        std::vector<PointMap> pointMaps;
+        std::vector<LatticeMap> latticeMaps;
         std::vector<ShapeMap> dataMaps;
         std::vector<ShapeGraph> shapeGraphs;
 
@@ -59,7 +59,7 @@ namespace MetaGraphReadWrite {
         struct DisplayData {
             int state = 0, viewClass = 0;
             bool showGrid = false, showText = false;
-            bool displayedPointMapProcessed = false; // P.K: never written but read. Old files?
+            bool displayedLatticeMapProcessed = false; // P.K: never written but read. Old files?
 
           private:
             [[maybe_unused]] unsigned _padding0 : 1 * 8;
@@ -67,21 +67,21 @@ namespace MetaGraphReadWrite {
 
           public:
             std::vector<std::vector<ShapeMapDisplayData>> perDrawingMap;
-            std::optional<unsigned int> displayedPointMap = std::nullopt;
-            std::vector<int> perPointMap;
+            std::optional<unsigned int> displayedLatticeMap = std::nullopt;
+            std::vector<int> perLatticeMap;
             std::optional<unsigned int> displayedDataMap = std::nullopt;
             std::vector<ShapeMapDisplayData> perDataMap;
             std::optional<unsigned int> displayedShapeGraph = std::nullopt;
             std::vector<ShapeMapDisplayData> perShapeGraph;
             DisplayData()
-                : _padding0(0), _padding1(0), perDrawingMap(), displayedPointMap(std::nullopt),
-                  perPointMap(), displayedDataMap(std::nullopt), perDataMap(),
+                : _padding0(0), _padding1(0), perDrawingMap(), displayedLatticeMap(std::nullopt),
+                  perLatticeMap(), displayedDataMap(std::nullopt), perDataMap(),
                   displayedShapeGraph(std::nullopt), perShapeGraph() {}
         } displayData;
 
         MetaGraphData()
             : readWriteStatus(ReadWriteStatus::NOT_READ_YET), version(0), metaGraph(),
-              drawingFiles(), pointMaps(), dataMaps(), shapeGraphs(), allLineMapData(),
+              drawingFiles(), latticeMaps(), dataMaps(), shapeGraphs(), allLineMapData(),
               displayData() {}
     };
 
@@ -111,13 +111,13 @@ namespace MetaGraphReadWrite {
         const std::vector<ShapeMapDisplayData> &displayData = std::vector<ShapeMapDisplayData>(),
         const std::optional<unsigned int> &displayedMap = 0);
 
-    std::tuple<std::vector<PointMap>, std::vector<int>, std::optional<unsigned int>>
-    readPointMaps(std::istream &stream, Region4f defaultRegion);
+    std::tuple<std::vector<LatticeMap>, std::vector<int>, std::optional<unsigned int>>
+    readLatticeMaps(std::istream &stream, Region4f defaultRegion);
 
-    template <typename PointMapOrRef>
-    bool writePointMaps(std::ostream &stream, const std::vector<PointMapOrRef> &pointMaps,
-                        const std::vector<int> &displayData = std::vector<int>(),
-                        const std::optional<unsigned int> &displayedMap = 0);
+    template <typename LatticeMapOrRef>
+    bool writeLatticeMaps(std::ostream &stream, const std::vector<LatticeMapOrRef> &latticeMaps,
+                          const std::vector<int> &displayData = std::vector<int>(),
+                          const std::optional<unsigned int> &displayedMap = 0);
 
     template <typename ShapeMapOrRef>
     bool writeSpacePixels(std::ostream &stream, const std::vector<ShapeMapOrRef> &spacePixels,
@@ -129,14 +129,14 @@ namespace MetaGraphReadWrite {
 
     ReadWriteStatus writeToFile(const std::string &filename, const MetaGraphData &mgd);
 
-    template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
+    template <typename LatticeMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
     ReadWriteStatus writeToFile(
         const std::string &filename,
         // MetaGraph Data
         const int version, const std::string &name, const Region4f &region,
         const FileProperties &fileProperties,
         const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
-        const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
+        const std::vector<LatticeMapOrRef> &latticeMaps, const std::vector<ShapeMapOrRef> &dataMaps,
         const std::vector<ShapeGraphOrRef> &shapeGraphs,
         const std::optional<AllLine::MapData> &allLineMapData,
         // display data
@@ -144,8 +144,8 @@ namespace MetaGraphReadWrite {
         const bool showText = true,
         const std::vector<std::vector<ShapeMapDisplayData>> &perDrawingMap =
             std::vector<std::vector<ShapeMapDisplayData>>(),
-        const std::optional<unsigned int> &displayedPointMap = std::nullopt,
-        const std::vector<int> &perPointMap = std::vector<int>(),
+        const std::optional<unsigned int> &displayedLatticeMap = std::nullopt,
+        const std::vector<int> &perLatticeMap = std::vector<int>(),
         const std::optional<unsigned int> &displayedDataMap = std::nullopt,
         const std::vector<ShapeMapDisplayData> &perDataMap = std::vector<ShapeMapDisplayData>(),
         const std::optional<unsigned int> &displayedShapeGraph = std::nullopt,
@@ -153,14 +153,14 @@ namespace MetaGraphReadWrite {
 
     ReadWriteStatus writeToStream(std::ostream &stream, const MetaGraphData &mgd);
 
-    template <typename PointMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
+    template <typename LatticeMapOrRef, typename ShapeMapOrRef, typename ShapeGraphOrRef>
     ReadWriteStatus writeToStream(
         std::ostream &stream,
         // MetaGraph Data
         const int version, const std::string &name, const Region4f &region,
         const FileProperties &fileProperties,
         const std::vector<std::pair<ShapeMapGroupData, std::vector<ShapeMapOrRef>>> &drawingFiles,
-        const std::vector<PointMapOrRef> &pointMaps, const std::vector<ShapeMapOrRef> &dataMaps,
+        const std::vector<LatticeMapOrRef> &latticeMaps, const std::vector<ShapeMapOrRef> &dataMaps,
         const std::vector<ShapeGraphOrRef> &shapeGraphs,
         const std::optional<AllLine::MapData> &allLineMapData,
         // display data
@@ -168,8 +168,8 @@ namespace MetaGraphReadWrite {
         const bool showText = true,
         const std::vector<std::vector<ShapeMapDisplayData>> &perDrawingMap =
             std::vector<std::vector<ShapeMapDisplayData>>(),
-        const std::optional<unsigned int> &displayedPointMap = std::nullopt,
-        const std::vector<int> &perPointMap = std::vector<int>(),
+        const std::optional<unsigned int> &displayedLatticeMap = std::nullopt,
+        const std::vector<int> &perLatticeMap = std::vector<int>(),
         const std::optional<unsigned int> &displayedDataMap = std::nullopt,
         const std::vector<ShapeMapDisplayData> &perDataMap = std::vector<ShapeMapDisplayData>(),
         const std::optional<unsigned int> &displayedShapeGraph = std::nullopt,

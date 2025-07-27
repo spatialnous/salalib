@@ -19,7 +19,7 @@
 // MapInfoData is stored with axial map data
 
 class ShapeMap;
-class PointMap;
+class LatticeMap;
 class AttributeTable;
 
 class MapInfoData {
@@ -50,7 +50,7 @@ class MapInfoData {
     int import(std::istream &miffile, std::istream &midfile, ShapeMap &map);
     // bool exportFile(ostream& miffile, ostream& midfile, const ShapeGraph& map);   // n.b.,
     // deprecated: use shapemap instead
-    bool exportFile(std::ostream &miffile, std::ostream &midfile, const PointMap &points);
+    bool exportFile(std::ostream &miffile, std::ostream &midfile, const LatticeMap &points);
     bool exportFile(std::ostream &miffile, std::ostream &midfile, const ShapeMap &map);
     bool exportPolygons(std::ostream &miffile, std::ostream &midfile,
                         const std::vector<std::vector<Point2f>> &polygons, const Region4f &region);

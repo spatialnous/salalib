@@ -8,7 +8,7 @@
 
 class IVGAAngular : public IVGATraversing {
   protected:
-    IVGAAngular(const PointMap &map) : IVGATraversing(map) {}
+    IVGAAngular(const LatticeMap &map) : IVGATraversing(map) {}
 
     std::vector<AnalysisData> getAnalysisData(const AttributeTable &attributes) {
         std::vector<AnalysisData> analysisData;
@@ -52,7 +52,7 @@ class IVGAAngular : public IVGATraversing {
     };
 
     void extractAngular(const ADRefVector<AnalysisData> &conns, std::set<AngularSearchData> &pixels,
-                        const PointMap &map, const AngularSearchData &curs) const {
+                        const LatticeMap &map, const AngularSearchData &curs) const {
         if (curs.angle == 0.0f || curs.ad.point.blocked() || map.blockedAdjacent(curs.ad.ref)) {
             for (auto &conn : conns) {
                 auto &ad = std::get<0>(conn).get();

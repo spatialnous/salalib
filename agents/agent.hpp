@@ -8,8 +8,8 @@
 
 #include "agentprogram.hpp"
 
+#include "../latticemap.hpp"
 #include "../pixelref.hpp"
-#include "../pointmap.hpp"
 
 #include "../genlib/pflipper.hpp"
 
@@ -24,7 +24,7 @@ class Agent {
 
   protected:
     AgentProgram *m_program;
-    PointMap *m_pointmap;
+    LatticeMap *m_latticemap;
     //
     PixelRef m_node;
     int m_step = 0;
@@ -59,10 +59,10 @@ class Agent {
 
   public:
     Agent()
-        : m_program(nullptr), m_pointmap(nullptr), m_node(), m_outputMode(OUTPUT_NOTHING), m_loc(),
-          m_target(), m_vector(), m_destination(), m_targetPix(), _padding0(0), _padding1(0),
-          m_occMemory() {}
-    Agent(AgentProgram *program, PointMap *pointmap, int outputMode = OUTPUT_NOTHING);
+        : m_program(nullptr), m_latticemap(nullptr), m_node(), m_outputMode(OUTPUT_NOTHING),
+          m_loc(), m_target(), m_vector(), m_destination(), m_targetPix(), _padding0(0),
+          _padding1(0), m_occMemory() {}
+    Agent(AgentProgram *program, LatticeMap *latticemap, int outputMode = OUTPUT_NOTHING);
     Agent(const Agent &) = default;
     Agent &operator=(const Agent &) = default;
     void onInit(PixelRef node, int trailNum = -1);
@@ -94,7 +94,7 @@ class Agent {
     const Point2f &getVector() const { return m_vector; }
     const PixelRef getNode() const { return m_node; }
     int getFrame() const { return m_frame; }
-    const PointMap &getPointMap() const { return *m_pointmap; }
+    const LatticeMap &getLatticeMap() const { return *m_latticemap; }
 };
 
 // note the add 0.5 means angles from e.g., -1/32 to 1/32 are in bin 0

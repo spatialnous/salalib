@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "pointmap.hpp"
+#include "latticemap.hpp"
 #include "shapegraph.hpp"
 #include "shapemap.hpp"
 
@@ -35,7 +35,7 @@ namespace PushValues {
                      AttributeTable &destAttr, const std::string &colOut,
                      const std::optional<const std::string> &countCol);
 
-    void shapeToPoint(const ShapeMap &sourceMap, const std::string &colIn, PointMap &destMap,
+    void shapeToPoint(const ShapeMap &sourceMap, const std::string &colIn, LatticeMap &destMap,
                       const std::string &colOut, Func pushFunc,
                       const std::optional<const std::string> &colCount = std::nullopt);
     void shapeToAxial(ShapeMap &sourceMap, const std::optional<const std::string> &colIn,
@@ -44,10 +44,10 @@ namespace PushValues {
     void shapeToShape(ShapeMap &sourceMap, const std::optional<const std::string> &colIn,
                       ShapeMap &destMap, const std::string &colOut, Func pushFunc,
                       const std::optional<const std::string> &countCol = std::nullopt);
-    void pointToShape(const PointMap &sourceMap, const std::optional<const std::string> &colIn,
+    void pointToShape(const LatticeMap &sourceMap, const std::optional<const std::string> &colIn,
                       ShapeMap &destMap, const std::string &colOut, Func pushFunc,
                       const std::optional<const std::string> &countCol = std::nullopt);
-    void pointToAxial(const PointMap &sourceMap, const std::optional<const std::string> &colIn,
+    void pointToAxial(const LatticeMap &sourceMap, const std::optional<const std::string> &colIn,
                       ShapeGraph &destMap, const std::string colOut, Func pushFunc,
                       const std::optional<const std::string> &countCol = std::nullopt);
     void axialToShape(const ShapeGraph &sourceMap, const std::optional<const std::string> &colIn,

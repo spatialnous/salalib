@@ -13,7 +13,7 @@
 
 class Point {
     friend class Bin;
-    friend class PointMap;
+    friend class LatticeMap;
 
   public:
     enum {

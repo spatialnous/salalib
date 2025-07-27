@@ -8,7 +8,7 @@
 
 #include "ivga.hpp"
 
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 
 class VGAThroughVision : public IVGA {
   protected:
@@ -29,7 +29,7 @@ class VGAThroughVision : public IVGA {
     };
 
   public:
-    VGAThroughVision(const PointMap &map) : IVGA(map) {}
+    VGAThroughVision(const LatticeMap &map) : IVGA(map) {}
     std::string getAnalysisName() const override { return "Through Vision Analysis"; }
     AnalysisResult run(Communicator *comm) override;
 };

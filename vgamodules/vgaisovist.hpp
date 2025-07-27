@@ -9,7 +9,7 @@
 #include "ivga.hpp"
 
 #include "../isovist.hpp"
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 
 #include "../genlib/bsptree.hpp"
 
@@ -34,7 +34,7 @@ class VGAIsovist : public IVGA {
     };
 
   public:
-    VGAIsovist(const PointMap &map, const std::vector<SalaShape> &boundaryShapes)
+    VGAIsovist(const LatticeMap &map, const std::vector<SalaShape> &boundaryShapes)
         : IVGA(map), m_boundaryShapes(boundaryShapes), _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Isovist Analysis"; }
     AnalysisResult run(Communicator *comm) override;

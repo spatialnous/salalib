@@ -9,7 +9,7 @@
 #include "agentprogram.hpp"
 
 #include "../ianalysis.hpp"
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 #include "agent.hpp"
 #include <cstring>
 
@@ -22,7 +22,7 @@ class AgentAnalysis : public IAnalysis {
     };
 
   private: // members
-    PointMap &m_pointMap;
+    LatticeMap &m_latticeMap;
     AgentProgram m_agentProgram;
 
     size_t m_systemTimesteps;
@@ -48,7 +48,7 @@ class AgentAnalysis : public IAnalysis {
     void move(std::vector<Agent> &agents);
 
     void runAgentEngine(std::vector<Agent> &agents, std::vector<PixelRef> &releaseLocations,
-                        Communicator *comm, PointMap *pointmap);
+                        Communicator *comm, LatticeMap *latticemap);
 
     void insertTrailsInMap(ShapeMap &trailsMap);
 
@@ -62,13 +62,13 @@ class AgentAnalysis : public IAnalysis {
     };
 
   public:
-    AgentAnalysis(PointMap &pointMap, size_t systemTimesteps, double releaseRate,
+    AgentAnalysis(LatticeMap &latticeMap, size_t systemTimesteps, double releaseRate,
                   size_t agentLifetime, unsigned short agentFOV, size_t agentStepsToDecision,
                   int agentAlgorithm, std::optional<size_t> randomReleaseLocationsSeed,
                   const std::vector<Point2f> &specificReleasePoints,
                   const std::optional<std::reference_wrapper<ShapeMap>> &gateLayer,
                   std::optional<TrailRecordOptions> recordTrails)
-        : m_pointMap(pointMap), m_agentProgram(), m_systemTimesteps(systemTimesteps),
+        : m_latticeMap(latticeMap), m_agentProgram(), m_systemTimesteps(systemTimesteps),
           m_releaseRate(releaseRate), m_agentLifetime(agentLifetime),
           m_agentAlgorithm(agentAlgorithm), m_agentFOV(agentFOV), _padding0(0),
           m_agentStepsToDecision(agentStepsToDecision),

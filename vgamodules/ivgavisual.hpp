@@ -8,7 +8,7 @@
 
 class IVGAVisual : public IVGATraversing {
   protected:
-    IVGAVisual(const PointMap &map) : IVGATraversing(map) {}
+    IVGAVisual(const LatticeMap &map) : IVGATraversing(map) {}
     std::vector<AnalysisData> getAnalysisData(const AttributeTable &attributes) {
         std::vector<AnalysisData> analysisData;
         analysisData.reserve(attributes.getNumRows());

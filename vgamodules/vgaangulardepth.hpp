@@ -8,7 +8,7 @@
 
 #include "ivgaangular.hpp"
 
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 
 class VGAAngularDepth : public IVGAAngular {
 
@@ -21,7 +21,7 @@ class VGAAngularDepth : public IVGAAngular {
     };
 
   public:
-    VGAAngularDepth(const PointMap &map, std::set<PixelRef> originRefs)
+    VGAAngularDepth(const LatticeMap &map, std::set<PixelRef> originRefs)
         : IVGAAngular(map), m_originRefs(std::move(originRefs)) {}
     std::string getAnalysisName() const override { return "Angular Depth"; }
     AnalysisResult run(Communicator *comm) override;

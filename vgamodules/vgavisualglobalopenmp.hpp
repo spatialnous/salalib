@@ -9,7 +9,7 @@
 #include "ivgavisual.hpp"
 
 #include "../genlib/stringutils.hpp"
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 
 class VGAVisualGlobalOpenMP : public IVGAVisual {
     double m_radius;
@@ -48,7 +48,7 @@ class VGAVisualGlobalOpenMP : public IVGAVisual {
     }
 
   public:
-    VGAVisualGlobalOpenMP(PointMap &map, double radius, bool gatesOnly,
+    VGAVisualGlobalOpenMP(LatticeMap &map, double radius, bool gatesOnly,
                           std::optional<int> limitToThreads = std::nullopt,
                           bool forceCommUpdatesMasterThread = false)
         : IVGAVisual(map), m_radius(radius), m_limitToThreads(limitToThreads),

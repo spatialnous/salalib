@@ -7,7 +7,7 @@
 
 namespace sala {
     std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line4f> &mergeLines,
-                                                 PointMap &currentMap) {
+                                                 LatticeMap &currentMap) {
         std::vector<PixelRefPair> mergePixelPairs;
 
         std::vector<Line4f>::const_iterator iter = mergeLines.begin(), end = mergeLines.end();
@@ -21,7 +21,7 @@ namespace sala {
         return mergePixelPairs;
     }
 
-    void mergePixelPairs(const std::vector<PixelRefPair> &links, PointMap &currentMap) {
+    void mergePixelPairs(const std::vector<PixelRefPair> &links, LatticeMap &currentMap) {
 
         // check if any link pixel already exists on the map
         std::vector<PixelRefPair>::const_iterator iter = links.begin(), end = links.end();
@@ -70,7 +70,7 @@ namespace sala {
         });
     }
 
-    void unmergePixelPairs(const std::vector<PixelRefPair> &links, PointMap &currentMap) {
+    void unmergePixelPairs(const std::vector<PixelRefPair> &links, LatticeMap &currentMap) {
 
         // check if any link pixel exists on the map
         std::vector<PixelRefPair>::const_iterator iter = links.begin(), end = links.end();
@@ -119,7 +119,7 @@ namespace sala {
                       [&](const PixelRefPair &pair) -> void { currentMap.unmergePixel(pair.a); });
     }
 
-    std::vector<SimpleLine> getMergedPixelsAsLines(PointMap &currentMap) {
+    std::vector<SimpleLine> getMergedPixelsAsLines(LatticeMap &currentMap) {
         std::vector<SimpleLine> mergedPixelsAsLines;
         std::vector<std::pair<PixelRef, PixelRef>> mergedPixelPairs =
             currentMap.getMergedPixelPairs();

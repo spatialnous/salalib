@@ -7,13 +7,13 @@
 // Interface to handle different kinds of VGA analysis
 
 #include "../ianalysis.hpp"
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 
 #include <string>
 
 class IVGA : public IAnalysis {
   protected:
-    const PointMap &m_map;
+    const LatticeMap &m_map;
 
   protected:
     struct AnalysisData {
@@ -74,11 +74,11 @@ class IVGA : public IAnalysis {
     }
 
   public:
-    IVGA(const PointMap &map) : m_map(map) {}
+    IVGA(const LatticeMap &map) : m_map(map) {}
 
     virtual void
     copyResultToMap(const std::vector<std::string> &colNames,
-                    const genlib::RowMatrix<double> &colValues, PointMap &map,
+                    const genlib::RowMatrix<double> &colValues, LatticeMap &map,
                     std::optional<std::vector<AttributeColumnStats>> columnStats = std::nullopt) {
         AttributeTable &attributes = map.getAttributeTable();
 

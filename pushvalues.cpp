@@ -85,7 +85,7 @@ PushValues::getColumnIndices(const AttributeTable &sourceAttr, const std::string
 }
 
 void PushValues::shapeToPoint(const ShapeMap &sourceMap, const std::string &colIn,
-                              PointMap &destMap, const std::string &colOut, Func pushFunc,
+                              LatticeMap &destMap, const std::string &colOut, Func pushFunc,
                               const std::optional<const std::string> &countCol) {
     auto &tableIn = sourceMap.getAttributeTable();
     auto &tableOut = destMap.getAttributeTable();
@@ -261,7 +261,7 @@ void PushValues::shapeToShape(ShapeMap &sourceMap, const std::optional<const std
     }
 }
 
-void PushValues::pointToShape(const PointMap &sourceMap,
+void PushValues::pointToShape(const LatticeMap &sourceMap,
                               const std::optional<const std::string> &colIn, ShapeMap &destMap,
                               const std::string &colOut, Func pushFunc,
                               const std::optional<const std::string> &countCol) {
@@ -318,7 +318,7 @@ void PushValues::pointToShape(const PointMap &sourceMap,
     }
 }
 
-void PushValues::pointToAxial(const PointMap &sourceMap,
+void PushValues::pointToAxial(const LatticeMap &sourceMap,
                               const std::optional<const std::string> &colIn, ShapeGraph &destMap,
                               const std::string colOut, Func pushFunc,
                               const std::optional<const std::string> &countCol) {

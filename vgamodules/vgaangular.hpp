@@ -9,7 +9,7 @@
 #include "ivgaangular.hpp"
 
 #include "../genlib/stringutils.hpp"
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 
 class VGAAngular : public IVGAAngular {
     double m_radius;
@@ -39,7 +39,7 @@ class VGAAngular : public IVGAAngular {
     }
 
   public:
-    VGAAngular(const PointMap &map, double radius, bool gatesOnly)
+    VGAAngular(const LatticeMap &map, double radius, bool gatesOnly)
         : IVGAAngular(map), m_radius(radius), m_gatesOnly(gatesOnly), _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     AnalysisResult run(Communicator *comm) override;

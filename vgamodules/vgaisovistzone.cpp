@@ -59,7 +59,7 @@ AnalysisResult VGAIsovistZone::run(Communicator *) {
     return result;
 }
 
-void VGAIsovistZone::extractMetric(Node &n, std::set<MetricTriple> &pixels, PointMap &map,
+void VGAIsovistZone::extractMetric(Node &n, std::set<MetricTriple> &pixels, LatticeMap &map,
                                    const MetricTriple &curs) {
     for (int i = 0; i < 32; i++) {
         Bin &bin = n.bin(i);
@@ -75,13 +75,13 @@ void VGAIsovistZone::extractMetric(Node &n, std::set<MetricTriple> &pixels, Poin
     }
 }
 
-void VGAIsovistZone::setColumnFormulaAndUpdate(PointMap &pointmap, size_t columnIndex,
+void VGAIsovistZone::setColumnFormulaAndUpdate(LatticeMap &latticemap, size_t columnIndex,
                                                std::string formula,
                                                std::optional<const std::set<int>> selectionSet) {
     SalaObj programContext;
     SalaGrf graph;
-    graph.map.point = &pointmap;
-    programContext = SalaObj(SalaObj::S_POINTMAPOBJ, graph);
+    graph.map.point = &latticemap;
+    programContext = SalaObj(SalaObj::S_LATTICEMAPOBJ, graph);
 
     std::istringstream stream(formula);
     SalaProgram proggy(programContext);

@@ -5,8 +5,8 @@
 #pragma once
 
 #include "../ianalysis.hpp"
+#include "../latticemap.hpp"
 #include "../pixelref.hpp"
-#include "../pointmap.hpp"
 
 #include <iomanip>
 
@@ -32,7 +32,7 @@ class VGAIsovistZone : public IAnalysis {
     };
 
   private:
-    PointMap &m_map;
+    LatticeMap &m_map;
     std::map<std::string, std::set<PixelRef>> m_originPointSets;
     float m_restrictDistance;
 
@@ -44,9 +44,9 @@ class VGAIsovistZone : public IAnalysis {
     MetricPoint &getMetricPoint(genlib::ColumnMatrix<MetricPoint> &metricPoints, PixelRef ref) {
         return (metricPoints(static_cast<size_t>(ref.y), static_cast<size_t>(ref.x)));
     }
-    void extractMetric(Node &n, std::set<MetricTriple> &pixels, PointMap &map,
+    void extractMetric(Node &n, std::set<MetricTriple> &pixels, LatticeMap &map,
                        const MetricTriple &curs);
-    void setColumnFormulaAndUpdate(PointMap &pointmap, size_t columnIndex, std::string formula,
+    void setColumnFormulaAndUpdate(LatticeMap &latticemap, size_t columnIndex, std::string formula,
                                    std::optional<const std::set<int>> selectionSet);
 
   public:
@@ -75,7 +75,7 @@ class VGAIsovistZone : public IAnalysis {
     }
 
   public:
-    VGAIsovistZone(PointMap &map, std::map<std::string, std::set<PixelRef>> originPointSets,
+    VGAIsovistZone(LatticeMap &map, std::map<std::string, std::set<PixelRef>> originPointSets,
                    float restrictDistance = -1)
         : m_map(map), m_originPointSets(originPointSets), m_restrictDistance(restrictDistance),
           _padding0(0) {}

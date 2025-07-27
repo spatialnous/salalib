@@ -16,7 +16,7 @@
 #include <vector>
 
 class AttributeTable;
-class PointMap;
+class LatticeMap;
 class ShapeMap;
 
 inline bool isalphanum_(char c) {
@@ -85,8 +85,8 @@ struct SalaList {
 struct SalaGrf {
     int node = 0;
     union Map {
-        PointMap *point; // vga
-        ShapeMap *shape; // everything else
+        LatticeMap *point; // vga
+        ShapeMap *shape;   // everything else
     };
 
   private:
@@ -146,11 +146,11 @@ class SalaObj {
         // maps are bitwise 'or'ed to node to make appropriate node type for each map
         S_GRAPHOBJ = 0x01000000,
         S_MAP = 0x06000000,
-        S_POINTMAP = 0x02000000,
+        S_LATTICEMAP = 0x02000000,
         S_SHAPEMAP = 0x04000000,
         // however, as the variable is uses the typename of the enum, each must be filled in
         // explicitly:
-        S_POINTMAPOBJ = 0x03000000,
+        S_LATTICEMAPOBJ = 0x03000000,
         S_SHAPEMAPOBJ = 0x05000000,
         S_THIS = 0x10000000
     };
@@ -456,8 +456,8 @@ inline SalaObj::SalaObj(const SalaObj &obj) : m_type(obj.m_type), _padding0(0) {
         m_data.graph.map.shape = obj.m_data.graph.map.shape;
         m_data.graph.node = obj.m_data.graph.node;
         break;
-    case S_POINTMAPOBJ:
-    case S_POINTMAP:
+    case S_LATTICEMAPOBJ:
+    case S_LATTICEMAP:
         m_data.graph.map.point = obj.m_data.graph.map.point;
         m_data.graph.node = obj.m_data.graph.node;
         break;
@@ -516,8 +516,8 @@ inline SalaObj &SalaObj::operator=(const SalaObj &obj) {
             m_data.graph.map.shape = obj.m_data.graph.map.shape;
             m_data.graph.node = obj.m_data.graph.node;
             break;
-        case S_POINTMAPOBJ:
-        case S_POINTMAP:
+        case S_LATTICEMAPOBJ:
+        case S_LATTICEMAP:
             m_data.graph.map.point = obj.m_data.graph.map.point;
             m_data.graph.node = obj.m_data.graph.node;
             break;
@@ -922,7 +922,7 @@ inline const std::string SalaObj::getTypeIndefArt() const {
     case S_TUPLE:
     case S_LIST:
     case S_SHAPEMAP:
-    case S_POINTMAP:
+    case S_LATTICEMAP:
         return "a ";
     case S_INT:
     case S_UNINIT:

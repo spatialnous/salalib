@@ -18,21 +18,21 @@
 #include <vector>
 
 namespace sala {
-    enum PointMapExceptionType { NO_ISOVIST_ANALYSIS };
-    class PointMapException : public genlib::RuntimeException {
+    enum LatticeMapExceptionType { NO_ISOVIST_ANALYSIS };
+    class LatticeMapException : public genlib::RuntimeException {
       private:
-        PointMapExceptionType m_errorType;
+        LatticeMapExceptionType m_errorType;
 
         [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
       public:
-        PointMapException(PointMapExceptionType errorType, std::string message)
+        LatticeMapException(LatticeMapExceptionType errorType, std::string message)
             : genlib::RuntimeException(std::move(message)), m_errorType(errorType), _padding0(0) {}
-        PointMapExceptionType getErrorType() const { return m_errorType; }
+        LatticeMapExceptionType getErrorType() const { return m_errorType; }
     };
 } // namespace sala
 
-class PointMap : public AttributeMap {
+class LatticeMap : public AttributeMap {
 
   public: // members
     bool hasIsovistAnalysis() {
@@ -71,14 +71,15 @@ class PointMap : public AttributeMap {
     };
 
   public: // ctors
-    PointMap(Region4f region, const std::string &name = std::string("VGA Map"));
-    ~PointMap() override {}
-    void copyData(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
-    void copy(const PointMap &sourcemap, bool copypoints = false, bool copyattributes = false);
+    LatticeMap(Region4f region, const std::string &name = std::string("VGA Map"));
+    ~LatticeMap() override {}
+    void copyData(const LatticeMap &sourcemap, bool copypoints = false,
+                  bool copyattributes = false);
+    void copy(const LatticeMap &sourcemap, bool copypoints = false, bool copyattributes = false);
 
     void resetBlockedLines() { m_blockedlines = false; }
 
-    PointMap(PointMap &&other)
+    LatticeMap(LatticeMap &&other)
         : AttributeMap(std::move(other.m_name), std::move(other.m_attributes),
                        std::move(other.m_attribHandle), std::move(other.m_layers)),
           m_points(std::move(other.m_points)), m_mergeLines(), m_spacing(), m_offset(),
@@ -87,7 +88,7 @@ class PointMap : public AttributeMap {
         m_region = std::move(other.m_region);
         copyData(other);
     }
-    PointMap &operator=(PointMap &&other) {
+    LatticeMap &operator=(LatticeMap &&other) {
         m_region = std::move(other.m_region);
         m_points = std::move(other.m_points);
         m_attributes = std::move(other.m_attributes);
@@ -96,8 +97,8 @@ class PointMap : public AttributeMap {
         copyData(other);
         return *this;
     }
-    PointMap(const PointMap &) = delete;
-    PointMap &operator=(const PointMap &) = delete;
+    LatticeMap(const LatticeMap &) = delete;
+    LatticeMap &operator=(const LatticeMap &) = delete;
 
   public: // methods
     void communicate(time_t &atime, Communicator *comm, size_t record);
@@ -182,8 +183,9 @@ class PointMap : public AttributeMap {
 
     void requireIsovistAnalysis() {
         if (!hasIsovistAnalysis()) {
-            throw sala::PointMapException(sala::PointMapExceptionType::NO_ISOVIST_ANALYSIS,
-                                          "Current pointmap does not contain isovist analysis");
+            throw sala::LatticeMapException(
+                sala::LatticeMapExceptionType::NO_ISOVIST_ANALYSIS,
+                "Current lattice map does not contain isovist analysis");
         }
     }
 
@@ -223,12 +225,12 @@ class PointMap : public AttributeMap {
 
 // inlined to make thread safe
 
-inline Point2f PointMap::depixelate(const PixelRef &p, double scalefactor) const {
+inline Point2f LatticeMap::depixelate(const PixelRef &p, double scalefactor) const {
     return Point2f(m_bottomLeft.x + m_spacing * scalefactor * static_cast<double>(p.x),
                    m_bottomLeft.y + m_spacing * scalefactor * static_cast<double>(p.y));
 }
 
-inline Region4f PointMap::regionate(const PixelRef &p, double border) const {
+inline Region4f LatticeMap::regionate(const PixelRef &p, double border) const {
     return Region4f(
         Point2f(m_bottomLeft.x + m_spacing * (static_cast<double>(p.x) - 0.5 - border),
                 m_bottomLeft.y + m_spacing * (static_cast<double>(p.y) - 0.5 - border)),

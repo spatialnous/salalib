@@ -8,7 +8,7 @@
 
 #include "ivgavisual.hpp"
 
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 
 #include "../genlib/stringutils.hpp"
 
@@ -46,7 +46,7 @@ class VGAVisualGlobal : public IVGAVisual {
     std::vector<std::string> getColumns(bool simpleVersion) const;
 
   public:
-    VGAVisualGlobal(const PointMap &map, double radius, bool gatesOnly)
+    VGAVisualGlobal(const LatticeMap &map, double radius, bool gatesOnly)
         : IVGAVisual(map), m_radius(radius), m_gatesOnly(gatesOnly), _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Global Visibility Analysis"; }
     AnalysisResult run(Communicator *comm) override;

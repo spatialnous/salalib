@@ -22,8 +22,8 @@
 
 #include "salaprogram.hpp"
 #include "connector.hpp"
+#include "latticemap.hpp"
 #include "ngraph.hpp"
-#include "pointmap.hpp"
 #include "shapemap.hpp"
 
 #include <cmath>
@@ -1436,7 +1436,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                     }
                     break;
                 case SalaObj::S_SHAPEMAPOBJ:
-                case SalaObj::S_POINTMAPOBJ:
+                case SalaObj::S_LATTICEMAPOBJ:
                     switch (func) {
                     case SalaObj::S_FVALUE: {
                         const std::string &str = param.toStringRef();
@@ -1536,7 +1536,7 @@ SalaObj SalaCommand::connections(SalaObj graphobj, SalaObj param) {
     // parameters is excluded due to potential for errors) for axial maps it must
     // be none
     SalaObj list;
-    if ((graphobj.m_type & SalaObj::S_MAP) == SalaObj::S_POINTMAP) {
+    if ((graphobj.m_type & SalaObj::S_MAP) == SalaObj::S_LATTICEMAP) {
         // point map version
         Node &node =
             graphobj.m_data.graph.map.point->getPoint(graphobj.m_data.graph.node).getNode();
@@ -1606,7 +1606,7 @@ SalaObj SalaCommand::connections(SalaObj graphobj, SalaObj param) {
 /////////////////////////////////////////////////////////////////////////////////
 
 AttributeTable *SalaObj::getTable() {
-    if ((m_type & SalaObj::S_MAP) == SalaObj::S_POINTMAP) {
+    if ((m_type & SalaObj::S_MAP) == SalaObj::S_LATTICEMAP) {
         return &(m_data.graph.map.point->getAttributeTable());
     } else {
         return &(m_data.graph.map.shape->getAttributeTable());

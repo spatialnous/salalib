@@ -6,8 +6,8 @@
 
 #pragma once
 
+#include "../latticemap.hpp"
 #include "../pixelref.hpp"
-#include "../pointmap.hpp"
 
 #include "ivgametric.hpp"
 
@@ -33,7 +33,7 @@ class VGAMetricShortestPathToMany : public IVGAMetric {
   public:
     std::string getAnalysisName() const override { return "Metric Shortest Path"; }
     AnalysisResult run(Communicator *) override;
-    VGAMetricShortestPathToMany(PointMap &map, std::set<PixelRef> pixelsFrom,
+    VGAMetricShortestPathToMany(LatticeMap &map, std::set<PixelRef> pixelsFrom,
                                 std::set<PixelRef> pixelsTo)
         : IVGAMetric(map), m_pixelsFrom(pixelsFrom), m_pixelsTo(pixelsTo) {}
 };

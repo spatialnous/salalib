@@ -8,8 +8,8 @@
 
 #include "ivgaangular.hpp"
 
+#include "../latticemap.hpp"
 #include "../pixelref.hpp"
-#include "../pointmap.hpp"
 
 class VGAAngularShortestPath : public IVGAAngular {
   private:
@@ -29,6 +29,6 @@ class VGAAngularShortestPath : public IVGAAngular {
   public:
     std::string getAnalysisName() const override { return "Angular Shortest Path"; }
     AnalysisResult run(Communicator *comm) override;
-    VGAAngularShortestPath(PointMap &map, PixelRef pixelFrom, PixelRef pixelTo)
+    VGAAngularShortestPath(LatticeMap &map, PixelRef pixelFrom, PixelRef pixelTo)
         : IVGAAngular(map), m_pixelFrom(pixelFrom), m_pixelTo(pixelTo) {}
 };

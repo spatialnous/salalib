@@ -4,7 +4,7 @@
 
 #include "ngraph.hpp"
 
-#include "pointmap.hpp"
+#include "latticemap.hpp"
 
 #include "genlib/containerutils.hpp"
 #include "genlib/readwritehelpers.hpp"

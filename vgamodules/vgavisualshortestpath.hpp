@@ -6,8 +6,8 @@
 
 #pragma once
 
+#include "../latticemap.hpp"
 #include "../pixelref.hpp"
-#include "../pointmap.hpp"
 
 #include "ivgavisual.hpp"
 
@@ -29,6 +29,6 @@ class VGAVisualShortestPath : public IVGAVisual {
   public:
     std::string getAnalysisName() const override { return "Visibility Shortest Path"; }
     AnalysisResult run(Communicator *) override;
-    VGAVisualShortestPath(const PointMap &map, PixelRef pixelFrom, PixelRef pixelTo)
+    VGAVisualShortestPath(const LatticeMap &map, PixelRef pixelFrom, PixelRef pixelTo)
         : IVGAVisual(map), m_pixelFrom(pixelFrom), m_pixelTo(pixelTo) {}
 };

@@ -16,7 +16,7 @@ void AgentAnalysis::init(std::vector<Agent> &agents, std::vector<PixelRef> &rele
         auto which = pafmath::pafrand() % releaseLocations.size();
         agents[agent].onInit(releaseLocations[which], trailNum);
     } else {
-        const PointMap &map = agents[agent].getPointMap();
+        const LatticeMap &map = agents[agent].getLatticeMap();
         PixelRef pix;
         do {
             pix = map.pickPixel(
@@ -38,10 +38,10 @@ void AgentAnalysis::move(std::vector<Agent> &agents) {
 
 void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
                                    std::vector<PixelRef> &releaseLocations, Communicator *comm,
-                                   PointMap *pointmap) {
+                                   LatticeMap *map) {
 
     if (m_agentProgram.selType == AgentProgram::SEL_LOS_OCC) {
-        pointmap->requireIsovistAnalysis();
+        map->requireIsovistAnalysis();
     }
 
     time_t atime = 0;
@@ -50,7 +50,7 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
         comm->CommPostMessage(Communicator::NUM_RECORDS, m_systemTimesteps);
     }
 
-    AttributeTable &table = pointmap->getAttributeTable();
+    AttributeTable &table = map->getAttributeTable();
     table.getOrInsertColumn(AgentAnalysis::Column::GATE_COUNTS);
 
     int outputMode = Agent::OUTPUT_COUNTS;
@@ -83,7 +83,7 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
         auto length = agents.size();
         size_t k;
         for (k = 0; k < q; k++) {
-            agents.push_back(Agent(&(m_agentProgram), pointmap, outputMode));
+            agents.push_back(Agent(&(m_agentProgram), map, outputMode));
         }
         for (k = 0; k < q; k++) {
             init(agents, releaseLocations, length + k, trailNum);
@@ -122,7 +122,7 @@ void AgentAnalysis::insertTrailsInMap(ShapeMap &trailsMap) {
 }
 
 AnalysisResult AgentAnalysis::run(Communicator *comm) {
-    AttributeTable &table = m_pointMap.getAttributeTable();
+    AttributeTable &table = m_latticeMap.getAttributeTable();
 
     if (m_agentFOV == 32) {
         m_agentProgram.vbin = -1;
@@ -137,7 +137,7 @@ AnalysisResult AgentAnalysis::run(Communicator *comm) {
 
     // if the m_release_locations is not set the locations are
     // set later by picking random pixels
-    auto &map = m_pointMap;
+    auto &map = m_latticeMap;
     if (!m_randomReleaseLocationsSeed.has_value()) {
         releaseLocations.clear();
         for_each(m_specificReleasePoints.begin(), m_specificReleasePoints.end(),
@@ -154,13 +154,13 @@ AnalysisResult AgentAnalysis::run(Communicator *comm) {
         // Transferring refs here, so we need to get the column name of the "Ref" column
         const std::string &colIn =
             m_gateLayer->get().getAttributeTable().getColumnName(static_cast<size_t>(-1));
-        PushValues::shapeToPoint(m_gateLayer->get(), colIn, m_pointMap,
+        PushValues::shapeToPoint(m_gateLayer->get(), colIn, m_latticeMap,
                                  AgentAnalysis::Column::INTERNAL_GATE, PushValues::Func::TOT);
 
         table.insertOrResetColumn(Column::INTERNAL_GATE_COUNTS);
     }
     AnalysisResult analysisResult;
-    runAgentEngine(agents, releaseLocations, comm, &m_pointMap);
+    runAgentEngine(agents, releaseLocations, comm, &m_latticeMap);
 
     if (m_recordTrails.has_value()) {
         std::string mapName = "Agent Trails";
@@ -172,7 +172,7 @@ AnalysisResult AgentAnalysis::run(Communicator *comm) {
         auto colcounts = table.getColumnIndex(Column::INTERNAL_GATE_COUNTS);
         AttributeTable &tableout = m_gateLayer->get().getAttributeTable();
         tableout.insertOrResetColumn(Column::AGENT_COUNTS);
-        PushValues::pointToShape(m_pointMap, Column::INTERNAL_GATE_COUNTS, *m_gateLayer,
+        PushValues::pointToShape(m_latticeMap, Column::INTERNAL_GATE_COUNTS, *m_gateLayer,
                                  Column::AGENT_COUNTS, PushValues::Func::TOT);
 
         // and delete the temporary columns:

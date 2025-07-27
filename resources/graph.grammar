@@ -63,13 +63,13 @@ def fillByteRange(value, byteArray, bitPos, bitLength):
                 <number name="numSpacePixel" id="569" type="integer" length="4" signed="yes" endian="little"/>
                 <structref name="SpacePixel" id="571" repeatmin="numSpacePixel" repeatmax="numSpacePixel" structure="id:570"/>
             </structure>
-            <structure name="PointMaps" id="573" repeatmin="0">
+            <structure name="LatticeMaps" id="573" repeatmin="0">
                 <string name="map type" mustmatch="yes" id="574" type="fixed-length" length="1">
                     <fixedvalues>
                         <fixedvalue name="map type" value="p"/>
                     </fixedvalues>
                 </string>
-                <structref name="pointMaps" id="576" structure="id:575"/>
+                <structref name="latticeMap" id="576" structure="id:575"/>
             </structure>
             <structure name="ShapeGraphs" id="578">
                 <string name="map type" mustmatch="yes" id="579" type="fixed-length" length="1">
@@ -265,7 +265,7 @@ def fillByteRange(value, byteArray, bitPos, bitLength):
                 </string>
             </structure>
         </structure>
-        <structure name="PointMap" id="748" encoding="ISO_8859-1:1987" endian="little" signed="yes">
+        <structure name="LatticeMap" id="748" encoding="ISO_8859-1:1987" endian="little" signed="yes">
             <structref name="pm_Name" id="749" structure="id:565"/>
             <number name="pm_spacing" id="750" type="float" length="64" lengthunit="bit"/>
             <number name="pm_rowCount" id="751" type="integer" length="4"/>
@@ -331,10 +331,10 @@ if nodeCount &gt; 0:
             <number name="dir" id="788" type="integer" length="1"/>
             <binary name="padding" id="789" length="6"/>
         </structure>
-        <structure name="PointMaps" id="575" encoding="ISO_8859-1:1987" endian="little" signed="yes">
+        <structure name="LatticeMaps" id="575" encoding="ISO_8859-1:1987" endian="little" signed="yes">
             <number name="Displayed Map" id="791" type="integer" length="4"/>
             <number name="pms_count" id="792" type="integer" length="4"/>
-            <structref name="pms_pointMap" id="793" repeatmin="pms_count" repeatmax="pms_count" structure="id:748"/>
+            <structref name="pms_latticeMap" id="793" repeatmin="pms_count" repeatmax="pms_count" structure="id:748"/>
         </structure>
         <structure name="pixelVecWithContext" id="795" encoding="ISO_8859-1:1987" endian="little" signed="yes">
             <number name="start" id="796" type="integer" length="2"/>

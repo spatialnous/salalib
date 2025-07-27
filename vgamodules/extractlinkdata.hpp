@@ -7,11 +7,11 @@
 #pragma once
 
 #include "../ianalysis.hpp"
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 
 class ExtractLinkData : public IAnalysis {
   private:
-    PointMap &m_map;
+    LatticeMap &m_map;
 
   public:
     struct Column {
@@ -24,6 +24,6 @@ class ExtractLinkData : public IAnalysis {
 
   public:
     std::string getAnalysisName() const override { return "Extract Link Data"; }
-    ExtractLinkData(PointMap &map) : m_map(map) {}
+    ExtractLinkData(LatticeMap &map) : m_map(map) {}
     AnalysisResult run(Communicator *comm) override;
 };

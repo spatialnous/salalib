@@ -84,7 +84,7 @@ set(salalib_HDRS
     ianalysis.hpp
     isovist.hpp
     mgraph_consts.hpp
-    pointmap.hpp
+    latticemap.hpp
     spacepixel.hpp
     attributetablehelpers.hpp
     displayparams.hpp
@@ -127,7 +127,7 @@ set(salalib_SRCS
     isovist.cpp
     metagraphreadwrite.cpp
     ngraph.cpp
-    pointmap.cpp
+    latticemap.cpp
     salaprogram.cpp
     pixelbase.cpp
     shapemap.cpp

@@ -8,18 +8,18 @@
 
 #include "agentanalysis.hpp"
 
-Agent::Agent(AgentProgram *program, PointMap *pointmap, int outputMode)
-    : m_program(program), m_pointmap(pointmap), m_node(), m_outputMode(outputMode), m_trailNum(-1),
-      m_loc(), m_target(), m_vector(), m_destination(), m_targetPix(), _padding0(0), _padding1(0),
-      m_occMemory() {}
+Agent::Agent(AgentProgram *program, LatticeMap *latticemap, int outputMode)
+    : m_program(program), m_latticemap(latticemap), m_node(), m_outputMode(outputMode),
+      m_trailNum(-1), m_loc(), m_target(), m_vector(), m_destination(), m_targetPix(), _padding0(0),
+      _padding1(0), m_occMemory() {}
 
 void Agent::onInit(PixelRef node, int trailNum) {
     m_node = node;
-    m_loc = m_pointmap->depixelate(m_node);
+    m_loc = m_latticemap->depixelate(m_node);
     if (m_outputMode & OUTPUT_GATE_COUNTS) {
         // see note about gates in Through vision analysis
-        m_gate = (m_pointmap->getPoint(node).filled())
-                     ? static_cast<int>(m_pointmap->getAttributeTable()
+        m_gate = (m_latticemap->getPoint(node).filled())
+                     ? static_cast<int>(m_latticemap->getAttributeTable()
                                             .getRow(AttributeKey(m_node))
                                             .getValue(AgentAnalysis::Column::INTERNAL_GATE))
                      : -1;
@@ -53,7 +53,7 @@ void Agent::onMove() {
         // reached final destination
         onDestination();
     } else if ((m_program->selType & AgentProgram::SEL_TARGETTED) &&
-               m_loc.dist(m_target) < m_pointmap->getSpacing()) {
+               m_loc.dist(m_target) < m_latticemap->getSpacing()) {
         // reached target (intermediate destination)
         m_step = 0;
         onTarget();
@@ -80,8 +80,8 @@ void Agent::onMove() {
     PixelRef lastnode = m_node;
     onStep();
     if (m_node != lastnode && m_outputMode != OUTPUT_NOTHING) {
-        if (m_pointmap->getPoint(m_node).filled()) {
-            AttributeRow &row = m_pointmap->getAttributeTable().getRow(AttributeKey(m_node));
+        if (m_latticemap->getPoint(m_node).filled()) {
+            AttributeRow &row = m_latticemap->getAttributeTable().getRow(AttributeKey(m_node));
             if (m_outputMode & OUTPUT_COUNTS) {
                 row.incrValue(AgentAnalysis::Column::GATE_COUNTS);
             }
@@ -112,10 +112,10 @@ void Agent::onStep() {
     m_stopped = false;
     m_step++;
     //
-    Point2f nextloc = m_loc + (m_vector * m_pointmap->getSpacing());
+    Point2f nextloc = m_loc + (m_vector * m_latticemap->getSpacing());
     // note: false returns unconstrained pixel: goodStep must check it is in bounds using
-    // m_pointmap->includes
-    PixelRef nextnode = m_pointmap->pixelate(nextloc, false);
+    // m_latticemap->includes
+    PixelRef nextnode = m_latticemap->pixelate(nextloc, false);
     if (nextnode != m_node) {
         // quick check location is okay...
         if (goodStep(nextnode)) {
@@ -138,17 +138,17 @@ void Agent::onStep() {
 bool Agent::diagonalStep() {
     Point2f vector1 = m_vector;
     vector1.rotate(M_PI / 4.0);
-    Point2f nextloc1 = m_loc + (vector1 * m_pointmap->getSpacing());
-    // note: "false" does not constrain to bounds: must be checked using m_pointmap->includes before
-    // getPoint is used
-    PixelRef nextnode1 = m_pointmap->pixelate(nextloc1, false);
+    Point2f nextloc1 = m_loc + (vector1 * m_latticemap->getSpacing());
+    // note: "false" does not constrain to bounds: must be checked using m_latticemap->includes
+    // before getPoint is used
+    PixelRef nextnode1 = m_latticemap->pixelate(nextloc1, false);
 
     Point2f vector2 = m_vector;
     vector2.rotate(-M_PI / 4.0);
-    Point2f nextloc2 = m_loc + (vector2 * m_pointmap->getSpacing());
-    // note: "false" does not constrain to bounds: must be checked using m_pointmap->includes before
-    // getPoint is used
-    int nextnode2 = m_pointmap->pixelate(nextloc2, false);
+    Point2f nextloc2 = m_loc + (vector2 * m_latticemap->getSpacing());
+    // note: "false" does not constrain to bounds: must be checked using m_latticemap->includes
+    // before getPoint is used
+    int nextnode2 = m_latticemap->pixelate(nextloc2, false);
 
     bool good = false;
     if (pafmath::pafrand() % 2 == 0) {
@@ -175,7 +175,7 @@ bool Agent::diagonalStep() {
     return good;
 }
 bool Agent::goodStep(PixelRef node) {
-    if (!m_pointmap->includes(node)) {
+    if (!m_latticemap->includes(node)) {
         return false;
     }
     // n.b., you have to know how the nodes are labelled for this connectValue trick
@@ -183,7 +183,7 @@ bool Agent::goodStep(PixelRef node) {
     dir.x = node.x - m_node.x;
     dir.y = node.y - m_node.y;
     // now translate dir to correct CONNECT value
-    if (m_pointmap->getPoint(m_node).getGridConnections() & connectValue(dir)) {
+    if (m_latticemap->getPoint(m_node).getGridConnections() & connectValue(dir)) {
         return true;
     }
 
@@ -243,7 +243,7 @@ Point2f Agent::onStandardLook(bool wholeisovist) {
         vbin = 32;
     }
     for (int i = 0; i < vbin; i++) {
-        choices += m_pointmap->getPoint(m_node).getNode().bincount((directionbin + i) % 32);
+        choices += m_latticemap->getPoint(m_node).getNode().bincount((directionbin + i) % 32);
     }
     if (choices == 0) {
         if (!wholeisovist) {
@@ -256,7 +256,7 @@ Point2f Agent::onStandardLook(bool wholeisovist) {
         }
     } else {
         auto chosen = static_cast<int>(pafmath::pafrand() % static_cast<unsigned int>(choices));
-        Node &node = m_pointmap->getPoint(m_node).getNode();
+        Node &node = m_latticemap->getPoint(m_node).getNode();
         for (; chosen >= node.bincount(directionbin % 32); directionbin++) {
             chosen -= node.bincount(directionbin % 32);
         }
@@ -270,7 +270,7 @@ Point2f Agent::onStandardLook(bool wholeisovist) {
     }
 
     m_targetPix = tarpixelate;
-    m_target = m_pointmap->depixelate(tarpixelate);
+    m_target = m_latticemap->depixelate(tarpixelate);
 
     return (m_target - m_loc).normalise();
 }
@@ -296,7 +296,7 @@ Point2f Agent::onWeightedLook(bool wholeisovist) {
         vbin = 32;
     }
     for (int i = 0; i < vbin; i++) {
-        Bin &bin = m_pointmap->getPoint(m_node).getNode().bin((directionbin + i) % 32);
+        Bin &bin = m_latticemap->getPoint(m_node).getNode().bin((directionbin + i) % 32);
         bin.first();
 
         // Quick mod - TV
@@ -330,7 +330,7 @@ Point2f Agent::onWeightedLook(bool wholeisovist) {
     }
 
     m_targetPix = tarpixelate;
-    m_target = m_pointmap->depixelate(tarpixelate);
+    m_target = m_latticemap->depixelate(tarpixelate);
 
     return (m_target - m_loc).normalise();
 }
@@ -358,7 +358,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
     }
     if (looktype == AgentProgram::SEL_OCC_ALL) {
         int choices = 0;
-        Node &node = m_pointmap->getPoint(m_node).getNode();
+        Node &node = m_latticemap->getPoint(m_node).getNode();
         for (int i = 0; i < vbin; i++) {
             if (node.occlusionBins[(directionbin + i) % 32].size()) {
                 choices += static_cast<int>(node.occlusionBins[(directionbin + i) % 32].size());
@@ -396,7 +396,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
         }
         std::vector<wpair> weightmap;
         double weight = 0.0;
-        Node &node = m_pointmap->getPoint(m_node).getNode();
+        Node &node = m_latticemap->getPoint(m_node).getNode();
         for (int i = 0; i < vbin; i += subset) {
             PixelRef nigpix;
             double fardist = -1.0;
@@ -466,7 +466,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
     }
 
     m_targetPix = tarpixelate;
-    m_target = m_pointmap->depixelate(tarpixelate);
+    m_target = m_latticemap->depixelate(tarpixelate);
 
     return (m_target - m_loc).normalise();
 }
@@ -496,8 +496,8 @@ Point2f Agent::onLoSLook(bool wholeisovist, int lookType) {
     for (int i = 0; i < vbin; i++) {
         double los =
             (lookType == AgentProgram::SEL_LOS)
-                ? m_pointmap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
-                : m_pointmap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
+                ? m_latticemap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
+                : m_latticemap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
         if (m_program->losSqrd) {
             los *= los;
         }
@@ -549,8 +549,8 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int lookType) {
     for (int i = 0; i < vbin; i++) {
         double los =
             (lookType == AgentProgram::SEL_LOS)
-                ? m_pointmap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
-                : m_pointmap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
+                ? m_latticemap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
+                : m_latticemap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
         if (m_program->losSqrd) {
             los *= los;
         }
@@ -708,7 +708,7 @@ Point2f Agent::onGibsonianLook2(bool wholeisovist) {
         maxbin = (pafmath::pafrand() % 2) ? m_program->vbin : -m_program->vbin;
     }
     // third action: detect heading for dead-end
-    if (maxbin == 0 && (m_currLos[0] / m_pointmap->getSpacing() < m_program->aheadThreshold)) {
+    if (maxbin == 0 && (m_currLos[0] / m_latticemap->getSpacing() < m_program->aheadThreshold)) {
         if (m_currLos[1] >= m_currLos[2]) {
             maxbin = -m_program->vbin;
         } else {
@@ -729,7 +729,7 @@ void Agent::calcLoS(int directionbin, bool curr) {
     } else {
         los = m_lastLos;
     }
-    Node &node = m_pointmap->getPoint(m_node).getNode();
+    Node &node = m_latticemap->getPoint(m_node).getNode();
     // ahead
     los[0] = node.bindistance(directionbin % 32);
     // directions:
@@ -751,7 +751,7 @@ void Agent::calcLoS2(int directionbin, bool curr) {
     } else {
         los = m_lastLos;
     }
-    Node &node = m_pointmap->getPoint(m_node).getNode();
+    Node &node = m_latticemap->getPoint(m_node).getNode();
     // ahead
     los[0] = node.bindistance(directionbin % 32);
     // directions:

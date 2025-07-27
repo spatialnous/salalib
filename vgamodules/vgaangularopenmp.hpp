@@ -9,7 +9,7 @@
 #include "ivgaangular.hpp"
 
 #include "../genlib/stringutils.hpp"
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 
 class VGAAngularOpenMP : public IVGAAngular {
     double m_radius;
@@ -49,7 +49,7 @@ class VGAAngularOpenMP : public IVGAAngular {
     }
 
   public:
-    VGAAngularOpenMP(const PointMap &map, double radius, bool gatesOnly,
+    VGAAngularOpenMP(const LatticeMap &map, double radius, bool gatesOnly,
                      std::optional<int> limitToThreads = std::nullopt,
                      bool forceCommUpdatesMasterThread = false)
         : IVGAAngular(map), m_radius(radius), m_limitToThreads(limitToThreads),

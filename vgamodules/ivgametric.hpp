@@ -8,7 +8,7 @@
 
 class IVGAMetric : public IVGATraversing {
   protected:
-    IVGAMetric(const PointMap &map) : IVGATraversing(map) {}
+    IVGAMetric(const LatticeMap &map) : IVGATraversing(map) {}
 
     std::vector<AnalysisData>
     getAnalysisData(const AttributeTable &attributes,
@@ -64,7 +64,7 @@ class IVGAMetric : public IVGATraversing {
     };
 
     void extractMetric(const ADRefVector<AnalysisData> &conns, std::set<MetricSearchData> &pixels,
-                       const PointMap &map, const MetricSearchData &curs) const {
+                       const LatticeMap &map, const MetricSearchData &curs) const {
         // if (dist == 0.0f || concaveConnected()) { // increases effiency but is too
         // inaccurate if (dist == 0.0f || !fullyConnected()) { // increases effiency
         // but can miss lines

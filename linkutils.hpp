@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "pointmap.hpp"
+#include "latticemap.hpp"
 
 #include "genlib/exceptions.hpp"
 
@@ -17,8 +17,8 @@ namespace sala {
         InvalidLinkException(std::string message) : genlib::BaseException(std::move(message)) {}
     };
     std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line4f> &mergeLines,
-                                                 PointMap &currentMap);
-    void mergePixelPairs(const std::vector<PixelRefPair> &links, PointMap &currentMap);
-    void unmergePixelPairs(const std::vector<PixelRefPair> &links, PointMap &currentMap);
-    std::vector<SimpleLine> getMergedPixelsAsLines(PointMap &currentMap);
+                                                 LatticeMap &currentMap);
+    void mergePixelPairs(const std::vector<PixelRefPair> &links, LatticeMap &currentMap);
+    void unmergePixelPairs(const std::vector<PixelRefPair> &links, LatticeMap &currentMap);
+    std::vector<SimpleLine> getMergedPixelsAsLines(LatticeMap &currentMap);
 } // namespace sala

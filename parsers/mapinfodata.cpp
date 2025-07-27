@@ -4,7 +4,7 @@
 
 #include "mapinfodata.hpp"
 
-#include "../pointmap.hpp"
+#include "../latticemap.hpp"
 #include "../shapemap.hpp"
 
 #include "../genlib/stringutils.hpp"
@@ -240,7 +240,8 @@ bool MapInfoData::exportFile(std::ostream& miffile, std::ostream& midfile, const
    return true;
 }
 */
-bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile, const PointMap &points) {
+bool MapInfoData::exportFile(std::ostream &miffile, std::ostream &midfile,
+                             const LatticeMap &points) {
     // if bounds has not been filled in, fill it in
     if (m_bounds.empty()) {
         char bounds[256];

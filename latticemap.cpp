@@ -4,7 +4,7 @@
 
 // Point data
 
-#include "pointmap.hpp"
+#include "latticemap.hpp"
 
 #include "attributetable.hpp"
 #include "ngraph.hpp"
@@ -23,7 +23,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 
-PointMap::PointMap(Region4f region, const std::string &name)
+LatticeMap::LatticeMap(Region4f region, const std::string &name)
     : AttributeMap(name, std::unique_ptr<AttributeTable>(new AttributeTable())), m_points(0, 0),
       m_mergeLines(), m_spacing(0.0), m_offset(), m_bottomLeft(), m_filledPointCount(0),
       m_initialised(false), m_blockedlines(false), m_processed(false), m_boundarygraph(false) {
@@ -32,7 +32,7 @@ PointMap::PointMap(Region4f region, const std::string &name)
     m_rows = 0;
 }
 
-void PointMap::copyData(const PointMap &sourcemap, bool copypoints, bool copyattributes) {
+void LatticeMap::copyData(const LatticeMap &sourcemap, bool copypoints, bool copyattributes) {
 
     m_cols = sourcemap.getCols();
     m_rows = sourcemap.getRows();
@@ -81,14 +81,14 @@ void PointMap::copyData(const PointMap &sourcemap, bool copypoints, bool copyatt
     }
 }
 
-void PointMap::copy(const PointMap &sourcemap, bool copypoints, bool copyattributes) {
+void LatticeMap::copy(const LatticeMap &sourcemap, bool copypoints, bool copyattributes) {
     m_name = sourcemap.getName();
     m_region = sourcemap.getRegion();
 
     copyData(sourcemap, copypoints, copyattributes);
 }
 
-void PointMap::communicate(time_t &atime, Communicator *comm, size_t record) {
+void LatticeMap::communicate(time_t &atime, Communicator *comm, size_t record) {
     if (comm) {
         if (qtimer(atime, 500)) {
             if (comm->IsCancelled()) {
@@ -99,7 +99,7 @@ void PointMap::communicate(time_t &atime, Communicator *comm, size_t record) {
     }
 }
 
-bool PointMap::setGrid(double spacing, const Point2f &offset) {
+bool LatticeMap::setGrid(double spacing, const Point2f &offset) {
     m_spacing = spacing;
     // note, the internal offset is the offset from the bottom left
     double xoffset = fmod(m_region.bottomLeft.x + offset.x, m_spacing);
@@ -148,7 +148,7 @@ bool PointMap::setGrid(double spacing, const Point2f &offset) {
     return true;
 }
 
-bool PointMap::clearAllPoints() {
+bool LatticeMap::clearAllPoints() {
     for (auto &point : m_points) {
         if (point.filled()) {
             point.set(Point::EMPTY);
@@ -159,7 +159,7 @@ bool PointMap::clearAllPoints() {
     return true;
 }
 
-bool PointMap::clearPointsInRange(PixelRef bl, PixelRef tr, std::set<int> &selSet) {
+bool LatticeMap::clearPointsInRange(PixelRef bl, PixelRef tr, std::set<int> &selSet) {
     if (!m_filledPointCount) {
         return false;
     }
@@ -193,7 +193,7 @@ bool PointMap::clearPointsInRange(PixelRef bl, PixelRef tr, std::set<int> &selSe
 
 // constrain is used to constrain to existing rows / cols
 // (not quite the same as constraining to bounding box due to spacing offsets)
-PixelRef PointMap::pixelate(const Point2f &p, bool constrain, int scalefactor) const {
+PixelRef LatticeMap::pixelate(const Point2f &p, bool constrain, int scalefactor) const {
     PixelRef ref;
 
     double spacing = m_spacing / static_cast<double>(scalefactor);
@@ -214,12 +214,12 @@ PixelRef PointMap::pixelate(const Point2f &p, bool constrain, int scalefactor) c
     return ref;
 }
 
-void PointMap::addPointsInRegionToSet(const Region4f &r, std::set<PixelRef> &selSet) {
+void LatticeMap::addPointsInRegionToSet(const Region4f &r, std::set<PixelRef> &selSet) {
     auto newSet = getPointsInRegion(r);
     selSet.insert(newSet.begin(), newSet.end());
 }
 
-std::set<PixelRef> PointMap::getPointsInRegion(const Region4f &r) const {
+std::set<PixelRef> LatticeMap::getPointsInRegion(const Region4f &r) const {
     std::set<PixelRef> selSet;
     auto sBl = pixelate(r.bottomLeft, true);
     auto sTr = pixelate(r.topRight, true);
@@ -238,7 +238,7 @@ std::set<PixelRef> PointMap::getPointsInRegion(const Region4f &r) const {
     return selSet;
 }
 
-bool PointMap::blockLines(std::vector<Line4f> &lines) {
+bool LatticeMap::blockLines(std::vector<Line4f> &lines) {
     if (!m_initialised || m_points.size() == 0) {
         return false;
     }
@@ -281,7 +281,7 @@ bool PointMap::blockLines(std::vector<Line4f> &lines) {
     return true;
 }
 
-void PointMap::blockLine(const Line4f &li) {
+void LatticeMap::blockLine(const Line4f &li) {
     std::vector<PixelRef> pixels = pixelateLineTouching(li, 1e-10);
     // touching is generally better for ensuring lines pixelated completely,
     // although it may catch extra points...
@@ -291,7 +291,7 @@ void PointMap::blockLine(const Line4f &li) {
     }
 }
 
-void PointMap::unblockLines(bool clearblockedflag) {
+void LatticeMap::unblockLines(bool clearblockedflag) {
     // just ensure lines don't exist to start off with (e.g., if someone's been
     // playing with the visible layers)
     for (size_t i = 0; i < m_cols; i++) {
@@ -307,7 +307,7 @@ void PointMap::unblockLines(bool clearblockedflag) {
 
 // still used through pencil tool
 
-bool PointMap::fillPoint(const Point2f &p, bool add) {
+bool LatticeMap::fillPoint(const Point2f &p, bool add) {
     // "false" is do not constrain to bounding box, includes() must be used before
     // getPoint
     PixelRef pix = pixelate(p, false);
@@ -333,7 +333,7 @@ bool PointMap::fillPoint(const Point2f &p, bool add) {
 // NB --- I've returned to original
 
 // AV TV // semifilled
-bool PointMap::makePoints(const Point2f &seed, int fillType, Communicator *comm) {
+bool LatticeMap::makePoints(const Point2f &seed, int fillType, Communicator *comm) {
     if (!m_initialised || m_points.size() == 0) {
         return false;
     }
@@ -412,7 +412,7 @@ bool PointMap::makePoints(const Point2f &seed, int fillType, Communicator *comm)
     return true;
 }
 
-int PointMap::expand(const PixelRef p1, const PixelRef p2, PixelRefVector &list, int filltype) {
+int LatticeMap::expand(const PixelRef p1, const PixelRef p2, PixelRefVector &list, int filltype) {
     if (p2.x < 0 || p2.x >= static_cast<short>(m_cols) || p2.y < 0 ||
         p2.y >= static_cast<short>(m_rows)) {
         // 1 = off edge
@@ -445,7 +445,7 @@ int PointMap::expand(const PixelRef p1, const PixelRef p2, PixelRefVector &list,
     return 8;
 }
 
-void PointMap::outputPoints(std::ostream &stream, char delim) {
+void LatticeMap::outputPoints(std::ostream &stream, char delim) {
     auto const streamFlags = stream.flags();
     stream << "Ref" << delim << "x" << delim << "y" << std::endl;
     stream.precision(12);
@@ -465,7 +465,7 @@ void PointMap::outputPoints(std::ostream &stream, char delim) {
     stream.flags(streamFlags);
 }
 
-void PointMap::outputMergeLines(std::ostream &stream, char delim) {
+void LatticeMap::outputMergeLines(std::ostream &stream, char delim) {
     auto const streamFlags = stream.flags();
     stream << "x1" << delim << "y1" << delim << "x2" << delim << "y2" << std::endl;
 
@@ -482,7 +482,7 @@ void PointMap::outputMergeLines(std::ostream &stream, char delim) {
 
 /////////////////////////////////////////////////////////////////////////////////
 
-void PointMap::outputSummary(std::ostream &myout, char delimiter) {
+void LatticeMap::outputSummary(std::ostream &myout, char delimiter) {
     myout << "Ref" << delimiter << "x" << delimiter << "y";
 
     // TODO: For compatibility write the columns in alphabetical order
@@ -518,12 +518,12 @@ void PointMap::outputSummary(std::ostream &myout, char delimiter) {
     myout.flags(streamFlags);
 }
 
-void PointMap::outputMif(std::ostream &miffile, std::ostream &midfile) {
+void LatticeMap::outputMif(std::ostream &miffile, std::ostream &midfile) {
     MapInfoData mapinfodata;
     mapinfodata.exportFile(miffile, midfile, *this);
 }
 
-void PointMap::outputNet(std::ostream &netfile) {
+void LatticeMap::outputNet(std::ostream &netfile) {
     // this is a bid of a faff, as we first have to get the point locations,
     // then the connections from a lookup table... ickity ick ick...
     std::map<PixelRef, PixelRefVector> graph;
@@ -564,7 +564,7 @@ void PointMap::outputNet(std::ostream &netfile) {
     }
 }
 
-void PointMap::outputConnections(std::ostream &myout) {
+void LatticeMap::outputConnections(std::ostream &myout) {
     myout << "#graph v1.0" << std::endl;
     for (size_t i = 0; i < m_cols; i++) {
         for (size_t j = 0; j < m_rows; j++) {
@@ -583,7 +583,7 @@ void PointMap::outputConnections(std::ostream &myout) {
     }
 }
 
-void PointMap::outputConnectionsAsCSV(std::ostream &myout, std::string delim) {
+void LatticeMap::outputConnectionsAsCSV(std::ostream &myout, std::string delim) {
     myout << "RefFrom" << delim << "RefTo";
     std::unordered_set<PixelRef, hashPixelRef> seenPix;
     for (size_t i = 0; i < m_cols; i++) {
@@ -605,7 +605,7 @@ void PointMap::outputConnectionsAsCSV(std::ostream &myout, std::string delim) {
     }
 }
 
-void PointMap::outputLinksAsCSV(std::ostream &myout, std::string delim) {
+void LatticeMap::outputLinksAsCSV(std::ostream &myout, std::string delim) {
     myout << "RefFrom" << delim << "RefTo";
     std::unordered_set<PixelRef, hashPixelRef> seenPix;
     for (size_t i = 0; i < m_cols; i++) {
@@ -625,7 +625,7 @@ void PointMap::outputLinksAsCSV(std::ostream &myout, std::string delim) {
     }
 }
 
-void PointMap::outputBinSummaries(std::ostream &myout) {
+void LatticeMap::outputBinSummaries(std::ostream &myout) {
     myout << "cols " << m_cols << " rows " << m_rows << std::endl;
 
     myout << "x\ty";
@@ -662,7 +662,7 @@ void PointMap::outputBinSummaries(std::ostream &myout) {
 // This is being phased out, with the new "edge" points (which are the filled
 // edges of the graph)
 
-bool PointMap::blockedAdjacent(const PixelRef p) const {
+bool LatticeMap::blockedAdjacent(const PixelRef p) const {
     bool ba = false;
     PixelRef temp = p.right();
     PixelRef bounds(static_cast<short>(m_cols), static_cast<short>(m_rows));
@@ -711,7 +711,7 @@ bool PointMap::blockedAdjacent(const PixelRef p) const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool PointMap::readMetadata(std::istream &stream) {
+bool LatticeMap::readMetadata(std::istream &stream) {
     m_name = dXstring::readString(stream);
 
     stream.read(reinterpret_cast<char *>(&m_spacing), sizeof(m_spacing));
@@ -733,7 +733,7 @@ bool PointMap::readMetadata(std::istream &stream) {
     return true;
 }
 
-bool PointMap::readPointsAndAttributes(std::istream &stream) {
+bool LatticeMap::readPointsAndAttributes(std::istream &stream) {
     m_attributes->read(stream, m_layers);
 
     m_points = genlib::ColumnMatrix<Point>(m_rows, m_cols);
@@ -773,7 +773,7 @@ bool PointMap::readPointsAndAttributes(std::istream &stream) {
     return true;
 }
 
-std::tuple<bool, int> PointMap::read(std::istream &stream) {
+std::tuple<bool, int> LatticeMap::read(std::istream &stream) {
     bool read = readMetadata(stream);
 
     // sala does not read or write display data by default any more.
@@ -787,7 +787,7 @@ std::tuple<bool, int> PointMap::read(std::istream &stream) {
     return std::make_tuple(read, displayedAttribute);
 }
 
-bool PointMap::writeMetadata(std::ostream &stream) const {
+bool LatticeMap::writeMetadata(std::ostream &stream) const {
     dXstring::writeString(stream, m_name);
 
     stream.write(reinterpret_cast<const char *>(&m_spacing), sizeof(m_spacing));
@@ -803,7 +803,7 @@ bool PointMap::writeMetadata(std::ostream &stream) const {
     return true;
 }
 
-bool PointMap::writePointsAndAttributes(std::ostream &stream) const {
+bool LatticeMap::writePointsAndAttributes(std::ostream &stream) const {
 
     m_attributes->write(stream, m_layers);
 
@@ -816,7 +816,7 @@ bool PointMap::writePointsAndAttributes(std::ostream &stream) const {
     return true;
 }
 
-bool PointMap::write(std::ostream &stream, int displayedAttribute) const {
+bool LatticeMap::write(std::ostream &stream, int displayedAttribute) const {
     bool written = writeMetadata(stream);
 
     stream.write(reinterpret_cast<const char *>(&displayedAttribute), sizeof(displayedAttribute));
@@ -831,7 +831,7 @@ bool PointMap::write(std::ostream &stream, int displayedAttribute) const {
 
 // Visibility graph construction constants
 
-size_t PointMap::tagState(bool settag) {
+size_t LatticeMap::tagState(bool settag) {
 
     size_t count = 0;
 
@@ -876,7 +876,7 @@ size_t PointMap::tagState(bool settag) {
 // Then wouldn't have to 'test twice' for the grid point being blocked...
 // ...perhaps a tweak for a later date!
 
-bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdist) {
+bool LatticeMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdist) {
     // Note, graph must be fixed (i.e., having blocking pixels filled in)
 
     if (!m_blockedlines) {
@@ -897,9 +897,9 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
 
     // attributes table set up
     // n.b. these must be entered in alphabetical order to preserve col indexing:
-    m_attributes->insertOrResetLockedColumn(PointMap::Column::CONNECTIVITY);
-    m_attributes->insertOrResetColumn(PointMap::Column::POINT_FIRST_MOMENT);
-    m_attributes->insertOrResetColumn(PointMap::Column::POINT_SECOND_MOMENT);
+    m_attributes->insertOrResetLockedColumn(LatticeMap::Column::CONNECTIVITY);
+    m_attributes->insertOrResetColumn(LatticeMap::Column::POINT_FIRST_MOMENT);
+    m_attributes->insertOrResetColumn(LatticeMap::Column::POINT_SECOND_MOMENT);
 
     // pre-label --- allows faster node access later on
     auto count = tagState(true);
@@ -973,7 +973,7 @@ bool PointMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxdis
     return true;
 }
 
-bool PointMap::unmake(bool removeLinks) {
+bool LatticeMap::unmake(bool removeLinks) {
     for (size_t i = 0; i < m_cols; i++) {
         for (size_t j = 0; j < m_rows; j++) {
             PixelRef curs = PixelRef(static_cast<short>(i), static_cast<short>(j));
@@ -1009,7 +1009,7 @@ bool PointMap::unmake(bool removeLinks) {
 // 2 -- register the reciprocal q octant in nodes you can see as requiring
 // processing
 
-bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
+bool LatticeMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
     static std::vector<PixelRef> binsB[32];
     static float farBinDists[32];
     for (int i = 0; i < 32; i++) {
@@ -1122,9 +1122,9 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
         pt.m_node->make(curs, binsB, farBinDists,
                         pt.m_processflag); // note: make clears bins!
         AttributeRow &row = m_attributes->getRow(AttributeKey(curs));
-        row.setValue(PointMap::Column::CONNECTIVITY, static_cast<float>(neighbourhoodSize));
-        row.setValue(PointMap::Column::POINT_FIRST_MOMENT, static_cast<float>(totalDist));
-        row.setValue(PointMap::Column::POINT_SECOND_MOMENT, static_cast<float>(totalDistSqr));
+        row.setValue(LatticeMap::Column::CONNECTIVITY, static_cast<float>(neighbourhoodSize));
+        row.setValue(LatticeMap::Column::POINT_FIRST_MOMENT, static_cast<float>(totalDist));
+        row.setValue(LatticeMap::Column::POINT_SECOND_MOMENT, static_cast<float>(totalDistSqr));
     } else {
         // Clear bins by hand if not using them to make
         for (int i = 0; i < 32; i++) {
@@ -1138,8 +1138,8 @@ bool PointMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
     return true;
 }
 
-bool PointMap::sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q, int depth,
-                      PixelRef curs) {
+bool LatticeMap::sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q, int depth,
+                        PixelRef curs) {
     bool hasgaps = false;
     int firstind = 0;
 
@@ -1198,7 +1198,7 @@ bool PointMap::sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool PointMap::binDisplay(Communicator *, std::set<int> &selSet) {
+bool LatticeMap::binDisplay(Communicator *, std::set<int> &selSet) {
     auto bindisplayCol = m_attributes->insertOrResetColumn("Node Bins");
 
     for (auto &sel : selSet) {
@@ -1219,8 +1219,8 @@ bool PointMap::binDisplay(Communicator *, std::set<int> &selSet) {
     return true;
 }
 
-bool PointMap::mergePoints(const Point2f &p, Region4f &firstPointsBounds,
-                           std::set<int> &firstPoints) {
+bool LatticeMap::mergePoints(const Point2f &p, Region4f &firstPointsBounds,
+                             std::set<int> &firstPoints) {
 
     // note that in a multiple selection, the point p is adjusted by the selection
     // bounds
@@ -1241,7 +1241,7 @@ bool PointMap::mergePoints(const Point2f &p, Region4f &firstPointsBounds,
     return true;
 }
 
-bool PointMap::unmergePoints(std::set<int> &firstPoints) {
+bool LatticeMap::unmergePoints(std::set<int> &firstPoints) {
     for (auto &sel : firstPoints) {
         PixelRef a = sel;
         Point p = getPoint(a);
@@ -1253,7 +1253,7 @@ bool PointMap::unmergePoints(std::set<int> &firstPoints) {
 }
 
 // Either of the pixels can be given here and the other will also be unmerged
-bool PointMap::unmergePixel(PixelRef a) {
+bool LatticeMap::unmergePixel(PixelRef a) {
     PixelRef c = getPoint(a).m_merge;
     genlib::findAndErase(m_mergeLines, PixelRefPair(a, c));
     getPoint(c).m_merge = NoPixel;
@@ -1263,7 +1263,7 @@ bool PointMap::unmergePixel(PixelRef a) {
     return true;
 }
 
-bool PointMap::mergePixels(PixelRef a, PixelRef b) {
+bool LatticeMap::mergePixels(PixelRef a, PixelRef b) {
     if (a == b && !getPoint(a).m_merge.empty()) {
         unmergePixel(a);
     }
@@ -1296,7 +1296,7 @@ bool PointMap::mergePixels(PixelRef a, PixelRef b) {
     return true;
 }
 
-void PointMap::mergeFromShapeMap(const ShapeMap &shapemap) {
+void LatticeMap::mergeFromShapeMap(const ShapeMap &shapemap) {
     const std::map<int, SalaShape> &polygons = shapemap.getAllShapes();
     for (const auto &polygon : polygons) {
         const SalaShape &poly = polygon.second;
@@ -1310,10 +1310,10 @@ void PointMap::mergeFromShapeMap(const ShapeMap &shapemap) {
     }
 }
 
-bool PointMap::isPixelMerged(const PixelRef &a) { return !getPoint(a).m_merge.empty(); }
+bool LatticeMap::isPixelMerged(const PixelRef &a) { return !getPoint(a).m_merge.empty(); }
 
 // -2 for point not in visibility graph, -1 for point has no data
-double PointMap::getLocationValue(const Point2f &point, std::optional<size_t> columnIdx) {
+double LatticeMap::getLocationValue(const Point2f &point, std::optional<size_t> columnIdx) {
     double val = -2;
 
     // "false" does not constrain to bounds
@@ -1337,7 +1337,7 @@ double PointMap::getLocationValue(const Point2f &point, std::optional<size_t> co
 /////////////////////////////////////////////////////////////////////////////////
 // Update connections will load an old graph and add char information
 
-void PointMap::addGridConnections() {
+void LatticeMap::addGridConnections() {
     for (auto iter = m_attributes->begin(); iter != m_attributes->end(); iter++) {
         PixelRef curs = iter->getKey().value;
         PixelRef node = curs.right();
@@ -1369,7 +1369,7 @@ void PointMap::addGridConnections() {
 }
 
 // value in range 0 to 1
-PixelRef PointMap::pickPixel(double value) const {
+PixelRef LatticeMap::pickPixel(double value) const {
     int which = static_cast<int>(ceil(value * static_cast<double>(m_rows * m_cols)) - 1);
     return PixelRef(static_cast<short>(static_cast<size_t>(which) % m_cols),
                     static_cast<short>(static_cast<size_t>(which) / m_cols));

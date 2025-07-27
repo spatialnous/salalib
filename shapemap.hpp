@@ -39,7 +39,7 @@ class ShapeMap : public AttributeMap {
         EMPTYMAP = 0x0000,
         DRAWINGMAP = 0x0001,
         DATAMAP = 0x0002,
-        POINTMAP = 0x0004,
+        LATTICEMAP = 0x0004,
         CONVEXMAP = 0x0008,
         ALLLINEMAP = 0x0010,
         AXIALMAP = 0x0020,
@@ -198,7 +198,7 @@ class ShapeMap : public AttributeMap {
                               std::optional<std::reference_wrapper<const std::set<int>>> selSet);
     // convert a selected pixels to a layer object (note, uses selection attribute on pixel, you
     // must select to make this work):
-    int makeShapeFromPointSet(const PointMap &pointmap, const std::set<int> &selSet);
+    int makeShapeFromPointSet(const LatticeMap &latticemap, const std::set<int> &selSet);
     //
     // move a shape (currently only a line shape) -- in the future should use SalaShape
     bool moveShape(int shaperef, const Line4f &line);
@@ -215,11 +215,12 @@ class ShapeMap : public AttributeMap {
     // some shape creation tools for the scripting language or DLL interface
   public:
     // helpers:
-    Point2f pointOffset(const PointMap &pointmap, int side);
+    Point2f pointOffset(const LatticeMap &map, int side);
     int moveDir(int side);
     //
-    void pointPixelBorder(const PointMap &pointmap, std::map<int, int> &relations, SalaShape &shape,
-                          int side, PixelRef currpix, PixelRef minpix, bool first);
+    void pointPixelBorder(const LatticeMap &latticemap, std::map<int, int> &relations,
+                          SalaShape &shape, int side, PixelRef currpix, PixelRef minpix,
+                          bool first);
     // slower point in topmost poly test:
     int pointInPoly(const Point2f &p) const;
     // test if point is inside a particular shape

@@ -11,42 +11,6 @@
 
 #include <set>
 
-struct AxialVertex;
-struct AxialVertexKey;
-struct RadialLine;
-struct PolyConnector;
-
-// used during angular analysis
-struct AnalysisInfo {
-    // lists used for multiple radius analysis
-    bool leaf;
-    bool choicecovered;
-
-  private:
-    [[maybe_unused]] unsigned _padding0 : 2 * 8;
-
-  public:
-    SegmentRef previous;
-    int depth;
-    double choice;
-    double weightedChoice;
-    double weightedChoice2; // EFEF
-    AnalysisInfo()
-        : leaf(true), choicecovered(false), _padding0(0), previous(), depth(0), choice(0.0),
-          weightedChoice(0.0), weightedChoice2(0.0) {
-
-        previous = SegmentRef();
-    }
-    void clearLine() {
-        choicecovered = false;
-        leaf = true;
-        previous = SegmentRef();
-        depth = 0; // choice values are cummulative and not cleared
-    }
-};
-
-class MapInfoData;
-
 typedef std::vector<std::set<int>> KeyVertices;
 
 class ShapeGraph : public ShapeMap {

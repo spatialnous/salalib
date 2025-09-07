@@ -19,6 +19,34 @@ class AxialIntegration : IAxial {
     [[maybe_unused]] unsigned _padding0 : 1 * 8;
     [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
+    // used during angular analysis
+    struct AnalysisInfo {
+        // lists used for multiple radius analysis
+        bool leaf;
+        bool choicecovered;
+
+      private:
+        [[maybe_unused]] unsigned _padding0 : 2 * 8;
+
+      public:
+        SegmentRef previous;
+        int depth;
+        double choice;
+        double weightedChoice;
+        AnalysisInfo()
+            : leaf(true), choicecovered(false), _padding0(0), previous(), depth(0), choice(0.0),
+              weightedChoice(0.0) {
+
+            previous = SegmentRef();
+        }
+        void clearLine() {
+            choicecovered = false;
+            leaf = true;
+            previous = SegmentRef();
+            depth = 0; // choice values are cummulative and not cleared
+        }
+    };
+
   public:
     struct Normalisation {
         inline static const std::string //

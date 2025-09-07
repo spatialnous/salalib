@@ -65,6 +65,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 set(salalib_HDRS
+    pixelbase.hpp
     alllinemap.hpp
     axialminimiser.hpp
     geometrygenerators.hpp
@@ -122,6 +123,7 @@ set(salalib_HDRS
 )
 
 set(salalib_SRCS
+    pixelbase.cpp
     shapegraph.cpp
     connector.cpp
     isovist.cpp
@@ -163,9 +165,7 @@ add_compile_definitions(_USE_MATH_DEFINES)
 # The headers are added to the library primarily so that they appear as part
 # of this particular project to IDEs that open it
 add_library(${salalib} STATIC ${salalib_HDRS} ${salalib_SRCS}
-    ${vgamodules_SRCS} ${axialmodules_SRCS} ${segmmodules_SRCS} ${parsers_SRCS}
-    pixelbase.hpp
-    pixelbase.cpp)
+    ${vgamodules_SRCS} ${axialmodules_SRCS} ${segmmodules_SRCS} ${parsers_SRCS})
 
 target_compile_options(${salalib} PRIVATE ${COMPILE_WARNINGS})
 

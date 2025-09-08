@@ -9,6 +9,7 @@ target_sources(salalib
         segmmetric.cpp
         segmtopological.cpp
         segmtulip.cpp
+        segmtulipleafchoice.cpp
         segmtopologicalpd.cpp
         segmmetricpd.cpp
         segmtulipdepth.cpp
@@ -20,6 +21,7 @@ target_sources(salalib
         segmmetric.hpp
         segmtopological.hpp
         segmtulip.hpp
+        segmtulipleafchoice.hpp
         segmhelpers.hpp
         segmmetricpd.hpp
         segmtopologicalpd.hpp

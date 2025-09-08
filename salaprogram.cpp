@@ -1343,7 +1343,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                     data = log10(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_LN:
-                    data = pafmath_ln(evaluate(pointer, pObj).toDouble());
+                    data = pafmath::ln(evaluate(pointer, pObj).toDouble());
                     break;
                 case SalaObj::S_RAND:
                     data = evaluate(pointer, pObj);

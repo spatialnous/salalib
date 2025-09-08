@@ -10,18 +10,13 @@
 
 #include <cmath>
 
-#ifndef pafmath_M_ROOT_1_2
-#define pafmath_M_ROOT_1_2 0.70710678118654752440084436210485
-#endif
-
-#ifndef pafmath_M_1_LN2
-#define pafmath_M_1_LN2 1.4426950408889634073599246810019
-#endif
-
-// note, in order to stop confusing myself I have ln defined:
-#define pafmath_ln(X) log(X)
-
 namespace pafmath {
+    constexpr long double M_ROOT_1_2 = 0.70710678118654752440084436210485L;
+    constexpr long double M_1_LN2 = 1.4426950408889634073599246810019L;
+
+    // note, in order to stop confusing myself I have ln defined:
+    inline double ln(double x) { return std::log(x); }
+
     inline double sqr(double a) { return (a * a); }
 
     inline int sgn(double a) { return (a < 0) ? -1 : 1; }
@@ -41,7 +36,7 @@ namespace pafmath {
         return static_cast<double>(pafrand(set)) / static_cast<double>(PAF_RAND_MAX + 1);
     }
 
-    inline double log2(double a) { return (pafmath_ln(a) * pafmath_M_1_LN2); }
+    inline double log2(double a) { return (static_cast<double>(pafmath::ln(a) * M_1_LN2)); }
 
     // Hillier Hanson dvalue
     /*
@@ -63,8 +58,8 @@ namespace pafmath {
 
     // Teklenburg integration (correction 31.01.11 due to Ulrich Thaler
     inline double teklinteg(double nodecount, double totaldepth) {
-        return pafmath_ln(0.5 * (nodecount - 2.0)) /
-               pafmath_ln(static_cast<double>(totaldepth - nodecount + 1));
+        return pafmath::ln(0.5 * (nodecount - 2.0)) /
+               pafmath::ln(static_cast<double>(totaldepth - nodecount + 1));
     }
 
     // Penn palmtree

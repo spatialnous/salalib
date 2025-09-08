@@ -461,26 +461,26 @@ bool ShapeMap::convertPointsToPolys(
                     polyP.x = p.x + polyRadius;
                     polyP.y = p.y;
                 } else if (k == 1) {
-                    polyP.x = p.x + polyRadius * pafmath_M_ROOT_1_2;
-                    polyP.y = p.y + polyRadius * pafmath_M_ROOT_1_2;
+                    polyP.x = static_cast<double>(p.x + polyRadius * pafmath::M_ROOT_1_2);
+                    polyP.y = static_cast<double>(p.y + polyRadius * pafmath::M_ROOT_1_2);
                 } else if (k == 2) {
                     polyP.x = p.x;
                     polyP.y = p.y + polyRadius;
                 } else if (k == 3) {
-                    polyP.x = p.x - polyRadius * pafmath_M_ROOT_1_2;
-                    polyP.y = p.y + polyRadius * pafmath_M_ROOT_1_2;
+                    polyP.x = static_cast<double>(p.x - polyRadius * pafmath::M_ROOT_1_2);
+                    polyP.y = static_cast<double>(p.y + polyRadius * pafmath::M_ROOT_1_2);
                 } else if (k == 4) {
                     polyP.x = p.x - polyRadius;
                     polyP.y = p.y;
                 } else if (k == 5) {
-                    polyP.x = p.x - polyRadius * pafmath_M_ROOT_1_2;
-                    polyP.y = p.y - polyRadius * pafmath_M_ROOT_1_2;
+                    polyP.x = static_cast<double>(p.x - polyRadius * pafmath::M_ROOT_1_2);
+                    polyP.y = static_cast<double>(p.y - polyRadius * pafmath::M_ROOT_1_2);
                 } else if (k == 6) {
                     polyP.x = p.x;
                     polyP.y = p.y - polyRadius;
                 } else if (k == 7) {
-                    polyP.x = p.x + polyRadius * pafmath_M_ROOT_1_2;
-                    polyP.y = p.y - polyRadius * pafmath_M_ROOT_1_2;
+                    polyP.x = static_cast<double>(p.x + polyRadius * pafmath::M_ROOT_1_2);
+                    polyP.y = static_cast<double>(p.y - polyRadius * pafmath::M_ROOT_1_2);
                 }
                 region.encompass(polyP);
                 shape.second.points.push_back(polyP);

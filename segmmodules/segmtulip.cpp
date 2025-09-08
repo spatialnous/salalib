@@ -469,7 +469,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                     rbinbase = rbin;
                     while (rbin < static_cast<int>(nradii)) {
                         if (((coverage >> rbin) & 0x1) == 1) {
-                            auto adtrCurrent = audittrail[ref][rbin][dir];
+                            auto &adtrCurrent = audittrail[ref][rbin][dir];
                             adtrCurrent.depth = depthlevel;
                             adtrCurrent.previous = lineindex.previous;
                             audittrail[lineindex.previous.ref][rbin]
@@ -620,8 +620,8 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
             // systems
             double cursNodeCount = 0.0, cursTotalDepth = 0.0;
             double cursTotalWeight = 0.0, cursTotalWeightedDepth = 0.0;
-            size_t j;
-            for (j = 0; j < nconnections; j++) {
+
+            for (size_t j = 0; j < nconnections; j++) {
                 auto &adtr = audittrail[j][k];
                 // find dir according
                 bool m0 = ((uncovered[j][0] >> k) & 0x1) == 0;

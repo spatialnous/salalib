@@ -1,0 +1,10 @@
+version = 1
+SPDX-PackageName = "salalib"
+SPDX-PackageSupplier = "Petros Koutsolampros <commits@pklampros.io>"
+SPDX-PackageDownloadLocation = "https://github.com/spatialnous/salalib"
+
+[[annotations]]
+path = [".gitignore", "README.md", ".clang-format", ".clang-tidy", "resources/graph.grammar", ".github/FUNDING.yml"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Petros Koutsolampros <commits@pklampros.io>"
+SPDX-License-Identifier = "GPL-3.0-or-later"

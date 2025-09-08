@@ -361,8 +361,9 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                     rbinbase = rbin;
                     while (rbin < static_cast<int>(nradii)) {
                         if (((coverage >> rbin) & 0x1) == 1) {
-                            audittrail[ref][rbin][dir].depth = depthlevel;
-                            audittrail[ref][rbin][dir].previous = lineindex.previous;
+                            auto &adtrCurrent = audittrail[ref][rbin][dir];
+                            adtrCurrent.depth = depthlevel;
+                            adtrCurrent.previous = lineindex.previous;
                             audittrail[lineindex.previous.ref][rbin]
                                       [(lineindex.previous.dir == 1) ? 0 : 1]
                                           .leaf = false;

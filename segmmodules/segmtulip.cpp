@@ -643,7 +643,7 @@ AnalysisResult SegmentTulip::run(Communicator *comm, ShapeGraph &map, bool) {
                     cursTotalWeight += weights[j];
                     cursTotalWeightedDepth += static_cast<float>(adtr[dir].depth) * weights[j];
                     //
-                    if (m_choice && adtr[dir].leaf) {
+                    if (m_choice && (!m_forceLeafChoice || (m_forceLeafChoice && adtr[dir].leaf))) {
                         // note, graph may be directed (e.g., for one way streets), so both ways
                         // must be included from now on:
                         SegmentRef here = SegmentRef(dir == 0 ? 1 : -1, static_cast<int>(j));

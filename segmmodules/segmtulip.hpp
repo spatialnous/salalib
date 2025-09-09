@@ -21,7 +21,8 @@ class SegmentTulip : ISegment {
     bool m_interactive;
     bool m_forceLegacyColumnOrder = false;
 
-    [[maybe_unused]] unsigned _padding0 : 1 * 8;
+    // Forces choice to only be calculated from leaf nodes
+    bool m_forceLeafChoice = false;
 
     // used during angular analysis
     struct AnalysisInfo {
@@ -124,10 +125,11 @@ class SegmentTulip : ISegment {
         : m_radiusSet(std::move(radiusSet)), m_selSet(std::move(selSet)), m_tulipBins(tulipBins),
           m_weightedMeasureCol(weightedMeasureCol), m_weightedMeasureCol2(weightedMeasureCol2),
           m_routeweightCol(routeweightCol), m_radiusType(radiusType), m_choice(choice),
-          m_interactive(interactive), _padding0(0) {}
+          m_interactive(interactive) {}
     void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
         m_forceLegacyColumnOrder = forceLegacyColumnOrder;
     }
+    void setForceLeafChoice(bool forceLeafChoice) { m_forceLeafChoice = forceLeafChoice; }
     std::string getAnalysisName() const override { return "Tulip Analysis"; }
     AnalysisResult run(Communicator *comm, ShapeGraph &map, bool) override;
 };

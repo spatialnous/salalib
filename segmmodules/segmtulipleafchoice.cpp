@@ -631,8 +631,14 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
         }
     }
     for (size_t cursor = 0; cursor < nconnections; cursor++) {
-        AttributeRow &row = attributes.getRow(
-            AttributeKey(genlib::getMapAtIndex(map.getAllShapes(), cursor)->first));
+        auto &shapeRef = map.getShapeRefFromIndex(cursor)->first;
+        AttributeRow &row = map.getAttributeTable().getRow(AttributeKey(shapeRef));
+
+        if (m_selSet.has_value()) {
+            if (m_selSet->find(shapeRef) == m_selSet->end()) {
+                continue;
+            }
+        }
         for (size_t r = 0; r < nradii; r++) {
             auto &adtr = audittrail[cursor][r];
             // according to Eva's correction, total choice and total weighted choice

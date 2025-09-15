@@ -22,10 +22,11 @@ class SegmentTulipLeafChoice : ISegment {
     int m_weightedMeasureCol2;
     int m_routeweightCol;
     RadiusType m_radiusType;
+    bool m_recordSelLeafs;
     bool m_interactive;
     bool m_forceLegacyColumnOrder = false;
 
-    [[maybe_unused]] unsigned _padding0 : 2 * 8;
+    [[maybe_unused]] unsigned _padding0 : 1 * 8;
 
     // used during angular analysis
     struct AnalysisInfo {
@@ -67,8 +68,12 @@ class SegmentTulipLeafChoice : ISegment {
                        double radius,
                        const std::optional<std::string> &routeWeightColName = std::nullopt,
                        const std::optional<std::string> &weightCol1Name = std::nullopt,
-                       const std::optional<std::string> &weightCol2Name = std::nullopt) {
+                       const std::optional<std::string> &weightCol2Name = std::nullopt,
+                       const std::optional<int> &leafRef = std::nullopt) {
         std::string colName = "T" + dXstring::formatString(tulipBins, "%d") + " " + column;
+        if (leafRef.has_value()) {
+            colName += "_" + std::to_string(*leafRef);
+        }
         bool spaceAdded = false;
         if (routeWeightColName.has_value() && weightCol1Name.has_value()) {
             colName += " [";
@@ -105,10 +110,11 @@ class SegmentTulipLeafChoice : ISegment {
                           RadiusType radiusType, double radius,
                           const std::optional<std::string> &weightCol1Name = std::nullopt,
                           const std::optional<std::string> &weightCol2Name = std::nullopt,
-                          const std::optional<std::string> &routeWeightColName = std::nullopt) {
+                          const std::optional<std::string> &routeWeightColName = std::nullopt,
+                          const std::optional<int> &leafRef = std::nullopt) {
         return attributes.getColumnIndex(getFormattedColumn(column, tulipBins, radiusType, radius,
                                                             weightCol1Name, weightCol2Name,
-                                                            routeWeightColName));
+                                                            routeWeightColName, leafRef));
     }
 
   private:
@@ -118,11 +124,11 @@ class SegmentTulipLeafChoice : ISegment {
     SegmentTulipLeafChoice(std::set<double> radiusSet, std::optional<std::set<int>> selSet,
                            int tulipBins, int weightedMeasureCol, RadiusType radiusType,
                            int weightedMeasureCol2 = -1, int routeweightCol = -1,
-                           bool interactive = false)
+                           bool recordSelLeafs = false, bool interactive = false)
         : m_radiusSet(std::move(radiusSet)), m_selSet(std::move(selSet)), m_tulipBins(tulipBins),
           m_weightedMeasureCol(weightedMeasureCol), m_weightedMeasureCol2(weightedMeasureCol2),
-          m_routeweightCol(routeweightCol), m_radiusType(radiusType), m_interactive(interactive),
-          _padding0(0) {}
+          m_routeweightCol(routeweightCol), m_radiusType(radiusType),
+          m_recordSelLeafs(recordSelLeafs), m_interactive(interactive), _padding0(0) {}
     void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
         m_forceLegacyColumnOrder = forceLegacyColumnOrder;
     }

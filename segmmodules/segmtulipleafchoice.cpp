@@ -30,91 +30,95 @@ std::vector<std::string> SegmentTulipLeafChoice::getRequiredColumns(ShapeGraph &
     }
 
     auto addColumn = [&newColumns, tulipBins = this->m_tulipBins, radiusType = this->m_radiusType](
-                         const std::string &column, double radius,
+                         const std::string &column, double radius, bool selectionOnly,
                          const std::optional<std::string> &routeWeightColName = std::nullopt,
                          const std::optional<std::string> &weightCol1Name = std::nullopt,
                          const std::optional<std::string> &weightCol2Name = std::nullopt,
                          const std::optional<int> &leafRef = std::nullopt) {
         newColumns.push_back(getFormattedColumn( //
-            column, tulipBins, radiusType, radius, routeWeightColName, weightCol1Name,
-            weightCol2Name, leafRef));
+            column, tulipBins, radiusType, radius, selectionOnly, routeWeightColName,
+            weightCol1Name, weightCol2Name, leafRef));
     };
     for (auto radius : radii) {
         if (!m_forceLegacyColumnOrder) {
             // EF routeweight *
             if (m_routeweightCol != -1) {
-                addColumn(Column::LEAF_CHOICE, radius, routeweightColText);
+                addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), routeweightColText);
                 if (m_selSet.has_value() && m_recordSelLeafs) {
                     for (auto ref : *m_selSet) {
-                        addColumn(Column::LEAF, radius, routeweightColText, std::nullopt,
-                                  std::nullopt, std::make_optional(ref));
-                    };
-                };
+                        addColumn(Column::LEAF, radius, m_selSet.has_value(), routeweightColText,
+                                  std::nullopt, std::nullopt, std::make_optional(ref));
+                    }
+                }
                 if (m_weightedMeasureCol != -1) {
-                    addColumn(Column::LEAF_CHOICE, radius, routeweightColText, weightingColText);
+                    addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), routeweightColText,
+                              weightingColText);
                 }
                 // EFEF*
                 if (m_weightedMeasureCol2 != -1) {
-                    addColumn(Column::LEAF_CHOICE, radius, routeweightColText, weightingColText,
-                              weightingColText2);
+                    addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), routeweightColText,
+                              weightingColText, weightingColText2);
                 }
                 //*EFEF
             }
             //*EF routeweight
             else { // Normal run // TV
-                addColumn(Column::LEAF_CHOICE, radius);
+                addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value());
                 if (m_selSet.has_value() && m_recordSelLeafs) {
                     for (auto ref : *m_selSet) {
-                        addColumn(Column::LEAF, radius, std::nullopt, std::nullopt, std::nullopt,
-                                  std::make_optional(ref));
-                    };
-                };
+                        addColumn(Column::LEAF, radius, m_selSet.has_value(), std::nullopt,
+                                  std::nullopt, std::nullopt, std::make_optional(ref));
+                    }
+                }
                 if (m_weightedMeasureCol != -1) {
-                    addColumn(Column::LEAF_CHOICE, radius, std::nullopt, weightingColText);
+                    addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), std::nullopt,
+                              weightingColText);
                 }
                 // EFEF*
                 if (m_weightedMeasureCol2 != -1) {
-                    addColumn(Column::LEAF_CHOICE, radius, std::nullopt, weightingColText,
-                              weightingColText2);
+                    addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), std::nullopt,
+                              weightingColText, weightingColText2);
                 }
                 //*EFEF
             }
         } else {
             // EF routeweight *
             if (m_routeweightCol != -1) {
-                addColumn(Column::LEAF_CHOICE, radius, routeweightColText);
+                addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), routeweightColText);
                 if (m_selSet.has_value() && m_recordSelLeafs) {
                     for (auto ref : *m_selSet) {
-                        addColumn(Column::LEAF, radius, routeweightColText, std::nullopt,
-                                  std::nullopt, std::make_optional(ref));
-                    };
-                };
+                        addColumn(Column::LEAF, radius, m_selSet.has_value(), routeweightColText,
+                                  std::nullopt, std::nullopt, std::make_optional(ref));
+                    }
+                }
                 if (m_weightedMeasureCol != -1) {
-                    addColumn(Column::LEAF_CHOICE, radius, routeweightColText, weightingColText);
+                    addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), routeweightColText,
+                              weightingColText);
                 }
                 // EFEF*
                 if (m_weightedMeasureCol2 != -1) {
-                    addColumn(Column::LEAF_CHOICE, radius, routeweightColText, weightingColText,
-                              weightingColText2);
+                    addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), routeweightColText,
+                              weightingColText, weightingColText2);
                 }
                 //*EFEF
             }
             //*EF routeweight
             else { // Normal run // TV
-                addColumn(Column::LEAF_CHOICE, radius);
+                addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value());
                 if (m_selSet.has_value() && m_recordSelLeafs) {
                     for (auto ref : *m_selSet) {
-                        addColumn(Column::LEAF, radius, std::nullopt, std::nullopt, std::nullopt,
-                                  std::make_optional(ref));
-                    };
-                };
+                        addColumn(Column::LEAF, radius, m_selSet.has_value(), std::nullopt,
+                                  std::nullopt, std::nullopt, std::make_optional(ref));
+                    }
+                }
                 if (m_weightedMeasureCol != -1) {
-                    addColumn(Column::LEAF_CHOICE, radius, std::nullopt, weightingColText);
+                    addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), std::nullopt,
+                              weightingColText);
                 }
                 // EFEF*
                 if (m_weightedMeasureCol2 != -1) {
-                    addColumn(Column::LEAF_CHOICE, radius, std::nullopt, weightingColText,
-                              weightingColText2);
+                    addColumn(Column::LEAF_CHOICE, radius, m_selSet.has_value(), std::nullopt,
+                              weightingColText, weightingColText2);
                 }
                 //*EFEF
             }
@@ -130,7 +134,7 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
         return result;
     }
 
-    if (m_recordSelLeafs && m_selSet->size() > 50) {
+    if (m_recordSelLeafs && m_selSet.has_value() && m_selSet->size() > 50) {
         if (comm)
             comm->logError("Can not record leafs for more than 50 selected origins");
         return result;
@@ -234,34 +238,42 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
 
     std::string tulipText = std::string("T") + dXstring::formatString(tulipBins, "%d");
 
+    auto nradii = radiusUnconverted.size();
+
     std::vector<size_t> choiceCol, wChoiceCol, wChoiceCol2;
-    std::unordered_map<int, size_t> leafCol;
+    std::unordered_map<int, std::vector<size_t>> leafCol;
     // then look them up! eek....
+    size_t radiusIdx = 0;
     for (auto radius : radiusUnconverted) {
         std::string radiusText = makeRadiusText(m_radiusType, radius);
         // EF routeweight *
         if (routeweightCol != -1) {
             choiceCol.push_back(getFormattedColumnIdx( //
                 attributes, Column::LEAF_CHOICE, m_tulipBins, m_radiusType, radius,
-                routeweightColText));
+                m_selSet.has_value(), routeweightColText));
 
             if (m_selSet.has_value() && m_recordSelLeafs) {
                 for (auto ref : *m_selSet) {
-                    leafCol[ref] = getFormattedColumnIdx( //
-                        attributes, Column::LEAF, m_tulipBins, m_radiusType, radius, std::nullopt,
-                        std::nullopt, routeweightColText, std::make_optional(ref));
-                };
-            };
+                    auto lc = leafCol.find(ref);
+                    if (lc == leafCol.end()) {
+                        lc = leafCol.insert({ref, std::vector<size_t>(nradii)}).first;
+                    }
+                    lc->second[radiusIdx] = getFormattedColumnIdx( //
+                        attributes, Column::LEAF, m_tulipBins, m_radiusType, radius,
+                        m_selSet.has_value(), std::nullopt, std::nullopt, routeweightColText,
+                        std::make_optional(ref));
+                }
+            }
             if (m_weightedMeasureCol != -1) {
                 wChoiceCol.push_back(getFormattedColumnIdx( //
                     attributes, Column::LEAF_CHOICE, m_tulipBins, m_radiusType, radius,
-                    routeweightColText, weightingColText));
+                    m_selSet.has_value(), routeweightColText, weightingColText));
             }
             // EFEF*
             if (weightingCol2 != -1) {
                 wChoiceCol2.push_back(getFormattedColumnIdx( //
                     attributes, Column::LEAF_CHOICE, m_tulipBins, m_radiusType, radius,
-                    routeweightColText, weightingColText, weightingColText2));
+                    m_selSet.has_value(), routeweightColText, weightingColText, weightingColText2));
             }
             //*EFEF
         }
@@ -269,27 +281,34 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
         else { // Normal run // TV
 
             choiceCol.push_back(getFormattedColumnIdx( //
-                attributes, Column::LEAF_CHOICE, m_tulipBins, m_radiusType, radius));
+                attributes, Column::LEAF_CHOICE, m_tulipBins, m_radiusType, radius,
+                m_selSet.has_value()));
             if (m_selSet.has_value() && m_recordSelLeafs) {
                 for (auto ref : *m_selSet) {
-                    leafCol[ref] = getFormattedColumnIdx( //
-                        attributes, Column::LEAF, m_tulipBins, m_radiusType, radius, std::nullopt,
-                        std::nullopt, std::nullopt, std::make_optional(ref));
-                };
-            };
+                    auto lc = leafCol.find(ref);
+                    if (lc == leafCol.end()) {
+                        lc = leafCol.insert({ref, std::vector<size_t>(nradii)}).first;
+                    }
+                    lc->second[radiusIdx] = getFormattedColumnIdx( //
+                        attributes, Column::LEAF, m_tulipBins, m_radiusType, radius,
+                        m_selSet.has_value(), std::nullopt, std::nullopt, std::nullopt,
+                        std::make_optional(ref));
+                }
+            }
             if (m_weightedMeasureCol != -1) {
                 wChoiceCol.push_back(getFormattedColumnIdx( //
                     attributes, Column::LEAF_CHOICE, m_tulipBins, m_radiusType, radius,
-                    std::nullopt, weightingColText));
+                    m_selSet.has_value(), std::nullopt, weightingColText));
             }
             // EFEF*
             if (weightingCol2 != -1) {
                 wChoiceCol2.push_back(getFormattedColumnIdx( //
                     attributes, Column::LEAF_CHOICE, m_tulipBins, m_radiusType, radius,
-                    std::nullopt, weightingColText, weightingColText2));
+                    m_selSet.has_value(), std::nullopt, weightingColText, weightingColText2));
             }
             //*EFEF
         }
+        ++radiusIdx;
     }
 
     tulipBins /= 2; // <- actually use semicircle of tulip bins
@@ -298,7 +317,6 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
     std::vector<std::vector<SegmentData>> bins(static_cast<size_t>(tulipBins));
 
     auto nconnections = map.getConnections().size();
-    auto nradii = radiusUnconverted.size();
 
     // TODO: Replace these with STL
     AnalysisInfo ***audittrail;
@@ -338,10 +356,8 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
         auto &shapeRef = map.getShapeRefFromIndex(cursor)->first;
         AttributeRow &row = map.getAttributeTable().getRow(AttributeKey(shapeRef));
 
-        if (m_selSet.has_value()) {
-            if (m_selSet->find(shapeRef) == m_selSet->end()) {
-                continue;
-            }
+        if (m_selSet.has_value() && m_selSet->find(shapeRef) == m_selSet->end()) {
+            continue;
         }
 
         for (int k = 0; k < tulipBins; k++) {
@@ -642,6 +658,31 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                 }
             }
         }
+
+        if (m_recordSelLeafs && m_selSet.has_value() &&
+            m_selSet->find(shapeRef) != m_selSet->end()) {
+            for (size_t j = 0; j < nconnections; j++) {
+                for (size_t k = 0; k < nradii; k++) {
+                    auto &adtr = audittrail[j][k];
+                    float leafVal = 0; // not a leaf
+                    if (adtr[0].leaf && adtr[1].leaf) {
+                        // leaf on both directions
+                        leafVal = 3;
+                    } else if (adtr[0].leaf) {
+                        // leaf forward
+                        leafVal = 1;
+                    } else if (adtr[1].leaf) {
+                        // leaf backwards
+                        leafVal = 2;
+                    }
+                    auto &connShapeRef = map.getShapeRefFromIndex(j)->first;
+                    AttributeRow &connRow =
+                        map.getAttributeTable().getRow(AttributeKey(connShapeRef));
+                    connRow.setValue(leafCol[shapeRef][k], leafVal);
+                }
+            }
+        }
+
         //
         processedRows++;
         //
@@ -673,11 +714,6 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
         auto &shapeRef = map.getShapeRefFromIndex(cursor)->first;
         AttributeRow &row = map.getAttributeTable().getRow(AttributeKey(shapeRef));
 
-        if (m_selSet.has_value()) {
-            if (m_selSet->find(shapeRef) == m_selSet->end()) {
-                continue;
-            }
-        }
         for (size_t r = 0; r < nradii; r++) {
             auto &adtr = audittrail[cursor][r];
             // according to Eva's correction, total choice and total weighted choice
@@ -699,20 +735,6 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
             //
             //
             row.setValue(choiceCol[r], static_cast<float>(totalChoice));
-            if (m_recordSelLeafs && m_selSet.has_value()) {
-                float leafVal = 0; // not a leaf
-                if (adtr[0].leaf && adtr[1].leaf) {
-                    // leaf on both directions
-                    leafVal = 3;
-                } else if (adtr[0].leaf) {
-                    // leaf forward
-                    leafVal = 1;
-                } else if (adtr[1].leaf) {
-                    // leaf backwards
-                    leafVal = 2;
-                }
-                row.setValue(leafCol[shapeRef], leafVal);
-            }
             if (m_weightedMeasureCol != -1) {
                 row.setValue(wChoiceCol[r], static_cast<float>(totalWeightedChoice));
                 // EFEF*

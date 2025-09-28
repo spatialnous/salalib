@@ -64,11 +64,14 @@ class SegmentTulip : ISegment {
     };
     static std::string
     getFormattedColumn(const std::string &column, int tulipBins, RadiusType radiusType,
-                       double radius,
+                       double radius, bool selectionOnly,
                        const std::optional<std::string> &routeWeightColName = std::nullopt,
                        const std::optional<std::string> &weightCol1Name = std::nullopt,
                        const std::optional<std::string> &weightCol2Name = std::nullopt) {
         std::string colName = "T" + dXstring::formatString(tulipBins, "%d") + " " + column;
+        if (selectionOnly) {
+            colName += " (Selection)";
+        }
         bool spaceAdded = false;
         if (routeWeightColName.has_value() && weightCol1Name.has_value()) {
             colName += " [";
@@ -106,13 +109,13 @@ class SegmentTulip : ISegment {
     }
     static size_t
     getFormattedColumnIdx(const AttributeTable &attributes, std::string column, int tulipBins,
-                          RadiusType radiusType, double radius,
+                          RadiusType radiusType, double radius, bool selectionOnly,
                           const std::optional<std::string> &weightCol1Name = std::nullopt,
                           const std::optional<std::string> &weightCol2Name = std::nullopt,
                           const std::optional<std::string> &routeWeightColName = std::nullopt) {
         return attributes.getColumnIndex(getFormattedColumn(column, tulipBins, radiusType, radius,
-                                                            weightCol1Name, weightCol2Name,
-                                                            routeWeightColName));
+                                                            selectionOnly, weightCol1Name,
+                                                            weightCol2Name, routeWeightColName));
     }
 
   private:

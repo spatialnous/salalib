@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2011-2026 Tasos Varoudis
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -1145,7 +1145,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 case SalaObj::S_SUBTRACT: {
                     SalaObj tmp1 = evaluate(pointer, pObj);
                     SalaObj tmp2 = evaluate(pointer, pObj);
-                    data = tmp1 - tmp2;
+                    data = tmp2 - tmp1;
                     break;
                 }
                 case SalaObj::S_PLUS:

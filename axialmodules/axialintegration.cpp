@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
-// SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2011-2026 Tasos Varoudis
 // SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
@@ -415,7 +415,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                     double ra = 2.0 * (meanDepth - 1.0) / static_cast<double>(nodeCount - 2);
                     // d-value / p-value from Depthmap 4 manual, note: node_count includes this one
                     double rraD = ra / pafmath::dvalue(nodeCount);
-                    double rraP = ra / pafmath::dvalue(nodeCount);
+                    double rraP = ra / pafmath::pvalue(nodeCount);
                     double integTk = pafmath::teklinteg(nodeCount, totalDepth);
                     row.setValue(integDvCol[r], static_cast<float>(1.0 / rraD));
 

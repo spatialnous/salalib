@@ -11,8 +11,17 @@
 
 #include "genlib/exceptions.hpp"
 
-#include <iomanip>
+#include <functional>
+#include <algorithm>
+#include <cmath>
+#include <set>
+#include <map>
+#include <iterator>
+#include <string>
 #include <time.h>
+#include <vector>
+#include <tuple>
+#include <utility>
 
 AllLine::MapData
 AllLine::generate(Communicator *comm, ShapeGraph &map,

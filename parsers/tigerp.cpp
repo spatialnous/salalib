@@ -11,7 +11,12 @@
 
 #include "../genlib/comm.hpp"
 
+#include <ctime>
+#include <cstddef>
 #include <fstream>
+#include <vector>
+#include <string>
+#include <utility>
 
 // at some point will need to extend to parsing record type 2 (chains) as well as record type 1
 // (node to node)

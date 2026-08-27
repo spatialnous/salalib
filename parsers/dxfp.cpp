@@ -7,7 +7,12 @@
 #include "../genlib/comm.hpp" // for communicator
 #include "../genlib/stringutils.hpp"
 
+#include <map>
+#include <cstddef>
+#include <istream>
+#include <cmath>
 #include <string>
+#include <utility>
 
 static int counter = 0;
 

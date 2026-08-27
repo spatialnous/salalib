@@ -7,7 +7,8 @@
 #include "genlib/containerutils.hpp"
 #include "genlib/readwritehelpers.hpp"
 
-#include <fstream>
+#include <istream>
+#include <ostream>
 #include <time.h>
 
 bool Connector::read(std::istream &stream) {

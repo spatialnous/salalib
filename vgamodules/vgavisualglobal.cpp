@@ -5,6 +5,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgavisualglobal.hpp"
+#include <vector>
+#include <string>
+#include <ctime>
+#include <cstddef>
+#include <optional>
+#include <cmath>
 
 std::vector<std::string> VGAVisualGlobal::getColumns(bool simpleVersion) const {
 

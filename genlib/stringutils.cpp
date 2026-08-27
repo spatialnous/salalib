@@ -6,10 +6,17 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <ctype.h>
-#include <memory>
+#include <istream>
+#include <ios>
+#include <ostream>
 #include <sstream>
+#include <vector>
+#include <string>
+#include <streambuf>
 
 namespace dXstring {
     std::vector<std::string> split(const std::string &s, char delim, bool skipEmptyTokens) {

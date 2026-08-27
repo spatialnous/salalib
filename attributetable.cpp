@@ -10,8 +10,19 @@
 #include "genlib/stringutils.hpp"
 
 #include <algorithm>
+#include <cstddef>
+#include <istream>
+#include <iterator>
+#include <memory>
+#include <map>
 #include <numeric>
+#include <ostream>
+#include <optional>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <stdexcept>
+#include <vector>
 
 const std::string &AttributeColumnImpl::getName() const { return m_name; }
 

@@ -7,6 +7,8 @@
 #include "axialstepdepth.hpp"
 
 #include "../genlib/pflipper.hpp"
+#include <cstddef>
+#include <vector>
 
 AnalysisResult AxialStepDepth::run(Communicator *, ShapeGraph &map, bool) {
 

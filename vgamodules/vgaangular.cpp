@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgaangular.hpp"
+#include <ctime>
+#include <cstddef>
+#include <string>
+#include <vector>
+#include <tuple>
 
 AnalysisResult VGAAngular::run(Communicator *comm) {
     auto &attributes = m_map.getAttributeTable();

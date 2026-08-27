@@ -13,7 +13,19 @@
 #include "genlib/readwritehelpers.hpp"
 #include "genlib/stringutils.hpp"
 
+#include <cstddef>
 #include <fstream>
+#include <type_traits>
+#include <functional>
+#include <string>
+#include <ios>
+#include <istream>
+#include <tuple>
+#include <vector>
+#include <utility>
+#include <ostream>
+#include <iosfwd>
+#include <optional>
 
 namespace {
     // old Depthmap display information, left here to allow reading

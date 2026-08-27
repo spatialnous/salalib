@@ -9,6 +9,11 @@
 #include "shapemap.hpp"
 
 #include "genlib/stringutils.hpp"
+#include <istream>
+#include <tuple>
+#include <vector>
+#include <utility>
+#include <ostream>
 
 bool ShapeMapGroupData::readInNameAndRegion(std::istream &stream) {
     name = dXstring::readString(stream);

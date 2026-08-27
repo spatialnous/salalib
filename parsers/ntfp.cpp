@@ -11,8 +11,15 @@
 #include "../genlib/containerutils.hpp"
 #include "../genlib/stringutils.hpp"
 
+#include <cstddef>
+#include <ctime>
+#include <algorithm>
 #include <fstream>
+#include <ios>
+#include <iterator>
 #include <sstream>
+#include <string>
+#include <vector>
 
 ///////////////////////////////////////////////////////////////////////////////
 

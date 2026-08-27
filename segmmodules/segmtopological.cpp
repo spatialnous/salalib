@@ -7,6 +7,9 @@
 #include "segmtopological.hpp"
 
 #include "segmhelpers.hpp"
+#include <ctime>
+#include <vector>
+#include <cstddef>
 
 AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool) {
 

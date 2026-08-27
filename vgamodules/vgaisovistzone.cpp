@@ -5,6 +5,12 @@
 #include "vgaisovistzone.hpp"
 
 #include "../salaprogram.hpp"
+#include <string>
+#include <set>
+#include <optional>
+#include <utility>
+#include <cstddef>
+#include <sstream>
 
 AnalysisResult VGAIsovistZone::run(Communicator *) {
 

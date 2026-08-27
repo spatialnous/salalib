@@ -8,6 +8,13 @@
 
 #include "genlib/containerutils.hpp"
 #include "genlib/readwritehelpers.hpp"
+#include <istream>
+#include <ostream>
+#include <cstdint>
+#include <set>
+#include <cstddef>
+#include <cstdlib>
+#include <vector>
 
 void Node::make(const PixelRef pix, PixelRefVector *bins, float *binFarDists, int qOctants) {
     m_pixel = pix;

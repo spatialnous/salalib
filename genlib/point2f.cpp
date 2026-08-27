@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "point2f.hpp"
+#include <cmath>
 
 bool Point2f::insegment(const Point2f &key, const Point2f &p2, const Point2f &p3,
                         double tolerance) {

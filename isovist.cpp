@@ -6,8 +6,11 @@
 #include "isovist.hpp"
 #include "tolerances.hpp"
 
+#include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <time.h>
+#include <utility>
 
 ///////////////////////////////////////////////////////////////////////
 

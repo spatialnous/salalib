@@ -7,6 +7,10 @@
 #include "segmmetricshortestpath.hpp"
 
 #include "segmhelpers.hpp"
+#include <cstddef>
+#include <vector>
+#include <cmath>
+#include <map>
 
 AnalysisResult SegmentMetricShortestPath::run(Communicator *) {
 

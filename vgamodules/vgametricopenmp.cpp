@@ -5,6 +5,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgametricopenmp.hpp"
+#include <ctime>
+#include <cstddef>
+#include <vector>
 
 #if defined(_OPENMP)
 #include <omp.h>

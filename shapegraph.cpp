@@ -12,9 +12,19 @@
 #include "genlib/containerutils.hpp"
 #include "genlib/readwritehelpers.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <float.h>
+#include <string>
+#include <ostream>
+#include <istream>
+#include <set>
+#include <iterator>
+#include <map>
 #include <time.h>
+#include <vector>
+#include <tuple>
+#include <utility>
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -7,6 +7,11 @@
 #include "vgaisovist.hpp"
 
 #include "../isovist.hpp"
+#include <ctime>
+#include <cstddef>
+#include <vector>
+#include <string>
+#include <set>
 
 AnalysisResult VGAIsovist::run(Communicator *comm) {
 

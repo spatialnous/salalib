@@ -17,9 +17,24 @@
 #include "genlib/pflipper.hpp"
 #include "genlib/stringutils.hpp"
 
+#include <algorithm>
 #include <cmath>
+#include <memory>
+#include <cstddef>
+#include <ctime>
+#include <ios>
+#include <map>
+#include <istream>
+#include <cstdint>
 #include <numeric>
+#include <string>
+#include <set>
+#include <ostream>
+#include <tuple>
+#include <optional>
 #include <unordered_set>
+#include <vector>
+#include <utility>
 
 /////////////////////////////////////////////////////////////////////////////////
 

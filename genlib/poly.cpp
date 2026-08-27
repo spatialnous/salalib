@@ -5,7 +5,6 @@
 
 #include "poly.hpp"
 
-#include <vector>
 
 namespace {
 

@@ -9,6 +9,16 @@
 #include "tolerances.hpp"
 
 #include "genlib/containerutils.hpp"
+#include <cstddef>
+#include <vector>
+#include <map>
+#include <utility>
+#include <cmath>
+#include <algorithm>
+#include <cstdint>
+#include <set>
+#include <iterator>
+#include <string>
 
 AxialVertex AxialPolygons::makeVertex(const AxialVertexKey &vertexkey, const Point2f &openspace) {
     auto vertPossIter =

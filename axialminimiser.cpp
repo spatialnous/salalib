@@ -6,6 +6,12 @@
 #include "axialminimiser.hpp"
 
 #include "tolerances.hpp"
+#include <cstddef>
+#include <map>
+#include <set>
+#include <vector>
+#include <cstdlib>
+#include <algorithm>
 
 static int compareValueTriplet(const void *p1, const void *p2) {
     auto vp1 = static_cast<const ValueTriplet *>(p1);

@@ -5,6 +5,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "axiallocal.hpp"
+#include <ctime>
+#include <cstddef>
+#include <vector>
 
 AnalysisResult AxialLocal::run(Communicator *comm, ShapeGraph &map, bool) {
     time_t atime = 0;

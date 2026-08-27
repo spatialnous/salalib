@@ -6,6 +6,8 @@
 
 #include "pafmath.hpp"
 
+#include <cstdint>
+#include <cmath>
 #include <inttypes.h>
 
 namespace {

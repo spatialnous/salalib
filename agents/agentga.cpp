@@ -7,6 +7,9 @@
 #include "agentga.hpp"
 
 #include "../genlib/pafmath.hpp"
+
+#include <cstdlib>
+
 namespace {
     static int rankselect(int popsize) {
         auto num = static_cast<int>(pafmath::prandom() * popsize * (popsize + 1) * 0.5);
@@ -44,4 +47,6 @@ AgentProgram *ProgramPopulation::makeChild() {
 }
 
 // note: this is correct -- do not use &m_population!
-void ProgramPopulation::sort() { qsort(population, POPSIZE, sizeof(AgentProgram), progcompare); }
+void ProgramPopulation::sort() {
+    std::qsort(population, POPSIZE, sizeof(AgentProgram), progcompare);
+}

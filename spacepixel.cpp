@@ -11,9 +11,16 @@
 #include "genlib/readwritehelpers.hpp"
 #include "genlib/stringutils.hpp"
 
+#include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <fstream>
+#include <iterator>
+#include <istream>
 #include <set>
+#include <string>
+#include <vector>
+#include <utility>
 
 SpacePixel::SpacePixel(const std::string &name)
     : PixelBase(name), m_lock(), m_newline(false), m_show(true), m_edit(false), m_color(),

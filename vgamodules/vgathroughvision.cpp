@@ -7,6 +7,11 @@
 #include "vgathroughvision.hpp"
 
 #include "../agents/agentanalysis.hpp"
+#include <ctime>
+#include <cstddef>
+#include <vector>
+#include <string>
+#include <utility>
 
 // This is a slow algorithm, but should give the correct answer
 // for demonstrative purposes

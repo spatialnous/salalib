@@ -26,9 +26,16 @@
 #include "ngraph.hpp"
 #include "shapemap.hpp"
 
+#include <cctype>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
+#include <istream>
+#include <set>
+#include <iterator>
 #include <time.h>
+#include <vector>
+#include <utility>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 

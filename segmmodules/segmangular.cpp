@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "segmangular.hpp"
+#include <ctime>
+#include <vector>
+#include <cstddef>
+#include <string>
+#include <utility>
 
 AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
     AnalysisResult result;

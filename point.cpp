@@ -5,6 +5,9 @@
 #include "point.hpp"
 
 #include "ngraph.hpp"
+#include <istream>
+#include <memory>
+#include <ostream>
 
 float Point::getBinDistance(int i) { return m_node->bindistance(i); }
 

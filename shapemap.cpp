@@ -17,12 +17,28 @@
 #include "genlib/readwritehelpers.hpp"
 #include "genlib/stringutils.hpp"
 
+#include <algorithm>
 #include <cmath>
+#include <memory>
+#include <map>
+#include <functional>
+#include <iterator>
+#include <cstdint>
+#include <istream>
+#include <ios>
+#include <fstream>
 #include <numeric>
+#include <set>
+#include <optional>
+#include <ostream>
 #include <stdexcept>
+#include <string>
 #include <time.h>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
+#include <utility>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

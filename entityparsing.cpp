@@ -8,8 +8,12 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <exception>
+#include <istream>
+#include <ostream>
 #include <sstream>
+#include <vector>
+#include <string>
+#include <utility>
 
 namespace EntityParsing {
 

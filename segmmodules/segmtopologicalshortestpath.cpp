@@ -7,6 +7,9 @@
 #include "segmtopologicalshortestpath.hpp"
 
 #include "segmhelpers.hpp"
+#include <cstddef>
+#include <vector>
+#include <map>
 
 AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
 

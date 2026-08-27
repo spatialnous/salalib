@@ -8,7 +8,17 @@
 #include "parsers/ntfp.hpp"
 #include "parsers/tigerp.hpp"
 
+#include <istream>
+#include <cstddef>
+#include <ctime>
+#include <ios>
+#include <map>
+#include <ostream>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+#include <stdexcept>
 
 namespace sala {
 

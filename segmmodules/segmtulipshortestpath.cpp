@@ -5,6 +5,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "segmtulipshortestpath.hpp"
+#include <cstddef>
+#include <vector>
+#include <iterator>
+#include <map>
+#include <cmath>
+#include <cstdint>
 
 // revised to use tulip bins for faster analysis of large spaces
 

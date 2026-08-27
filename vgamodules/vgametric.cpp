@@ -5,6 +5,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgametric.hpp"
+#include <ctime>
+#include <cstddef>
+#include <string>
+#include <vector>
 
 AnalysisResult VGAMetric::run(Communicator *comm) {
 

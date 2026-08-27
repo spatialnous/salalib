@@ -5,6 +5,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgavisuallocaladjmatrix.hpp"
+#include <ctime>
+#include <cstddef>
+#include <vector>
+#include <map>
+#include <utility>
+#include <set>
 
 #if defined(_OPENMP)
 #include <omp.h>

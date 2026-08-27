@@ -5,6 +5,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgavisuallocal.hpp"
+#include <ctime>
+#include <cstddef>
+#include <algorithm>
 
 AnalysisResult VGAVisualLocal::run(Communicator *comm) {
     time_t atime = 0;

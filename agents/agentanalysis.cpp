@@ -9,6 +9,13 @@
 #include "agent.hpp"
 
 #include "../pushvalues.hpp"
+#include <vector>
+#include <cstddef>
+#include <iterator>
+#include <ctime>
+#include <optional>
+#include <algorithm>
+#include <string>
 
 void AgentAnalysis::init(std::vector<Agent> &agents, std::vector<PixelRef> &releaseLocations,
                          size_t agent, int trailNum) {

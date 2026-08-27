@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,6 +22,30 @@
 #include <string>
 #include <vector>
 #include <utility>
+
+namespace {
+    // The grid dimensions come from the region's aspect ratio. A region with no
+    // width or no height makes one ratio infinite, and casting that to size_t is
+    // undefined behaviour: it saturates to SIZE_MAX rather than clamping, so a
+    // later "== 0" check never fires. Each dimension is handled before dividing.
+    genlib::RowMatrix<std::vector<int>> makePixelLines(const Region4f &region, size_t count,
+                                                       double density) {
+        size_t rows = 1, cols = 1;
+        if (region.height() != 0) {
+            double whRatio = region.width() / region.height();
+            rows = static_cast<size_t>(sqrt(static_cast<double>(count) * whRatio * density));
+            if (rows == 0)
+                rows = 1;
+        }
+        if (region.width() != 0) {
+            double hwRatio = region.height() / region.width();
+            cols = static_cast<size_t>(sqrt(static_cast<double>(count) * hwRatio * density));
+            if (cols == 0)
+                cols = 1;
+        }
+        return genlib::RowMatrix<std::vector<int>>(rows, cols);
+    }
+}
 
 SpacePixel::SpacePixel(const std::string &name)
     : PixelBase(name), m_lock(), m_newline(false), m_show(true), m_edit(false), m_color(),
@@ -110,47 +135,19 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
     // work out extents...
     m_region = Region4f(min, max);
 
-    if (m_region.height() == 0) {
-        m_rows = 1;
-    } else {
-        double whRatio = m_region.width() / m_region.height();
-        m_rows = static_cast<size_t>(sqrt(static_cast<double>(size) * whRatio * density));
-        if (m_rows < 1)
-            m_rows = 1;
-    }
-
-    if (m_region.width() == 0) {
-        m_cols = 1;
-    } else {
-        double hwRatio = m_region.height() / m_region.width();
-        m_cols = static_cast<size_t>(sqrt(static_cast<double>(size) * hwRatio * density));
-        if (m_cols < 1)
-            m_cols = 1;
-    }
-    // could work these two out on the fly, but it's easier to have them stored:
-    // m_pixel_height = m_region.height() / static_cast<double>(m_rows);
-    // m_pixel_width  = m_region.width()  / static_cast<double>(m_cols);
-
-    m_pixelLines = genlib::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
-                                                       static_cast<size_t>(m_cols));
+    m_pixelLines = makePixelLines(
+        m_region, static_cast<size_t>(size), density);
+    m_rows = m_pixelLines.rows();
+    m_cols = m_pixelLines.columns();
 }
 
 void SpacePixel::reinitLines(double density) {
     m_displayLines.clear();
 
-    double whRatio = m_region.width() / m_region.height();
-    double hwRatio = m_region.height() / m_region.width();
-
-    m_rows = static_cast<size_t>(sqrt(static_cast<double>(m_lines.size()) * whRatio * density));
-    m_cols = static_cast<size_t>(sqrt(static_cast<double>(m_lines.size()) * hwRatio * density));
-
-    if (m_rows < 1)
-        m_rows = 1;
-    if (m_cols < 1)
-        m_cols = 1;
-
-    m_pixelLines = genlib::RowMatrix<std::vector<int>>(static_cast<size_t>(m_rows),
-                                                       static_cast<size_t>(m_cols));
+    m_pixelLines = makePixelLines(
+        m_region, static_cast<size_t>(m_lines.size()), density);
+    m_rows = m_pixelLines.rows();
+    m_cols = m_pixelLines.columns();
 
     // now re-add the lines:
     for (const auto &line : m_lines) {

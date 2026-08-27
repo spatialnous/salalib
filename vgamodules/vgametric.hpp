@@ -22,6 +22,7 @@ class VGAMetric : public IVGAMetric {
   public:
     struct Column {
         inline static const std::string                                                //
+            METRIC_MEAN_PENN_DISTANCE = "Metric Mean Penn Distance",                   //
             METRIC_MEAN_SHORTEST_PATH_ANGLE = "Metric Mean Shortest-Path Angle",       //
             METRIC_MEAN_SHORTEST_PATH_DISTANCE = "Metric Mean Shortest-Path Distance", //
             METRIC_MEAN_STRAIGHT_LINE_DISTANCE = "Metric Mean Straight-Line Distance", //

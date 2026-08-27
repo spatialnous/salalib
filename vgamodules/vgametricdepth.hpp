@@ -17,6 +17,7 @@ class VGAMetricDepth : public IVGAMetric {
   public:
     struct Column {
         inline static const std::string                                            //
+            METRIC_STEP_PENN_DISTANCE = "Metric Step Penn Distance",               //
             METRIC_STEP_SHORTEST_PATH_ANGLE = "Metric Step Shortest-Path Angle",   //
             METRIC_STEP_SHORTEST_PATH_LENGTH = "Metric Step Shortest-Path Length", //
             METRIC_STRAIGHT_LINE_DISTANCE = "Metric Straight-Line Distance";       //

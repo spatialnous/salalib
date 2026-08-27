@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgametric.hpp"
+#include <algorithm>
 #include <ctime>
 #include <cstddef>
 #include <string>
@@ -21,6 +22,8 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
                               static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
+    std::string pennColText = getColumnWithRadius(Column::METRIC_MEAN_PENN_DISTANCE,    //
+                                                  m_radius, m_map.getRegion());
     std::string mspaColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE,    //
                                                   m_radius, m_map.getRegion());               //
     std::string msplColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_DISTANCE, //
@@ -30,9 +33,10 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
     std::string countColText = getColumnWithRadius(Column::METRIC_NODE_COUNT,                 //
                                                    m_radius, m_map.getRegion());              //
 
-    AnalysisResult result({mspaColText, msplColText, distColText, countColText},
+    AnalysisResult result({pennColText, mspaColText, msplColText, distColText, countColText},
                           attributes.getNumRows());
 
+    auto pennCol = result.getColumnIndex(pennColText);
     auto mspaCol = result.getColumnIndex(mspaColText);
     auto msplCol = result.getColumnIndex(msplColText);
     auto distCol = result.getColumnIndex(distColText);
@@ -57,6 +61,13 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
 
         auto [totalDepth, totalAngle, euclidDepth, totalNodes] =
             traverseSum(analysisData, graph, refs, m_radius, ad0);
+
+        // Legacy Mean Penn Distance formula. The root contributes zero to both
+        // totals and is counted in totalNodes, for compatibility with historic output.
+        result.setValue(ad0.attributeDataRow, pennCol,
+                        static_cast<float>(
+                            std::max(0.0, static_cast<double>(totalDepth - euclidDepth)) /
+                                static_cast<double>(totalNodes)));
 
         result.setValue(ad0.attributeDataRow, mspaCol, //
                         static_cast<float>(static_cast<double>(totalAngle) /

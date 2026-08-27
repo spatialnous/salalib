@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgametricdepth.hpp"
+#include <algorithm>
 #include <cstddef>
 #include <optional>
 #include <vector>
@@ -14,7 +15,8 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
 
     auto &attributes = m_map.getAttributeTable();
 
-    AnalysisResult result({Column::METRIC_STEP_SHORTEST_PATH_ANGLE,
+    AnalysisResult result({Column::METRIC_STEP_PENN_DISTANCE,
+                           Column::METRIC_STEP_SHORTEST_PATH_ANGLE,
                            Column::METRIC_STEP_SHORTEST_PATH_LENGTH,
                            Column::METRIC_STRAIGHT_LINE_DISTANCE},
                           static_cast<size_t>(m_map.getFilledPointCount()));
@@ -22,9 +24,11 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
     // n.b., insert columns sets values to -1 if the column already exists
     auto pathAngleColIdx = result.getColumnIndex(Column::METRIC_STEP_SHORTEST_PATH_ANGLE);
     auto pathLengthColIdx = result.getColumnIndex(Column::METRIC_STEP_SHORTEST_PATH_LENGTH);
+    std::optional<size_t> pennDistColIdx = std::nullopt;
     std::optional<size_t> distColIdx = std::nullopt;
     if (m_originRefs.size() == 1) {
         // Note: Euclidean distance is currently only calculated from a single point
+        pennDistColIdx = result.getColumnIndex(Column::METRIC_STEP_PENN_DISTANCE);
         distColIdx = result.getColumnIndex(Column::METRIC_STRAIGHT_LINE_DISTANCE);
     }
 
@@ -44,8 +48,11 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
     for (size_t i = 0; i < analysisData.size(); i++) {
         result.setValue(i, pathAngleColIdx, pathAngleCol.getValue(i));
         result.setValue(i, pathLengthColIdx, pathLengthCol.getValue(i));
-        if (distColIdx.has_value()) {
+        if (m_originRefs.size() == 1) {
             result.setValue(i, *distColIdx, euclidDistCol.getValue(i));
+            result.setValue(i, *pennDistColIdx,
+                            std::max(0.0f, pathLengthCol.getValue(i) -
+                                euclidDistCol.getValue(i)));
         }
     }
     result.columnStats = {pathAngleCol.getStats(), pathLengthCol.getStats(),

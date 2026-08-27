@@ -14,10 +14,6 @@
 #include <string>
 #include <utility>
 
-static int counter = 0;
-
-///////////////////////////////////////////////////////////////////////////////
-
 bool operator>(const DxfTableRow &a, const DxfTableRow &b) // for hash table
 {
     return a.m_name > b.m_name;
@@ -145,7 +141,6 @@ std::istream &DxfParser::open(std::istream &stream) {
             break;
         }
         if (m_communicator) {
-            counter++;
             if (qtimer(m_time, 500)) {
                 if (m_communicator->IsCancelled()) {
                     throw Communicator::CancelledException();
@@ -357,7 +352,6 @@ void DxfParser::openBlocks(std::istream &stream) {
             break;
         }
         if (m_communicator) {
-            counter++;
             if (qtimer(m_time, 500)) {
                 if (m_communicator->IsCancelled()) {
                     throw Communicator::CancelledException();
@@ -583,7 +577,6 @@ void DxfParser::openEntities(std::istream &stream, DxfToken &token, DxfBlock *bl
             break;
         }
         if (m_communicator) {
-            counter++;
             if (qtimer(m_time, 500)) {
                 if (m_communicator->IsCancelled()) {
                     throw Communicator::CancelledException();

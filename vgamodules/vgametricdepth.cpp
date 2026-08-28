@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
-// SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2011-2026 Tasos Varoudis
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -37,12 +37,21 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
     const auto graph = getGraph(analysisData, refs, true);
 
     bool keepStats = true;
-    AnalysisColumn pathAngleCol, pathLengthCol, euclidDistCol;
+    AnalysisColumn pathAngleCol, pathLengthCol, euclidDistCol, pennDistCol;
     {
-        auto traversalResult = traverse(analysisData, graph, refs, -1, m_originRefs, keepStats);
+        auto traversalResult = traverse(
+            analysisData, graph, refs, -1, m_originRefs, keepStats);
         pathAngleCol = std::move(traversalResult[0]);
         pathLengthCol = std::move(traversalResult[1]);
         euclidDistCol = std::move(traversalResult[2]);
+        if (m_originRefs.size() == 1) {
+            pennDistCol = AnalysisColumn(analysisData.size(), 0);
+            for (size_t i = 0; i < analysisData.size(); i++) {
+                pennDistCol.setValue(
+                    i, std::max(0.0f, pathLengthCol.getValue(i) -
+                        euclidDistCol.getValue(i)), true);
+            }
+        }
     }
 
     for (size_t i = 0; i < analysisData.size(); i++) {
@@ -50,13 +59,11 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
         result.setValue(i, pathLengthColIdx, pathLengthCol.getValue(i));
         if (m_originRefs.size() == 1) {
             result.setValue(i, *distColIdx, euclidDistCol.getValue(i));
-            result.setValue(i, *pennDistColIdx,
-                            std::max(0.0f, pathLengthCol.getValue(i) -
-                                euclidDistCol.getValue(i)));
+            result.setValue(i, *pennDistColIdx, pennDistCol.getValue(i));
         }
     }
-    result.columnStats = {pathAngleCol.getStats(), pathLengthCol.getStats(),
-                          euclidDistCol.getStats()};
+    result.columnStats = {pennDistCol.getStats(), pathAngleCol.getStats(),
+                          pathLengthCol.getStats(), euclidDistCol.getStats()};
 
     result.completed = true;
 

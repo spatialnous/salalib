@@ -320,7 +320,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         pflipper<std::vector<std::pair<int, int>>> foundlist;
         foundlist.a().push_back(std::pair<int, int>(static_cast<int>(i), -1));
         covered[i] = true;
-        int totalDepth = 0, depth = 1, nodeCount = 1, pos = -1,
+        int totalDepth = 0, depth = 1, maxDepth = 0, nodeCount = 1, pos = -1,
             previous = -1; // node_count includes this 1
         double weight = 0.0, rootweight = 0.0, totalWeight = 0.0, wTotalDepth = 0.0;
         if (m_weightedMeasureCol.has_value()) {
@@ -377,6 +377,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                             }
                         }
                         totalDepth += depth;
+                        maxDepth = depth;
                         nodeCount++;
                         depthcounts.back() += 1;
                     }
@@ -439,7 +440,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                         if (!simpleVersion) {
                             // alan's palm-tree normalisation: palmtree
                             double dmin = nodeCount - 1;
-                            double dmax = pafmath::palmtree(nodeCount, depth - 1);
+                            double dmax = pafmath::palmtree(nodeCount, maxDepth);
                             if (dmax != dmin) {
                                 row.setValue(
                                     pennNormCol[r],

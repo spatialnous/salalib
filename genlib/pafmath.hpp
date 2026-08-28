@@ -63,13 +63,15 @@ namespace pafmath {
     }
 
     // Penn palmtree
-
+    // Maximum total depth for a rooted graph with n nodes and maximum
+    // shortest-path depth r. A radius above n - 1 saturates at the
+    // path-graph maximum.
     inline double palmtree(double n, double r) {
-        if (n > r) {
-            return r * (n - 0.5 * (r + 1));
-        } else {
-            return 0.5 * n * (n - 1);
+        if (n <= 1.0 || r <= 0.0) {
+            return 0.0;
         }
+        const double radius = r < n - 1.0 ? r : n - 1.0;
+        return radius * (n - 0.5 * (radius + 1.0));
     }
 
     double poisson(int x, double lambda);

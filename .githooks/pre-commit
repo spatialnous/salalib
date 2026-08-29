@@ -14,3 +14,22 @@ do
     clang-format --dry-run --Werror -style=file:.clang-format $FILE
 done
 echo "clang-format satisfied"
+
+echo "Running clang-tidy (include-cleaner)..."
+CPP_FILES=$(git diff --cached --name-only --diff-filter=d | grep -E '\.cpp$' || true)
+if [ -n "$CPP_FILES" ]; then
+    TIDY_OUTPUT=$(clang-tidy --quiet \
+        -checks='-*,misc-include-cleaner' \
+        -config='{CheckOptions: [{key: misc-include-cleaner.IgnoreHeaders, value: ".*[.]hpp;.*[.]h"}]}' \
+        $CPP_FILES -- -std=c++17 2>/dev/null || true)
+
+    ISSUE_COUNT=$(printf '%s\n' "$TIDY_OUTPUT" | grep -c 'no header providing' || true)
+
+    if [ "$ISSUE_COUNT" -gt 0 ]; then
+        echo "clang-tidy found $ISSUE_COUNT missing-include issue(s):"
+        printf '%s\n' "$TIDY_OUTPUT" | grep 'no header providing'
+        echo "Run the clang-tidy --fix command manually, review, then re-stage."
+        exit 1
+    fi
+fi
+echo "clang-tidy satisfied"

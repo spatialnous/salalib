@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <fstream>
+#include <ios>
 #include <ostream>
 #include <string>
 
@@ -81,7 +82,7 @@ AgentProgram crossover(const AgentProgram &progA, const AgentProgram &progB) {
 // TODO: Expose this functionality to the UIs
 void AgentProgram::save(const std::string &filename) {
     // standard ascii:
-    std::ofstream file(filename.c_str());
+    std::ofstream file(filename.c_str(), std::ios::binary);
 
     file << "Destination selection: ";
     switch (selType) {

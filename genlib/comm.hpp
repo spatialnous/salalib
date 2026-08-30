@@ -115,8 +115,11 @@ class Communicator {
         }
         return 0;
     }
-    void SetOutfile(const char *filename) { m_outfile = new std::ofstream(filename); }
-    //
+
+    void SetOutfile(const char *filename) {
+        m_outfile = new std::ofstream(filename, std::ios::binary);
+    }
+
     bool IsCancelled() const { return m_cancelled; }
     void Cancel() { m_cancelled = true; }
 

@@ -5,11 +5,11 @@
 
 target_sources(salalib
     PRIVATE
-        axialintegration.cpp
-        axiallocal.cpp
-        axialstepdepth.cpp
-    PUBLIC
         axialintegration.hpp
         axiallocal.hpp
         axialstepdepth.hpp
-    )
+
+        axialintegration.cpp
+        axiallocal.cpp
+        axialstepdepth.cpp
+)

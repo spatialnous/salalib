@@ -5,13 +5,13 @@
 
 target_sources(salalib
     PRIVATE
-        ntfp.cpp
-        dxfp.cpp
-        mapinfodata.cpp
-        tigerp.cpp
-    PUBLIC
         dxfp.hpp
         ntfp.hpp
         mapinfodata.hpp
         tigerp.hpp
-    )
+
+        ntfp.cpp
+        dxfp.cpp
+        mapinfodata.cpp
+        tigerp.cpp
+)

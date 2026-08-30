@@ -55,16 +55,6 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
     endif()
 endif()
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-    # Disable floating-point expression contraction to get the
-    # same results on x86 and arm64
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:strict")
-endif()
-
 set(salalib_HDRS
     pixelbase.hpp
     alllinemap.hpp
@@ -169,6 +159,18 @@ add_library(${salalib} STATIC ${salalib_HDRS} ${salalib_SRCS}
     ${vgamodules_SRCS} ${axialmodules_SRCS} ${segmmodules_SRCS} ${parsers_SRCS})
 
 target_compile_options(${salalib} PRIVATE ${COMPILE_WARNINGS})
+
+# Disable floating-point expression contraction to get the
+# same results on x86 and arm64
+if (MSVC)   # cl.exe, clang-cl, Intel targeting the MSVC ABI
+    target_compile_options(${salalib} PUBLIC /fp:strict)
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
+    target_compile_options(${salalib} PUBLIC -ffp-contract=off)
+else()
+    message(WARNING
+        "salalib: no floating-point contraction control known for "
+        "'${CMAKE_CXX_COMPILER_ID}'. Results may not match other platforms.")
+endif()
 
 if (NOT DISABLE_OPENMP)
     find_package(OpenMP)

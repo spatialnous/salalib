@@ -5,18 +5,6 @@
 
 target_sources(salalib
     PRIVATE
-        segmangular.cpp
-        segmmetric.cpp
-        segmtopological.cpp
-        segmtulip.cpp
-        segmtulipleafchoice.cpp
-        segmtopologicalpd.cpp
-        segmmetricpd.cpp
-        segmtulipdepth.cpp
-        segmmetricshortestpath.cpp
-        segmtopologicalshortestpath.cpp
-        segmtulipshortestpath.cpp
-    PUBLIC
         segmangular.hpp
         segmmetric.hpp
         segmtopological.hpp
@@ -29,4 +17,16 @@ target_sources(salalib
         segmmetricshortestpath.hpp
         segmtopologicalshortestpath.hpp
         segmtulipshortestpath.hpp
-    )
+
+        segmangular.cpp
+        segmmetric.cpp
+        segmtopological.cpp
+        segmtulip.cpp
+        segmtulipleafchoice.cpp
+        segmtopologicalpd.cpp
+        segmmetricpd.cpp
+        segmtulipdepth.cpp
+        segmmetricshortestpath.cpp
+        segmtopologicalshortestpath.cpp
+        segmtulipshortestpath.cpp
+)

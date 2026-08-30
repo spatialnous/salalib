@@ -24,7 +24,7 @@ target_sources(salalib
         simplematrix.hpp
         stringutils.hpp
         xmlparse.hpp
-    PUBLIC
+
         bsptree.cpp
         point2f.cpp
         edgeu.cpp

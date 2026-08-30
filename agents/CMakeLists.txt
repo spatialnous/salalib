@@ -9,7 +9,7 @@ target_sources(salalib
         agentprogram.hpp
         agentga.hpp
         agentanalysis.hpp
-    PRIVATE
+
         agent.cpp
         agentprogram.cpp
         agentga.cpp

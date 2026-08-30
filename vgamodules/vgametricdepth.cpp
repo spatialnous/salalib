@@ -8,18 +8,17 @@
 #include <algorithm>
 #include <cstddef>
 #include <optional>
-#include <vector>
 #include <utility>
+#include <vector>
 
 AnalysisResult VGAMetricDepth::run(Communicator *) {
 
     auto &attributes = m_map.getAttributeTable();
 
-    AnalysisResult result({Column::METRIC_STEP_PENN_DISTANCE,
-                           Column::METRIC_STEP_SHORTEST_PATH_ANGLE,
-                           Column::METRIC_STEP_SHORTEST_PATH_LENGTH,
-                           Column::METRIC_STRAIGHT_LINE_DISTANCE},
-                          static_cast<size_t>(m_map.getFilledPointCount()));
+    AnalysisResult result(
+        {Column::METRIC_STEP_PENN_DISTANCE, Column::METRIC_STEP_SHORTEST_PATH_ANGLE,
+         Column::METRIC_STEP_SHORTEST_PATH_LENGTH, Column::METRIC_STRAIGHT_LINE_DISTANCE},
+        static_cast<size_t>(m_map.getFilledPointCount()));
 
     // n.b., insert columns sets values to -1 if the column already exists
     auto pathAngleColIdx = result.getColumnIndex(Column::METRIC_STEP_SHORTEST_PATH_ANGLE);
@@ -39,8 +38,7 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
     bool keepStats = true;
     AnalysisColumn pathAngleCol, pathLengthCol, euclidDistCol, pennDistCol;
     {
-        auto traversalResult = traverse(
-            analysisData, graph, refs, -1, m_originRefs, keepStats);
+        auto traversalResult = traverse(analysisData, graph, refs, -1, m_originRefs, keepStats);
         pathAngleCol = std::move(traversalResult[0]);
         pathLengthCol = std::move(traversalResult[1]);
         euclidDistCol = std::move(traversalResult[2]);
@@ -48,8 +46,7 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
             pennDistCol = AnalysisColumn(analysisData.size(), 0);
             for (size_t i = 0; i < analysisData.size(); i++) {
                 pennDistCol.setValue(
-                    i, std::max(0.0f, pathLengthCol.getValue(i) -
-                        euclidDistCol.getValue(i)), true);
+                    i, std::max(0.0f, pathLengthCol.getValue(i) - euclidDistCol.getValue(i)), true);
             }
         }
     }
@@ -62,8 +59,8 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
             result.setValue(i, *pennDistColIdx, pennDistCol.getValue(i));
         }
     }
-    result.columnStats = {pennDistCol.getStats(), pathAngleCol.getStats(),
-                          pathLengthCol.getStats(), euclidDistCol.getStats()};
+    result.columnStats = {pennDistCol.getStats(), pathAngleCol.getStats(), pathLengthCol.getStats(),
+                          euclidDistCol.getStats()};
 
     result.completed = true;
 

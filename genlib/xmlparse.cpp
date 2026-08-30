@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "xmlparse.hpp"
-#include <fstream>
-#include <string>
+
 #include <cctype>
-#include <sstream>
-#include <ostream>
-#include <map>
 #include <cstddef>
+#include <fstream>
+#include <map>
+#include <ostream>
+#include <sstream>
+#include <string>
 
 enum {
     STEP_START,

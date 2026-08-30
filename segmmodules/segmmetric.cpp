@@ -7,10 +7,10 @@
 #include "segmmetric.hpp"
 
 #include "segmhelpers.hpp"
-#include <ctime>
-#include <cstddef>
-#include <vector>
 #include <cmath>
+#include <cstddef>
+#include <ctime>
+#include <vector>
 
 AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
 

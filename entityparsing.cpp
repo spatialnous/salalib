@@ -11,9 +11,9 @@
 #include <istream>
 #include <ostream>
 #include <sstream>
-#include <vector>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace EntityParsing {
 

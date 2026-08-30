@@ -7,8 +7,8 @@
 #include "segmtopologicalpd.hpp"
 
 #include "segmhelpers.hpp"
-#include <vector>
 #include <cstddef>
+#include <vector>
 
 AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) {
 

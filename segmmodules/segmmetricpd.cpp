@@ -7,9 +7,9 @@
 #include "segmmetricpd.hpp"
 
 #include "segmhelpers.hpp"
-#include <vector>
-#include <cstddef>
 #include <cmath>
+#include <cstddef>
+#include <vector>
 
 AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
 

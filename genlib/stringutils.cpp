@@ -10,13 +10,13 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctype.h>
-#include <istream>
 #include <ios>
+#include <istream>
 #include <ostream>
 #include <sstream>
-#include <vector>
-#include <string>
 #include <streambuf>
+#include <string>
+#include <vector>
 
 namespace dXstring {
     std::vector<std::string> split(const std::string &s, char delim, bool skipEmptyTokens) {

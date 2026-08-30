@@ -6,12 +6,12 @@
 #include "tidylines.hpp"
 
 #include "tolerances.hpp"
-#include <vector>
 #include <algorithm>
-#include <cstddef>
 #include <cmath>
+#include <cstddef>
 #include <map>
 #include <utility>
+#include <vector>
 
 // helper -- a little class to tidy up a set of lines
 

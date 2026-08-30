@@ -15,17 +15,17 @@
 
 #include <cstddef>
 #include <fstream>
-#include <type_traits>
 #include <functional>
-#include <string>
 #include <ios>
-#include <istream>
-#include <tuple>
-#include <vector>
-#include <utility>
-#include <ostream>
 #include <iosfwd>
+#include <istream>
 #include <optional>
+#include <ostream>
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace {
     // old Depthmap display information, left here to allow reading

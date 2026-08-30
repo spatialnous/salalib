@@ -13,15 +13,15 @@
 #include <cstddef>
 #include <istream>
 #include <iterator>
-#include <memory>
 #include <map>
+#include <memory>
 #include <numeric>
-#include <ostream>
 #include <optional>
+#include <ostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <utility>
-#include <stdexcept>
 #include <vector>
 
 const std::string &AttributeColumnImpl::getName() const { return m_name; }

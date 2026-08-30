@@ -7,14 +7,14 @@
 #include "axialintegration.hpp"
 
 #include "../genlib/pflipper.hpp"
-#include <vector>
-#include <string>
+#include <cmath>
+#include <cstddef>
+#include <ctime>
 #include <optional>
 #include <set>
-#include <ctime>
-#include <cstddef>
+#include <string>
 #include <utility>
-#include <cmath>
+#include <vector>
 
 std::vector<std::string> AxialIntegration::getRequiredColumns(std::vector<int> radii,
                                                               std::string weightingColName,

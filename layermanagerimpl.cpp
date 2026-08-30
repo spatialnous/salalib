@@ -6,12 +6,12 @@
 
 #include "genlib/stringutils.hpp"
 #include <cstddef>
-#include <string>
-#include <utility>
-#include <stdexcept>
 #include <cstdint>
 #include <istream>
 #include <ostream>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 LayerManagerImpl::LayerManagerImpl() : m_visibleLayers(1), m_layers(), m_layerLookup() {
     m_layers.push_back("Everything");

@@ -6,8 +6,8 @@
 
 #include "vgametric.hpp"
 #include <algorithm>
-#include <ctime>
 #include <cstddef>
+#include <ctime>
 #include <string>
 #include <vector>
 
@@ -22,7 +22,7 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
                               static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
-    std::string pennColText = getColumnWithRadius(Column::METRIC_MEAN_PENN_DISTANCE,    //
+    std::string pennColText = getColumnWithRadius(Column::METRIC_MEAN_PENN_DISTANCE, //
                                                   m_radius, m_map.getRegion());
     std::string mspaColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE,    //
                                                   m_radius, m_map.getRegion());               //
@@ -64,10 +64,10 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
 
         // Legacy Mean Penn Distance formula. The root contributes zero to both
         // totals and is counted in totalNodes, for compatibility with historic output.
-        result.setValue(ad0.attributeDataRow, pennCol,
-                        static_cast<float>(
-                            std::max(0.0, static_cast<double>(totalDepth - euclidDepth)) /
-                                static_cast<double>(totalNodes)));
+        result.setValue(
+            ad0.attributeDataRow, pennCol,
+            static_cast<float>(std::max(0.0, static_cast<double>(totalDepth - euclidDepth)) /
+                               static_cast<double>(totalNodes)));
 
         result.setValue(ad0.attributeDataRow, mspaCol, //
                         static_cast<float>(static_cast<double>(totalAngle) /

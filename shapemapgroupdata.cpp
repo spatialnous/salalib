@@ -10,10 +10,10 @@
 
 #include "genlib/stringutils.hpp"
 #include <istream>
-#include <tuple>
-#include <vector>
-#include <utility>
 #include <ostream>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 bool ShapeMapGroupData::readInNameAndRegion(std::istream &stream) {
     name = dXstring::readString(stream);

@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "attributetableindex.hpp"
-#include <vector>
+#include <algorithm>
 #include <cstddef>
 #include <stdexcept>
-#include <algorithm>
 #include <utility>
+#include <vector>
 
 std::vector<ConstAttributeIndexItem> makeAttributeIndex(const AttributeTable &table, int colIndex) {
     std::vector<ConstAttributeIndexItem> index;

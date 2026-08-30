@@ -7,10 +7,10 @@
 #include "salashape.hpp"
 
 #include "genlib/readwritehelpers.hpp"
+#include <cmath>
+#include <cstddef>
 #include <istream>
 #include <ostream>
-#include <cstddef>
-#include <cmath>
 #include <vector>
 
 bool SalaShape::read(std::istream &stream) {

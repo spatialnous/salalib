@@ -12,16 +12,16 @@
 #include "genlib/exceptions.hpp"
 #include "genlib/stringutils.hpp"
 
-#include <memory>
+#include <algorithm>
+#include <cstddef>
 #include <functional>
 #include <map>
-#include <cstddef>
-#include <algorithm>
+#include <memory>
 #include <numeric>
-#include <string>
-#include <vector>
-#include <utility>
 #include <optional>
+#include <string>
+#include <utility>
+#include <vector>
 
 // convert line layers to an axial map
 

@@ -16,12 +16,12 @@
 #include <cmath>
 #include <cstddef>
 #include <fstream>
-#include <iterator>
 #include <istream>
+#include <iterator>
 #include <set>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace {
     // The grid dimensions come from the region's aspect ratio. A region with no
@@ -45,7 +45,7 @@ namespace {
         }
         return genlib::RowMatrix<std::vector<int>>(rows, cols);
     }
-}
+} // namespace
 
 SpacePixel::SpacePixel(const std::string &name)
     : PixelBase(name), m_lock(), m_newline(false), m_show(true), m_edit(false), m_color(),
@@ -135,8 +135,7 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
     // work out extents...
     m_region = Region4f(min, max);
 
-    m_pixelLines = makePixelLines(
-        m_region, static_cast<size_t>(size), density);
+    m_pixelLines = makePixelLines(m_region, static_cast<size_t>(size), density);
     m_rows = m_pixelLines.rows();
     m_cols = m_pixelLines.columns();
 }
@@ -144,8 +143,7 @@ void SpacePixel::initLines(int size, const Point2f &min, const Point2f &max, dou
 void SpacePixel::reinitLines(double density) {
     m_displayLines.clear();
 
-    m_pixelLines = makePixelLines(
-        m_region, static_cast<size_t>(m_lines.size()), density);
+    m_pixelLines = makePixelLines(m_region, static_cast<size_t>(m_lines.size()), density);
     m_rows = m_pixelLines.rows();
     m_cols = m_pixelLines.columns();
 

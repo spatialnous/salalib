@@ -5,10 +5,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "segmtulipdepth.hpp"
-#include <cstddef>
-#include <vector>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
+#include <vector>
 
 // revised to use tulip bins for faster analysis of large spaces
 

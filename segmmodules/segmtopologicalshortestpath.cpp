@@ -8,8 +8,8 @@
 
 #include "segmhelpers.hpp"
 #include <cstddef>
-#include <vector>
 #include <map>
+#include <vector>
 
 AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
 

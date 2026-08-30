@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "linkutils.hpp"
-#include <ostream>
 #include <algorithm>
+#include <ostream>
 #include <sstream>
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace sala {
     std::vector<PixelRefPair> pixelateMergeLines(const std::vector<Line4f> &mergeLines,

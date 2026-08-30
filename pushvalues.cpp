@@ -7,13 +7,13 @@
 #include "pushvalues.hpp"
 
 #include "attributetable.hpp"
-#include <tuple>
-#include <optional>
 #include <cstddef>
-#include <string>
 #include <map>
-#include <utility>
+#include <optional>
 #include <set>
+#include <string>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 void PushValues::pushValue(double &val, int &count, double thisval, Func pushFunc) {

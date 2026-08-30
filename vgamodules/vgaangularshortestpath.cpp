@@ -5,9 +5,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgaangularshortestpath.hpp"
-#include <vector>
-#include <set>
 #include <optional>
+#include <set>
+#include <vector>
 
 AnalysisResult VGAAngularShortestPath::run(Communicator *) {
 

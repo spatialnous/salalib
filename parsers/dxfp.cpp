@@ -7,10 +7,10 @@
 #include "../genlib/comm.hpp" // for communicator
 #include "../genlib/stringutils.hpp"
 
-#include <map>
+#include <cmath>
 #include <cstddef>
 #include <istream>
-#include <cmath>
+#include <map>
 #include <string>
 #include <utility>
 

@@ -11,9 +11,9 @@
 #include "../genlib/containerutils.hpp"
 #include "../genlib/stringutils.hpp"
 
+#include <algorithm>
 #include <cstddef>
 #include <ctime>
-#include <algorithm>
 #include <fstream>
 #include <ios>
 #include <iterator>

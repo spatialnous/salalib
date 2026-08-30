@@ -9,11 +9,11 @@
 #include "../genlib/pafmath.hpp"
 #include "../genlib/stringutils.hpp"
 
-#include <cstdlib>
 #include <cstddef>
+#include <cstdlib>
 #include <fstream>
-#include <string>
 #include <ostream>
+#include <string>
 
 AgentProgram::AgentProgram()
     : selType(SEL_LOS), steps(3), vbin(7), vahead(0), aheadThreshold(), feelerThreshold(),

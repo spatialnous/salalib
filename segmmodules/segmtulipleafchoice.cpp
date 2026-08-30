@@ -7,14 +7,14 @@
 #include "segmtulipleafchoice.hpp"
 
 #include "../genlib/stringutils.hpp"
-#include <vector>
-#include <string>
-#include <optional>
+#include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <ctime>
+#include <optional>
+#include <string>
 #include <unordered_map>
-#include <cmath>
-#include <algorithm>
+#include <vector>
 
 std::vector<std::string> SegmentTulipLeafChoice::getRequiredColumns(ShapeGraph &map,
                                                                     std::vector<double> radii) {

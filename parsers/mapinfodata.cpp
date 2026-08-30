@@ -9,17 +9,17 @@
 
 #include "../genlib/stringutils.hpp"
 
-#include <istream>
-#include <cstddef>
-#include <exception>
-#include <cstdio>
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
+#include <cstdio>
+#include <exception>
+#include <istream>
 #include <numeric>
-#include <vector>
-#include <string>
 #include <ostream>
+#include <string>
 #include <utility>
+#include <vector>
 
 int MapInfoData::import(std::istream &miffile, std::istream &midfile, ShapeMap &map) {
     int mapLoaded = MINFO_OK;

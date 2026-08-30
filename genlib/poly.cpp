@@ -5,7 +5,6 @@
 
 #include "poly.hpp"
 
-
 namespace {
 
     int bitcount(int a) {

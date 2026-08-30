@@ -6,12 +6,12 @@
 #include "bsptree.hpp"
 #include "exceptions.hpp"
 
-#include <ctime>
 #include <cstddef>
+#include <ctime>
 #include <memory>
 #include <stack>
-#include <vector>
 #include <utility>
+#include <vector>
 
 // Binary Space Partition
 

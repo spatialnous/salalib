@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "attributetableview.hpp"
-#include <cstddef>
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
 
 AttributeTableView::AttributeTableView(const AttributeTable &tableIn)

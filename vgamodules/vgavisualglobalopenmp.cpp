@@ -5,10 +5,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgavisualglobalopenmp.hpp"
-#include <ctime>
-#include <cstddef>
-#include <vector>
 #include <cmath>
+#include <cstddef>
+#include <ctime>
+#include <vector>
 
 #if defined(_OPENMP)
 #include <omp.h>

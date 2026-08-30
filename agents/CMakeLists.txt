@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 target_sources(salalib
-    PUBLIC
+    PRIVATE
         agent.hpp
         agentprogram.hpp
         agentga.hpp

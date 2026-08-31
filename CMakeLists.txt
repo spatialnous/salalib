@@ -6,8 +6,7 @@
 set(salalib salalib)
 
 if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
-        "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    if (CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
         # Common GCC and Clang warnings
         set(COMPILE_WARNINGS -Wall -Wextra -Wpedantic -Wconversion -Wshadow
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
@@ -20,7 +19,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             -Wno-non-virtual-dtor -Wno-cast-qual
             -Wno-format-nonliteral
             )
-        if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        if (CMAKE_CXX_COMPILER_ID MATCHES "^(Clang|AppleClang)$")
             # Clang-specific
             set(COMPILE_WARNINGS "${COMPILE_WARNINGS}"
                 -Wunreachable-code-break -Wextra-semi-stmt

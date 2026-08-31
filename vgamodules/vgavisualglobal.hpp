@@ -12,6 +12,9 @@
 
 #include "../genlib/stringutils.hpp"
 
+#include <string>
+#include <vector>
+
 class VGAVisualGlobal : public IVGAVisual {
     double m_radius;
     bool m_gatesOnly;

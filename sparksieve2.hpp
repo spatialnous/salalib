@@ -8,10 +8,7 @@
 
 #include "genlib/line4f.hpp"
 
-#include <cstdint>
-#include <float.h>
 #include <list>
-#include <map>
 #include <vector>
 
 class sparkSieve2 {

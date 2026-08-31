@@ -7,6 +7,7 @@
 #include "segmtulipleafchoice.hpp"
 
 #include "../genlib/stringutils.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>

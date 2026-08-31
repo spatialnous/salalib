@@ -8,6 +8,7 @@
 #include "pafmath.hpp"
 
 #include <algorithm>
+#include <math.h>
 
 // Note: code depends on XAXIS being 0 and YAXIS being 1 --- do not change
 enum class LineAxis { NOAXIS = -1, XAXIS = 0, YAXIS = 1 };

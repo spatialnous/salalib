@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgaangularshortestpath.hpp"
+
 #include <optional>
 #include <set>
 #include <vector>

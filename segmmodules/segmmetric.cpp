@@ -7,6 +7,7 @@
 #include "segmmetric.hpp"
 
 #include "segmhelpers.hpp"
+
 #include <cmath>
 #include <cstddef>
 #include <ctime>

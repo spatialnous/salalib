@@ -5,6 +5,7 @@
 #include "layermanagerimpl.hpp"
 
 #include "genlib/stringutils.hpp"
+
 #include <cstddef>
 #include <cstdint>
 #include <istream>

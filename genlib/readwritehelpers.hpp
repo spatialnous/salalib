@@ -7,6 +7,7 @@
 
 #include "exceptions.hpp"
 
+#include <cstddef>
 #include <iostream>
 #include <map>
 #include <vector>

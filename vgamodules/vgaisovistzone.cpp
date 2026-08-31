@@ -5,6 +5,7 @@
 #include "vgaisovistzone.hpp"
 
 #include "../salaprogram.hpp"
+
 #include <cstddef>
 #include <optional>
 #include <set>

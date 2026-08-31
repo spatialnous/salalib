@@ -8,7 +8,15 @@
 #include "../latticemap.hpp"
 #include "../pixelref.hpp"
 
+#include <cstddef>
 #include <iomanip>
+#include <ios>
+#include <map>
+#include <optional>
+#include <ostream>
+#include <set>
+#include <sstream>
+#include <string>
 
 class VGAIsovistZone : public IAnalysis {
     struct MetricTriple {

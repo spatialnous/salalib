@@ -10,6 +10,9 @@
 
 #include "../latticemap.hpp"
 
+#include <cstddef>
+#include <string>
+
 class VGAThroughVision : public IVGA {
   protected:
     struct AnalysisData {

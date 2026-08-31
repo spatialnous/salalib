@@ -8,6 +8,11 @@
 
 #include "../isegment.hpp"
 
+#include <optional>
+#include <set>
+#include <string>
+#include <utility>
+
 class SegmentMetric : ISegment {
     double m_radius;
     std::optional<std::set<int>> m_selSet;

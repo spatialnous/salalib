@@ -8,6 +8,13 @@
 
 #include "../isegment.hpp"
 
+#include <cstddef>
+#include <optional>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
 // This is the legacy Tulip angular analysis where Choice is only calculated
 // from leaf nodes. These are not the traditional "dead end" nodes of graph
 // analysis, rather, they are ends of traversal that may happen even if

@@ -10,8 +10,10 @@
 
 #include "genlib/line4f.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <istream>
+#include <ostream>
 #include <vector>
 
 class SalaShape {

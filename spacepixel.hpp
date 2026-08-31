@@ -14,8 +14,11 @@
 #include "genlib/line4f.hpp"
 #include "genlib/simplematrix.hpp"
 
+#include <fstream>
+#include <istream>
 #include <map>
 #include <string>
+#include <vector>
 
 // couple of quick helpers
 

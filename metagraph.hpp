@@ -11,10 +11,8 @@
 #include "fileproperties.hpp"
 #include "shapemap.hpp"
 
-#include <memory>
-#include <mutex>
-#include <optional>
-#include <vector>
+#include <string>
+#include <utility>
 
 struct MetaGraph {
     Region4f region;

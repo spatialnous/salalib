@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "segmtulipdepth.hpp"
+
 #include <cmath>
 #include <cstddef>
 #include <cstdint>

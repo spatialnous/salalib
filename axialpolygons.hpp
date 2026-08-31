@@ -11,6 +11,11 @@
 
 #include "genlib/simplematrix.hpp"
 
+#include <cstdint>
+#include <map>
+#include <set>
+#include <vector>
+
 struct AxialVertexKey {
     int refKey;
     short refA;

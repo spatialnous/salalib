@@ -11,6 +11,9 @@
 #include "../genlib/stringutils.hpp"
 #include "../latticemap.hpp"
 
+#include <optional>
+#include <string>
+
 class VGAAngularOpenMP : public IVGAAngular {
     double m_radius;
     std::optional<int> m_limitToThreads;

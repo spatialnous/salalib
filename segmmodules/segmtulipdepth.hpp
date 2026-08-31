@@ -8,6 +8,10 @@
 
 #include "../isegment.hpp"
 
+#include <set>
+#include <string>
+#include <utility>
+
 class SegmentTulipDepth : ISegment {
     std::set<int> m_originRefs;
     int m_tulipBins = 1024;

@@ -8,6 +8,10 @@
 
 #include "spacepixel.hpp"
 
+#include <map>
+#include <utility>
+#include <vector>
+
 // helpers... a class to tidy up ugly maps people may give me...
 
 class TidyLines : public SpacePixel {

@@ -8,6 +8,13 @@
 
 #include "../isegment.hpp"
 
+#include <cstddef>
+#include <optional>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
 class SegmentTulip : ISegment {
   private:
     std::set<double> m_radiusSet;

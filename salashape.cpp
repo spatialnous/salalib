@@ -7,9 +7,11 @@
 #include "salashape.hpp"
 
 #include "genlib/readwritehelpers.hpp"
+
 #include <cmath>
 #include <cstddef>
 #include <istream>
+#include <math.h>
 #include <ostream>
 #include <vector>
 

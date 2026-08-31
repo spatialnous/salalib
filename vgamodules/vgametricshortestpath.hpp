@@ -11,6 +11,9 @@
 
 #include "ivgametric.hpp"
 
+#include <set>
+#include <string>
+
 class VGAMetricShortestPath : public IVGAMetric {
     std::set<PixelRef> m_pixelsFrom;
     PixelRef m_pixelTo;

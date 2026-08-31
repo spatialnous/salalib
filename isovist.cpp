@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <math.h>
 #include <time.h>
 #include <utility>
 

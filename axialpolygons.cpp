@@ -9,12 +9,14 @@
 #include "tolerances.hpp"
 
 #include "genlib/containerutils.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
 #include <map>
+#include <math.h>
 #include <set>
 #include <string>
 #include <utility>

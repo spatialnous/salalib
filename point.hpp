@@ -9,7 +9,11 @@
 
 #include "genlib/line4f.hpp"
 
+#include <cstdint>
+#include <istream>
 #include <memory>
+#include <ostream>
+#include <vector>
 
 class Point {
     friend class Bin;

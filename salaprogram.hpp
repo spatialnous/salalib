@@ -10,9 +10,13 @@
 
 #include "genlib/stringutils.hpp"
 
+#include <cctype>
 #include <cmath>
+#include <cstddef>
+#include <istream>
 #include <map>
 #include <set>
+#include <string>
 #include <vector>
 
 class AttributeTable;

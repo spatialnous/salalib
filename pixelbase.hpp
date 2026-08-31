@@ -11,6 +11,7 @@
 
 #include "genlib/line4f.hpp"
 
+#include <cstddef>
 #include <string>
 
 class PixelBase {

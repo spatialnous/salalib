@@ -6,10 +6,10 @@
 
 #include <chrono>
 #include <cstddef>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <sys/types.h>
 #include <vector>
 
 const char *const g_default_file_set = "File set";

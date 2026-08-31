@@ -8,7 +8,13 @@
 
 #include "shapemap.hpp"
 
+#include <functional>
+#include <istream>
+#include <ostream>
 #include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 struct ShapeMapGroupData {
     std::string name; // <- file name

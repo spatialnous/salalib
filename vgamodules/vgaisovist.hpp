@@ -13,6 +13,11 @@
 
 #include "../genlib/bsptree.hpp"
 
+#include <cstddef>
+#include <set>
+#include <string>
+#include <vector>
+
 class VGAIsovist : public IVGA {
     const std::vector<SalaShape> &m_boundaryShapes;
     bool m_simpleVersion = false;

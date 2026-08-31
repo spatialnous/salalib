@@ -10,6 +10,9 @@
 #include "../latticemap.hpp"
 #include "ivgametric.hpp"
 
+#include <optional>
+#include <string>
+
 class VGAMetricOpenMP : public IVGAMetric {
     double m_radius;
 

@@ -14,7 +14,17 @@
 #include "genlib/exceptions.hpp"
 #include "genlib/simplematrix.hpp"
 
+#include <cmath>
+#include <cstddef>
+#include <ctime>
+#include <istream>
+#include <optional>
+#include <ostream>
 #include <set>
+#include <stdexcept>
+#include <string>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 namespace sala {

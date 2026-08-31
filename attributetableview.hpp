@@ -8,6 +8,7 @@
 #include "attributetableindex.hpp"
 
 #include <functional>
+#include <vector>
 
 class AttributeTableView {
   public:

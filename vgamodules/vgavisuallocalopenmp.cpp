@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgavisuallocalopenmp.hpp"
+
 #include <algorithm>
 #include <cstddef>
 #include <ctime>

@@ -6,6 +6,10 @@
 
 #include "genlib/stringutils.hpp"
 
+#include <istream>
+#include <ostream>
+#include <string>
+
 class FileProperties {
   protected:
     std::string m_createPerson;

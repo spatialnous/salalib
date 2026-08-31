@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgaangular.hpp"
+
 #include <cstddef>
 #include <ctime>
 #include <string>

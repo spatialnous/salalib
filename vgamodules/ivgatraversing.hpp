@@ -8,8 +8,8 @@
 
 #include "ivga.hpp"
 
-#include <numeric>
-#include <string>
+#include <set>
+#include <vector>
 
 class IVGATraversing : public IVGA {
   public:

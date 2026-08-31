@@ -14,10 +14,10 @@
 
 #include <algorithm>
 #include <cmath>
-#include <float.h>
 #include <istream>
 #include <iterator>
 #include <map>
+#include <math.h>
 #include <ostream>
 #include <set>
 #include <string>

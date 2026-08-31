@@ -11,6 +11,9 @@
 #include "../latticemap.hpp"
 #include "../pixelref.hpp"
 
+#include <set>
+#include <string>
+
 class VGAMetricDepthLinkCost : public IVGAMetric {
 
   private:

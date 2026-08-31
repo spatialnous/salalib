@@ -7,6 +7,7 @@
 
 #include "region4f.hpp"
 
+#include <cmath>
 #include <cstdint>
 
 // Lines are stored left to right as regions,

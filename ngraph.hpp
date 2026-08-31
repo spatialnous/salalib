@@ -10,6 +10,8 @@
 
 #include <cstdint>
 #include <istream>
+#include <ostream>
+#include <vector>
 
 struct PixelVec {
     PixelVec(const PixelRef start = NoPixel, const PixelRef end = NoPixel)

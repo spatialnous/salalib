@@ -7,6 +7,7 @@
 #include "vgathroughvision.hpp"
 
 #include "../agents/agentanalysis.hpp"
+
 #include <cstddef>
 #include <ctime>
 #include <string>

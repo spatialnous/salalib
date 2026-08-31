@@ -13,6 +13,9 @@
 
 #include "../genlib/pflipper.hpp"
 
+#include <cstdint>
+#include <math.h>
+
 class Agent {
   public:
     enum {

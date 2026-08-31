@@ -5,6 +5,7 @@
 #include "point.hpp"
 
 #include "ngraph.hpp"
+
 #include <istream>
 #include <memory>
 #include <ostream>

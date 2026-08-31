@@ -6,6 +6,9 @@
 
 #include "attributetable.hpp"
 
+#include <utility>
+#include <vector>
+
 class ConstAttributeIndexItem {
   public:
     ConstAttributeIndexItem(const AttributeKey &k, double v, const AttributeRow &r)

@@ -11,6 +11,10 @@
 #include "../latticemap.hpp"
 #include "../pixelref.hpp"
 
+#include <set>
+#include <string>
+#include <utility>
+
 class VGAVisualGlobalDepth : public IVGAVisual {
 
     std::set<PixelRef> m_originRefs;

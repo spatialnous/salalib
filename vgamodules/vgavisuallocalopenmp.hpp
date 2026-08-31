@@ -10,6 +10,10 @@
 #include "../latticemap.hpp"
 #include "../pixelref.hpp"
 
+#include <optional>
+#include <set>
+#include <string>
+
 class VGAVisualLocalOpenMP : public IAnalysis {
     LatticeMap &m_map;
     std::optional<int> m_limitToThreads;

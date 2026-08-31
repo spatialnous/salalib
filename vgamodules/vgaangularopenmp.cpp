@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgaangularopenmp.hpp"
+
 #include <cstddef>
 #include <ctime>
 #include <tuple>

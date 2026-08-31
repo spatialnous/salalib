@@ -10,6 +10,8 @@
 
 #include "../latticemap.hpp"
 
+#include <string>
+
 class VGAVisualLocal : public IVGA {
     bool m_gatesOnly;
 

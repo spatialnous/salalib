@@ -8,6 +8,7 @@
 #include "../genlib/comm.hpp"
 #include "../genlib/line4f.hpp"
 
+#include <cstddef>
 #include <string>
 #include <vector>
 

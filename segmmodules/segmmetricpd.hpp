@@ -8,6 +8,10 @@
 
 #include "../isegment.hpp"
 
+#include <set>
+#include <string>
+#include <utility>
+
 class SegmentMetricPD : ISegment {
 
     std::set<int> m_originRefs;

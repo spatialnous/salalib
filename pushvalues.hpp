@@ -10,6 +10,12 @@
 #include "shapegraph.hpp"
 #include "shapemap.hpp"
 
+#include <cstddef>
+#include <optional>
+#include <string>
+#include <tuple>
+#include <utility>
+
 namespace PushValues {
     enum class Func {
         MAX, // = 0

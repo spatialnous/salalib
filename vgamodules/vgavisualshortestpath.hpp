@@ -11,6 +11,8 @@
 
 #include "ivgavisual.hpp"
 
+#include <string>
+
 class VGAVisualShortestPath : public IVGAVisual {
   private:
     PixelRef m_pixelFrom, m_pixelTo;

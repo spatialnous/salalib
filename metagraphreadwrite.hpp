@@ -15,7 +15,14 @@
 #include "genlib/exceptions.hpp"
 #include "shapemapgroupdata.hpp"
 
+#include <iosfwd>
 #include <istream>
+#include <optional>
+#include <ostream>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 namespace MetaGraphReadWrite {
 

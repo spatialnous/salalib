@@ -11,6 +11,12 @@
 
 #include "genlib/comm.hpp"
 
+#include <functional>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 namespace MapConverter {
 
     std::unique_ptr<ShapeGraph> convertDrawingToAxial(

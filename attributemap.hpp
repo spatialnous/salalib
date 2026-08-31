@@ -11,6 +11,12 @@
 #include "layermanagerimpl.hpp"
 #include "pixelbase.hpp"
 
+#include <cstddef>
+#include <memory>
+#include <set>
+#include <string>
+#include <utility>
+
 class AttributeMap : public PixelBase {
 
   protected:

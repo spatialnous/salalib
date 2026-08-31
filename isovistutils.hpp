@@ -10,6 +10,12 @@
 #include "isovist.hpp"
 #include "shapemap.hpp"
 
+#include <math.h>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
 namespace IsovistUtils {
 
     static std::set<std::string> setIsovistData(Isovist &isovist, AttributeTable &table,

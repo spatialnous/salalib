@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "exportutils.hpp"
+
 #include <ostream>
 
 void exportUtils::writeMapShapesAsCat(ShapeMap &map, std::ostream &stream) {

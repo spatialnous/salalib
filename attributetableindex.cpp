@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "attributetableindex.hpp"
+
 #include <algorithm>
 #include <cstddef>
 #include <stdexcept>

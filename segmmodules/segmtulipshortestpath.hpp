@@ -9,6 +9,9 @@
 #include "../ianalysis.hpp"
 #include "../shapegraph.hpp"
 
+#include <cstddef>
+#include <string>
+
 class SegmentTulipShortestPath : public IAnalysis {
   private:
     ShapeGraph &m_map;

@@ -8,7 +8,9 @@
 
 #include "genlib/comm.hpp"
 
+#include <cstddef>
 #include <string>
+#include <vector>
 
 class IAnalysis {
   protected:

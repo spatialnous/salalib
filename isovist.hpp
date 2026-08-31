@@ -7,7 +7,10 @@
 
 #include "genlib/bsptree.hpp"
 
+#include <cstdint>
 #include <set>
+#include <utility>
+#include <vector>
 
 // this is very much like sparksieve:
 

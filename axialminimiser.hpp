@@ -8,6 +8,11 @@
 #include "axialpolygons.hpp"
 #include "shapegraph.hpp"
 
+#include <cstddef>
+#include <map>
+#include <set>
+#include <vector>
+
 struct ValueTriplet {
     int value1;
     float value2;

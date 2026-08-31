@@ -9,6 +9,8 @@
 #include "../ianalysis.hpp"
 #include "../shapegraph.hpp"
 
+#include <string>
+
 class SegmentTopologicalShortestPath : public IAnalysis {
   private:
     ShapeGraph &m_map;

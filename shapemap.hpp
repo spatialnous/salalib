@@ -22,10 +22,19 @@
 #include "genlib/simpleline.hpp"
 #include "genlib/simplematrix.hpp"
 
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <fstream>
+#include <functional>
+#include <istream>
 #include <map>
 #include <optional>
+#include <ostream>
 #include <set>
 #include <string>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 class ShapeMap : public AttributeMap {

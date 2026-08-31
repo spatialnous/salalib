@@ -14,8 +14,13 @@
 // defined layers.  It also reads in any line types defined.
 
 #include "../genlib/comm.hpp"
+
 #include <cmath>
+#include <cstddef>
+#include <ctime>
+#include <istream>
 #include <map>
+#include <string>
 #include <vector>
 
 class DxfToken;

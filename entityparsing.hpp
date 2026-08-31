@@ -9,7 +9,9 @@
 #include "genlib/exceptions.hpp"
 #include "genlib/line4f.hpp"
 
+#include <istream>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace EntityParsing {

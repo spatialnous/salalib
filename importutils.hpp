@@ -8,7 +8,9 @@
 #include "parsers/dxfp.hpp"
 #include "shapemap.hpp"
 
+#include <istream>
 #include <map>
+#include <string>
 #include <vector>
 
 namespace sala {

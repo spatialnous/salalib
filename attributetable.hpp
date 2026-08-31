@@ -7,13 +7,17 @@
 #include "displayparams.hpp"
 #include "layermanager.hpp"
 
+#include <cstddef>
+#include <functional>
 #include <istream>
 #include <iterator>
 #include <map>
 #include <memory>
 #include <optional>
+#include <ostream>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 ///

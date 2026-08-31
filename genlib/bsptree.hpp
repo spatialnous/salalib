@@ -8,7 +8,10 @@
 #include "comm.hpp"
 #include "line4f.hpp"
 
+#include <ctime>
 #include <memory>
+#include <utility>
+#include <vector>
 
 // Binary Space Partition
 

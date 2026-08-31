@@ -9,7 +9,9 @@
 #include "mgraph_consts.hpp"
 #include "pafcolor.hpp"
 
+#include <cstddef>
 #include <set>
+#include <string>
 
 namespace dXreimpl {
     inline void pushSelectionToLayer(AttributeTable &table, LayerManager &layerManager,

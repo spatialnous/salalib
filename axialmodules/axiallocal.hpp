@@ -8,6 +8,8 @@
 
 #include "../iaxial.hpp"
 
+#include <string>
+
 class AxialLocal : IAxial {
   public:
     struct Column {

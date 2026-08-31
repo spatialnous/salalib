@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "segmtulipshortestpath.hpp"
+
 #include <cmath>
 #include <cstddef>
 #include <cstdint>

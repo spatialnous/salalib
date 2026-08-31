@@ -9,6 +9,7 @@
 #include "shapemap.hpp"
 
 #include "genlib/stringutils.hpp"
+
 #include <istream>
 #include <ostream>
 #include <tuple>

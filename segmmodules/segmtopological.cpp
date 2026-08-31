@@ -7,6 +7,7 @@
 #include "segmtopological.hpp"
 
 #include "segmhelpers.hpp"
+
 #include <cstddef>
 #include <ctime>
 #include <vector>

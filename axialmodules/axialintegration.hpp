@@ -9,6 +9,13 @@
 #include "../genlib/stringutils.hpp"
 #include "../iaxial.hpp"
 
+#include <cstddef>
+#include <optional>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
 class AxialIntegration : IAxial {
     std::set<double> m_radiusSet;
     std::optional<size_t> m_weightedMeasureCol;

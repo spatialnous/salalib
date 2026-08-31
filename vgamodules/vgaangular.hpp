@@ -11,6 +11,8 @@
 #include "../genlib/stringutils.hpp"
 #include "../latticemap.hpp"
 
+#include <string>
+
 class VGAAngular : public IVGAAngular {
     double m_radius;
     bool m_gatesOnly;

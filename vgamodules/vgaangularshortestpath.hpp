@@ -11,6 +11,8 @@
 #include "../latticemap.hpp"
 #include "../pixelref.hpp"
 
+#include <string>
+
 class VGAAngularShortestPath : public IVGAAngular {
   private:
     PixelRef m_pixelFrom, m_pixelTo;

@@ -7,6 +7,7 @@
 
 #include <exception>
 #include <string>
+#include <utility>
 
 namespace genlib {
     class BaseException : public std::exception {

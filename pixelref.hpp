@@ -6,7 +6,10 @@
 
 #include "genlib/point2f.hpp"
 
+#include <cmath>
+#include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <vector>
 
 class PixelRef {

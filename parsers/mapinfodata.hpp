@@ -12,6 +12,7 @@
 #include <istream>
 #include <ostream>
 #include <string>
+#include <vector>
 
 // imported and exported data
 // note: this is very basic and designed for axial line import / export only

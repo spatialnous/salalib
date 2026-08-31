@@ -7,8 +7,10 @@
 #include "vgaisovist.hpp"
 
 #include "../isovist.hpp"
+
 #include <cstddef>
 #include <ctime>
+#include <math.h>
 #include <set>
 #include <string>
 #include <vector>

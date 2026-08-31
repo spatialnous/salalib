@@ -9,6 +9,14 @@
 #include "axialpolygons.hpp"
 #include "shapegraph.hpp"
 
+#include <cstddef>
+#include <functional>
+#include <map>
+#include <set>
+#include <string>
+#include <tuple>
+#include <vector>
+
 namespace AllLine {
     struct MapData {
         size_t index = 0;

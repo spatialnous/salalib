@@ -8,6 +8,10 @@
 
 #include "../iaxial.hpp"
 
+#include <set>
+#include <string>
+#include <utility>
+
 class AxialStepDepth : IAxial {
 
     std::set<int> m_originRefs;

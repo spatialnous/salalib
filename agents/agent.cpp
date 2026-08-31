@@ -7,11 +7,13 @@
 #include "agent.hpp"
 
 #include "agentanalysis.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
+#include <math.h>
 #include <vector>
 
 Agent::Agent(AgentProgram *program, LatticeMap *latticemap, int outputMode)

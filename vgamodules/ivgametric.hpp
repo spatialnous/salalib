@@ -6,6 +6,16 @@
 
 #include "ivgatraversing.hpp"
 
+#include <cstddef>
+#include <map>
+#include <math.h>
+#include <optional>
+#include <set>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
+
 class IVGAMetric : public IVGATraversing {
   protected:
     IVGAMetric(const LatticeMap &map) : IVGATraversing(map) {}

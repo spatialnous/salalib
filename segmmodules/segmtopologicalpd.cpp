@@ -7,6 +7,7 @@
 #include "segmtopologicalpd.hpp"
 
 #include "segmhelpers.hpp"
+
 #include <cstddef>
 #include <vector>
 

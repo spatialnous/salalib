@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "linkutils.hpp"
+
 #include <algorithm>
 #include <ostream>
 #include <sstream>

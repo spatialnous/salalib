@@ -9,7 +9,16 @@
 #include "../ianalysis.hpp"
 #include "../latticemap.hpp"
 
+#include <algorithm>
+#include <cstddef>
+#include <functional>
+#include <iterator>
+#include <optional>
+#include <stdexcept>
 #include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 class IVGA : public IAnalysis {
   protected:

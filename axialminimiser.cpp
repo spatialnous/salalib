@@ -6,6 +6,7 @@
 #include "axialminimiser.hpp"
 
 #include "tolerances.hpp"
+
 #include <algorithm>
 #include <cstddef>
 #include <cstdlib>

@@ -8,6 +8,10 @@
 
 #include "../isegment.hpp"
 
+#include <set>
+#include <string>
+#include <utility>
+
 class SegmentAngular : ISegment {
     std::set<double> m_radiusSet;
 

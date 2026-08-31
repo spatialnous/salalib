@@ -12,6 +12,8 @@
 
 #include "../genlib/stringutils.hpp"
 
+#include <string>
+
 class VGAMetric : public IVGAMetric {
     double m_radius;
     bool m_gatesOnly;

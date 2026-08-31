@@ -7,6 +7,7 @@
 #include "segmtopologicalshortestpath.hpp"
 
 #include "segmhelpers.hpp"
+
 #include <cstddef>
 #include <map>
 #include <vector>

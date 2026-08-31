@@ -7,6 +7,7 @@
 #include "segmmetricpd.hpp"
 
 #include "segmhelpers.hpp"
+
 #include <cmath>
 #include <cstddef>
 #include <vector>

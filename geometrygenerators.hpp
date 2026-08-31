@@ -6,6 +6,7 @@
 
 #include "genlib/simpleline.hpp"
 
+#include <cstddef>
 #include <vector>
 
 class GeometryGenerators {

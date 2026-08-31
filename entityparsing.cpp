@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <istream>
+#include <math.h>
 #include <ostream>
 #include <sstream>
 #include <string>

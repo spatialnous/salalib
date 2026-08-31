@@ -10,8 +10,14 @@
 
 #include "../ianalysis.hpp"
 #include "../latticemap.hpp"
+
 #include "agent.hpp"
+
 #include <cstring>
+#include <functional>
+#include <optional>
+#include <string>
+#include <vector>
 
 class AgentAnalysis : public IAnalysis {
 

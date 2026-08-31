@@ -7,6 +7,7 @@
 #include "genlib/point2f.hpp"
 
 #include <cmath>
+#include <math.h>
 
 class IsovistDefinition {
   public:

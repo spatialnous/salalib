@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgametricshortestpathtomany.hpp"
+
 #include <cstddef>
 #include <map>
 #include <string>

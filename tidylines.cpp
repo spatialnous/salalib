@@ -6,6 +6,7 @@
 #include "tidylines.hpp"
 
 #include "tolerances.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>

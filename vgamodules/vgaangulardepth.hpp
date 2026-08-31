@@ -10,6 +10,10 @@
 
 #include "../latticemap.hpp"
 
+#include <set>
+#include <string>
+#include <utility>
+
 class VGAAngularDepth : public IVGAAngular {
 
     std::set<PixelRef> m_originRefs;

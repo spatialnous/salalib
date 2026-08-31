@@ -9,6 +9,8 @@
 #include "../ianalysis.hpp"
 #include "../latticemap.hpp"
 
+#include <string>
+
 class ExtractLinkData : public IAnalysis {
   private:
     LatticeMap &m_map;

@@ -8,6 +8,8 @@
 #include "edgeu.hpp"
 #include "point2f.hpp"
 
+#include <cmath>
+
 class Region4f {
   public:
     Point2f bottomLeft;

@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgametricdepthlinkcost.hpp"
+
 #include <cstddef>
 #include <utility>
 #include <vector>

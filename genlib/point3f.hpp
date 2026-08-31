@@ -7,6 +7,8 @@
 
 #include "point2f.hpp"
 
+#include <cmath>
+
 class Point3f {
   public:
     double x;

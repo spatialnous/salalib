@@ -9,7 +9,13 @@
 
 #include "genlib/comm.hpp"
 
+#include <cstddef>
+#include <istream>
+#include <ostream>
 #include <set>
+#include <string>
+#include <tuple>
+#include <vector>
 
 typedef std::vector<std::set<int>> KeyVertices;
 

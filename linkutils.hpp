@@ -8,6 +8,8 @@
 
 #include "genlib/exceptions.hpp"
 
+#include <string>
+#include <utility>
 #include <vector>
 
 namespace sala {

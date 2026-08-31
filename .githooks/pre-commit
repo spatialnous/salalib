@@ -40,7 +40,6 @@ CPP_FILES=$(git diff --cached --name-only --diff-filter=d | grep -E '\.cpp$' || 
 if [ -n "$CPP_FILES" ]; then
     TIDY_OUTPUT=$(clang-tidy --quiet \
         -checks='-*,misc-include-cleaner' \
-        -config='{CheckOptions: [{key: misc-include-cleaner.IgnoreHeaders, value: ".*[.]hpp;.*[.]h"}]}' \
         $CPP_FILES -- -std=c++17 -I. 2>&1 || true)
 
     # A file that fails to parse produces no include-cleaner findings, so a

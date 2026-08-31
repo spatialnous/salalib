@@ -1,6 +1,6 @@
-Checks:                       'readability-identifier-naming,clang-analyzer-*,modernize-use-override, cppcoreguidelines-prefer-member-initializer, -cppcoreguidelines-*, modernize-use-nullptr, clang-diagnostic-*'
+Checks:                       'readability-identifier-naming,clang-analyzer-*,modernize-use-override, cppcoreguidelines-prefer-member-initializer, -cppcoreguidelines-*, modernize-use-nullptr, clang-diagnostic-*, misc-include-cleaner'
 WarningsAsErrors:             '*'
-HeaderFilterRegex:            '.*'
+HeaderFilterRegex:            ''
 CheckOptions:
   - key:             readability-identifier-naming.LocalVariableCase
     value:           'camelBack'
@@ -24,3 +24,5 @@ CheckOptions:
     value:           ''
   - key:             readability-identifier-naming.ParameterCase
     value:           'camelBack'
+  - key:             misc-include-cleaner.IgnoreHeaders
+    value:           '.*[.]hpp;.*[.]h'

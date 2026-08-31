@@ -21,7 +21,15 @@ if [ -n "$CPP_FILES" ]; then
     TIDY_OUTPUT=$(clang-tidy --quiet \
         -checks='-*,misc-include-cleaner' \
         -config='{CheckOptions: [{key: misc-include-cleaner.IgnoreHeaders, value: ".*[.]hpp;.*[.]h"}]}' \
-        $CPP_FILES -- -std=c++17 -I. 2>/dev/null || true)
+        $CPP_FILES -- -std=c++17 -I. 2>&1 || true)
+
+    # A file that fails to parse produces no include-cleaner findings, so a
+    # broken parse would otherwise be indistinguishable from a clean one.
+    if printf '%s\n' "$TIDY_OUTPUT" | grep -q 'clang-diagnostic-error'; then
+        echo "clang-tidy could not parse some files:"
+        printf '%s\n' "$TIDY_OUTPUT" | grep 'clang-diagnostic-error'
+        exit 1
+    fi
 
     ISSUE_COUNT=$(printf '%s\n' "$TIDY_OUTPUT" | grep -c 'no header providing' || true)
 

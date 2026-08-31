@@ -481,8 +481,8 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                             case RadiusType::METRIC:
                                 while (rbin != static_cast<int>(nradii) &&
                                        radius[static_cast<size_t>(rbin)] != -1 &&
-                                       static_cast<double>(lineindex.metricdepth + seglength) *
-                                               0.5 >
+                                       static_cast<double>(lineindex.metricdepth) +
+                                               (static_cast<double>(seglength) * 0.5) >
                                            radius[static_cast<size_t>(rbin)]) {
                                     rbin++;
                                 }
@@ -550,8 +550,8 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                             case RadiusType::METRIC:
                                 while (rbin != static_cast<int>(nradii) &&
                                        radius[static_cast<size_t>(rbin)] != -1 &&
-                                       static_cast<double>(lineindex.metricdepth + seglength) *
-                                               0.5 >
+                                       static_cast<double>(lineindex.metricdepth) +
+                                               (static_cast<double>(seglength) * 0.5) >
                                            radius[static_cast<size_t>(rbin)]) {
                                     rbin++;
                                 }

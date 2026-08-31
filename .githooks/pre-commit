@@ -1,8 +1,8 @@
+#!/bin/bash
 # SPDX-FileCopyrightText: 2024-2026 Petros Koutsolampros
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-#!/bin/sh
 
 set -e
 

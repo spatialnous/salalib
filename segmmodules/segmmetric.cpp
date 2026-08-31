@@ -86,7 +86,7 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
         std::vector<int> list[512]; // 512 bins!
         int bin = 0;
         list[bin].push_back(static_cast<int>(cursor));
-        double rootseglength = seglengths[cursor];
+        double rootseglength = static_cast<double>(seglengths[cursor]);
         audittrail[cursor] = TopoMetSegmentRef(static_cast<int>(cursor), Connector::SEG_CONN_ALL,
                                                rootseglength * 0.5, -1);
         int open = 1;
@@ -111,7 +111,7 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
                 here.done = true;
             }
             //
-            double len = seglengths[static_cast<size_t>(here.ref)];
+            double len = static_cast<double>(seglengths[static_cast<size_t>(here.ref)]);
             totalmetdepth += here.dist - len * 0.5; // preloaded with length ahead
             wtotal += len;
             wtotaldepth += len * (here.dist - len * 0.5);
@@ -140,14 +140,16 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
                         (seen[static_cast<size_t>(connectedCursor)] == 0xffffffff) ? false : true;
                     float length = seglengths[static_cast<size_t>(connectedCursor)];
                     audittrail[static_cast<size_t>(connectedCursor)] =
-                        TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
+                        TopoMetSegmentRef(connectedCursor, here.dir,
+                                          here.dist + static_cast<double>(length), here.ref);
                     seen[static_cast<size_t>(connectedCursor)] = segdepth;
-                    if (m_radius == -1 || here.dist + length < m_radius) {
+                    if (m_radius == -1 || here.dist + static_cast<double>(length) < m_radius) {
                         // puts in a suitable bin ahead of us...
                         open++;
                         //
                         // better to divide by 511 but have 512 bins...
-                        list[(bin + static_cast<int>(floor(0.5 + 511 * length / maxseglength))) %
+                        list[(bin + static_cast<int>(floor(
+                                        0.5 + static_cast<double>(511 * length / maxseglength)))) %
                              512]
                             .push_back(connectedCursor);
                     }
@@ -164,7 +166,7 @@ AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {
                             // in this method of choice, start and end lines are included
                             choicevals[static_cast<size_t>(subcur)].choice += 1;
                             choicevals[static_cast<size_t>(subcur)].wchoice +=
-                                (rootseglength * length);
+                                (rootseglength * static_cast<double>(length));
                             subcur = audittrail[static_cast<size_t>(subcur)].previous;
                         }
                     }

@@ -138,7 +138,8 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, const std::string &colI
                     continue;
                 auto valCount = valCounts.find(AttributeKey(pix));
                 if (valCount != valCounts.end()) {
-                    pushValue(valCount->second.value, valCount->second.count, thisval, pushFunc);
+                    pushValue(valCount->second.value, valCount->second.count,
+                              static_cast<double>(thisval), pushFunc);
                 }
             }
         } else if (shape.second.isPolyLine()) {
@@ -153,7 +154,8 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, const std::string &colI
                     continue;
                 auto valCount = valCounts.find(AttributeKey(pix));
                 if (valCount != valCounts.end()) {
-                    pushValue(valCount->second.value, valCount->second.count, thisval, pushFunc);
+                    pushValue(valCount->second.value, valCount->second.count,
+                              static_cast<double>(thisval), pushFunc);
                 }
             }
         }
@@ -173,7 +175,7 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, const std::string &colI
         for (auto gate : gatelist) {
             auto &rowIn = sourceMap.getAttributeRowFromShapeIndex(gate);
             if (isObjectVisible(sourceMap.getLayers(), rowIn)) {
-                double thisval = rowIn.getValue(colInIdx);
+                double thisval = static_cast<double>(rowIn.getValue(colInIdx));
                 pushValue(val, count, thisval, pushFunc);
             }
         }
@@ -214,7 +216,7 @@ void PushValues::shapeToAxial(ShapeMap &sourceMap, const std::optional<const std
             if (isObjectVisible(sourceMap.getLayers(), rowIn)) {
                 double thisval = static_cast<double>(gate);
                 if (colInIdx.has_value())
-                    thisval = rowIn.getValue(colInIdx.value());
+                    thisval = static_cast<double>(rowIn.getValue(colInIdx.value()));
                 pushValue(val, count, thisval, pushFunc);
             }
         }
@@ -255,7 +257,7 @@ void PushValues::shapeToShape(ShapeMap &sourceMap, const std::optional<const std
             if (isObjectVisible(sourceMap.getLayers(), rowIn)) {
                 double thisval = static_cast<double>(gate);
                 if (colInIdx.has_value())
-                    thisval = rowIn.getValue(colInIdx.value());
+                    thisval = static_cast<double>(rowIn.getValue(colInIdx.value()));
                 pushValue(val, count, thisval, pushFunc);
             }
         }
@@ -298,7 +300,7 @@ void PushValues::pointToShape(const LatticeMap &sourceMap,
         gatelist = destMap.pointInPolyList(sourceMap.getPoint(pixIn).getLocation());
         double thisval = iterIn->getKey().value;
         if (colInIdx.has_value())
-            thisval = iterIn->getRow().getValue(colInIdx.value());
+            thisval = static_cast<double>(iterIn->getRow().getValue(colInIdx.value()));
         for (auto gate : gatelist) {
             AttributeRow &rowOut = destMap.getAttributeRowFromShapeIndex(gate);
             if (isObjectVisible(destMap.getLayers(), rowOut)) {
@@ -357,7 +359,7 @@ void PushValues::pointToAxial(const LatticeMap &sourceMap,
         gatelist = destMap.pointInPolyList(sourceMap.getPoint(pixIn).getLocation());
         double thisval = iterIn->getKey().value;
         if (colInIdx.has_value())
-            thisval = iterIn->getRow().getValue(colInIdx.value());
+            thisval = static_cast<double>(iterIn->getRow().getValue(colInIdx.value()));
         for (auto gate : gatelist) {
             int keyOut = destMap.getShapeRefFromIndex(gate)->first;
             AttributeRow &rowOut = tableOut.getRow(AttributeKey(keyOut));
@@ -417,7 +419,7 @@ void PushValues::axialToShape(const ShapeGraph &sourceMap,
         gatelist = destMap.shapeInPolyList(dataMap[keyIn]);
         double thisval = iterIn->getKey().value;
         if (colInIdx.has_value())
-            thisval = iterIn->getRow().getValue(colInIdx.value());
+            thisval = static_cast<double>(iterIn->getRow().getValue(colInIdx.value()));
         for (auto gate : gatelist) {
             int keyOut = destMap.getShapeRefFromIndex(gate)->first;
             AttributeRow &rowOut = tableOut.getRow(AttributeKey(keyOut));
@@ -476,7 +478,7 @@ void PushValues::axialToAxial(const ShapeGraph &sourceMap,
         gatelist = destMap.shapeInPolyList(shapeMap[keyIn]);
         double thisval = iterIn->getKey().value;
         if (colInIdx.has_value())
-            thisval = iterIn->getRow().getValue(colInIdx.value());
+            thisval = static_cast<double>(iterIn->getRow().getValue(colInIdx.value()));
         for (auto gate : gatelist) {
             int keyOut = destMap.getShapeRefFromIndex(gate)->first;
             AttributeRow &rowOut = tableOut.getRow(AttributeKey(keyOut));

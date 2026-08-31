@@ -46,7 +46,7 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
     for (auto &cursor : m_originRefs) {
         seen[static_cast<size_t>(cursor)] = 0;
         open++;
-        double length = seglengths[static_cast<size_t>(cursor)];
+        double length = static_cast<double>(seglengths[static_cast<size_t>(cursor)]);
         audittrail[static_cast<size_t>(cursor)] =
             TopoMetSegmentRef(cursor, Connector::SEG_CONN_ALL, length * 0.5, -1);
         list[0].push_back(cursor);
@@ -97,8 +97,8 @@ AnalysisResult SegmentTopologicalPD::run(Communicator *, ShapeGraph &map, bool) 
                 float length = seglengths[static_cast<size_t>(connectedCursor)];
                 int axialref = axialrefs[static_cast<size_t>(connectedCursor)];
                 seen[static_cast<size_t>(connectedCursor)] = segdepth;
-                audittrail[static_cast<size_t>(connectedCursor)] =
-                    TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
+                audittrail[static_cast<size_t>(connectedCursor)] = TopoMetSegmentRef(
+                    connectedCursor, here.dir, here.dist + static_cast<double>(length), here.ref);
                 // puts in a suitable bin ahead of us...
                 open++;
                 //

@@ -209,10 +209,10 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
         double maxValue = attributes.getColumn(static_cast<size_t>(routeweightCol)).getStats().max;
         routeweightColText = attributes.getColumnName(static_cast<size_t>(routeweightCol));
         for (size_t i = 0; i < map.getConnections().size(); i++) {
-            routeweights.push_back(
-                static_cast<float>(1.0 - (map.getAttributeRowFromShapeIndex(i).getValue(
-                                              static_cast<size_t>(routeweightCol)) /
-                                          maxValue))); // scale and revert!
+            routeweights.push_back(static_cast<float>(
+                1.0 - (static_cast<double>(map.getAttributeRowFromShapeIndex(i).getValue(
+                           static_cast<size_t>(routeweightCol))) /
+                       maxValue))); // scale and revert!
         }
     } else { // Normal run // TV
         for (size_t i = 0; i < map.getConnections().size(); i++) {
@@ -380,8 +380,9 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
             }
         }
 
-        double rootseglength = row.getValue(lengthCol);
-        double rootweight = (m_weightedMeasureCol != -1) ? weights[cursor] : 0.0;
+        double rootseglength = static_cast<double>(row.getValue(lengthCol));
+        double rootweight =
+            (m_weightedMeasureCol != -1) ? static_cast<double>(weights[cursor]) : 0.0;
 
         // setup: direction 0 (both ways), segment i, previous -1, segdepth (step depth) 0,
         // metricdepth 0.5 * rootseglength, bin 0
@@ -454,13 +455,18 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                                 // 0 and 1 and is reversed such that: = 1.0-(attributes.getValue(i,
                                 // routeweight_col)/max_value)
                                 extradepth = static_cast<int>(
-                                    floor(segconn.second * static_cast<float>(tulipBins) * 0.5 *
-                                          routeweights[static_cast<size_t>(conn.ref)]));
+                                    floor(static_cast<double>(segconn.second *
+                                                              static_cast<float>(tulipBins)) *
+                                          0.5 *
+                                          static_cast<double>(
+                                              routeweights[static_cast<size_t>(conn.ref)])));
                             }
                             //*EF routeweight
                             else {
                                 extradepth = static_cast<int>(
-                                    floor(segconn.second * static_cast<float>(tulipBins) * 0.5));
+                                    floor(static_cast<double>(segconn.second *
+                                                              static_cast<float>(tulipBins)) *
+                                          0.5));
                             }
                             seglength = lengths[static_cast<size_t>(conn.ref)];
                             switch (m_radiusType) {
@@ -475,7 +481,8 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                             case RadiusType::METRIC:
                                 while (rbin != static_cast<int>(nradii) &&
                                        radius[static_cast<size_t>(rbin)] != -1 &&
-                                       lineindex.metricdepth + seglength * 0.5 >
+                                       static_cast<double>(lineindex.metricdepth + seglength) *
+                                               0.5 >
                                            radius[static_cast<size_t>(rbin)]) {
                                     rbin++;
                                 }
@@ -517,13 +524,18 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                                 // 0 and 1 and is reversed such that: = 1.0-(attributes.getValue(i,
                                 // routeweight_col)/max_value)
                                 extradepth = static_cast<int>(
-                                    floor(segconn.second * static_cast<float>(tulipBins) * 0.5 *
-                                          routeweights[static_cast<size_t>(conn.ref)]));
+                                    floor(static_cast<double>(segconn.second *
+                                                              static_cast<float>(tulipBins)) *
+                                          0.5 *
+                                          static_cast<double>(
+                                              routeweights[static_cast<size_t>(conn.ref)])));
                             }
                             //*EF routeweight
                             else {
                                 extradepth = static_cast<int>(
-                                    floor(segconn.second * static_cast<float>(tulipBins) * 0.5));
+                                    floor(static_cast<double>(segconn.second *
+                                                              static_cast<float>(tulipBins)) *
+                                          0.5));
                             }
                             seglength = lengths[static_cast<size_t>(conn.ref)];
                             switch (m_radiusType) {
@@ -538,7 +550,8 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                             case RadiusType::METRIC:
                                 while (rbin != static_cast<int>(nradii) &&
                                        radius[static_cast<size_t>(rbin)] != -1 &&
-                                       lineindex.metricdepth + seglength * 0.5 >
+                                       static_cast<double>(lineindex.metricdepth + seglength) *
+                                               0.5 >
                                            radius[static_cast<size_t>(rbin)]) {
                                     rbin++;
                                 }
@@ -622,10 +635,12 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                                     // this node has not been encountered before: this adds the
                                     // choicecount and weight for this node, and flags it as visited
                                     choicecount++;
-                                    choiceweight +=
-                                        weights[static_cast<size_t>(here.ref)] * rootweight;
+                                    choiceweight += static_cast<double>(
+                                                        weights[static_cast<size_t>(here.ref)]) *
+                                                    rootweight;
                                     // EFEF*
-                                    choiceweight2 += weights2[static_cast<size_t>(here.ref)] *
+                                    choiceweight2 += static_cast<double>(
+                                                         weights2[static_cast<size_t>(here.ref)]) *
                                                      rootweight; // rootweight!
                                     //*EFEF
 
@@ -634,12 +649,15 @@ AnalysisResult SegmentTulipLeafChoice::run(Communicator *comm, ShapeGraph &map, 
                                     // choice added to them:
                                     if (m_weightedMeasureCol != -1) {
                                         adt.weightedChoice +=
-                                            (weights[static_cast<size_t>(here.ref)] * rootweight) /
+                                            (static_cast<double>(
+                                                 weights[static_cast<size_t>(here.ref)]) *
+                                             rootweight) /
                                             2.0;
                                         // EFEF*
                                         if (weightingCol2 != -1) {
                                             adt.weightedChoice2 +=
-                                                (weights2[static_cast<size_t>(here.ref)] *
+                                                (static_cast<double>(
+                                                     weights2[static_cast<size_t>(here.ref)]) *
                                                  rootweight) /
                                                 2.0; // rootweight!
                                         }

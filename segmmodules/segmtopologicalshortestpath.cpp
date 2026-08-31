@@ -46,7 +46,7 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
 
     seen[static_cast<size_t>(m_refFrom)] = 0;
     open++;
-    double length = seglengths[static_cast<size_t>(m_refFrom)];
+    double length = static_cast<double>(seglengths[static_cast<size_t>(m_refFrom)]);
     audittrail[static_cast<size_t>(m_refFrom)] =
         TopoMetSegmentRef(m_refFrom, Connector::SEG_CONN_ALL, length * 0.5, -1);
     list[0].push_back(m_refFrom);
@@ -100,7 +100,8 @@ AnalysisResult SegmentTopologicalShortestPath::run(Communicator *) {
                 int axialref = axialrefs[static_cast<size_t>(connectedCursor)];
                 seen[static_cast<size_t>(connectedCursor)] = segdepth;
                 audittrail[static_cast<size_t>(connectedCursor)] =
-                    TopoMetSegmentRef(connectedCursor, here.dir, here.dist + seglength, here.ref);
+                    TopoMetSegmentRef(connectedCursor, here.dir,
+                                      here.dist + static_cast<double>(seglength), here.ref);
                 // puts in a suitable bin ahead of us...
                 open++;
                 //

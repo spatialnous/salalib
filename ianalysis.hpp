@@ -19,16 +19,16 @@ class IAnalysis {
 
         void updateStats(float val, float oldVal) {
             if (m_stats.total < 0) {
-                m_stats.total = val;
+                m_stats.total = static_cast<double>(val);
             } else {
-                m_stats.total += val;
-                m_stats.total -= oldVal;
+                m_stats.total += static_cast<double>(val);
+                m_stats.total -= static_cast<double>(oldVal);
             }
-            if (val > m_stats.max) {
-                m_stats.max = val;
+            if (static_cast<double>(val) > m_stats.max) {
+                m_stats.max = static_cast<double>(val);
             }
-            if (m_stats.min < 0 || val < m_stats.min) {
-                m_stats.min = val;
+            if (m_stats.min < 0 || static_cast<double>(val) < m_stats.min) {
+                m_stats.min = static_cast<double>(val);
             }
         }
 

@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include <cstddef>
 struct TopoMetSegmentRef {
     double dist;
     int ref;
@@ -38,5 +37,5 @@ struct SegInfo {
     [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
   public:
-    SegInfo() : length(0.0f), layer(0), _padding0(0) {}
+    SegInfo() : length(0.0), layer(0), _padding0(0) {}
 };

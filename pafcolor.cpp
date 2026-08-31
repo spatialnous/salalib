@@ -5,7 +5,6 @@
 #include "pafcolor.hpp" // <- sala actually includes vertex.h for us
 
 #include <cmath>
-#include <float.h> // _finite support
 
 namespace {
     static unsigned int g_nicecolor[] = {
@@ -91,9 +90,9 @@ PafColor &PafColor::makeColor(double field, DisplayParams dp) {
         dp.red = 1.0f - dp.red;
     }
     if (dp.colorscale == DisplayParams::DEPTHMAPCLASSIC) {
-        makeDepthmapClassic(field, dp.blue, dp.red);
+        makeDepthmapClassic(field, static_cast<double>(dp.blue), static_cast<double>(dp.red));
     } else {
-        field = (field - dp.blue) / (dp.red - dp.blue);
+        field = (field - static_cast<double>(dp.blue)) / static_cast<double>(dp.red - dp.blue);
         // Quick mod - TV
         if (std::isnan(field)) {
             field = 0.5;

@@ -80,20 +80,20 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                 if (neighbourhood.size() > 1) {
                     result.setValue(        //
                         refIdx, clusterCol, //
-                        static_cast<float>(cluster /
-                                           static_cast<double>(neighbourhood.size() *
-                                                               (neighbourhood.size() - 1))));
+                        static_cast<double>(cluster /
+                                            static_cast<double>(neighbourhood.size() *
+                                                                (neighbourhood.size() - 1))));
                     result.setValue(        //
                         refIdx, controlCol, //
-                        static_cast<float>(control));
+                        static_cast<double>(control));
                     result.setValue(                //
                         refIdx, controllabilityCol, //
-                        static_cast<float>(static_cast<double>(neighbourhood.size()) /
-                                           static_cast<double>(totalneighbourhood.size())));
+                        static_cast<double>(neighbourhood.size()) /
+                            static_cast<double>(totalneighbourhood.size()));
                 } else {
-                    result.setValue(refIdx, clusterCol, -1);
-                    result.setValue(refIdx, controlCol, -1);
-                    result.setValue(refIdx, controllabilityCol, -1);
+                    result.setValue(refIdx, clusterCol, -1.0);
+                    result.setValue(refIdx, controlCol, -1.0);
+                    result.setValue(refIdx, controllabilityCol, -1.0);
                 }
                 count++; // <- increment count
             }

@@ -32,7 +32,8 @@ std::vector<ConstAttributeIndexItem> makeAttributeIndex(const AttributeTable &ta
         double perturbationFactor = table.getColumn(static_cast<size_t>(colIndex)).getStats().max *
                                     1e-9 / static_cast<double>(numRows);
         for (auto &item : table) {
-            double value = item.getRow().getValue(static_cast<size_t>(colIndex));
+            double value =
+                static_cast<double>(item.getRow().getValue(static_cast<size_t>(colIndex)));
             value += static_cast<double>(idx) * perturbationFactor;
 
             index.push_back(ConstAttributeIndexItem(item.getKey(), value, item.getRow()));
@@ -68,7 +69,8 @@ std::vector<AttributeIndexItem> makeAttributeIndex(AttributeTable &table, int co
         double perturbationFactor = table.getColumn(static_cast<size_t>(colIndex)).getStats().max *
                                     1e-9 / static_cast<double>(numRows);
         for (auto &item : table) {
-            double value = item.getRow().getValue(static_cast<size_t>(colIndex));
+            double value =
+                static_cast<double>(item.getRow().getValue(static_cast<size_t>(colIndex)));
             value += static_cast<double>(idx) * perturbationFactor;
 
             index.push_back(AttributeIndexItem(item.getKey(), value, item.getRow()));
@@ -89,7 +91,7 @@ getIndexItemsInValueRange(std::vector<AttributeIndexItem> &index, AttributeTable
     return std::pair<std::vector<AttributeIndexItem>::iterator,
                      std::vector<AttributeIndexItem>::iterator>(
         std::lower_bound(index.begin(), index.end(),
-                         AttributeIndexItem(dummykey, fromValue, dummyrow)),
+                         AttributeIndexItem(dummykey, static_cast<double>(fromValue), dummyrow)),
         std::upper_bound(index.begin(), index.end(),
-                         AttributeIndexItem(dummykey, toValue, dummyrow)));
+                         AttributeIndexItem(dummykey, static_cast<double>(toValue), dummyrow)));
 }

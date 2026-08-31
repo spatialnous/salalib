@@ -28,7 +28,7 @@ AnalysisResult VGAAngularDepth::run(Communicator *) {
     auto sdCol = traverse(analysisData, graph, refs, -1, m_originRefs).back();
 
     for (size_t i = 0; i < analysisData.size(); i++) {
-        result.setValue(i, sdColIdx, sdCol.getValue(i));
+        result.setValue(i, sdColIdx, static_cast<double>(sdCol.getValue(i)));
     }
 
     result.completed = true;

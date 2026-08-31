@@ -82,11 +82,9 @@ double Line4f::intersection_point(const Line4f &l, LineAxis axis, double toleran
         if (l.width() == 0.0) {
             loc = l.bottomLeft.x;
         } else {
-            // Using long doubles here to force higher accuracy of calculations
-            // and thus parity of the x86 and arm64 results
-            long double lg = l.grad(LineAxis::YAXIS);
-            long double g = grad(LineAxis::YAXIS);
-            if (fabs(static_cast<double>(lg - g)) <= tolerance) {
+            double lg = l.grad(LineAxis::YAXIS);
+            double g = grad(LineAxis::YAXIS);
+            if (fabs(lg - g) <= tolerance) {
                 // these have almost the same gradient, so it's impossible to tell where they
                 // intersect: going for midpoint
                 Point2f p = l.midpoint();
@@ -94,24 +92,20 @@ double Line4f::intersection_point(const Line4f &l, LineAxis axis, double toleran
             } else {
                 // this is the same as: constant(YAXIS) - l.constant(YAXIS)) / (l.grad(YAXIS) -
                 // grad(YAXIS));
-                // Using long doubles here to force higher accuracy of calculations
-                // and thus parity of the x86 and arm64 results
-                long double laxv = l.ax();
-                long double layv = l.ay();
-                long double axv = ax();
-                long double ayv = ay();
-                loc = static_cast<double>(((ayv - (g * axv)) - (layv - lg * laxv)) / (lg - g));
+                double laxv = l.ax();
+                double layv = l.ay();
+                double axv = ax();
+                double ayv = ay();
+                loc = ((ayv - (g * axv)) - (layv - lg * laxv)) / (lg - g);
             }
         }
     } else {
         if (l.height() == 0.0) {
             loc = l.bottomLeft.y;
         } else {
-            // Using long doubles here to force higher accuracy of calculations
-            // and thus parity of the x86 and arm64 results
-            long double lg = l.grad(LineAxis::XAXIS);
-            long double g = grad(LineAxis::XAXIS);
-            if (fabs(static_cast<double>(lg - g)) <= tolerance) {
+            double lg = l.grad(LineAxis::XAXIS);
+            double g = grad(LineAxis::XAXIS);
+            if (fabs(lg - g) <= tolerance) {
                 // these have almost the same gradient, so it's impossible to tell where they
                 // intersect: going for midpoint
                 Point2f p = l.midpoint();
@@ -119,13 +113,11 @@ double Line4f::intersection_point(const Line4f &l, LineAxis axis, double toleran
             } else {
                 // this is the same as: constant(XAXIS) - l.constant(XAXIS)) / (l.grad(XAXIS) -
                 // grad(XAXIS));
-                // Using long doubles here to force higher accuracy of calculations
-                // and thus parity of the x86 and arm64 results
-                long double laxv = l.ax();
-                long double layv = l.ay();
-                long double axv = ax();
-                long double ayv = ay();
-                loc = static_cast<double>(((axv - (g * ayv)) - (laxv - (lg * layv))) / (lg - g));
+                double laxv = l.ax();
+                double layv = l.ay();
+                double axv = ax();
+                double ayv = ay();
+                loc = ((axv - (g * ayv)) - (laxv - (lg * layv))) / (lg - g);
             }
         }
     }
@@ -306,17 +298,14 @@ Point2f Line4f::intersection_point(const Line4f &b, double tolerance) const {
 }
 
 bool Line4f::intersects(const Line4f &b, double tolerance) const {
-    // Using long doubles here to force higher accuracy of calculations
-    // and thus parity of the x86 and arm64 results
-
-    long double aax = ax();
-    long double aay = ay();
-    long double abx = bx();
-    long double aby = by();
-    long double bax = b.ax();
-    long double bay = b.ay();
-    long double bbx = b.bx();
-    long double bby = b.by();
+    double aax = ax();
+    double aay = ay();
+    double abx = bx();
+    double aby = by();
+    double bax = b.ax();
+    double bay = b.ay();
+    double bbx = b.bx();
+    double bby = b.by();
 
     if (((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay)) *
                 ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay)) <=
@@ -334,17 +323,14 @@ bool Line4f::intersects(const Line4f &b, double tolerance) const {
 // (uses dot product comparison)
 
 bool Line4f::intersects_no_touch(const Line4f &b, double tolerance) const {
-    // Using long doubles here to force higher accuracy of calculations
-    // and thus parity of the x86 and arm64 results
-
-    long double aax = ax();
-    long double aay = ay();
-    long double abx = bx();
-    long double aby = by();
-    long double bax = b.ax();
-    long double bay = b.ay();
-    long double bbx = b.bx();
-    long double bby = b.by();
+    double aax = ax();
+    double aay = ay();
+    double abx = bx();
+    double aby = by();
+    double bax = b.ax();
+    double bay = b.ay();
+    double bbx = b.bx();
+    double bby = b.by();
 
     if (((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay)) *
                 ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay)) <
@@ -360,23 +346,20 @@ bool Line4f::intersects_no_touch(const Line4f &b, double tolerance) const {
 
 // returns 0 for no intersect, 1 for touching and 2 for crossing
 int Line4f::intersects_distinguish(const Line4f &b, double tolerance) const {
-    // Using long doubles here to force higher accuracy of calculations
-    // and thus parity of the x86 and arm64 results
+    double aax = ax();
+    double aay = ay();
+    double abx = bx();
+    double aby = by();
+    double bax = b.ax();
+    double bay = b.ay();
+    double bbx = b.bx();
+    double bby = b.by();
 
-    long double aax = ax();
-    long double aay = ay();
-    long double abx = bx();
-    long double aby = by();
-    long double bax = b.ax();
-    long double bay = b.ay();
-    long double bbx = b.bx();
-    long double bby = b.by();
+    double alpha = ((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay)) *
+                   ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay));
 
-    long double alpha = ((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay)) *
-                        ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay));
-
-    long double beta = ((bay - bby) * (aax - bax) + (bbx - bax) * (aay - bay)) *
-                       ((bay - bby) * (abx - bax) + (bbx - bax) * (aby - bay));
+    double beta = ((bay - bby) * (aax - bax) + (bbx - bax) * (aay - bay)) *
+                  ((bay - bby) * (abx - bax) + (bbx - bax) * (aby - bay));
 
     if (alpha <= tolerance && beta <= tolerance) {
         if (alpha < -tolerance && beta < -tolerance) {
@@ -393,24 +376,21 @@ int Line4f::intersects_distinguish(const Line4f &b, double tolerance) const {
 // n.b. only used by polygon contains -- throws if the first point of line b is touching line a
 // (first point of line b is the point to be tested) -- i.e., throws if point touches polygon
 int Line4f::intersects_b(const Line4f &b, double tolerance) const {
-    // Using long doubles here to force higher accuracy of calculations
-    // and thus parity of the x86 and arm64 results
+    double aax = ax();
+    double aay = ay();
+    double abx = bx();
+    double aby = by();
+    double bax = b.ax();
+    double bay = b.ay();
+    double bbx = b.bx();
+    double bby = b.by();
 
-    long double aax = ax();
-    long double aay = ay();
-    long double abx = bx();
-    long double aby = by();
-    long double bax = b.ax();
-    long double bay = b.ay();
-    long double bbx = b.bx();
-    long double bby = b.by();
+    double alpha = ((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay));
 
-    long double alpha = ((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay));
+    double beta = ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay));
 
-    long double beta = ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay));
-
-    long double gamma = ((bay - bby) * (aax - bax) + (bbx - bax) * (aay - bay)) *
-                        ((bay - bby) * (abx - bax) + (bbx - bax) * (aby - bay));
+    double gamma = ((bay - bby) * (aax - bax) + (bbx - bax) * (aay - bay)) *
+                   ((bay - bby) * (abx - bax) + (bbx - bax) * (aby - bay));
 
     if (alpha * beta <= tolerance && gamma <= tolerance) {
         if (alpha * beta < -tolerance && gamma < -tolerance) {
@@ -419,7 +399,7 @@ int Line4f::intersects_b(const Line4f &b, double tolerance) const {
             // this function is only used for poly contains point,
             // the throw is defined if the point is *on* the polygon edge
             // (within the tolerance)
-            if (fabs(static_cast<double>(alpha)) <= tolerance) {
+            if (fabs(alpha) <= tolerance) {
                 throw 1;
             }
             return 1;

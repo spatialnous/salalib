@@ -42,16 +42,16 @@ const AttributeColumnStats &AttributeColumnImpl::getStats() const { return stats
 
 void AttributeColumnImpl::updateStats(float val, float oldVal) const {
     if (stats.total < 0) {
-        stats.total = val;
+        stats.total = static_cast<double>(val);
     } else {
-        stats.total += val;
-        stats.total -= oldVal;
+        stats.total += static_cast<double>(val);
+        stats.total -= static_cast<double>(oldVal);
     }
-    if (val > stats.max) {
-        stats.max = val;
+    if (static_cast<double>(val) > stats.max) {
+        stats.max = static_cast<double>(val);
     }
-    if (stats.min < 0 || val < stats.min) {
-        stats.min = val;
+    if (stats.min < 0 || static_cast<double>(val) < stats.min) {
+        stats.min = static_cast<double>(val);
     }
 }
 
@@ -70,9 +70,9 @@ size_t AttributeColumnImpl::read(std::istream &stream) {
     m_name = dXstring::readString(stream);
     float val;
     stream.read(reinterpret_cast<char *>(&val), sizeof(float));
-    stats.min = val;
+    stats.min = static_cast<double>(val);
     stream.read(reinterpret_cast<char *>(&val), sizeof(float));
-    stats.max = val;
+    stats.max = static_cast<double>(val);
     stream.read(reinterpret_cast<char *>(&stats.total), sizeof(double));
     int physicalColumn;
     stream.read(reinterpret_cast<char *>(&physicalColumn),
@@ -117,7 +117,8 @@ float AttributeRowImpl::getNormalisedValue(size_t index) const {
     }
     return m_data[index] < 0
                ? -1.0f
-               : static_cast<float>((m_data[index] - colStats.min) / (colStats.max - colStats.min));
+               : static_cast<float>((static_cast<double>(m_data[index]) - colStats.min) /
+                                    (colStats.max - colStats.min));
 }
 
 AttributeRow &AttributeRowImpl::setValue(const std::string &column, float value) {

@@ -71,15 +71,15 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
             Connector &line = map.getConnections()[static_cast<size_t>(lineindex.ref)];
             // convert depth from tulip_bins normalised to standard angle
             // (note the -1)
-            double depthToLine = depthlevel / (static_cast<float>(tulipBins - 1) * 0.5);
+            double depthToLine = depthlevel / (static_cast<double>(tulipBins - 1) * 0.5);
             map.getAttributeRowFromShapeIndex(static_cast<size_t>(lineindex.ref))
                 .setValue(stepdepthCol, static_cast<float>(depthToLine));
             int extradepth;
             if (lineindex.dir != -1) {
                 for (auto &segconn : line.forwardSegconns) {
                     if (!covered[static_cast<size_t>(segconn.first.ref)]) {
-                        extradepth = static_cast<int>(
-                            floor(segconn.second * static_cast<float>(tulipBins) * 0.5));
+                        extradepth = static_cast<int>(floor(static_cast<double>(segconn.second) *
+                                                            static_cast<double>(tulipBins) * 0.5));
                         bins[(static_cast<size_t>(currentbin) + tulipBins +
                               static_cast<size_t>(extradepth)) %
                              tulipBins]
@@ -93,8 +93,8 @@ AnalysisResult SegmentTulipDepth::run(Communicator *, ShapeGraph &map, bool) {
             if (lineindex.dir != 1) {
                 for (auto &segconn : line.backSegconns) {
                     if (!covered[static_cast<size_t>(segconn.first.ref)]) {
-                        extradepth = static_cast<int>(
-                            floor(segconn.second * static_cast<float>(tulipBins) * 0.5));
+                        extradepth = static_cast<int>(floor(static_cast<double>(segconn.second) *
+                                                            static_cast<double>(tulipBins) * 0.5));
                         bins[(static_cast<size_t>(currentbin) + tulipBins +
                               static_cast<size_t>(extradepth)) %
                              tulipBins]

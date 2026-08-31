@@ -1332,7 +1332,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                             throw SalaError("Range cannot have a step of 0", m_line);
                         }
                         auto listlen = static_cast<int>(
-                            ceil(static_cast<float>(end - start) / static_cast<float>(step)));
+                            ceil(static_cast<double>(end - start) / static_cast<double>(step)));
                         if (listlen <= 0) {
                             data = SalaObj(SalaObj::S_LIST);
                         } else {
@@ -1454,8 +1454,9 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                             if (!table->hasColumn(str)) {
                                 throw SalaError(str + " is an unknown column", m_line);
                             }
-                            data = SalaObj(table->getRow(AttributeKey(obj.m_data.graph.node))
-                                               .getValue(table->getColumnIndex(str)));
+                            data = SalaObj(static_cast<double>(
+                                table->getRow(AttributeKey(obj.m_data.graph.node))
+                                    .getValue(table->getColumnIndex(str))));
                         }
                     } break;
                     case SalaObj::S_FSETVALUE: {

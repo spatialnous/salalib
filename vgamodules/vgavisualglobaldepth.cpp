@@ -22,10 +22,10 @@ AnalysisResult VGAVisualGlobalDepth::run(Communicator *) {
     const auto refs = getRefVector(analysisData);
     const auto graph = getGraph(analysisData, refs, false);
 
-    auto sdCol = traverse(analysisData, graph, refs, -1.0f, m_originRefs)[0];
+    auto sdCol = traverse(analysisData, graph, refs, -1.0, m_originRefs)[0];
 
     for (size_t i = 0; i < analysisData.size(); i++) {
-        result.setValue(i, colIdx, sdCol.getValue(i));
+        result.setValue(i, colIdx, static_cast<double>(sdCol.getValue(i)));
     }
 
     result.completed = true;

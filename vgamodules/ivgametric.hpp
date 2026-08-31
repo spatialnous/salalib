@@ -72,7 +72,9 @@ class IVGAMetric : public IVGATraversing {
             for (auto &conn : conns) {
                 auto &ad = std::get<0>(conn).get();
                 if (ad.visitedFromBin == 0 &&
-                    (ad.dist == -1.0 || (curs.dist + dist(ad.ref, curs.ad.ref) < ad.dist))) {
+                    (static_cast<double>(ad.dist) == -1.0 ||
+                     (static_cast<double>(curs.dist) + dist(ad.ref, curs.ad.ref) <
+                      static_cast<double>(ad.dist)))) {
                     ad.dist = curs.dist + static_cast<float>(dist(ad.ref, curs.ad.ref));
                     // n.b. dmap v4.06r now sets angle in range 0 to 4 (1 = 90 degrees)
                     ad.cumAngle =
@@ -114,7 +116,7 @@ class IVGAMetric : public IVGATraversing {
             auto internalNode = searchList.extract(searchList.begin());
             MetricSearchData here = std::move(internalNode.value());
 
-            if (radius != -1.0 && (here.dist * m_map.getSpacing()) > radius) {
+            if (radius != -1.0 && (static_cast<double>(here.dist) * m_map.getSpacing()) > radius) {
                 break;
             }
 
@@ -126,9 +128,10 @@ class IVGAMetric : public IVGATraversing {
                 ad1.visitedFromBin = ~0;
                 pathAngleCol.setValue(ad1.attributeDataRow, static_cast<float>(ad1.cumAngle),
                                       keepStats);
-                pathLengthCol.setValue(ad1.attributeDataRow,
-                                       static_cast<float>(m_map.getSpacing() * here.dist),
-                                       keepStats);
+                pathLengthCol.setValue(
+                    ad1.attributeDataRow,
+                    static_cast<float>(m_map.getSpacing() * static_cast<double>(here.dist)),
+                    keepStats);
                 if (originRefs.size() == 1) {
                     // Note: Euclidean distance is currently only calculated from a single point
                     euclidDistCol.setValue(
@@ -142,9 +145,10 @@ class IVGAMetric : public IVGATraversing {
                         ad2.cumAngle = ad1.cumAngle;
                         pathAngleCol.setValue(ad2.attributeDataRow,
                                               static_cast<float>(ad2.cumAngle), keepStats);
-                        pathLengthCol.setValue(ad2.attributeDataRow,
-                                               static_cast<float>(m_map.getSpacing() * here.dist),
-                                               keepStats);
+                        pathLengthCol.setValue(
+                            ad2.attributeDataRow,
+                            static_cast<float>(m_map.getSpacing() * static_cast<double>(here.dist)),
+                            keepStats);
                         if (originRefs.size() == 1) {
                             // Note: Euclidean distance is currently only calculated from a single
                             // point
@@ -307,7 +311,7 @@ class IVGAMetric : public IVGATraversing {
             auto internalNode = searchList.extract(searchList.begin());
             MetricSearchData here = std::move(internalNode.value());
 
-            if (radius != -1.0 && (here.dist * m_map.getSpacing()) > radius) {
+            if (radius != -1.0 && (static_cast<double>(here.dist) * m_map.getSpacing()) > radius) {
                 break;
             }
             auto &ad1 = here.ad;
@@ -325,7 +329,8 @@ class IVGAMetric : public IVGATraversing {
                         ad2.visitedFromBin = ~0;
                     }
                 }
-                totalDepth += static_cast<float>(here.dist * m_map.getSpacing());
+                totalDepth +=
+                    static_cast<float>(static_cast<double>(here.dist) * m_map.getSpacing());
                 totalAngle += ad1.cumAngle;
                 euclidDepth += static_cast<float>(m_map.getSpacing() * dist(ad1.ref, ad0.ref));
                 totalNodes += 1;

@@ -63,7 +63,8 @@ class IVGAAngular : public IVGATraversing {
                             ? 0.0f
                             : static_cast<float>(angle(ad.ref, curs.ad.ref, *curs.lastPixel) /
                                                  (M_PI * 0.5));
-                    if (ad.cumAngle == -1.0 || curs.angle + ang < ad.cumAngle) {
+                    if (static_cast<double>(ad.cumAngle) == -1.0 ||
+                        curs.angle + ang < ad.cumAngle) {
                         ad.cumAngle = curs.ad.cumAngle + ang;
                         pixels.insert(AngularSearchData(ad, ad.cumAngle, curs.ad.ref));
                     }
@@ -93,7 +94,7 @@ class IVGAAngular : public IVGATraversing {
         while (searchList.size()) {
             auto internalNode = searchList.extract(searchList.begin());
             AngularSearchData here = std::move(internalNode.value());
-            if (radius != -1.0 && here.angle > radius) {
+            if (radius != -1.0 && static_cast<double>(here.angle) > radius) {
                 break;
             }
 
@@ -136,7 +137,7 @@ class IVGAAngular : public IVGATraversing {
             auto internalNode = searchList.extract(searchList.begin());
             AngularSearchData here = std::move(internalNode.value());
 
-            if (radius != -1.0 && here.angle > radius) {
+            if (radius != -1.0 && static_cast<double>(here.angle) > radius) {
                 break;
             }
             auto &ad1 = here.ad;

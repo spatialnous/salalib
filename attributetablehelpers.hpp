@@ -36,7 +36,7 @@ namespace dXreimpl {
         }
 
         PafColor color;
-        return color.makeColor(tableView.getNormalisedValue(key, row),
+        return color.makeColor(static_cast<double>(tableView.getNormalisedValue(key, row)),
                                tableView.getDisplayParams());
     }
 

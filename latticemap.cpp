@@ -1112,7 +1112,7 @@ bool LatticeMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
                         // note m_spacing is used to scale the moment of inertia
                         // appropriately
                         double thisDist = dist(addlist[n], curs) * m_spacing;
-                        if (thisDist > farBinDists[bin]) {
+                        if (thisDist > static_cast<double>(farBinDists[bin])) {
                             farBinDists[bin] = static_cast<float>(thisDist);
                         }
                         totalDist += thisDist;
@@ -1341,9 +1341,10 @@ double LatticeMap::getLocationValue(const Point2f &point, std::optional<size_t> 
     if (!getPoint(pix).filled()) {
         val = -2;
     } else if (!columnIdx.has_value()) {
-        val = static_cast<float>(pix);
+        val = static_cast<double>(pix);
     } else {
-        val = m_attributes->getRow(AttributeKey(pix)).getValue(columnIdx.value());
+        val = static_cast<double>(
+            m_attributes->getRow(AttributeKey(pix)).getValue(columnIdx.value()));
     }
 
     return val;

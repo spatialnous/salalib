@@ -203,7 +203,8 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
     if (m_weightedMeasureCol.has_value()) {
         weightingColText = attributes.getColumnName(*m_weightedMeasureCol);
         for (size_t i = 0; i < map.getShapeCount(); i++) {
-            weights.push_back(map.getAttributeRowFromShapeIndex(i).getValue(*m_weightedMeasureCol));
+            weights.push_back(static_cast<double>(
+                map.getAttributeRowFromShapeIndex(i).getValue(*m_weightedMeasureCol)));
         }
     }
 
@@ -538,10 +539,10 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 wTotalChoice += audittrail[i][r].weightedChoice;
                 // n.b., normalise choice according to (n-1)(n-2)/2 (maximum possible through
                 // routes)
-                double nodeCount = row.getValue(countCol[r]);
+                double nodeCount = static_cast<double>(row.getValue(countCol[r]));
                 double totalWeight = 0;
                 if (m_weightedMeasureCol.has_value()) {
-                    totalWeight = row.getValue(totalWeightCol[r]);
+                    totalWeight = static_cast<double>(row.getValue(totalWeightCol[r]));
                 }
                 if (nodeCount > 2) {
                     row.setValue(choiceCol[r], static_cast<float>(totalChoice));

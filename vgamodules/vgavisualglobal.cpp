@@ -90,7 +90,7 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
         // Space
         if (!m_simpleVersion) {
             result.setValue(ad0.attributeDataRow, countCol.value(),
-                            static_cast<float>(totalNodes)); // note: total nodes includes this one
+                            static_cast<double>(totalNodes)); // note: total nodes includes this one
         }
         // ERROR !!!!!!
         if (totalNodes > 1) {
@@ -98,7 +98,7 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
                 static_cast<double>(totalDepth) / static_cast<double>(totalNodes - 1);
             if (!m_simpleVersion) {
                 result.setValue(ad0.attributeDataRow, depthCol.value(),
-                                static_cast<float>(meanDepth));
+                                static_cast<double>(meanDepth));
             }
             // total nodes > 2 to avoid divide by 0 (was > 3)
             if (totalNodes > 2 && meanDepth > 1.0) {
@@ -109,26 +109,26 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
                 double rraP = ra / pafmath::pvalue(totalNodes);
                 double integTk = pafmath::teklinteg(totalNodes, totalDepth);
                 result.setValue(ad0.attributeDataRow, integDvCol.value(),
-                                static_cast<float>(1.0 / rraD));
+                                static_cast<double>(1.0 / rraD));
                 if (!m_simpleVersion) {
                     result.setValue(ad0.attributeDataRow, integPvCol.value(),
-                                    static_cast<float>(1.0 / rraP));
+                                    static_cast<double>(1.0 / rraP));
                 }
                 if (totalDepth - totalNodes + 1 > 1) {
                     if (!m_simpleVersion) {
                         result.setValue(ad0.attributeDataRow, integTkCol.value(),
-                                        static_cast<float>(integTk));
+                                        static_cast<double>(integTk));
                     }
                 } else {
                     if (!m_simpleVersion) {
-                        result.setValue(ad0.attributeDataRow, integTkCol.value(), -1.0f);
+                        result.setValue(ad0.attributeDataRow, integTkCol.value(), -1.0);
                     }
                 }
             } else {
-                result.setValue(ad0.attributeDataRow, integDvCol.value(), -1.0f);
+                result.setValue(ad0.attributeDataRow, integDvCol.value(), -1.0);
                 if (!m_simpleVersion) {
-                    result.setValue(ad0.attributeDataRow, integPvCol.value(), -1.0f);
-                    result.setValue(ad0.attributeDataRow, integTkCol.value(), -1.0f);
+                    result.setValue(ad0.attributeDataRow, integPvCol.value(), -1.0);
+                    result.setValue(ad0.attributeDataRow, integTkCol.value(), -1.0);
                 }
             }
             double entropy = 0.0, relEntropy = 0.0, factorial = 1.0;
@@ -142,22 +142,19 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
                     // Formula from Turner 2001, "Depthmap"
                     factorial *= static_cast<double>(k + 1);
                     double q =
-                        (pow(meanDepth, static_cast<double>(k)) / static_cast<double>(factorial)) *
-                        exp(-meanDepth);
-                    relEntropy += static_cast<float>(prob) * pafmath::log2(prob / q);
+                        (pow(meanDepth, static_cast<double>(k)) / factorial) * exp(-meanDepth);
+                    relEntropy += prob * pafmath::log2(prob / q);
                 }
             }
             if (!m_simpleVersion) {
-                result.setValue(ad0.attributeDataRow, entropyCol.value(),
-                                static_cast<float>(entropy));
-                result.setValue(ad0.attributeDataRow, relEntropyCol.value(),
-                                static_cast<float>(relEntropy));
+                result.setValue(ad0.attributeDataRow, entropyCol.value(), entropy);
+                result.setValue(ad0.attributeDataRow, relEntropyCol.value(), relEntropy);
             }
         } else {
             if (!m_simpleVersion) {
-                result.setValue(ad0.attributeDataRow, depthCol.value(), -1.0f);
-                result.setValue(ad0.attributeDataRow, entropyCol.value(), -1.0f);
-                result.setValue(ad0.attributeDataRow, relEntropyCol.value(), -1.0f);
+                result.setValue(ad0.attributeDataRow, depthCol.value(), -1.0);
+                result.setValue(ad0.attributeDataRow, entropyCol.value(), -1.0);
+                result.setValue(ad0.attributeDataRow, relEntropyCol.value(), -1.0);
             }
         }
         count++; // <- increment count

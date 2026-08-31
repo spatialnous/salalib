@@ -51,7 +51,7 @@ struct AnalysisResult {
     }
 
     AnalysisResult(std::vector<std::string> &&attributeNames = std::vector<std::string>(),
-                   size_t rowCount = 0, double defValue = -1.0f)
+                   size_t rowCount = 0, double defValue = -1.0)
         : _padding0(0), _padding1(0), m_newAttributes(attributeNames),
           m_attributeDatata(genlib::RowMatrix<double>(rowCount, attributeNames.size())),
           m_newShapeMaps(), m_newLatticeMaps(), m_newShapeGraphs() {

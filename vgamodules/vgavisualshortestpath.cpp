@@ -94,9 +94,10 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
                                 auto currInvMetricZonePixelVal =
                                     result.getValue(zad.attributeDataRow, invMetricZoneColIdx);
                                 if (currInvMetricZonePixelVal == -1 ||
-                                    1.0f / (zoneLineDist + 1) > currInvMetricZonePixelVal) {
+                                    1.0 / (zoneLineDist + 1) >
+                                        static_cast<double>(currInvMetricZonePixelVal)) {
                                     result.setValue(zad.attributeDataRow, invMetricZoneColIdx,
-                                                    1.0f / (zoneLineDist + 1));
+                                                    1.0 / (zoneLineDist + 1));
                                 }
                             }
                             zad.visitedFromBin = 0;

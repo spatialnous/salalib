@@ -500,10 +500,11 @@ Point2f Agent::onLoSLook(bool wholeisovist, int lookType) {
         vbin = 32;
     }
     for (int i = 0; i < vbin; i++) {
-        double los =
-            (lookType == AgentProgram::SEL_LOS)
-                ? m_latticemap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
-                : m_latticemap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
+        double los = (lookType == AgentProgram::SEL_LOS)
+                         ? static_cast<double>(m_latticemap->getPoint(m_node).getNode().bindistance(
+                               (directionbin + i) % 32))
+                         : static_cast<double>(m_latticemap->getPoint(m_node).getNode().occdistance(
+                               (directionbin + i) % 32));
         if (m_program->losSqrd) {
             los *= los;
         }
@@ -531,9 +532,9 @@ Point2f Agent::onLoSLook(bool wholeisovist, int lookType) {
         }
     }
 
-    float angle = static_cast<float>(anglefrombin2(targetbin));
+    double angle = anglefrombin2(targetbin);
 
-    return Point2f(cosf(angle), sinf(angle));
+    return Point2f(cos(angle), sin(angle));
 }
 
 Point2f Agent::onDirectedLoSLook(bool wholeisovist, int lookType) {
@@ -553,10 +554,11 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int lookType) {
         vbin = 32;
     }
     for (int i = 0; i < vbin; i++) {
-        double los =
-            (lookType == AgentProgram::SEL_LOS)
-                ? m_latticemap->getPoint(m_node).getNode().bindistance((directionbin + i) % 32)
-                : m_latticemap->getPoint(m_node).getNode().occdistance((directionbin + i) % 32);
+        double los = (lookType == AgentProgram::SEL_LOS)
+                         ? static_cast<double>(m_latticemap->getPoint(m_node).getNode().bindistance(
+                               (directionbin + i) % 32))
+                         : static_cast<double>(m_latticemap->getPoint(m_node).getNode().occdistance(
+                               (directionbin + i) % 32));
         if (m_program->losSqrd) {
             los *= los;
         }
@@ -581,9 +583,9 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int lookType) {
         }
     }
 
-    float angle = static_cast<float>(anglefrombin2(targetbin));
+    double angle = anglefrombin2(targetbin);
 
-    return Point2f(cosf(angle), sinf(angle));
+    return Point2f(cos(angle), sin(angle));
 }
 
 // Gibsonian agents record their last known information,
@@ -607,15 +609,14 @@ Point2f Agent::onGibsonianLook(bool wholeisovist) {
         }
     }
 
-    float angle = 0.0;
+    double angle = 0.0;
 
     if (ruleChoice != -1) {
-        angle = static_cast<float>(
-            anglefrombin2((binfromvec(m_vector) + (2 * ruleChoice + 1) * dir + 32) % 32));
+        angle = anglefrombin2((binfromvec(m_vector) + (2 * ruleChoice + 1) * dir + 32) % 32);
     }
 
     // if no rule selection made, carry on in current direction
-    return (ruleChoice == -1) ? m_vector : Point2f(cosf(angle), sinf(angle));
+    return (ruleChoice == -1) ? m_vector : Point2f(cos(angle), sin(angle));
 }
 
 int Agent::onGibsonianRule(int rule) {
@@ -632,45 +633,49 @@ int Agent::onGibsonianRule(int rule) {
         break;
     case AgentProgram::SEL_OPTIC_FLOW:
         // rule_threshold reflects from 0x (0) to 5x (100.0)
-        if ((m_currLos[rule + 1] + 1) / (m_lastLos[rule + 1] + 1) >
-            m_program->ruleThreshold[rule] / 20.0) {
+        if (static_cast<double>((m_currLos[rule + 1] + 1) / (m_lastLos[rule + 1] + 1)) >
+            static_cast<double>(m_program->ruleThreshold[rule]) / 20.0) {
             option = 0x01;
         }
-        if ((m_currLos[rule + 5] + 1) / (m_lastLos[rule + 5] + 1) >
-            m_program->ruleThreshold[rule] / 20.0) {
+        if (static_cast<double>((m_currLos[rule + 5] + 1) / (m_lastLos[rule + 5] + 1)) >
+            static_cast<double>(m_program->ruleThreshold[rule]) / 20.0) {
             option |= 0x10;
         }
         break;
     case AgentProgram::SEL_COMPARATIVE_LENGTH:
         // rule_threshold reflects from 0x (0) to 10x (100.0)
-        if ((m_currLos[rule + 1] + 1) / (m_currLos[0] + 1) >
-            m_program->ruleThreshold[rule] / 10.0) {
+        if (static_cast<double>((m_currLos[rule + 1] + 1) / (m_currLos[0] + 1)) >
+            static_cast<double>(m_program->ruleThreshold[rule]) / 10.0) {
             option = 0x01;
         }
-        if ((m_currLos[rule + 5] + 1) / (m_currLos[0] + 1) >
-            m_program->ruleThreshold[rule] / 10.0) {
+        if (static_cast<double>((m_currLos[rule + 5] + 1) / (m_currLos[0] + 1)) >
+            static_cast<double>(m_program->ruleThreshold[rule]) / 10.0) {
             option |= 0x10;
         }
         break;
     case AgentProgram::SEL_COMPARATIVE_OPTIC_FLOW:
         // rule_threshold reflects from 0x (0) to 10x (100.0)
-        if ((m_currLos[rule + 1] * m_lastLos[0] + 1) / (m_lastLos[rule + 1] * m_currLos[0] + 1) >
-            m_program->ruleThreshold[rule] / 10.0) {
+        if (static_cast<double>((m_currLos[rule + 1] * m_lastLos[0] + 1) /
+                                (m_lastLos[rule + 1] * m_currLos[0] + 1)) >
+            static_cast<double>(m_program->ruleThreshold[rule]) / 10.0) {
             option = 0x01;
         }
-        if ((m_currLos[rule + 5] * m_lastLos[0] + 1) / (m_lastLos[rule + 5] * m_currLos[0] + 1) >
-            m_program->ruleThreshold[rule] / 10.0) {
+        if (static_cast<double>((m_currLos[rule + 5] * m_lastLos[0] + 1) /
+                                (m_lastLos[rule + 5] * m_currLos[0] + 1)) >
+            static_cast<double>(m_program->ruleThreshold[rule]) / 10.0) {
             option |= 0x10;
         }
         break;
     }
     int dir = 0;
-    if (option == 0x01 && m_program->ruleProbability[0] > pafmath::prandomr()) {
+    if (option == 0x01 &&
+        static_cast<double>(m_program->ruleProbability[0]) > pafmath::prandomr()) {
         dir = -1;
-    } else if (option == 0x10 && m_program->ruleProbability[0] > pafmath::prandomr()) {
+    } else if (option == 0x10 &&
+               static_cast<double>(m_program->ruleProbability[0]) > pafmath::prandomr()) {
         dir = +1;
-    } else if (option == 0x11 &&
-               m_program->ruleProbability[0] > pafmath::prandomr() * pafmath::prandomr()) {
+    } else if (option == 0x11 && static_cast<double>(m_program->ruleProbability[0]) >
+                                     pafmath::prandomr() * pafmath::prandomr()) {
         // note, use random * random event as there are two ways to do this
         dir = (pafmath::pafrand() % 2) ? -1 : +1;
     }
@@ -705,16 +710,18 @@ Point2f Agent::onGibsonianLook2(bool wholeisovist) {
     if ((m_currLos[2] - m_lastLos[2]) / m_currLos[2] > m_program->feelerThreshold) {
         dir |= 0x10;
     }
-    if (dir == 0x01 && m_program->feelerProbability > pafmath::prandomr()) {
+    if (dir == 0x01 && static_cast<double>(m_program->feelerProbability) > pafmath::prandomr()) {
         maxbin = -m_program->vbin;
-    } else if (dir == 0x10 && m_program->feelerProbability > pafmath::prandomr()) {
+    } else if (dir == 0x10 &&
+               static_cast<double>(m_program->feelerProbability) > pafmath::prandomr()) {
         maxbin = m_program->vbin;
-    } else if (dir == 0x11 &&
-               m_program->feelerProbability > pafmath::prandomr() * pafmath::prandomr()) {
+    } else if (dir == 0x11 && static_cast<double>(m_program->feelerProbability) >
+                                  pafmath::prandomr() * pafmath::prandomr()) {
         maxbin = (pafmath::pafrand() % 2) ? m_program->vbin : -m_program->vbin;
     }
     // third action: detect heading for dead-end
-    if (maxbin == 0 && (m_currLos[0] / m_latticemap->getSpacing() < m_program->aheadThreshold)) {
+    if (maxbin == 0 && (static_cast<double>(m_currLos[0]) / m_latticemap->getSpacing() <
+                        static_cast<double>(m_program->aheadThreshold))) {
         if (m_currLos[1] >= m_currLos[2]) {
             maxbin = -m_program->vbin;
         } else {
@@ -723,9 +730,9 @@ Point2f Agent::onGibsonianLook2(bool wholeisovist) {
     }
 
     int bin = binfromvec(m_vector) + maxbin;
-    float angle = static_cast<float>(anglefrombin2(bin));
+    double angle = anglefrombin2(bin);
 
-    return (maxbin == 0) ? m_vector : Point2f(cosf(angle), sinf(angle));
+    return (maxbin == 0) ? m_vector : Point2f(cos(angle), sin(angle));
 }
 
 void Agent::calcLoS(int directionbin, bool curr) {

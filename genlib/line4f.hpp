@@ -105,18 +105,16 @@ class Line4f : public Region4f {
                                          : sign() * width() / height();
     }
     double constant(LineAxis axis) const {
-        // Using long doubles here to force higher accuracy of calculations
-        // and thus parity of the x86 and arm64 results
         if (axis == LineAxis::YAXIS) {
-            long double gaxis = grad(axis);
-            long double axv = ax();
-            long double ayv = ay();
-            return static_cast<double>(ayv - (gaxis * axv));
+            double gaxis = grad(axis);
+            double axv = ax();
+            double ayv = ay();
+            return ayv - (gaxis * axv);
         } else {
-            long double gaxis = grad(axis);
-            long double axv = ax();
-            long double ayv = ay();
-            return static_cast<double>(axv - (gaxis * ayv));
+            double gaxis = grad(axis);
+            double axv = ax();
+            double ayv = ay();
+            return axv - (gaxis * ayv);
         }
     }
     //

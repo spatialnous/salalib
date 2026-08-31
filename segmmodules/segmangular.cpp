@@ -88,7 +88,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
             SegmentData lineindex = biniter->second;
             if (!covered[static_cast<size_t>(lineindex.ref)]) {
                 covered[static_cast<size_t>(lineindex.ref)] = true;
-                double depthToLine = biniter->first;
+                double depthToLine = static_cast<double>(biniter->first);
                 totalDepth[lineindex.coverage] += depthToLine;
                 nodeCount[lineindex.coverage] += 1;
                 anglebins.erase(biniter);
@@ -96,7 +96,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                 if (lineindex.dir != -1) {
                     for (auto &segconn : line.forwardSegconns) {
                         if (!covered[static_cast<size_t>(segconn.first.ref)]) {
-                            double angle = depthToLine + segconn.second;
+                            double angle = depthToLine + static_cast<double>(segconn.second);
                             size_t rbin = lineindex.coverage;
                             while (rbin != radii.size() && radii[rbin] != -1 &&
                                    angle > radii[rbin]) {
@@ -115,7 +115,7 @@ AnalysisResult SegmentAngular::run(Communicator *comm, ShapeGraph &map, bool) {
                 if (lineindex.dir != 1) {
                     for (auto &segconn : line.backSegconns) {
                         if (!covered[static_cast<size_t>(segconn.first.ref)]) {
-                            double angle = depthToLine + segconn.second;
+                            double angle = depthToLine + static_cast<double>(segconn.second);
                             size_t rbin = lineindex.coverage;
                             while (rbin != radii.size() && radii[rbin] != -1 &&
                                    angle > radii[rbin]) {

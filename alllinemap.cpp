@@ -338,7 +338,7 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
         comm->CommPostMessage(Communicator::NUM_RECORDS, polyconnections.size());
     }
 
-    long double tolerance = sqrt(TOLERANCE_A); // * polyconnections[i].line.length();
+    double tolerance = sqrt(TOLERANCE_A); // * polyconnections[i].line.length();
     for (size_t i = 0; i < polyconnections.size(); i++) {
         PixelRefVector pixels = map.pixelateLine(polyconnections[i].line);
         std::vector<size_t> testedshapes;

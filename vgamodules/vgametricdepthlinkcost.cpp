@@ -29,7 +29,7 @@ AnalysisResult VGAMetricDepthLinkCost::run(Communicator *) {
     }
 
     for (size_t i = 0; i < analysisData.size(); i++) {
-        result.setValue(i, pathLengthColIdx, pathLengthCol.getValue(i));
+        result.setValue(i, pathLengthColIdx, static_cast<double>(pathLengthCol.getValue(i)));
     }
 
     result.completed = true;

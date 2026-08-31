@@ -117,7 +117,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
                     double q =
                         (pow(meanDepth, static_cast<double>(k)) / static_cast<double>(factorial)) *
                         exp(-meanDepth);
-                    relEntropy += static_cast<float>(prob) * pafmath::log2(prob / q);
+                    relEntropy += prob * pafmath::log2(prob / q);
                 }
             }
             dp.entropy = static_cast<float>(entropy);
@@ -178,13 +178,13 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
     auto dataIter = colData.begin();
     for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {
-        result.setValue(ridx, integDvCol, dataIter->integDv);
-        result.setValue(ridx, integPvCol, dataIter->integPv);
-        result.setValue(ridx, integTkCol, dataIter->integTk);
-        result.setValue(ridx, countCol, dataIter->count);
-        result.setValue(ridx, depthCol, dataIter->depth);
-        result.setValue(ridx, entropyCol, dataIter->entropy);
-        result.setValue(ridx, relEntropyCol, dataIter->relEntropy);
+        result.setValue(ridx, integDvCol, static_cast<double>(dataIter->integDv));
+        result.setValue(ridx, integPvCol, static_cast<double>(dataIter->integPv));
+        result.setValue(ridx, integTkCol, static_cast<double>(dataIter->integTk));
+        result.setValue(ridx, countCol, static_cast<double>(dataIter->count));
+        result.setValue(ridx, depthCol, static_cast<double>(dataIter->depth));
+        result.setValue(ridx, entropyCol, static_cast<double>(dataIter->entropy));
+        result.setValue(ridx, relEntropyCol, static_cast<double>(dataIter->relEntropy));
         dataIter++;
     }
 

@@ -47,7 +47,7 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
 
         for (auto &adt : analysisData) {
             adt.visitedFromBin = 0;
-            result.setValue(adt.attributeDataRow, distCol, adt.dist);
+            result.setValue(adt.attributeDataRow, distCol, static_cast<double>(adt.dist));
             adt.dist = -1.0f;
         }
 
@@ -100,7 +100,7 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
                                 auto currMetricZonePixelVal = static_cast<float>(
                                     result.getValue(zad.attributeDataRow, metricZoneColIdx));
                                 if (currMetricZonePixelVal == -1 ||
-                                    zoneLineDist < currMetricZonePixelVal) {
+                                    zoneLineDist < static_cast<double>(currMetricZonePixelVal)) {
                                     result.setValue(zad.attributeDataRow, metricZoneColIdx,
                                                     zoneLineDist);
                                 }
@@ -109,9 +109,10 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
                                 auto currInvMetricZonePixelVal = static_cast<float>(
                                     result.getValue(zad.attributeDataRow, invMetricZoneColIdx));
                                 if (currInvMetricZonePixelVal == -1 ||
-                                    1.0f / (zoneLineDist + 1) > currInvMetricZonePixelVal) {
+                                    1.0 / (zoneLineDist + 1) >
+                                        static_cast<double>(currInvMetricZonePixelVal)) {
                                     result.setValue(zad.attributeDataRow, invMetricZoneColIdx,
-                                                    1.0f / (zoneLineDist + 1));
+                                                    1.0 / (zoneLineDist + 1));
                                 }
                             }
                             zad.visitedFromBin = 0;

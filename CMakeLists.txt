@@ -13,9 +13,9 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             -Wcast-align -Wpacked -Wsuggest-override -Wextra-semi
             -Wunused-macros -Wmissing-noreturn -Wmissing-declarations
             -Wold-style-cast -Weffc++ -Wpadded -Warray-bounds
+            -Wdouble-promotion
             # yes eventually
-            -Wno-float-equal -Wno-double-promotion
-            -Wno-switch-enum
+            -Wno-float-equal -Wno-switch-enum
             # maybe
             -Wno-non-virtual-dtor -Wno-cast-qual
             -Wno-format-nonliteral

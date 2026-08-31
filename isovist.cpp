@@ -165,39 +165,39 @@ void Isovist::make(BSPNode *here) {
 }
 
 void Isovist::drawnode(const Line4f &li, int tag) {
-    long double pipi = 2.0 * M_PI;
+    double pipi = 2.0 * M_PI;
 
     Point2f p1 = li.start() - m_centre;
     p1.normalise();
     Point2f p2 = li.end() - m_centre;
     p2.normalise();
 
-    auto p1x = static_cast<long double>(p1.x);
-    auto p2x = static_cast<long double>(p2.x);
+    auto p1x = p1.x;
+    auto p2x = p2.x;
 
-    long double acosl1x = acosl(p1x);
-    long double acosl2x = acosl(p2x);
+    double acosl1x = acos(p1x);
+    double acosl2x = acos(p2x);
 
-    long double angle1 = (p1.y < 0) ? (pipi - acosl1x) : acosl1x;
-    long double angle2 = (p2.y < 0) ? (pipi - acosl2x) : acosl2x;
+    double angle1 = (p1.y < 0) ? (pipi - acosl1x) : acosl1x;
+    double angle2 = (p2.y < 0) ? (pipi - acosl2x) : acosl2x;
 
     if (angle2 > angle1) {
         if (angle2 - angle1 >= M_PI) {
             // 0 to angle1 and angle2 to 2 pi
-            addBlock(li, tag, 0.0, static_cast<double>(angle1));
-            addBlock(li, tag, static_cast<double>(angle2), static_cast<double>(pipi));
+            addBlock(li, tag, 0.0, angle1);
+            addBlock(li, tag, angle2, pipi);
         } else {
             // angle1 to angle2
-            addBlock(li, tag, static_cast<double>(angle1), static_cast<double>(angle2));
+            addBlock(li, tag, angle1, angle2);
         }
     } else {
         if (angle1 - angle2 >= M_PI) {
             // 0 to angle2 and angle1 to 2 pi
-            addBlock(li, tag, 0.0, static_cast<double>(angle2));
-            addBlock(li, tag, static_cast<double>(angle1), static_cast<double>(pipi));
+            addBlock(li, tag, 0.0, angle2);
+            addBlock(li, tag, angle1, pipi);
         } else {
             // angle2 to angle1
-            addBlock(li, tag, static_cast<double>(angle2), static_cast<double>(angle1));
+            addBlock(li, tag, angle2, angle1);
         }
     }
     //
@@ -224,7 +224,7 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
             gap++;
         }
         if (gap != m_gaps.end() && gap->startangle < endangle + 1e-9) {
-            long double a, b;
+            double a, b;
             if (gap->startangle > startangle - 1e-9) {
                 a = gap->startangle;
                 if (gap->endangle < endangle + 1e-9) {
@@ -263,14 +263,12 @@ void Isovist::addBlock(const Line4f &li, int tag, double startangle, double enda
             }
 
             // using cos and sin directly to achieve double binary parity between macos and linux
-            Point2f pa = li.intersection_point(
-                Line4f(m_centre, m_centre + Point2f(static_cast<double>(cosl(a)),
-                                                    static_cast<double>(sinl(a)))));
-            Point2f pb = li.intersection_point(
-                Line4f(m_centre, m_centre + Point2f(static_cast<double>(cosl(b)),
-                                                    static_cast<double>(sinl(b)))));
+            Point2f pa =
+                li.intersection_point(Line4f(m_centre, m_centre + Point2f(cos(a), sin(a))));
+            Point2f pb =
+                li.intersection_point(Line4f(m_centre, m_centre + Point2f(cos(b), sin(b))));
 
-            m_blocks.insert(IsoSeg(static_cast<double>(a), static_cast<double>(b), pa, pb, tag));
+            m_blocks.insert(IsoSeg(a, b, pa, pb, tag));
         } else {
             finished = true;
         }

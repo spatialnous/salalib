@@ -79,7 +79,7 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
             int linePixelCounter = 0;
             auto *lad = &analysisData.at(getRefIdx(refs, pixelTo));
             result.setValue(lad->attributeDataRow, orderCol, counter);
-            result.setValue(lad->attributeDataRow, distCol, lad->dist);
+            result.setValue(lad->attributeDataRow, distCol, static_cast<double>(lad->dist));
 
             counter++;
             auto currParent = pixelToParent;
@@ -88,7 +88,7 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
                 auto &ad = analysisData.at(getRefIdx(refs, currParent->second));
                 auto &p = ad.point;
                 result.setValue(ad.attributeDataRow, orderCol, counter);
-                result.setValue(ad.attributeDataRow, distCol, ad.dist);
+                result.setValue(ad.attributeDataRow, distCol, static_cast<double>(ad.dist));
 
                 if (!p.getMergePixel().empty() && p.getMergePixel() == currParent->first) {
                     result.setValue(ad.attributeDataRow, linkedCol, 1);

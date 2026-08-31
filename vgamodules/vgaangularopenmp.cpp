@@ -136,9 +136,9 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
     auto dataIter = colData.begin();
     for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {
-        result.setValue(ridx, meanDepthCol, dataIter->meanDepth);
-        result.setValue(ridx, totalDepthCol, dataIter->totalDepth);
-        result.setValue(ridx, countCol, dataIter->count);
+        result.setValue(ridx, meanDepthCol, static_cast<double>(dataIter->meanDepth));
+        result.setValue(ridx, totalDepthCol, static_cast<double>(dataIter->totalDepth));
+        result.setValue(ridx, countCol, static_cast<double>(dataIter->count));
         dataIter++;
     }
 

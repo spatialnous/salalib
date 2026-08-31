@@ -48,12 +48,13 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
     for (auto &cursor : m_originRefs) {
         seen[static_cast<size_t>(cursor)] = 0;
         open++;
-        double length = seglengths[static_cast<size_t>(cursor)];
+        double length = static_cast<double>(seglengths[static_cast<size_t>(cursor)]);
         audittrail[static_cast<size_t>(cursor)] =
             TopoMetSegmentRef(static_cast<int>(cursor), Connector::SEG_CONN_ALL, length * 0.5, -1);
         // better to divide by 511 but have 512 bins...
-        list[(static_cast<int>(floor(0.5 + 511 * length / maxseglength))) % 512].push_back(
-            static_cast<int>(cursor));
+        list[(static_cast<int>(floor(0.5 + 511 * length / static_cast<double>(maxseglength)))) %
+             512]
+            .push_back(static_cast<int>(cursor));
         AttributeRow &row = map.getAttributeRowFromShapeIndex(static_cast<size_t>(cursor));
         row.setValue(sdColIdx, 0);
     }
@@ -99,17 +100,20 @@ AnalysisResult SegmentMetricPD::run(Communicator *, ShapeGraph &map, bool) {
             if (seen[static_cast<size_t>(connectedCursor)] > segdepth) {
                 float length = seglengths[static_cast<size_t>(connectedCursor)];
                 seen[static_cast<size_t>(connectedCursor)] = segdepth;
-                audittrail[static_cast<size_t>(connectedCursor)] =
-                    TopoMetSegmentRef(connectedCursor, here.dir, here.dist + length, here.ref);
+                audittrail[static_cast<size_t>(connectedCursor)] = TopoMetSegmentRef(
+                    connectedCursor, here.dir, here.dist + static_cast<double>(length), here.ref);
                 // puts in a suitable bin ahead of us...
                 open++;
                 //
                 // better to divide by 511 but have 512 bins...
-                list[(bin + static_cast<int>(floor(0.5 + 511 * length / maxseglength))) % 512]
+                list[(bin + static_cast<int>(
+                                floor(0.5 + static_cast<double>(511 * length / maxseglength)))) %
+                     512]
                     .push_back(connectedCursor);
                 AttributeRow &row =
                     map.getAttributeRowFromShapeIndex(static_cast<size_t>(connectedCursor));
-                row.setValue(sdColIdx, static_cast<float>(here.dist + length * 0.5));
+                row.setValue(sdColIdx,
+                             static_cast<float>(here.dist + static_cast<double>(length) * 0.5));
             }
             iter++;
         }

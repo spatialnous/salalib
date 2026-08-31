@@ -11,8 +11,8 @@
 #include <cmath>
 
 namespace pafmath {
-    constexpr long double M_ROOT_1_2 = 0.70710678118654752440084436210485L;
-    constexpr long double M_1_LN2 = 1.4426950408889634073599246810019L;
+    constexpr double M_ROOT_1_2 = 0.70710678118654752440084436210485;
+    constexpr double M_1_LN2 = 1.4426950408889634073599246810019;
 
     // note, in order to stop confusing myself I have ln defined:
     inline double ln(double x) { return std::log(x); }
@@ -36,7 +36,7 @@ namespace pafmath {
         return static_cast<double>(pafrand(set)) / static_cast<double>(PAF_RAND_MAX + 1);
     }
 
-    inline double log2(double a) { return (static_cast<double>(pafmath::ln(a) * M_1_LN2)); }
+    inline double log2(double a) { return (pafmath::ln(a) * M_1_LN2); }
 
     // Hillier Hanson dvalue
     /*

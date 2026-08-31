@@ -52,11 +52,11 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
     }
 
     for (size_t i = 0; i < analysisData.size(); i++) {
-        result.setValue(i, pathAngleColIdx, pathAngleCol.getValue(i));
-        result.setValue(i, pathLengthColIdx, pathLengthCol.getValue(i));
+        result.setValue(i, pathAngleColIdx, static_cast<double>(pathAngleCol.getValue(i)));
+        result.setValue(i, pathLengthColIdx, static_cast<double>(pathLengthCol.getValue(i)));
         if (m_originRefs.size() == 1) {
-            result.setValue(i, *distColIdx, euclidDistCol.getValue(i));
-            result.setValue(i, *pennDistColIdx, pennDistCol.getValue(i));
+            result.setValue(i, *distColIdx, static_cast<double>(euclidDistCol.getValue(i)));
+            result.setValue(i, *pennDistColIdx, static_cast<double>(pennDistCol.getValue(i)));
         }
     }
     result.columnStats = {pennDistCol.getStats(), pathAngleCol.getStats(), pathLengthCol.getStats(),

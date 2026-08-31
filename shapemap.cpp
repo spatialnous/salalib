@@ -477,26 +477,26 @@ bool ShapeMap::convertPointsToPolys(
                     polyP.x = p.x + polyRadius;
                     polyP.y = p.y;
                 } else if (k == 1) {
-                    polyP.x = static_cast<double>(p.x + polyRadius * pafmath::M_ROOT_1_2);
-                    polyP.y = static_cast<double>(p.y + polyRadius * pafmath::M_ROOT_1_2);
+                    polyP.x = p.x + polyRadius * pafmath::M_ROOT_1_2;
+                    polyP.y = p.y + polyRadius * pafmath::M_ROOT_1_2;
                 } else if (k == 2) {
                     polyP.x = p.x;
                     polyP.y = p.y + polyRadius;
                 } else if (k == 3) {
-                    polyP.x = static_cast<double>(p.x - polyRadius * pafmath::M_ROOT_1_2);
-                    polyP.y = static_cast<double>(p.y + polyRadius * pafmath::M_ROOT_1_2);
+                    polyP.x = p.x - polyRadius * pafmath::M_ROOT_1_2;
+                    polyP.y = p.y + polyRadius * pafmath::M_ROOT_1_2;
                 } else if (k == 4) {
                     polyP.x = p.x - polyRadius;
                     polyP.y = p.y;
                 } else if (k == 5) {
-                    polyP.x = static_cast<double>(p.x - polyRadius * pafmath::M_ROOT_1_2);
-                    polyP.y = static_cast<double>(p.y - polyRadius * pafmath::M_ROOT_1_2);
+                    polyP.x = p.x - polyRadius * pafmath::M_ROOT_1_2;
+                    polyP.y = p.y - polyRadius * pafmath::M_ROOT_1_2;
                 } else if (k == 6) {
                     polyP.x = p.x;
                     polyP.y = p.y - polyRadius;
                 } else if (k == 7) {
-                    polyP.x = static_cast<double>(p.x + polyRadius * pafmath::M_ROOT_1_2);
-                    polyP.y = static_cast<double>(p.y - polyRadius * pafmath::M_ROOT_1_2);
+                    polyP.x = p.x + polyRadius * pafmath::M_ROOT_1_2;
+                    polyP.y = p.y - polyRadius * pafmath::M_ROOT_1_2;
                 }
                 region.encompass(polyP);
                 shape.second.points.push_back(polyP);
@@ -2030,10 +2030,10 @@ double ShapeMap::getLocationValue(const Point2f &point, std::optional<size_t> at
     if (x != -1) {
         int key = getShapeRefFromIndex(static_cast<size_t>(x))->first;
         if (!attributeIdx.has_value()) {
-            val = static_cast<float>(key);
+            val = static_cast<double>(key);
         } else {
             auto &row = m_attributes->getRow(AttributeKey(key));
-            val = row.getValue(attributeIdx.value());
+            val = static_cast<double>(row.getValue(attributeIdx.value()));
         }
     }
     return (x == -1) ? -2.0 : val; // -2.0 is returned when point cannot be

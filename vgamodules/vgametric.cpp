@@ -64,22 +64,18 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
 
         // Legacy Mean Penn Distance formula. The root contributes zero to both
         // totals and is counted in totalNodes, for compatibility with historic output.
-        result.setValue(
-            ad0.attributeDataRow, pennCol,
-            static_cast<float>(std::max(0.0, static_cast<double>(totalDepth - euclidDepth)) /
-                               static_cast<double>(totalNodes)));
+        result.setValue(ad0.attributeDataRow, pennCol,
+                        std::max(0.0, static_cast<double>(totalDepth - euclidDepth)) /
+                            static_cast<double>(totalNodes));
 
-        result.setValue(ad0.attributeDataRow, mspaCol, //
-                        static_cast<float>(static_cast<double>(totalAngle) /
-                                           static_cast<double>(totalNodes))); //
-        result.setValue(ad0.attributeDataRow, msplCol,                        //
-                        static_cast<float>(static_cast<double>(totalDepth) /
-                                           static_cast<double>(totalNodes))); //
-        result.setValue(ad0.attributeDataRow, distCol,                        //
-                        static_cast<float>(static_cast<double>(euclidDepth) /
-                                           static_cast<double>(totalNodes))); //
-        result.setValue(ad0.attributeDataRow, countCol,                       //
-                        static_cast<float>(totalNodes));                      //
+        result.setValue(ad0.attributeDataRow, mspaCol,                                       //
+                        static_cast<double>(totalAngle) / static_cast<double>(totalNodes));  //
+        result.setValue(ad0.attributeDataRow, msplCol,                                       //
+                        static_cast<double>(totalDepth) / static_cast<double>(totalNodes));  //
+        result.setValue(ad0.attributeDataRow, distCol,                                       //
+                        static_cast<double>(euclidDepth) / static_cast<double>(totalNodes)); //
+        result.setValue(ad0.attributeDataRow, countCol,                                      //
+                        totalNodes);                                                         //
 
         count++; // <- increment count
 

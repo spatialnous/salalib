@@ -8,7 +8,6 @@
 
 #include "genlib/comm.hpp"
 
-#include <set>
 #include <string>
 
 class IAnalysis {

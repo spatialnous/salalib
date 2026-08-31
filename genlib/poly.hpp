@@ -6,7 +6,6 @@
 #pragma once
 
 #include "regiontree.hpp"
-#include <cstdint>
 
 class Poly {
   protected:

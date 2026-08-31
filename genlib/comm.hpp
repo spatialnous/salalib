@@ -5,6 +5,7 @@
 #pragma once
 
 #include <chrono>
+#include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <string>

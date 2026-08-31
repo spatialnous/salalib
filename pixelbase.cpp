@@ -8,9 +8,6 @@
 
 #include "pixelbase.hpp"
 
-#include "genlib/readwritehelpers.hpp"
-#include "genlib/stringutils.hpp"
-
 #include <cmath>
 
 /*

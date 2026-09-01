@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2019 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2019-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -14,6 +14,7 @@
 #include <fstream>
 #include <ios>
 #include <ostream>
+#include <sstream>
 #include <string>
 
 AgentProgram::AgentProgram()
@@ -242,4 +243,34 @@ bool AgentProgram::open(const std::string &filename) {
     }
 
     return true;
+}
+
+bool AgentProgram::isValidSelType(int selType) {
+    switch (selType) {
+    case SEL_STANDARD:
+    case SEL_LOS:
+    case SEL_LOS_OCC:
+    case SEL_OPTIC_FLOW2:
+    case SEL_LENGTH:
+    case SEL_OPTIC_FLOW:
+    case SEL_COMPARATIVE_LENGTH:
+    case SEL_COMPARATIVE_OPTIC_FLOW:
+    case SEL_OCC_ALL:
+    case SEL_OCC_BIN45:
+    case SEL_OCC_BIN60:
+    case SEL_OCC_STANDARD:
+    case SEL_OCC_WEIGHT_DIST:
+    case SEL_OCC_WEIGHT_ANG:
+    case SEL_OCC_WEIGHT_DIST_ANG:
+    case SEL_OCC_MEMORY:
+        return true;
+    default:
+        return false;
+    }
+}
+
+std::string AgentProgram::selTypeToString(int selType) {
+    std::stringstream stream;
+    stream << "0x" << std::hex << std::uppercase << selType;
+    return stream.str();
 }

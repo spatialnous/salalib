@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2019 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2019-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -37,6 +37,9 @@ struct AgentProgram {
         SEL_OCC_MEMORY = 0x9008
     };
     int selType;
+    static bool isValidSelType(int selType);
+    static std::string selTypeToString(int selType);
+
     int steps;
     int vbin;
     // these three variables for evolved Gibsonian agents:

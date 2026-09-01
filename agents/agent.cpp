@@ -1,12 +1,14 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2019 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2019-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "agent.hpp"
 
 #include "agentanalysis.hpp"
+
+#include "../genlib/exceptions.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -224,6 +226,9 @@ Point2f Agent::onLook(bool wholeisovist) {
         case AgentProgram::SEL_OPTIC_FLOW2:
             dir = onGibsonianLook2(wholeisovist);
             break;
+        default:
+            throw genlib::RuntimeException("Unhandled agent algorithm: " +
+                                           AgentProgram::selTypeToString(m_program->selType));
         }
     }
     if ((m_program->selType & AgentProgram::SEL_GIBSONIAN) && !m_stuck) {
@@ -668,6 +673,9 @@ int Agent::onGibsonianRule(int rule) {
             option |= 0x10;
         }
         break;
+    default:
+        throw genlib::RuntimeException("Unhandled Gibsonian agent algorithm: " +
+                                       AgentProgram::selTypeToString(m_program->selType));
     }
     int dir = 0;
     if (option == 0x01 &&

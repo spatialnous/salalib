@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -9,6 +9,8 @@
 #include "agent.hpp"
 
 #include "../pushvalues.hpp"
+
+#include "../genlib/exceptions.hpp"
 
 #include <algorithm>
 #include <cstddef>
@@ -139,6 +141,10 @@ AnalysisResult AgentAnalysis::run(Communicator *comm) {
     }
 
     m_agentProgram.steps = static_cast<int>(m_agentStepsToDecision);
+    if (!AgentProgram::isValidSelType(m_agentAlgorithm)) {
+        throw genlib::RuntimeException("Invalid agent algorithm: " +
+                                       AgentProgram::selTypeToString(m_agentAlgorithm));
+    }
     m_agentProgram.selType = m_agentAlgorithm;
 
     std::vector<PixelRef> releaseLocations;

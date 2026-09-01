@@ -11,7 +11,7 @@ WHO_RE=$(printf '%s' "$WHO" | sed 's/[][\.*^$(){}?+|/]/\\&/g')
 FAIL=0
 for f in $(git diff --cached --name-only --diff-filter=d); do
     [ -f "$f" ] || continue
-    grep -q 'SPDX-FileCopyrightText' "$f" 2>/dev/null || continue     # REUSE.toml-covered
+    grep -q 'SPDX-FileCopyrightText:' "$f" 2>/dev/null || continue     # REUSE.toml-covered
     LINE=$(grep -nE "SPDX-FileCopyrightText:.*${WHO_RE}" "$f" | head -1)
     if [ -z "$LINE" ]; then
         [ $FAIL -eq 0 ] && echo "Copyright headers need updating for $YEAR:"; FAIL=1

@@ -248,6 +248,7 @@ bool AgentProgram::open(const std::string &filename) {
 bool AgentProgram::isValidSelType(int selType) {
     switch (selType) {
     case SEL_STANDARD:
+    case SEL_WEIGHTED:
     case SEL_LOS:
     case SEL_LOS_OCC:
     case SEL_OPTIC_FLOW2:

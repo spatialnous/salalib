@@ -215,6 +215,9 @@ Point2f Agent::onLook(bool wholeisovist) {
         case AgentProgram::SEL_STANDARD:
             dir = onStandardLook(wholeisovist);
             break;
+        case AgentProgram::SEL_WEIGHTED:
+            dir = onWeightedLook(wholeisovist);
+            break;
         case AgentProgram::SEL_LOS:
         case AgentProgram::SEL_LOS_OCC:
             if (m_program->destinationDirected) {
@@ -288,7 +291,6 @@ Point2f Agent::onStandardLook(bool wholeisovist) {
     return (m_target - m_loc).normalise();
 }
 
-// TODO: Expose this functionality to the UIs
 Point2f Agent::onWeightedLook(bool wholeisovist) {
     if (wholeisovist) {
         // use standard targetted look instead:
@@ -754,7 +756,7 @@ void Agent::calcLoS(int directionbin, bool curr) {
     }
     Node &node = m_latticemap->getPoint(m_node).getNode();
     // ahead
-    los[0] = node.bindistance(directionbin % 32);
+    los[0] = node.bindistance(directionbin);
     // directions:
     int count = 1;
     for (int i = 1; i <= 7; i += 2) {
@@ -776,7 +778,7 @@ void Agent::calcLoS2(int directionbin, bool curr) {
     }
     Node &node = m_latticemap->getPoint(m_node).getNode();
     // ahead
-    los[0] = node.bindistance(directionbin % 32);
+    los[0] = node.bindistance(directionbin);
     // directions:
     los[1] = node.bindistance((directionbin - m_program->vbin + 32) % 32);
     los[2] = node.bindistance((directionbin + m_program->vbin) % 32);

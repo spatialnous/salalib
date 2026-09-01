@@ -130,7 +130,8 @@ inline int binfromvec(const Point2f &p) {
         return 16 - k;
     if (p.x < 0.0 && p.y < 0.0)
         return 16 + k;
-    return (32 - k) % 32;
+    // k == 0 here means due east, i.e. bin 0 rather than bin 32
+    return (k == 0) ? 0 : 32 - k;
 }
 
 // a random angle based on a bin direction

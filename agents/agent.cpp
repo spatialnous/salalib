@@ -747,6 +747,7 @@ Point2f Agent::onGibsonianLook2(bool wholeisovist) {
     return (maxbin == 0) ? m_vector : Point2f(cos(angle), sin(angle));
 }
 
+// directionbin must be 0..31, as returned by binfromvec
 void Agent::calcLoS(int directionbin, bool curr) {
     float *los;
     if (curr) {
@@ -769,6 +770,7 @@ void Agent::calcLoS(int directionbin, bool curr) {
     }
 }
 
+// directionbin must be 0..31, as returned by binfromvec
 void Agent::calcLoS2(int directionbin, bool curr) {
     float *los;
     if (curr) {

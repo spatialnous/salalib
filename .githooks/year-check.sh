@@ -9,7 +9,7 @@ WHO=$(git check-mailmap "$IDENT" 2>/dev/null | sed 's/ <.*//')
 WHO_RE=$(printf '%s' "$WHO" | sed 's/[][\.*^$(){}?+|/]/\\&/g')
 
 FAIL=0
-for f in $(git diff --cached --name-only --diff-filter=d); do
+for f in $(git diff --cached --name-only --diff-filter=d "${EXTRA_YEAR_CHECK_EXCLUDES[@]}"); do
     [ -f "$f" ] || continue
     grep -q 'SPDX-FileCopyrightText:' "$f" 2>/dev/null || continue     # REUSE.toml-covered
     LINE=$(grep -nE "SPDX-FileCopyrightText:.*${WHO_RE}" "$f" | head -1)

@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2019 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2019-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -100,9 +100,37 @@ class Agent {
     const LatticeMap &getLatticeMap() const { return *m_latticemap; }
 };
 
+// The original version of the function was:
+//   return static_cast<int>(32.0 * (0.5 * p.angle() / M_PI) + 0.5);
+//
+// This version does away with the angle calculation, as it was using
+// trigonometric functions. Those are not guaranteed to have the same
+// results across all platforms, risking minor differences between them
+// especially at the edge of bin calculation. In this version we
+// initially find the octant where our vector direction falls and then
+// add up to the quarters of the octant, based on how many of the known
+// tan values above are covered.
+//
 // note the add 0.5 means angles from e.g., -1/32 to 1/32 are in bin 0
 inline int binfromvec(const Point2f &p) {
-    return static_cast<int>(32.0 * (0.5 * p.angle() / M_PI) + 0.5);
+    // tan(5.625°), tan(16.875°), tan(28.125°), tan(39.375°) as literals
+    static constexpr double th[4] = {0.098491403357164, 0.303346683607342, //
+                                     0.534511135950792, 0.820678790828660};
+
+    const double ax = fabs(p.x), ay = fabs(p.y);
+    const bool lo = (ay <= ax);
+    const double num = lo ? ay : ax;
+    const double den = lo ? ax : ay;
+    const double r = (den != 0.0) ? num / den : 0.0;
+    const int c = (r >= th[0]) + (r >= th[1]) + (r >= th[2]) + (r >= th[3]);
+    const int k = lo ? c : 8 - c;
+    if (p.x >= 0.0 && p.y >= 0.0)
+        return k;
+    if (p.x < 0.0 && p.y >= 0.0)
+        return 16 - k;
+    if (p.x < 0.0 && p.y < 0.0)
+        return 16 + k;
+    return (32 - k) % 32;
 }
 
 // a random angle based on a bin direction

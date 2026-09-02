@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -228,28 +229,13 @@ PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) const {
     double dy = q.y - p.y;
     int polarity = -1;
     double t = 0;
-    // Quick mod - TV
-#if defined(_MSC_VER)
-    if (abs(dx) == abs(dy)) {
-#else
-    if (fabs(dx) == fabs(dy)) {
-#endif
+    if (std::fabs(dx) == std::fabs(dy)) {
         polarity = 0;
-    }
-#if defined(_MSC_VER)
-    else if (abs(dx) > abs(dy)) {
-        t = abs(dx);
-#else
-    else if (fabs(dx) > fabs(dy)) {
-        t = fabs(dx);
-#endif
+    } else if (std::fabs(dx) > std::fabs(dy)) {
+        t = std::fabs(dx);
         polarity = 1;
     } else {
-#if defined(_MSC_VER)
-        t = abs(dy);
-#else
-        t = fabs(dy);
-#endif
+        t = std::fabs(dy);
         polarity = 2;
     }
 
@@ -261,12 +247,12 @@ PixelRefVector PixelBase::quickPixelateLine(PixelRef p, PixelRef q) const {
     double ppy = p.y + 0.5;
 
     for (int i = 0; i <= t; i++) {
-        if (polarity == 1 && fabs(floor(ppy) - ppy) < 1e-9) {
+        if (polarity == 1 && std::fabs(floor(ppy) - ppy) < 1e-9) {
             list.push_back(PixelRef(static_cast<short>(floor(ppx)), //
                                     static_cast<short>(floor(ppy + 0.5))));
             list.push_back(PixelRef(static_cast<short>(floor(ppx)), //
                                     static_cast<short>(floor(ppy - 0.5))));
-        } else if (polarity == 2 && fabs(floor(ppx) - ppx) < 1e-9) {
+        } else if (polarity == 2 && std::fabs(floor(ppx) - ppx) < 1e-9) {
             list.push_back(PixelRef(static_cast<short>(floor(ppx + 0.5)), //
                                     static_cast<short>(floor(ppy))));
             list.push_back(PixelRef(static_cast<short>(floor(ppx - 0.5)), //

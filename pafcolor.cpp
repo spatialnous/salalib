@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2000-2010 University College London, Eva Friedrich
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -168,51 +169,21 @@ PafColor &PafColor::makeDepthmapClassic(double field, double blue, double red) {
     // the colours slightly
     if (field >= 0.0 && field < blue) {
         setr(htmlByte(0.5 * (blue - field) / blue * 1.0));
-        // Quick mod - TV
-#if defined(_MSC_VER)
-        setb(unsigned char(0xFF));
-#else
         setb(static_cast<unsigned char>(0xFF));
-#endif
     } else if (field >= blue && field < (green + blue) / 2.0) {
-        // Quick mod - TV
-#if defined(_MSC_VER)
-        setb(unsigned char(0xFF));
-#else
         setb(static_cast<unsigned char>(0xFF));
-#endif
         setg(htmlByte((2.0 * (field - blue) / (green - blue)) * 1.0));
     } else if (field >= (green + blue) / 2.0 && field < green) {
         setb(htmlByte((2.0 * (green - field) / (green - blue)) * 1.0));
-        // Quick mod - TV
-#if defined(_MSC_VER)
-        setg(unsigned char(0xFF));
-#else
         setg(static_cast<unsigned char>(0xFF));
-#endif
     } else if (field >= green && field < (green + red) / 2.0) {
-        // Quick mod - TV
-#if defined(_MSC_VER)
-        setg(unsigned char(0xFF));
-#else
         setg(static_cast<unsigned char>(0xFF));
-#endif
         setr(htmlByte((2.0 * (field - green) / (red - green)) * 1.0));
     } else if (field >= (green + red) / 2.0 && field < red) {
         setg(htmlByte((2.0 * (red - field) / (red - green)) * 1.0));
-        // Quick mod - TV
-#if defined(_MSC_VER)
-        setr(unsigned char(0xFF));
-#else
         setr(static_cast<unsigned char>(0xFF));
-#endif
     } else if (field >= red) {
-        // Quick mod - TV
-#if defined(_MSC_VER)
-        setr(unsigned char(0xFF));
-#else
         setr(static_cast<unsigned char>(0xFF));
-#endif
         setb(htmlByte(0.5 * (field - red) / (1.0 - red) * 1.0));
     }
     return *this;

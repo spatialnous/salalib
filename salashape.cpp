@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2024-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -84,13 +84,7 @@ double SalaShape::getAngDev() const {
     double dev = 0.0;
     for (size_t i = 1; i < points.size() - 1; i++) {
         double ang = points[i - 1].angle(points[i], points[i + 1]);
-
-        // Quick mod - TV
-#if defined(_MSC_VER)
-        dev += abs(M_PI - ang);
-#else
-        (M_PI - ang) < 0.0 ? dev += (ang - M_PI) : dev += (M_PI - ang);
-#endif
+        dev += std::fabs(M_PI - ang);
     }
     // convert to Iida Hillier units (0 to 2):
     dev /= M_PI * 0.5;

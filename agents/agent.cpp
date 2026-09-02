@@ -314,22 +314,12 @@ Point2f Agent::onWeightedLook(bool wholeisovist) {
         Bin &bin = m_latticemap->getPoint(m_node).getNode().bin((directionbin + i) % 32);
         bin.first();
 
-        // Quick mod - TV
-#if defined(_MSC_VER)
-        int node = bin.is_tail() ? -1 : bin.cursor();
-#else
-        int node = bin.is_tail() ? -1 : bin.cursor().x;
-#endif
+        int node = bin.is_tail() ? -1 : static_cast<int>(bin.cursor());
         while (node != -1) {
             weight += ((directionbin + i) % 32 == aheadbin) ? 5.0 : 1.0;
             weightmap.push_back(wpair(weight, node));
             bin.next();
-            // Quick mod - TV
-#if defined(_MSC_VER)
-            node = bin.is_tail() ? -1 : bin.cursor();
-#else
-            node = bin.is_tail() ? -1 : bin.cursor().x;
-#endif
+            node = bin.is_tail() ? -1 : static_cast<int>(bin.cursor());
         }
     }
     if (weightmap.size() == 0) {

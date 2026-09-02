@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2018 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later

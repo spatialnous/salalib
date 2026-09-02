@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
 // SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //

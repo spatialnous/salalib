@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -139,12 +139,12 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
                 if (distribution[k] > 0) {
                     double prob =
                         static_cast<double>(distribution[k]) / static_cast<double>(totalNodes - 1);
-                    entropy -= prob * pafmath::log2(prob);
+                    entropy -= prob * pafmath::plog2(prob);
                     // Formula from Turner 2001, "Depthmap"
                     factorial *= static_cast<double>(k + 1);
                     double q =
                         (pow(meanDepth, static_cast<double>(k)) / factorial) * exp(-meanDepth);
-                    relEntropy += prob * pafmath::log2(prob / q);
+                    relEntropy += prob * pafmath::plog2(prob / q);
                 }
             }
             if (!m_simpleVersion) {

@@ -112,13 +112,13 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
                 if (distribution[k] > 0) {
                     double prob =
                         static_cast<double>(distribution[k]) / static_cast<double>(totalNodes - 1);
-                    entropy -= prob * pafmath::log2(prob);
+                    entropy -= prob * pafmath::plog2(prob);
                     // Formula from Turner 2001, "Depthmap"
                     factorial *= static_cast<double>(k + 1);
                     double q =
                         (pow(meanDepth, static_cast<double>(k)) / static_cast<double>(factorial)) *
                         exp(-meanDepth);
-                    relEntropy += prob * pafmath::log2(prob / q);
+                    relEntropy += prob * pafmath::plog2(prob / q);
                 }
             }
             dp.entropy = static_cast<float>(entropy);

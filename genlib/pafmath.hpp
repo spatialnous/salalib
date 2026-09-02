@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 1996-2011 Alasdair Turner (a.turner@ucl.ac.uk)
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -36,7 +37,7 @@ namespace pafmath {
         return static_cast<double>(pafrand(set)) / static_cast<double>(PAF_RAND_MAX + 1);
     }
 
-    inline double log2(double a) { return (pafmath::ln(a) * M_1_LN2); }
+    inline double plog2(double a) { return (pafmath::ln(a) * M_1_LN2); }
 
     // Hillier Hanson dvalue
     /*
@@ -48,12 +49,12 @@ namespace pafmath {
 
     // Hillier Hanson dvalue (from Kruger 1989 -- see Teklenburg et al)
     inline double dvalue(double k) {
-        return 2.0 * (k * (pafmath::log2((k + 2.0) / 3.0) - 1.0) + 1.0) / ((k - 1.0) * (k - 2.0));
+        return 2.0 * (k * (pafmath::plog2((k + 2.0) / 3.0) - 1.0) + 1.0) / ((k - 1.0) * (k - 2.0));
     }
 
     // Hillier Hanson pvalue
     inline double pvalue(double k) {
-        return 2.0 * (k - pafmath::log2(k) - 1.0) / ((k - 1.0) * (k - 2.0));
+        return 2.0 * (k - pafmath::plog2(k) - 1.0) / ((k - 1.0) * (k - 2.0));
     }
 
     // Teklenburg integration (correction 31.01.11 due to Ulrich Thaler

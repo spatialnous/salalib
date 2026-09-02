@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2026 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -481,13 +481,13 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                             // (i.e., including or not including the node itself)
                             double prob = static_cast<double>(depthcounts[k]) /
                                           static_cast<double>(nodeCount);
-                            entropy -= prob * pafmath::log2(prob);
+                            entropy -= prob * pafmath::plog2(prob);
                             // Formula from Turner 2001, "Depthmap"
                             factorial *= static_cast<double>(k + 1);
                             double q = (pow(meanDepth, static_cast<double>(k)) /
                                         static_cast<double>(factorial)) *
                                        exp(-meanDepth);
-                            relEntropy += static_cast<double>(prob) * pafmath::log2(prob / q);
+                            relEntropy += static_cast<double>(prob) * pafmath::plog2(prob / q);
                             //
                             harmonic += 1.0 / static_cast<double>(depthcounts[k]);
                         }

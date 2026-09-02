@@ -8,10 +8,9 @@
 
 #include "ivga.hpp"
 
+#include "../genlib/bsptree.hpp"
 #include "../isovist.hpp"
 #include "../latticemap.hpp"
-
-#include "../genlib/bsptree.hpp"
 
 #include <cstddef>
 #include <set>

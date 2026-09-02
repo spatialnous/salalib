@@ -8,10 +8,9 @@
 
 #include "agentprogram.hpp"
 
+#include "../genlib/pflipper.hpp"
 #include "../latticemap.hpp"
 #include "../pixelref.hpp"
-
-#include "../genlib/pflipper.hpp"
 
 #include <cstdint>
 #include <math.h>

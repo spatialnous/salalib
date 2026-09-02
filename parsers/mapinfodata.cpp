@@ -4,10 +4,9 @@
 
 #include "mapinfodata.hpp"
 
+#include "../genlib/stringutils.hpp"
 #include "../latticemap.hpp"
 #include "../shapemap.hpp"
-
-#include "../genlib/stringutils.hpp"
 
 #include <algorithm>
 #include <cctype>

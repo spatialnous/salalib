@@ -9,13 +9,13 @@
 #include "attributetable.hpp"
 #include "attributetablehelpers.hpp"
 #include "latticemap.hpp"
-#include "parsers/mapinfodata.hpp" // for mapinfo interface
 #include "tolerances.hpp"
 
 #include "genlib/containerutils.hpp"
 #include "genlib/exceptions.hpp"
 #include "genlib/readwritehelpers.hpp"
 #include "genlib/stringutils.hpp"
+#include "parsers/mapinfodata.hpp" // for mapinfo interface
 
 #include <algorithm>
 #include <cmath>

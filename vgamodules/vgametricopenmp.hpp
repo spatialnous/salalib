@@ -1,14 +1,15 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
 
+#include "ivgametric.hpp"
+
 #include "../genlib/stringutils.hpp"
 #include "../latticemap.hpp"
-#include "ivgametric.hpp"
 
 #include <optional>
 #include <string>

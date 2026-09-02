@@ -5,9 +5,8 @@
 #pragma once
 
 #include "../attributetable.hpp"
-#include "../layermanagerimpl.hpp"
-
 #include "../genlib/region4f.hpp"
+#include "../layermanagerimpl.hpp"
 
 #include <istream>
 #include <ostream>

@@ -5,8 +5,9 @@
 #pragma once
 
 #include "importtypedefs.hpp"
-#include "parsers/dxfp.hpp"
 #include "shapemap.hpp"
+
+#include "parsers/dxfp.hpp"
 
 #include <istream>
 #include <map>

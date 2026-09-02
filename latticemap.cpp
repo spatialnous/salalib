@@ -8,7 +8,6 @@
 
 #include "attributetable.hpp"
 #include "ngraph.hpp"
-#include "parsers/mapinfodata.hpp" // for mapinfo interface
 #include "salashape.hpp"
 #include "shapemap.hpp"
 
@@ -16,6 +15,7 @@
 #include "genlib/containerutils.hpp"
 #include "genlib/pflipper.hpp"
 #include "genlib/stringutils.hpp"
+#include "parsers/mapinfodata.hpp" // for mapinfo interface
 
 #include <algorithm>
 #include <cmath>

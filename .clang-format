@@ -2,3 +2,12 @@ IndentWidth: 4
 ColumnLimit: 100
 NamespaceIndentation: All
 LineEnding: LF
+IncludeBlocks: Regroup
+IncludeIsMainRegex: '$'
+IncludeCategories:
+  - Regex: '^"[^/"]+\.hpp"'    # sibling headers
+    Priority: 2
+  - Regex: '^"'                # other project headers
+    Priority: 3
+  - Regex: '^<'                # system
+    Priority: 4

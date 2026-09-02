@@ -8,9 +8,8 @@
 
 #include "ivgavisual.hpp"
 
-#include "../latticemap.hpp"
-
 #include "../genlib/stringutils.hpp"
+#include "../latticemap.hpp"
 
 #include <string>
 #include <vector>

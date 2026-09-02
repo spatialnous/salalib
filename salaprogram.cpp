@@ -21,6 +21,7 @@
 // a global function stack alongside the global variable stack
 
 #include "salaprogram.hpp"
+
 #include "connector.hpp"
 #include "latticemap.hpp"
 #include "ngraph.hpp"

@@ -11,9 +11,9 @@
 #include "latticemap.hpp"
 #include "metagraph.hpp"
 #include "shapegraph.hpp"
+#include "shapemapgroupdata.hpp"
 
 #include "genlib/exceptions.hpp"
-#include "shapemapgroupdata.hpp"
 
 #include <iosfwd>
 #include <istream>

@@ -6,12 +6,11 @@
 
 #pragma once
 
+#include "agent.hpp"
 #include "agentprogram.hpp"
 
 #include "../ianalysis.hpp"
 #include "../latticemap.hpp"
-
-#include "agent.hpp"
 
 #include <cstring>
 #include <functional>

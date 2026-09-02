@@ -5,12 +5,12 @@
 #include "shapegraph.hpp"
 
 #include "axialpolygons.hpp"
-#include "parsers/mapinfodata.hpp"
 #include "tolerances.hpp"
 
 #include "genlib/comm.hpp" // For communicator
 #include "genlib/containerutils.hpp"
 #include "genlib/readwritehelpers.hpp"
+#include "parsers/mapinfodata.hpp"
 
 #include <algorithm>
 #include <cmath>

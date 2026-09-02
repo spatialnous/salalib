@@ -6,10 +6,10 @@
 
 #pragma once
 
+#include "ivgametric.hpp"
+
 #include "../latticemap.hpp"
 #include "../pixelref.hpp"
-
-#include "ivgametric.hpp"
 
 #include <set>
 #include <string>

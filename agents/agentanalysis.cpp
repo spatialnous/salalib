@@ -8,9 +8,8 @@
 
 #include "agent.hpp"
 
-#include "../pushvalues.hpp"
-
 #include "../genlib/exceptions.hpp"
+#include "../pushvalues.hpp"
 
 #include <algorithm>
 #include <cstddef>

@@ -11,16 +11,16 @@
 #include "attributetablehelpers.hpp"
 #include "attributetableview.hpp"
 #include "connector.hpp"
-#include "genlib/containerutils.hpp"
 #include "importtypedefs.hpp"
 #include "layermanagerimpl.hpp"
-#include "parsers/mapinfodata.hpp"
 #include "salaevent.hpp"
 #include "salashape.hpp"
 #include "shaperef.hpp"
 
+#include "genlib/containerutils.hpp"
 #include "genlib/simpleline.hpp"
 #include "genlib/simplematrix.hpp"
+#include "parsers/mapinfodata.hpp"
 
 #include <algorithm>
 #include <cmath>

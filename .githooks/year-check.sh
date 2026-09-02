@@ -11,12 +11,14 @@ WHO_RE=$(printf '%s' "$WHO" | sed 's/[][\.*^$(){}?+|/]/\\&/g')
 # Changed lines that do not, on their own, warrant a copyright year bump. A file
 # whose staged diff touches only lines matching this ERE is skipped. Mechanical
 # include hygiene is the motivating case: adding a transitive #include is not an
-# act of authorship. Override before sourcing to add patterns, or set it empty to
+# act of authorship. Nor is editing the SPDX block itself - restoring someone
+# else's copyright line should not demand a bump of your own.
+# Override before sourcing to add patterns, or set it empty to
 # check every change:
 #   YEAR_CHECK_IGNORE_PATTERNS='' .githooks/pre-commit
 # n.b. "=" not ":=", so an explicitly empty value disables the feature rather
 # than falling back to this default.
-: "${YEAR_CHECK_IGNORE_PATTERNS=^[[:space:]]*#[[:space:]]*include|^[[:space:]]*$}"
+: "${YEAR_CHECK_IGNORE_PATTERNS=^[[:space:]]*#[[:space:]]*include|^[[:space:]]*$|^[[:space:]]*(//|#)[[:space:]]*SPDX-}"
 
 FAIL=0
 for f in $(git diff --cached --name-only --diff-filter=d "${EXTRA_YEAR_CHECK_EXCLUDES[@]}"); do

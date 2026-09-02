@@ -57,11 +57,11 @@ if [ -n "$CPP_FILES" ]; then
         exit 1
     fi
 
-    ISSUE_COUNT=$(printf '%s\n' "$TIDY_OUTPUT" | grep -c 'no header providing|not used directly' || true)
+    ISSUE_COUNT=$(printf '%s\n' "$TIDY_OUTPUT" | grep -cE 'no header providing|not used directly' || true)
 
     if [ "$ISSUE_COUNT" -gt 0 ]; then
         echo "clang-tidy found $ISSUE_COUNT missing-include issue(s):"
-        printf '%s\n' "$TIDY_OUTPUT" | grep 'no header providing|not used directly'
+        printf '%s\n' "$TIDY_OUTPUT" | grep -E 'no header providing|not used directly'
         echo "Run the clang-tidy --fix command manually, review, then re-stage."
         exit 1
     fi

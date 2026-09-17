@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2017-2018 Christian Sailer
-# SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+# SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -19,6 +19,11 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
             -Wno-non-virtual-dtor -Wno-cast-qual
             -Wno-format-nonliteral
             )
+        if (MINGW)
+            # MS-ABI packs bits differently than what this project
+            # targets (Itanium), so remove this warning
+            list(REMOVE_ITEM COMPILE_WARNINGS -Wpadded)
+        endif()
         if (CMAKE_CXX_COMPILER_ID MATCHES "^(Clang|AppleClang)$")
             # Clang-specific
             set(COMPILE_WARNINGS "${COMPILE_WARNINGS}"

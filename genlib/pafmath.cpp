@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,12 +8,16 @@
 
 #include "pafmath.hpp"
 
+#include "exceptions.hpp"
+
 #include <cmath>
 #include <cstdint>
 #include <inttypes.h>
+#include <string>
 
 namespace {
-    uint64_t g_rand[11] = {1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+    constexpr int PAF_RAND_SETS = 11;
+    uint64_t g_rand[PAF_RAND_SETS] = {1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
 
     // 25-Jul-2007: changed the g_mult and g_const used for random number generation
     // for some reason, there appeared to be a pattern to the numbers
@@ -25,6 +30,9 @@ namespace {
 
 void pafmath::pafsrand(unsigned int seed, int set) // = 0
 {
+    if (set < 0 || set >= PAF_RAND_SETS) {
+        throw genlib::RuntimeException("Random stream out of range: " + std::to_string(set));
+    }
     g_rand[set] = seed;
 }
 
@@ -41,6 +49,9 @@ void pafmath::pafsrand(unsigned int seed, int set) // = 0
 
 unsigned int pafmath::pafrand(int set) // = 0
 {
+    if (set < 0 || set >= PAF_RAND_SETS) {
+        throw genlib::RuntimeException("Random stream out of range: " + std::to_string(set));
+    }
     g_rand[set] = g_mult * g_rand[set] + g_const;
 
     return static_cast<unsigned int>((g_rand[set] >> 32) & pafmath::PAF_RAND_MAX);

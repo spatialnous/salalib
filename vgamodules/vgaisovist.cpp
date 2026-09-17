@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -89,16 +89,16 @@ AnalysisResult VGAIsovist::run(Communicator *comm) {
 std::vector<std::string> VGAIsovist::createAttributes(bool simpleVersion) const {
     std::vector<std::string> cols;
 
-    cols.push_back(Column::ISOVIST_AREA);
+    cols.emplace_back(Column::ISOVIST_AREA);
 
     if (!simpleVersion) {
-        cols.push_back(Column::ISOVIST_COMPACTNESS);
-        cols.push_back(Column::ISOVIST_DRIFT_ANGLE);
-        cols.push_back(Column::ISOVIST_DRIFT_MAGNITUDE);
-        cols.push_back(Column::ISOVIST_MIN_RADIAL);
-        cols.push_back(Column::ISOVIST_MAX_RADIAL);
-        cols.push_back(Column::ISOVIST_OCCLUSIVITY);
-        cols.push_back(Column::ISOVIST_PERIMETER);
+        cols.emplace_back(Column::ISOVIST_COMPACTNESS);
+        cols.emplace_back(Column::ISOVIST_DRIFT_ANGLE);
+        cols.emplace_back(Column::ISOVIST_DRIFT_MAGNITUDE);
+        cols.emplace_back(Column::ISOVIST_MIN_RADIAL);
+        cols.emplace_back(Column::ISOVIST_MAX_RADIAL);
+        cols.emplace_back(Column::ISOVIST_OCCLUSIVITY);
+        cols.emplace_back(Column::ISOVIST_PERIMETER);
     }
     return cols;
 }

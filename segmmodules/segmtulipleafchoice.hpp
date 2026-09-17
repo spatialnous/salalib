@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,6 +12,7 @@
 #include <optional>
 #include <set>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -66,18 +67,19 @@ class SegmentTulipLeafChoice : ISegment {
 
   public:
     struct Column {
-        inline static const std::string  //
-            LEAF_CHOICE = "Leaf Choice", //
-            LEAF = "Leaf";               //
+        static constexpr std::string_view //
+            LEAF_CHOICE = "Leaf Choice",  //
+            LEAF = "Leaf";                //
     };
     static std::string
-    getFormattedColumn(const std::string &column, int tulipBins, RadiusType radiusType,
+    getFormattedColumn(const std::string_view column, int tulipBins, RadiusType radiusType,
                        double radius, bool selectionOnly,
                        const std::optional<std::string> &routeWeightColName = std::nullopt,
                        const std::optional<std::string> &weightCol1Name = std::nullopt,
                        const std::optional<std::string> &weightCol2Name = std::nullopt,
                        const std::optional<int> &leafRef = std::nullopt) {
-        std::string colName = "T" + dXstring::formatString(tulipBins, "%d") + " " + column;
+        std::string colName =
+            "T" + dXstring::formatString(tulipBins, "%d") + " " + std::string(column);
         if (leafRef.has_value()) {
             colName += "_" + std::to_string(*leafRef);
         }
@@ -116,7 +118,7 @@ class SegmentTulipLeafChoice : ISegment {
         return colName;
     }
     static size_t
-    getFormattedColumnIdx(const AttributeTable &attributes, std::string column, int tulipBins,
+    getFormattedColumnIdx(const AttributeTable &attributes, std::string_view column, int tulipBins,
                           RadiusType radiusType, double radius, bool selectionOnly,
                           const std::optional<std::string> &weightCol1Name = std::nullopt,
                           const std::optional<std::string> &weightCol2Name = std::nullopt,

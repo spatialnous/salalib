@@ -11,6 +11,7 @@
 
 #include <cstddef>
 #include <ctime>
+#include <string>
 #include <vector>
 
 AnalysisResult SegmentTopological::run(Communicator *comm, ShapeGraph &map, bool) {

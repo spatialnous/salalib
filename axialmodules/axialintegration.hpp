@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -56,15 +56,15 @@ class AxialIntegration : IAxial {
 
   public:
     struct Normalisation {
-        inline static const std::string //
-            NORM = "Norm",              //
-            HH = "HH",                  //
-            PV = "P-value",             //
-            TK = "Tekl",                //
-            PENN = "Penn";              //
+        static constexpr std::string_view //
+            NORM = "Norm",                //
+            HH = "HH",                    //
+            PV = "P-value",               //
+            TK = "Tekl",                  //
+            PENN = "Penn";                //
     };
     struct Column {
-        inline static const std::string                  //
+        static constexpr std::string_view                //
             CHOICE = "Choice",                           //
             ENTROPY = "Entropy",                         //
             METRIC_NODE_COUNT = "Metric Node Count",     //
@@ -80,24 +80,24 @@ class AxialIntegration : IAxial {
             TOTAL_DEPTH = "Total Depth";                 //
     };
     static std::string
-    getFormattedColumn(const std::string &column, int radius,
-                       const std::optional<std::string> &weightingColName = std::nullopt,
-                       const std::optional<std::string> &normalisation = std::nullopt) {
-        std::string colName = column;
+    getFormattedColumn(const std::string_view column, int radius,
+                       const std::optional<std::string_view> &weightingColName = std::nullopt,
+                       const std::optional<std::string_view> &normalisation = std::nullopt) {
+        std::string colName(column);
         bool spaceAdded = false;
         if (weightingColName.has_value() && column == Column::TOTAL) {
             // The TOTAL column seems to be special i.e. not really a weighting
-            colName += " " + weightingColName.value();
+            colName += " " + std::string(weightingColName.value());
             spaceAdded = true;
         } else if (weightingColName.has_value()) {
-            colName += " [" + weightingColName.value() + " Wgt]";
+            colName += " [" + std::string(weightingColName.value()) + " Wgt]";
             spaceAdded = true;
         }
         if (normalisation.has_value()) {
             if (!spaceAdded) {
                 colName += " ";
             }
-            colName += "[" + normalisation.value() + "]";
+            colName += "[" + std::string(normalisation.value()) + "]";
         }
         if (radius != -1.0) {
             colName += dXstring::formatString(radius, " R%d");
@@ -105,9 +105,10 @@ class AxialIntegration : IAxial {
         return colName;
     }
     static size_t
-    getFormattedColumnIdx(const AttributeTable &attributes, const std::string &column, int radius,
-                          const std::optional<std::string> &weightingColName = std::nullopt,
-                          const std::optional<std::string> &normalisation = std::nullopt) {
+    getFormattedColumnIdx(const AttributeTable &attributes, const std::string_view column,
+                          int radius,
+                          const std::optional<std::string_view> &weightingColName = std::nullopt,
+                          const std::optional<std::string_view> &normalisation = std::nullopt) {
         return attributes.getColumnIndex(
             getFormattedColumn(column, radius, weightingColName, normalisation));
     }

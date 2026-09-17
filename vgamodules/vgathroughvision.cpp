@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -42,9 +42,9 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
     auto agentGateCountColIdx = m_map.getAttributeTable().getColumnIndexOptional(
         AgentAnalysis::Column::INTERNAL_GATE_COUNTS);
 
-    std::vector<std::string> cols = {Column::THROUGH_VISION};
+    std::vector<std::string> cols = {std::string(Column::THROUGH_VISION)};
     if (agentGateColIdx.has_value() && agentGateCountColIdx.has_value()) {
-        cols.push_back(AgentAnalysis::Column::INTERNAL_GATE_COUNTS);
+        cols.emplace_back(AgentAnalysis::Column::INTERNAL_GATE_COUNTS);
     }
     AnalysisResult result(std::move(cols), attributes.getNumRows());
 

@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,6 +11,7 @@
 #include <optional>
 #include <set>
 #include <string>
+#include <string_view>
 #include <utility>
 
 class SegmentMetric : ISegment {
@@ -19,7 +20,7 @@ class SegmentMetric : ISegment {
 
   public:
     struct Column {
-        inline static const std::string                        //
+        static constexpr std::string_view                      //
             METRIC_CHOICE = "Metric Choice",                   //
             METRIC_CHOICE_SLW = "Metric Choice [SLW]",         //
             METRIC_MEAN_DEPTH = "Metric Mean Depth",           //
@@ -28,8 +29,8 @@ class SegmentMetric : ISegment {
             METRIC_TOTAL_NODES = "Metric Total Nodes",         //
             METRIC_TOTAL_LENGTH = "Metric Total Length";       //
     };
-    static std::string getFormattedColumn(const std::string &column, double radius) {
-        std::string colName = column;
+    static std::string getFormattedColumn(const std::string_view column, double radius) {
+        std::string colName(column);
         if (radius != -1.0) {
             colName += dXstring::formatString(radius, " R%.f metric");
         }

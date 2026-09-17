@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,6 +12,7 @@
 
 #include <cstddef>
 #include <string>
+#include <string_view>
 
 class VGAThroughVision : public IVGA {
   protected:
@@ -27,7 +28,7 @@ class VGAThroughVision : public IVGA {
 
   public:
     struct Column {
-        inline static const std::string        //
+        static constexpr std::string_view      //
             THROUGH_VISION = "Through vision"; //
     };
 

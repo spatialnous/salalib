@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <map>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -17,7 +18,7 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
     auto &attributes = m_map.getAttributeTable();
 
     // custom linking costs from the attribute table
-    std::string linkMetricCostColName = Column::LINK_METRIC_COST;
+    std::string_view linkMetricCostColName = Column::LINK_METRIC_COST;
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
     const auto refs = getRefVector(analysisData);

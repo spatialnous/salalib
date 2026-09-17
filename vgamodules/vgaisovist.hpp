@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -15,6 +15,7 @@
 #include <cstddef>
 #include <set>
 #include <string>
+#include <string_view>
 #include <vector>
 
 class VGAIsovist : public IVGA {
@@ -26,7 +27,7 @@ class VGAIsovist : public IVGA {
 
   public:
     struct Column {
-        inline static const std::string                          //
+        static constexpr std::string_view                        //
             ISOVIST_AREA = "Isovist Area",                       //
             ISOVIST_COMPACTNESS = "Isovist Compactness",         //
             ISOVIST_DRIFT_ANGLE = "Isovist Drift Angle",         //

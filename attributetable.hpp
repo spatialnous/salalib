@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2017 Christian Sailer
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -17,6 +18,7 @@
 #include <ostream>
 #include <set>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -32,13 +34,13 @@ namespace AttributeName {
 ///
 class AttributeRow : public LayerAware {
   public:
-    virtual float getValue(const std::string &column) const = 0;
+    virtual float getValue(const std::string_view column) const = 0;
     virtual float getValue(size_t index) const = 0;
     virtual float getNormalisedValue(size_t index) const = 0;
-    virtual AttributeRow &setValue(const std::string &column, float value) = 0;
+    virtual AttributeRow &setValue(const std::string_view column, float value) = 0;
     virtual AttributeRow &setValue(size_t index, float value) = 0;
     virtual AttributeRow &incrValue(size_t index, float value = 1.0f) = 0;
-    virtual AttributeRow &incrValue(const std::string &colName, float value = 1.0f) = 0;
+    virtual AttributeRow &incrValue(const std::string_view colName, float value = 1.0f) = 0;
 
     ~AttributeRow() override {}
 };
@@ -96,11 +98,11 @@ class AttributeColumn {
 class AttributeColumnManager {
   public:
     virtual size_t getNumColumns() const = 0;
-    virtual size_t getColumnIndex(const std::string &name) const = 0;
-    virtual std::optional<size_t> getColumnIndexOptional(const std::string &name) const = 0;
+    virtual size_t getColumnIndex(const std::string_view name) const = 0;
+    virtual std::optional<size_t> getColumnIndexOptional(const std::string_view name) const = 0;
     virtual const AttributeColumn &getColumn(size_t index) const = 0;
     virtual const std::string &getColumnName(size_t index) const = 0;
-    virtual bool hasColumn(const std::string &name) const = 0;
+    virtual bool hasColumn(const std::string_view name) const = 0;
 };
 
 // Implementation of AttributeColumn
@@ -108,7 +110,7 @@ class AttributeColumnManager {
 class AttributeColumnImpl : public AttributeColumn, AttributeColumnStats {
     // AttributeColumn interface
   public:
-    AttributeColumnImpl(const std::string &name, const std::string &formula = std::string())
+    AttributeColumnImpl(const std::string_view name, const std::string &formula = std::string())
         : stats(), m_name(name), m_displayParams(), m_locked(false), m_hidden(false), _padding0(0),
           m_formula(formula) {}
 
@@ -167,12 +169,12 @@ class AttributeRowImpl : public AttributeRow {
 
     // AttributeRow interface
   public:
-    float getValue(const std::string &column) const override;
+    float getValue(const std::string_view column) const override;
     float getValue(size_t index) const override;
     float getNormalisedValue(size_t index) const override;
-    AttributeRow &setValue(const std::string &column, float value) override;
+    AttributeRow &setValue(const std::string_view column, float value) override;
     AttributeRow &setValue(size_t index, float value) override;
-    AttributeRow &incrValue(const std::string &column, float value) override;
+    AttributeRow &incrValue(const std::string_view column, float value) override;
     AttributeRow &incrValue(size_t index, float value) override;
 
     void addColumn();
@@ -252,13 +254,13 @@ class AttributeTable : public AttributeColumnManager {
     size_t getRowIdx(const AttributeKey &key) const;
     AttributeRow &addRow(const AttributeKey &key);
     AttributeColumn &getColumn(size_t index);
-    size_t insertOrResetColumn(const std::string &columnName,
+    size_t insertOrResetColumn(const std::string_view columnName,
                                const std::string &formula = std::string());
-    size_t insertOrResetLockedColumn(const std::string &columnName,
+    size_t insertOrResetLockedColumn(const std::string_view columnName,
                                      const std::string &formula = std::string());
-    size_t getOrInsertColumn(const std::string &columnName,
+    size_t getOrInsertColumn(const std::string_view columnName,
                              const std::string &formula = std::string());
-    size_t getOrInsertLockedColumn(const std::string &columnName,
+    size_t getOrInsertLockedColumn(const std::string_view columnName,
                                    const std::string &formula = std::string());
     void removeRow(const AttributeKey &key);
     void removeColumn(size_t colIndex);
@@ -287,12 +289,12 @@ class AttributeTable : public AttributeColumnManager {
 
     // interface AttributeColumnManager
   public:
-    size_t getColumnIndex(const std::string &name) const override;
-    std::optional<size_t> getColumnIndexOptional(const std::string &name) const override;
+    size_t getColumnIndex(const std::string_view name) const override;
+    std::optional<size_t> getColumnIndexOptional(const std::string_view name) const override;
     const AttributeColumn &getColumn(size_t index) const override;
     const std::string &getColumnName(size_t index) const override;
     size_t getNumColumns() const override;
-    bool hasColumn(const std::string &name) const override;
+    bool hasColumn(const std::string_view name) const override;
 
     // TODO: Compatibility. Very inefficient method to retreive a column's index
     // if the set of columns was sorted
@@ -313,7 +315,7 @@ class AttributeTable : public AttributeColumnManager {
 
   private:
     void checkColumnIndex(size_t index) const;
-    size_t addColumnInternal(const std::string &name, const std::string &formula);
+    size_t addColumnInternal(const std::string_view name, const std::string &formula);
 
     // warning - here be dragons!
     // This is the implementation of stl style iterators on attribute table, allowing efficient

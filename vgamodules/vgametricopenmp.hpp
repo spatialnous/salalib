@@ -13,6 +13,7 @@
 
 #include <optional>
 #include <string>
+#include <string_view>
 
 class VGAMetricOpenMP : public IVGAMetric {
     double m_radius;
@@ -35,23 +36,24 @@ class VGAMetricOpenMP : public IVGAMetric {
 
   public:
     struct Column {
-        inline static const std::string                                                //
+        static constexpr std::string_view                                              //
             METRIC_MEAN_SHORTEST_PATH_ANGLE = "Metric Mean Shortest-Path Angle",       //
             METRIC_MEAN_SHORTEST_PATH_DISTANCE = "Metric Mean Shortest-Path Distance", //
             METRIC_MEAN_STRAIGHT_LINE_DISTANCE = "Metric Mean Straight-Line Distance", //
             METRIC_NODE_COUNT = "Metric Node Count";                                   //
     };
-    static std::string getColumnWithRadius(std::string column, double radius, Region4f mapRegion) {
+    static std::string getColumnWithRadius(std::string_view column, double radius,
+                                           Region4f mapRegion) {
         if (radius != -1.0) {
             if (radius > 100.0) {
-                return column + " R" + dXstring::formatString(radius, "%.f");
+                return std::string(column) + " R" + dXstring::formatString(radius, "%.f");
             } else if (mapRegion.width() < 1.0) {
-                return column + " R" + dXstring::formatString(radius, "%.4f");
+                return std::string(column) + " R" + dXstring::formatString(radius, "%.4f");
             } else {
-                return column + " R" + dXstring::formatString(radius, "%.2f");
+                return std::string(column) + " R" + dXstring::formatString(radius, "%.2f");
             }
         }
-        return column;
+        return std::string(column);
     }
 
   public:

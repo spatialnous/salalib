@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2000-2010 University College London, Eva Friedrich
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -34,7 +35,7 @@ class ShapeGraph : public ShapeMap {
 
   public: // known columns
     struct Column {
-        inline static const std::string                    //
+        static constexpr std::string_view                  //
             CONNECTIVITY = "Connectivity",                 //
             LINE_LENGTH = "Line Length",                   //
             AXIAL_LINE_REF = "Axial Line Ref",             //

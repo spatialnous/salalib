@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2019-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -17,6 +17,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <string_view>
 
 class VGAIsovistZone : public IAnalysis {
     struct MetricTriple {
@@ -59,15 +60,15 @@ class VGAIsovistZone : public IAnalysis {
 
   public:
     struct Column {
-        inline static const std::string                                            //
+        static constexpr std::string_view                                          //
             ISOVIST_ZONE_DISTANCE = "Isovist Zone Distance",                       //
             ISOVIST_ZONE_INV_SQ_DISTANCE = "Isovist Zone Inverse Square Distance"; //
     };
 
-    static std::string getFormattedColumn(const std::string &column,
+    static std::string getFormattedColumn(const std::string_view column,
                                           std::optional<std::string> originPointSetName,
                                           float restrictDistance) {
-        std::string colName = column;
+        std::string colName(column);
 
         if (originPointSetName.has_value()) {
             colName += " [" + originPointSetName.value() + "]";

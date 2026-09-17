@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,6 +13,7 @@
 #include <optional>
 #include <set>
 #include <string>
+#include <string_view>
 
 class VGAVisualLocalOpenMP : public IAnalysis {
     LatticeMap &m_map;
@@ -30,7 +31,7 @@ class VGAVisualLocalOpenMP : public IAnalysis {
 
   public:
     struct Column {
-        inline static const std::string                                      //
+        static constexpr std::string_view                                    //
             VISUAL_CLUSTERING_COEFFICIENT = "Visual Clustering Coefficient", //
             VISUAL_CONTROL = "Visual Control",                               //
             VISUAL_CONTROLLABILITY = "Visual Controllability";               //

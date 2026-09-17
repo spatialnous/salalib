@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,6 +12,7 @@
 
 #include <set>
 #include <string>
+#include <string_view>
 #include <utility>
 
 class VGAMetricDepth : public IVGAMetric {
@@ -20,7 +21,7 @@ class VGAMetricDepth : public IVGAMetric {
 
   public:
     struct Column {
-        inline static const std::string                                            //
+        static constexpr std::string_view                                          //
             METRIC_STEP_PENN_DISTANCE = "Metric Step Penn Distance",               //
             METRIC_STEP_SHORTEST_PATH_ANGLE = "Metric Step Shortest-Path Angle",   //
             METRIC_STEP_SHORTEST_PATH_LENGTH = "Metric Step Shortest-Path Length", //

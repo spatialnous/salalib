@@ -12,6 +12,7 @@
 #include <cmath>
 #include <cstddef>
 #include <ctime>
+#include <string>
 #include <vector>
 
 AnalysisResult SegmentMetric::run(Communicator *comm, ShapeGraph &map, bool) {

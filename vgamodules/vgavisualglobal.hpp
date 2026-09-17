@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,6 +12,7 @@
 #include "../latticemap.hpp"
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 class VGAVisualGlobal : public IVGAVisual {
@@ -28,7 +29,7 @@ class VGAVisualGlobal : public IVGAVisual {
 
   public:
     struct Column {
-        inline static const std::string                             //
+        static constexpr std::string_view                           //
             VISUAL_ENTROPY = "Visual Entropy",                      //
             VISUAL_INTEGRATION_HH = "Visual Integration [HH]",      //
             VISUAL_INTEGRATION_PV = "Visual Integration [P-value]", //
@@ -37,11 +38,12 @@ class VGAVisualGlobal : public IVGAVisual {
             VISUAL_NODE_COUNT = "Visual Node Count",                //
             VISUAL_REL_ENTROPY = "Visual Relativised Entropy";      //
     };
-    static std::string getColumnWithRadius(std::string column, double radius) {
+    static std::string getColumnWithRadius(std::string_view column, double radius) {
         if (radius != -1) {
-            return column + " R" + dXstring::formatString(static_cast<int>(radius), "%d");
+            return std::string(column) + " R" +
+                   dXstring::formatString(static_cast<int>(radius), "%d");
         }
-        return column;
+        return std::string(column);
     }
 
   private:

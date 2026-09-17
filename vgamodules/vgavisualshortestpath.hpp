@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -19,7 +19,7 @@ class VGAVisualShortestPath : public IVGAVisual {
 
   public:
     struct Column {
-        inline static const std::string                                                    //
+        static constexpr std::string_view                                                  //
             VISUAL_SHORTEST_PATH = "Visual Shortest Path",                                 //
             VISUAL_SHORTEST_PATH_LINKED = "Visual Shortest Path Linked",                   //
             VISUAL_SHORTEST_PATH_ORDER = "Visual Shortest Path Order",                     //

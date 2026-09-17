@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2024-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,11 +12,13 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <initializer_list>
 #include <iterator>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
 
 struct AnalysisResult {
@@ -29,14 +31,14 @@ struct AnalysisResult {
   public:
     std::optional<std::vector<AttributeColumnStats>> columnStats = std::nullopt;
 
-    void addAttribute(std::string attribute) {
+    void addAttribute(std::string_view attribute) {
         auto colIt = std::find(m_newAttributes.begin(), m_newAttributes.end(), attribute);
         if (colIt == m_newAttributes.end()) {
-            m_newAttributes.push_back(attribute);
+            m_newAttributes.emplace_back(attribute);
         }
     }
     const std::vector<std::string> &getAttributes() const { return m_newAttributes; }
-    size_t getColumnIndex(const std::string &column) {
+    size_t getColumnIndex(const std::string_view column) {
         auto iter = std::find(m_newAttributes.begin(), m_newAttributes.end(), column);
         if (iter == m_newAttributes.end()) {
             std::stringstream message;
@@ -61,6 +63,15 @@ struct AnalysisResult {
           m_newShapeMaps(), m_newLatticeMaps(), m_newShapeGraphs() {
         m_attributeDatata.initialiseValues(defValue);
     }
+
+    AnalysisResult(std::initializer_list<std::string> attributeNames, size_t rowCount = 0,
+                   double defValue = -1.0)
+        : AnalysisResult(std::vector<std::string>(attributeNames), rowCount, defValue) {}
+
+    AnalysisResult(std::vector<std::string_view> attributeNames, size_t rowCount = 0,
+                   double defValue = -1.0)
+        : AnalysisResult(std::vector<std::string>(attributeNames.begin(), attributeNames.end()),
+                         rowCount, defValue) {}
 
     genlib::RowMatrix<double> getAttributeData() const { return m_attributeDatata; }
 

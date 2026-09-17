@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2018-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2018-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,7 +11,7 @@
 #include <math.h>
 #include <optional>
 #include <set>
-#include <string>
+#include <string_view>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -22,7 +22,7 @@ class IVGAMetric : public IVGATraversing {
 
     std::vector<AnalysisData>
     getAnalysisData(const AttributeTable &attributes,
-                    std::optional<std::string> linkCostColumn = std::nullopt) {
+                    std::optional<std::string_view> linkCostColumn = std::nullopt) {
         std::vector<AnalysisData> analysisData;
         analysisData.reserve(attributes.getNumRows());
 

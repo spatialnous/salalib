@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2018 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,7 @@
 #include "../shapegraph.hpp"
 
 #include <string>
+#include <string_view>
 
 class SegmentTopologicalShortestPath : public IAnalysis {
   private:
@@ -18,7 +19,7 @@ class SegmentTopologicalShortestPath : public IAnalysis {
 
   public:
     struct Column {
-        inline static const std::string                                          //
+        static constexpr std::string_view                                        //
             TOPOLOGICAL_SHORTEST_PATH_DEPTH = "Topological Shortest Path Depth", //
             TOPOLOGICAL_SHORTEST_PATH_ORDER = "Topological Shortest Path Order"; //
     };

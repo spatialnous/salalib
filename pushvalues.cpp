@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2024-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,6 +13,7 @@
 #include <optional>
 #include <set>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -44,26 +45,28 @@ void PushValues::pushValue(double &val, int &count, double thisval, Func pushFun
 
 std::tuple<std::optional<size_t>, size_t, std::optional<size_t>>
 PushValues::getColumnIndices(const AttributeTable &sourceAttr,
-                             const std::optional<const std::string> &colIn,
-                             AttributeTable &destAttr, const std::string &colOut,
-                             const std::optional<const std::string> &countCol) {
+                             const std::optional<const std::string_view> colIn,
+                             AttributeTable &destAttr, const std::string_view colOut,
+                             const std::optional<const std::string_view> countCol) {
 
     std::optional<size_t> colInIdx = std::nullopt;
     if (colIn.has_value()) {
         colInIdx = sourceAttr.getColumnIndexOptional(colIn.value());
         if (!colInIdx.has_value()) {
-            throw PushValueError("Column " + colIn.value() + " has not been found in source table");
+            throw PushValueError("Column " + std::string(colIn.value()) +
+                                 " has not been found in source table");
         }
     }
     std::optional<size_t> colOutIdx = destAttr.getColumnIndexOptional(colOut);
     if (!colOutIdx.has_value()) {
-        throw PushValueError("Column " + colOut + " has not been found in destination table");
+        throw PushValueError("Column " + std::string(colOut) +
+                             " has not been found in destination table");
     }
     std::optional<size_t> countColIdx = std::nullopt;
     if (countCol.has_value()) {
         countColIdx = destAttr.getColumnIndexOptional(countCol.value());
         if (!countColIdx.has_value()) {
-            throw PushValueError("Column " + countCol.value() +
+            throw PushValueError("Column " + std::string(countCol.value()) +
                                  " has not been found in destination table");
         }
     }
@@ -71,31 +74,33 @@ PushValues::getColumnIndices(const AttributeTable &sourceAttr,
 }
 
 std::tuple<size_t, size_t, std::optional<size_t>>
-PushValues::getColumnIndices(const AttributeTable &sourceAttr, const std::string &colIn,
-                             AttributeTable &destAttr, const std::string &colOut,
-                             const std::optional<const std::string> &countCol) {
+PushValues::getColumnIndices(const AttributeTable &sourceAttr, const std::string_view colIn,
+                             AttributeTable &destAttr, const std::string_view colOut,
+                             const std::optional<const std::string_view> countCol) {
     std::optional<size_t> colInIdx = sourceAttr.getColumnIndexOptional(colIn);
     if (!colInIdx.has_value()) {
-        throw PushValueError("Column " + colIn + " has not been found in destination table");
+        throw PushValueError("Column " + std::string(colIn) +
+                             " has not been found in destination table");
     }
     std::optional<size_t> colOutIdx = destAttr.getColumnIndexOptional(colOut);
     if (!colOutIdx.has_value()) {
-        throw PushValueError("Column " + colOut + " has not been found in destination table");
+        throw PushValueError("Column " + std::string(colOut) +
+                             " has not been found in destination table");
     }
     std::optional<size_t> countColIdx = std::nullopt;
     if (countCol.has_value()) {
         countColIdx = destAttr.getColumnIndexOptional(countCol.value());
         if (!countColIdx.has_value()) {
-            throw PushValueError("Column " + countCol.value() +
+            throw PushValueError("Column " + std::string(countCol.value()) +
                                  " has not been found in destination table");
         }
     }
     return std::make_tuple(colInIdx.value(), colOutIdx.value(), countColIdx);
 }
 
-void PushValues::shapeToPoint(const ShapeMap &sourceMap, const std::string &colIn,
-                              LatticeMap &destMap, const std::string &colOut, Func pushFunc,
-                              const std::optional<const std::string> &countCol) {
+void PushValues::shapeToPoint(const ShapeMap &sourceMap, const std::string_view colIn,
+                              LatticeMap &destMap, const std::string_view colOut, Func pushFunc,
+                              const std::optional<const std::string_view> &countCol) {
     auto &tableIn = sourceMap.getAttributeTable();
     auto &tableOut = destMap.getAttributeTable();
 
@@ -190,9 +195,10 @@ void PushValues::shapeToPoint(const ShapeMap &sourceMap, const std::string &colI
     }
 }
 
-void PushValues::shapeToAxial(ShapeMap &sourceMap, const std::optional<const std::string> &colIn,
-                              ShapeGraph &destMap, const std::string &colOut, Func pushFunc,
-                              const std::optional<const std::string> &countCol) {
+void PushValues::shapeToAxial(ShapeMap &sourceMap,
+                              const std::optional<const std::string_view> colIn,
+                              ShapeGraph &destMap, const std::string_view colOut, Func pushFunc,
+                              const std::optional<const std::string_view> countCol) {
 
     auto &tableIn = sourceMap.getAttributeTable();
     auto &tableOut = destMap.getAttributeTable();
@@ -231,9 +237,10 @@ void PushValues::shapeToAxial(ShapeMap &sourceMap, const std::optional<const std
     }
 }
 
-void PushValues::shapeToShape(ShapeMap &sourceMap, const std::optional<const std::string> &colIn,
-                              ShapeMap &destMap, const std::string &colOut, Func pushFunc,
-                              const std::optional<const std::string> &countCol) {
+void PushValues::shapeToShape(ShapeMap &sourceMap,
+                              const std::optional<const std::string_view> colIn, ShapeMap &destMap,
+                              const std::string_view colOut, Func pushFunc,
+                              const std::optional<const std::string_view> countCol) {
     auto &tableIn = sourceMap.getAttributeTable();
     auto &tableOut = destMap.getAttributeTable();
 
@@ -273,9 +280,9 @@ void PushValues::shapeToShape(ShapeMap &sourceMap, const std::optional<const std
 }
 
 void PushValues::pointToShape(const LatticeMap &sourceMap,
-                              const std::optional<const std::string> &colIn, ShapeMap &destMap,
-                              const std::string &colOut, Func pushFunc,
-                              const std::optional<const std::string> &countCol) {
+                              const std::optional<const std::string_view> colIn, ShapeMap &destMap,
+                              const std::string_view colOut, Func pushFunc,
+                              const std::optional<const std::string_view> countCol) {
 
     auto &tableIn = sourceMap.getAttributeTable();
     auto &tableOut = destMap.getAttributeTable();
@@ -330,9 +337,9 @@ void PushValues::pointToShape(const LatticeMap &sourceMap,
 }
 
 void PushValues::pointToAxial(const LatticeMap &sourceMap,
-                              const std::optional<const std::string> &colIn, ShapeGraph &destMap,
-                              const std::string colOut, Func pushFunc,
-                              const std::optional<const std::string> &countCol) {
+                              const std::optional<const std::string_view> colIn,
+                              ShapeGraph &destMap, const std::string_view colOut, Func pushFunc,
+                              const std::optional<const std::string_view> countCol) {
 
     auto &tableIn = sourceMap.getAttributeTable();
     auto &tableOut = destMap.getAttributeTable();
@@ -390,8 +397,8 @@ void PushValues::pointToAxial(const LatticeMap &sourceMap,
 }
 
 void PushValues::axialToShape(const ShapeGraph &sourceMap,
-                              const std::optional<const std::string> &colIn, ShapeMap &destMap,
-                              const std::string colOut, Func pushFunc,
+                              const std::optional<const std::string_view> colIn, ShapeMap &destMap,
+                              const std::string_view colOut, Func pushFunc,
                               const std::optional<const std::string> countCol) {
 
     auto &tableIn = sourceMap.getAttributeTable();
@@ -449,9 +456,9 @@ void PushValues::axialToShape(const ShapeGraph &sourceMap,
     }
 }
 void PushValues::axialToAxial(const ShapeGraph &sourceMap,
-                              const std::optional<const std::string> &colIn, ShapeGraph &destMap,
-                              const std::string colOut, Func pushFunc,
-                              const std::optional<const std::string> &countCol) {
+                              const std::optional<const std::string_view> colIn,
+                              ShapeGraph &destMap, const std::string_view colOut, Func pushFunc,
+                              const std::optional<const std::string_view> countCol) {
 
     auto &tableIn = sourceMap.getAttributeTable();
     auto &tableOut = destMap.getAttributeTable();

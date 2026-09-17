@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2017 Christian Sailer
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,6 +22,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -100,7 +102,7 @@ void AttributeColumnImpl::write(std::ostream &stream, int physicalCol) {
 }
 
 // AttributeRow implementation
-float AttributeRowImpl::getValue(const std::string &column) const {
+float AttributeRowImpl::getValue(const std::string_view column) const {
     return getValue(m_colManager.getColumnIndex(column));
 }
 
@@ -121,7 +123,7 @@ float AttributeRowImpl::getNormalisedValue(size_t index) const {
                                     (colStats.max - colStats.min));
 }
 
-AttributeRow &AttributeRowImpl::setValue(const std::string &column, float value) {
+AttributeRow &AttributeRowImpl::setValue(const std::string_view column, float value) {
     return setValue(m_colManager.getColumnIndex(column), value);
 }
 
@@ -170,7 +172,7 @@ AttributeRow &AttributeRowImpl::incrValue(size_t index, float value) {
     return *this;
 }
 
-AttributeRow &AttributeRowImpl::incrValue(const std::string &colName, float value) {
+AttributeRow &AttributeRowImpl::incrValue(const std::string_view colName, float value) {
     return incrValue(m_colManager.getColumnIndex(colName), value);
 }
 
@@ -240,7 +242,7 @@ AttributeColumn &AttributeTable::getColumn(size_t index) {
     return m_columns[index];
 }
 
-size_t AttributeTable::insertOrResetColumn(const std::string &columnName,
+size_t AttributeTable::insertOrResetColumn(const std::string_view columnName,
                                            const std::string &formula) {
     auto iter = m_columnMapping.find(columnName);
     if (iter == m_columnMapping.end()) {
@@ -256,14 +258,14 @@ size_t AttributeTable::insertOrResetColumn(const std::string &columnName,
     return iter->second;
 }
 
-size_t AttributeTable::insertOrResetLockedColumn(const std::string &columnName,
+size_t AttributeTable::insertOrResetLockedColumn(const std::string_view columnName,
                                                  const std::string &formula) {
     size_t index = insertOrResetColumn(columnName, formula);
     m_columns[index].setLock(true);
     return index;
 }
 
-size_t AttributeTable::getOrInsertColumn(const std::string &columnName,
+size_t AttributeTable::getOrInsertColumn(const std::string_view columnName,
                                          const std::string &formula) {
     auto iter = m_columnMapping.find(columnName);
     if (iter != m_columnMapping.end()) {
@@ -272,7 +274,7 @@ size_t AttributeTable::getOrInsertColumn(const std::string &columnName,
     return addColumnInternal(columnName, formula);
 }
 
-size_t AttributeTable::getOrInsertLockedColumn(const std::string &columnName,
+size_t AttributeTable::getOrInsertLockedColumn(const std::string_view columnName,
                                                const std::string &formula) {
     size_t index = getOrInsertColumn(columnName, formula);
     m_columns[index].setLock(true);
@@ -374,7 +376,7 @@ void AttributeTable::clear() {
     m_columnMapping.clear();
 }
 
-size_t AttributeTable::getColumnIndex(const std::string &name) const {
+size_t AttributeTable::getColumnIndex(const std::string_view name) const {
     auto iter = m_columnMapping.find(name);
     if (iter == m_columnMapping.end()) {
         std::stringstream message;
@@ -384,7 +386,7 @@ size_t AttributeTable::getColumnIndex(const std::string &name) const {
     return iter->second;
 }
 
-std::optional<size_t> AttributeTable::getColumnIndexOptional(const std::string &name) const {
+std::optional<size_t> AttributeTable::getColumnIndexOptional(const std::string_view name) const {
     auto iter = m_columnMapping.find(name);
     if (iter == m_columnMapping.end()) {
         return std::nullopt;
@@ -418,7 +420,7 @@ const std::string &AttributeTable::getColumnName(size_t index) const {
 
 size_t AttributeTable::getNumColumns() const { return m_columns.size(); }
 
-bool AttributeTable::hasColumn(const std::string &name) const {
+bool AttributeTable::hasColumn(const std::string_view name) const {
     auto iter = m_columnMapping.find(name);
     return (iter != m_columnMapping.end());
 }
@@ -429,10 +431,10 @@ void AttributeTable::checkColumnIndex(size_t index) const {
     }
 }
 
-size_t AttributeTable::addColumnInternal(const std::string &name, const std::string &formula) {
+size_t AttributeTable::addColumnInternal(const std::string_view name, const std::string &formula) {
     size_t colIndex = m_columns.size();
     m_columns.push_back(AttributeColumnImpl(name, formula));
-    m_columnMapping[name] = colIndex;
+    m_columnMapping[std::string(name)] = colIndex;
     for (auto &elem : m_rows) {
         elem.second->addColumn();
     }

@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -8,7 +8,7 @@
 
 #include <optional>
 #include <set>
-#include <string>
+#include <string_view>
 #include <vector>
 
 AnalysisResult VGAMetricShortestPath::run(Communicator *) {
@@ -16,14 +16,14 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
     auto &attributes = m_map.getAttributeTable();
 
     // custom linking costs from the attribute table
-    std::string linkMetricCostColName = Column::LINK_METRIC_COST;
-    std::string pathColName = Column::METRIC_SHORTEST_PATH;
-    std::string distColName = Column::METRIC_SHORTEST_PATH_DISTANCE;
-    std::string linkedColName = Column::METRIC_SHORTEST_PATH_LINKED;
-    std::string orderColName = Column::METRIC_SHORTEST_PATH_ORDER;
-    std::string zoneColName = Column::METRIC_SHORTEST_PATH_VISUAL_ZONE;
-    std::string metricZoneColName = Column::METRIC_SHORTEST_PATH_METRIC_ZONE;
-    std::string invMetricZoneColName = Column::METRIC_SHORTEST_PATH_INV_METRIC_ZONE;
+    std::string_view linkMetricCostColName = Column::LINK_METRIC_COST;
+    std::string_view pathColName = Column::METRIC_SHORTEST_PATH;
+    std::string_view distColName = Column::METRIC_SHORTEST_PATH_DISTANCE;
+    std::string_view linkedColName = Column::METRIC_SHORTEST_PATH_LINKED;
+    std::string_view orderColName = Column::METRIC_SHORTEST_PATH_ORDER;
+    std::string_view zoneColName = Column::METRIC_SHORTEST_PATH_VISUAL_ZONE;
+    std::string_view metricZoneColName = Column::METRIC_SHORTEST_PATH_METRIC_ZONE;
+    std::string_view invMetricZoneColName = Column::METRIC_SHORTEST_PATH_INV_METRIC_ZONE;
 
     AnalysisResult result({pathColName, distColName, linkedColName, orderColName, zoneColName,
                            metricZoneColName, invMetricZoneColName},

@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -14,6 +14,7 @@
 #include <ctime>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
@@ -38,7 +39,7 @@ std::vector<std::string> SegmentTulip::getRequiredColumns(ShapeGraph &map,
     }
 
     auto addColumn = [&newColumns, tulipBins = this->m_tulipBins, radiusType = this->m_radiusType](
-                         const std::string &column, double radius, bool selectionOnly,
+                         const std::string_view column, double radius, bool selectionOnly,
                          const std::optional<std::string> &routeWeightColName = std::nullopt,
                          const std::optional<std::string> &weightCol1Name = std::nullopt,
                          const std::optional<std::string> &weightCol2Name = std::nullopt) {

@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -16,6 +16,7 @@
 #include <functional>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 class AgentAnalysis : public IAnalysis {
@@ -59,7 +60,7 @@ class AgentAnalysis : public IAnalysis {
 
   public: // column data
     struct Column {
-        inline static const std::string                      // Originally:
+        static constexpr std::string_view                    // Originally:
             GATE_COUNTS = "Gate Counts",                     // g_col_total_counts
             INTERNAL_GATE_COUNTS = "__Internal_Gate_Counts", // g_col_gate_counts
             INTERNAL_GATE = "__Internal_Gate",               // g_col_gate

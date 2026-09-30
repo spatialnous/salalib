@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -1387,7 +1388,10 @@ void LatticeMap::addGridConnections() {
 
 // value in range 0 to 1
 PixelRef LatticeMap::pickPixel(double value) const {
-    int which = static_cast<int>(ceil(value * static_cast<double>(m_rows * m_cols)) - 1);
-    return PixelRef(static_cast<short>(static_cast<size_t>(which) % m_cols),
-                    static_cast<short>(static_cast<size_t>(which) / m_cols));
+    // value is expected in (0, 1]. a value of 0 (or below) would otherwise
+    // give -1 here, which wraps when cast to size_t
+    auto total = static_cast<size_t>(m_rows) * static_cast<size_t>(m_cols);
+    auto which = static_cast<int>(ceil(value * static_cast<double>(total)) - 1);
+    auto idx = static_cast<size_t>(std::clamp(which, 0, static_cast<int>(total) - 1));
+    return PixelRef(static_cast<short>(idx % m_cols), static_cast<short>(idx / m_cols));
 }

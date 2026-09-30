@@ -9,6 +9,7 @@
 #include "agentanalysis.hpp"
 
 #include "../genlib/exceptions.hpp"
+#include "../genlib/pafmath.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -18,8 +19,8 @@
 #include <math.h>
 #include <vector>
 
-Agent::Agent(AgentProgram *program, LatticeMap *latticemap, int outputMode)
-    : m_program(program), m_latticemap(latticemap), m_node(), m_outputMode(outputMode),
+Agent::Agent(AgentProgram *program, LatticeMap *latticemap, pafmath::Pafrand *rng, int outputMode)
+    : m_program(program), m_latticemap(latticemap), m_rng(rng), m_node(), m_outputMode(outputMode),
       m_trailNum(-1), m_loc(), m_target(), m_vector(), m_destination(), m_targetPix(), _padding0(0),
       _padding1(0), m_occMemory() {}
 
@@ -68,7 +69,7 @@ void Agent::onMove() {
         m_step = 0;
         onTarget();
         m_vector = onLook(false);
-    } else if (pafmath::prandomr() < (1.0 / m_program->steps) &&
+    } else if (m_rng->prandomr() < (1.0 / m_program->steps) &&
                !m_targetLock) { // note, on average, will change 1 in steps
         m_step = 0;
         m_vector = onLook(false);
@@ -161,7 +162,7 @@ bool Agent::diagonalStep() {
     int nextnode2 = m_latticemap->pixelate(nextloc2, false);
 
     bool good = false;
-    if (pafmath::pafrand() % 2 == 0) {
+    if (m_rng->next() % 2 == 0) {
         if (goodStep(nextnode1)) {
             m_node = nextnode1;
             m_loc = nextloc1;
@@ -271,7 +272,7 @@ Point2f Agent::onStandardLook(bool wholeisovist) {
             return Point2f(0, 0);
         }
     } else {
-        auto chosen = static_cast<int>(pafmath::pafrand() % static_cast<unsigned int>(choices));
+        auto chosen = static_cast<int>(m_rng->next() % static_cast<unsigned int>(choices));
         Node &node = m_latticemap->getPoint(m_node).getNode();
         for (; chosen >= node.bincount(directionbin % 32); directionbin++) {
             chosen -= node.bincount(directionbin % 32);
@@ -325,7 +326,7 @@ Point2f Agent::onWeightedLook(bool wholeisovist) {
     if (weightmap.size() == 0) {
         return onWeightedLook(true);
     } else {
-        double chosen = pafmath::prandomr() * weight;
+        double chosen = m_rng->prandomr() * weight;
         for (size_t i = 0; i < weightmap.size(); i++) {
             if (chosen < weightmap[i].weight) {
                 tarpixelate = weightmap[i].node;
@@ -386,7 +387,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
             //     return Point2f(0, 0);
             // }
         } else {
-            size_t chosen = pafmath::pafrand() % static_cast<unsigned int>(choices);
+            size_t chosen = m_rng->next() % static_cast<unsigned int>(choices);
             for (; chosen >= node.occlusionBins[directionbin % 32].size(); directionbin++) {
                 chosen -= node.occlusionBins[directionbin % 32].size();
             }
@@ -460,7 +461,7 @@ Point2f Agent::onOcclusionLook(bool wholeisovist, int looktype) {
             //     return Point2f(0, 0);
             // }
         } else {
-            double chosen = pafmath::prandomr() * weight;
+            double chosen = m_rng->prandomr() * weight;
             for (size_t i = 0; i < weightmap.size(); i++) {
                 if (chosen < weightmap[i].weight) {
                     tarpixelate = weightmap[i].node;
@@ -522,7 +523,7 @@ Point2f Agent::onLoSLook(bool wholeisovist, int lookType) {
             return Point2f(0, 0);
         }
     } else {
-        double chosen = pafmath::prandomr() * weight;
+        double chosen = m_rng->prandomr() * weight;
         for (size_t i = 0; i < weightmap.size(); i++) {
             if (chosen < weightmap[i].weight) {
                 targetbin = weightmap[i].node;
@@ -531,7 +532,7 @@ Point2f Agent::onLoSLook(bool wholeisovist, int lookType) {
         }
     }
 
-    double angle = anglefrombin2(targetbin);
+    double angle = anglefrombin2(targetbin, *m_rng);
 
     return Point2f(cos(angle), sin(angle));
 }
@@ -573,7 +574,7 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int lookType) {
             return Point2f(0, 0);
         }
     } else {
-        double chosen = pafmath::prandomr() * weight;
+        double chosen = m_rng->prandomr() * weight;
         for (size_t i = 0; i < weightmap.size(); i++) {
             if (chosen < weightmap[i].weight) {
                 targetbin = weightmap[i].node;
@@ -582,7 +583,7 @@ Point2f Agent::onDirectedLoSLook(bool wholeisovist, int lookType) {
         }
     }
 
-    double angle = anglefrombin2(targetbin);
+    double angle = anglefrombin2(targetbin, *m_rng);
 
     return Point2f(cos(angle), sin(angle));
 }
@@ -611,7 +612,8 @@ Point2f Agent::onGibsonianLook(bool wholeisovist) {
     double angle = 0.0;
 
     if (ruleChoice != -1) {
-        angle = anglefrombin2((binfromvec(m_vector) + (2 * ruleChoice + 1) * dir + 32) % 32);
+        angle =
+            anglefrombin2((binfromvec(m_vector) + (2 * ruleChoice + 1) * dir + 32) % 32, *m_rng);
     }
 
     // if no rule selection made, carry on in current direction
@@ -670,16 +672,15 @@ int Agent::onGibsonianRule(int rule) {
                                        AgentProgram::selTypeToString(m_program->selType));
     }
     int dir = 0;
-    if (option == 0x01 &&
-        static_cast<double>(m_program->ruleProbability[0]) > pafmath::prandomr()) {
+    if (option == 0x01 && static_cast<double>(m_program->ruleProbability[0]) > m_rng->prandomr()) {
         dir = -1;
     } else if (option == 0x10 &&
-               static_cast<double>(m_program->ruleProbability[0]) > pafmath::prandomr()) {
+               static_cast<double>(m_program->ruleProbability[0]) > m_rng->prandomr()) {
         dir = +1;
     } else if (option == 0x11 && static_cast<double>(m_program->ruleProbability[0]) >
-                                     pafmath::prandomr() * pafmath::prandomr()) {
+                                     m_rng->prandomr() * m_rng->prandomr()) {
         // note, use random * random event as there are two ways to do this
-        dir = (pafmath::pafrand() % 2) ? -1 : +1;
+        dir = (m_rng->next() % 2) ? -1 : +1;
     }
     return dir;
 }
@@ -712,14 +713,14 @@ Point2f Agent::onGibsonianLook2(bool wholeisovist) {
     if ((m_currLos[2] - m_lastLos[2]) / m_currLos[2] > m_program->feelerThreshold) {
         dir |= 0x10;
     }
-    if (dir == 0x01 && static_cast<double>(m_program->feelerProbability) > pafmath::prandomr()) {
+    if (dir == 0x01 && static_cast<double>(m_program->feelerProbability) > m_rng->prandomr()) {
         maxbin = -m_program->vbin;
     } else if (dir == 0x10 &&
-               static_cast<double>(m_program->feelerProbability) > pafmath::prandomr()) {
+               static_cast<double>(m_program->feelerProbability) > m_rng->prandomr()) {
         maxbin = m_program->vbin;
     } else if (dir == 0x11 && static_cast<double>(m_program->feelerProbability) >
-                                  pafmath::prandomr() * pafmath::prandomr()) {
-        maxbin = (pafmath::pafrand() % 2) ? m_program->vbin : -m_program->vbin;
+                                  m_rng->prandomr() * m_rng->prandomr()) {
+        maxbin = (m_rng->next() % 2) ? m_program->vbin : -m_program->vbin;
     }
     // third action: detect heading for dead-end
     if (maxbin == 0 && (static_cast<double>(m_currLos[0]) / m_latticemap->getSpacing() <
@@ -732,7 +733,7 @@ Point2f Agent::onGibsonianLook2(bool wholeisovist) {
     }
 
     int bin = binfromvec(m_vector) + maxbin;
-    double angle = anglefrombin2(bin);
+    double angle = anglefrombin2(bin, *m_rng);
 
     return (maxbin == 0) ? m_vector : Point2f(cos(angle), sin(angle));
 }

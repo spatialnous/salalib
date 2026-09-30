@@ -19,6 +19,8 @@ class SegmentTulipShortestPath : public IAnalysis {
     size_t m_tulipBins;
     int m_refFrom, m_refTo;
 
+    pafmath::Pafrand m_rng;
+
   public:
     struct Column {
         static constexpr std::string_view                                //
@@ -27,8 +29,9 @@ class SegmentTulipShortestPath : public IAnalysis {
     };
 
   public:
-    SegmentTulipShortestPath(ShapeGraph &map, size_t tulipBins, int refFrom, int refTo)
-        : m_map(map), m_tulipBins(tulipBins), m_refFrom(refFrom), m_refTo(refTo) {}
+    SegmentTulipShortestPath(ShapeGraph &map, size_t tulipBins, int refFrom, int refTo,
+                             unsigned int seed)
+        : m_map(map), m_tulipBins(tulipBins), m_refFrom(refFrom), m_refTo(refTo), m_rng(seed) {}
     std::string getAnalysisName() const override { return "Tulip Shortest Path"; }
     AnalysisResult run(Communicator *) override;
 };

@@ -6,6 +6,7 @@
 
 #include "axialintegration.hpp"
 
+#include "../genlib/pafmath.hpp"
 #include "../genlib/pflipper.hpp"
 
 #include <cmath>
@@ -337,7 +338,7 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
                 if (!m_choice) {
                     index = foundlist.a().back().first;
                 } else {
-                    pos = static_cast<int>(pafmath::pafrand() % foundlist.a().size());
+                    pos = static_cast<int>(m_rng.next() % foundlist.a().size());
                     index = foundlist.a().at(static_cast<size_t>(pos)).first;
                     previous = foundlist.a().at(static_cast<size_t>(pos)).second;
                     audittrail[index][0].previous.ref =

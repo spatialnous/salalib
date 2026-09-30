@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2019 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2019-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,8 +11,8 @@
 #include <cstdlib>
 
 namespace {
-    static int rankselect(int popsize) {
-        auto num = static_cast<int>(pafmath::prandom() * popsize * (popsize + 1) * 0.5);
+    static int rankselect(int popsize, pafmath::Pafrand &rng) {
+        auto num = static_cast<int>(rng.prandom() * popsize * (popsize + 1) * 0.5);
         for (int i = 0; i < popsize; i++) {
             if (num < (popsize - i)) {
                 return i;
@@ -36,12 +36,12 @@ namespace {
 } // namespace
 
 AgentProgram *ProgramPopulation::makeChild() {
-    int a = rankselect(POPSIZE);
-    int b = rankselect(POPSIZE);
+    int a = rankselect(POPSIZE, rng);
+    int b = rankselect(POPSIZE, rng);
     while (a == b)
-        b = rankselect(POPSIZE);
-    population[POPSIZE - 1] = crossover(population[a], population[b]);
-    population[POPSIZE - 1].mutate();
+        b = rankselect(POPSIZE, rng);
+    population[POPSIZE - 1] = crossover(population[a], population[b], rng);
+    population[POPSIZE - 1].mutate(rng);
 
     return &(population[POPSIZE - 1]);
 }

@@ -10,6 +10,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstdint>
 
 namespace pafmath {
     constexpr double M_ROOT_1_2 = 0.70710678118654752440084436210485;
@@ -23,19 +24,6 @@ namespace pafmath {
     inline int sgn(double a) { return (a < 0) ? -1 : 1; }
 
     const unsigned int PAF_RAND_MAX = 0x0FFFFFFF;
-    void pafsrand(unsigned int seed, int set = 0);
-    unsigned int pafrand(int set = 0);
-
-    // a random number from 0 to 1
-    inline double prandom(int set = 0) {
-        return static_cast<double>(pafrand(set)) / static_cast<double>(PAF_RAND_MAX);
-    }
-
-    // a random number from 0 to just less than 1
-
-    inline double prandomr(int set = 0) {
-        return static_cast<double>(pafrand(set)) / static_cast<double>(PAF_RAND_MAX + 1);
-    }
 
     inline double plog2(double a) { return (pafmath::ln(a) * M_1_LN2); }
 
@@ -78,5 +66,45 @@ namespace pafmath {
     double poisson(int x, double lambda);
     double cumpoisson(int x, double lambda);
     int invcumpoisson(double p, double lambda);
+
+    // Pafrand is a Linear Congruential Generator
+    // Each instance owns its own sequence, so
+    // one analysis consuming numbers cannot shift another analysis's results.
+    // After the 25-Jul-2007 changes:
+    // The current version seems to meet standard randomness conditions
+    // Tested using Diehard, the 32 bit version ((g_rand[set] >> 32) & 0xffffffff)
+    // passes all tests for at least the first 5 seeds above
+    // it is also independent in at least 20 dimensions
+    // It should not be used for "serious" randomness, but should be fine
+    // for most things (agents in sala, genetic algorithms, etc)
+    // 25-Jul-2007: moved up to take top 32 bits
+    class Pafrand {
+        // 25-Jul-2007: changed the g_mult and g_const used for random number generation
+        // for some reason, there appeared to be a pattern to the numbers
+
+        static constexpr uint64_t S_MULT = /*(0xF9561B2E << 32) + */ 0x71A7FA85;
+        static constexpr uint64_t S_CONST = /*(0x9BB3920E << 32) + */ 0xF5E958B9;
+        uint64_t m_state;
+
+      public:
+        explicit Pafrand(unsigned int seed = 1) : m_state(seed) {}
+
+        unsigned int next() {
+            m_state = S_MULT * m_state + S_CONST;
+            return static_cast<unsigned int>((m_state >> 32) & PAF_RAND_MAX);
+        }
+        // a random number from 0 to 1
+        double prandom() { return static_cast<double>(next()) / static_cast<double>(PAF_RAND_MAX); }
+        // a random number from 0 to just less than 1
+        double prandomr() {
+            return static_cast<double>(next()) / static_cast<double>(PAF_RAND_MAX + 1);
+        }
+    };
+
+    // Default seed. This is set to 1 instad of 0 to match the original set of
+    // streams possible for g_rand: 1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29. It relies
+    // on the fact that almost no analysis ever called another seed instead relying
+    // on the default set = 0 thus g_rand[0] thus seed = 1
+    constexpr unsigned int defaultSeed = 1;
 
 } // namespace pafmath

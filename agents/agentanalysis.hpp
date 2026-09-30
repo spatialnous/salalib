@@ -40,7 +40,9 @@ class AgentAnalysis : public IAnalysis {
     [[maybe_unused]] unsigned _padding0 : 2 * 8; // padding
 
     size_t m_agentStepsToDecision = 3;
-    std::optional<size_t> m_randomReleaseLocationsSeed = 0;
+    pafmath::Pafrand m_rng;
+    pafmath::Pafrand m_releaseLocationRng;
+    std::optional<unsigned int> m_randomReleaseLocationsSeed;
     const std::vector<Point2f> &m_specificReleasePoints;
 
     const std::optional<std::reference_wrapper<ShapeMap>> m_gateLayer = std::nullopt;
@@ -70,7 +72,8 @@ class AgentAnalysis : public IAnalysis {
   public:
     AgentAnalysis(LatticeMap &latticeMap, size_t systemTimesteps, double releaseRate,
                   size_t agentLifetime, unsigned short agentFOV, size_t agentStepsToDecision,
-                  int agentAlgorithm, std::optional<size_t> randomReleaseLocationsSeed,
+                  int agentAlgorithm, std::optional<unsigned int> runSeed,
+                  std::optional<unsigned int> randomReleaseLocationsSeed,
                   const std::vector<Point2f> &specificReleasePoints,
                   const std::optional<std::reference_wrapper<ShapeMap>> &gateLayer,
                   std::optional<TrailRecordOptions> recordTrails)
@@ -78,6 +81,9 @@ class AgentAnalysis : public IAnalysis {
           m_releaseRate(releaseRate), m_agentLifetime(agentLifetime),
           m_agentAlgorithm(agentAlgorithm), m_agentFOV(agentFOV), _padding0(0),
           m_agentStepsToDecision(agentStepsToDecision),
+          m_rng(runSeed.value_or(pafmath::defaultSeed)),
+          // at the moment replicating old process, perhaps this should be configurable...
+          m_releaseLocationRng(randomReleaseLocationsSeed.value_or(pafmath::defaultSeed)),
           m_randomReleaseLocationsSeed(randomReleaseLocationsSeed),
           m_specificReleasePoints(specificReleasePoints), m_gateLayer(gateLayer),
           m_recordTrails(recordTrails) {}

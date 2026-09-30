@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -9,6 +10,7 @@
 
 #include "attributetable.hpp"
 
+#include "genlib/pafmath.hpp"
 #include "genlib/stringutils.hpp"
 
 #include <cctype>
@@ -411,10 +413,11 @@ class SalaProgram {
     SalaObj m_thisobj;
     // marks for state management in maps
     std::map<int, SalaObj> m_marks;
+    pafmath::Pafrand m_rng;
     char read(std::istream &program) { return static_cast<char>(program.get()); }
 
   public:
-    SalaProgram(SalaObj context);
+    SalaProgram(SalaObj context, unsigned int seed);
     ~SalaProgram();
     bool parse(std::istream &program);
     SalaObj evaluate();

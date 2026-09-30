@@ -8,54 +8,8 @@
 
 #include "pafmath.hpp"
 
-#include "exceptions.hpp"
-
 #include <cmath>
-#include <cstdint>
 #include <inttypes.h>
-#include <string>
-
-namespace {
-    constexpr int PAF_RAND_SETS = 11;
-    uint64_t g_rand[PAF_RAND_SETS] = {1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
-
-    // 25-Jul-2007: changed the g_mult and g_const used for random number generation
-    // for some reason, there appeared to be a pattern to the numbers
-
-    // Quick mod - TV
-    const uint64_t g_mult = /*(0xF9561B2E << 32) + */ 0x71A7FA85;
-    const uint64_t g_const = /*(0x9BB3920E << 32) + */ 0xF5E958B9;
-
-} // namespace
-
-void pafmath::pafsrand(unsigned int seed, int set) // = 0
-{
-    if (set < 0 || set >= PAF_RAND_SETS) {
-        throw genlib::RuntimeException("Random stream out of range: " + std::to_string(set));
-    }
-    g_rand[set] = seed;
-}
-
-// Pafrand is a Linear Congruential Generator
-// After the 25-Jul-2007 changes:
-// The current version seems to meet standard randomness conditions
-// Tested using Diehard, the 32 bit version ((g_rand[set] >> 32) & 0xffffffff)
-// passes all tests for at least the first 5 seeds above
-// it is also independent in at least 20 dimensions
-// It should not be used for "serious" randomness, but should be fine
-// for most things (agents in sala, genetic algorithms, etc)
-
-// 25-Jul-2007: moved up to take top 32 bits
-
-unsigned int pafmath::pafrand(int set) // = 0
-{
-    if (set < 0 || set >= PAF_RAND_SETS) {
-        throw genlib::RuntimeException("Random stream out of range: " + std::to_string(set));
-    }
-    g_rand[set] = g_mult * g_rand[set] + g_const;
-
-    return static_cast<unsigned int>((g_rand[set] >> 32) & pafmath::PAF_RAND_MAX);
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 

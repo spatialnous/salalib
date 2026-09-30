@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2019 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2019-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -20,9 +20,10 @@ const int TIMESTEPS = 1600;
 struct ProgramPopulation {
   public:
     AgentProgram population[POPSIZE];
+    pafmath::Pafrand rng;
 
   public:
-    ProgramPopulation() {}
+    ProgramPopulation(unsigned int seed) : rng(seed) {}
     AgentProgram *makeChild();
     void sort();
 };

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2019-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -91,7 +91,7 @@ void VGAIsovistZone::setColumnFormulaAndUpdate(LatticeMap &latticemap, size_t co
     programContext = SalaObj(SalaObj::S_LATTICEMAPOBJ, graph);
 
     std::istringstream stream(formula);
-    SalaProgram proggy(programContext);
+    SalaProgram proggy(programContext, pafmath::defaultSeed);
     if (!proggy.parse(stream)) {
         throw genlib::RuntimeException("There was an error parsing your formula:\n\n" +
                                        proggy.getLastErrorMessage());

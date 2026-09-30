@@ -27,6 +27,7 @@ class Agent {
   protected:
     AgentProgram *m_program;
     LatticeMap *m_latticemap;
+    pafmath::Pafrand *m_rng;
     //
     PixelRef m_node;
     int m_step = 0;
@@ -64,7 +65,8 @@ class Agent {
         : m_program(nullptr), m_latticemap(nullptr), m_node(), m_outputMode(OUTPUT_NOTHING),
           m_loc(), m_target(), m_vector(), m_destination(), m_targetPix(), _padding0(0),
           _padding1(0), m_occMemory() {}
-    Agent(AgentProgram *program, LatticeMap *latticemap, int outputMode = OUTPUT_NOTHING);
+    Agent(AgentProgram *program, LatticeMap *latticemap, pafmath::Pafrand *rng,
+          int outputMode = OUTPUT_NOTHING);
     Agent(const Agent &) = default;
     Agent &operator=(const Agent &) = default;
     void onInit(PixelRef node, int trailNum = -1);
@@ -134,8 +136,8 @@ inline int binfromvec(const Point2f &p) {
 }
 
 // a random angle based on a bin direction
-inline double anglefrombin2(int here) {
-    return (2.0 * M_PI) * ((static_cast<double>(here) - 0.5) / 32.0 + pafmath::prandom() / 32.0);
+inline double anglefrombin2(int here, pafmath::Pafrand &rng) {
+    return (2.0 * M_PI) * ((static_cast<double>(here) - 0.5) / 32.0 + rng.prandom() / 32.0);
 }
 
 inline int binsbetween(int bin1, int bin2) {

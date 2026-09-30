@@ -19,6 +19,8 @@ class SegmentTulipDepth : ISegment {
 
     [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
+    pafmath::Pafrand m_rng;
+
   public:
     struct Column {
         static constexpr std::string_view              //
@@ -26,8 +28,8 @@ class SegmentTulipDepth : ISegment {
     };
 
   public:
-    SegmentTulipDepth(int tulipBins, std::set<int> originRefs)
-        : m_originRefs(std::move(originRefs)), m_tulipBins(tulipBins), _padding0(0) {}
+    SegmentTulipDepth(int tulipBins, std::set<int> originRefs, unsigned int seed)
+        : m_originRefs(std::move(originRefs)), m_tulipBins(tulipBins), _padding0(0), m_rng(seed) {}
     std::string getAnalysisName() const override { return "Tulip Analysis"; }
     AnalysisResult run(Communicator *, ShapeGraph &map, bool) override;
 };

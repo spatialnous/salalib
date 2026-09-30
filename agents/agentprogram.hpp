@@ -67,8 +67,9 @@ struct AgentProgram {
     AgentProgram();
     //
     // for evolution
-    void mutate();
-    friend AgentProgram crossover(const AgentProgram &progA, const AgentProgram &progB);
+    void mutate(pafmath::Pafrand &rng);
+    friend AgentProgram crossover(const AgentProgram &progA, const AgentProgram &progB,
+                                  pafmath::Pafrand &rng);
     // to reload later:
     void save(const std::string &filename);
     bool open(const std::string &filename);

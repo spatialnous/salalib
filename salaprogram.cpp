@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2026 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -126,9 +127,9 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-SalaProgram::SalaProgram(SalaObj context)
+SalaProgram::SalaProgram(SalaObj context, unsigned int seed)
     : m_rootCommand(), m_varStack(), m_errorStack(), m_col(), m_marked(false), _padding0(0),
-      m_thisobj(), m_marks() {
+      m_thisobj(), m_marks(), m_rng(seed) {
     if (!g_sala_loaded) {
         loadSalaProgram();
     }
@@ -1357,7 +1358,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 case SalaObj::S_RAND:
                     data = evaluate(pointer, pObj);
                     data.ensureNone();
-                    data = SalaObj(pafmath::prandom());
+                    data = SalaObj(m_program->m_rng.prandom());
                     break;
                 case SalaObj::S_SIN:
                     data = sin(evaluate(pointer, pObj).toDouble());

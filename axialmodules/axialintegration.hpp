@@ -13,6 +13,7 @@
 #include <optional>
 #include <set>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -25,6 +26,8 @@ class AxialIntegration : IAxial {
 
     [[maybe_unused]] unsigned _padding0 : 1 * 8;
     [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
+    pafmath::Pafrand m_rng;
 
     // used during angular analysis
     struct AnalysisInfo {
@@ -120,11 +123,11 @@ class AxialIntegration : IAxial {
 
   public:
     AxialIntegration(std::set<double> radiusSet, int weightedMeasureCol, bool choice,
-                     bool fulloutput)
+                     bool fulloutput, unsigned int seed)
         : m_radiusSet(std::move(radiusSet)),
           m_weightedMeasureCol(weightedMeasureCol < 0 ? std::nullopt
                                                       : std::make_optional(weightedMeasureCol)),
-          m_choice(choice), m_fulloutput(fulloutput), _padding0(0), _padding1(0) {}
+          m_choice(choice), m_fulloutput(fulloutput), _padding0(0), _padding1(0), m_rng(seed) {}
     std::string getAnalysisName() const override { return "Angular Analysis"; }
     void setForceLegacyColumnOrder(bool forceLegacyColumnOrder) {
         m_forceLegacyColumnOrder = forceLegacyColumnOrder;

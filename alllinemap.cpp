@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2000-2010 University College London, Eva Friedrich
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -166,16 +166,13 @@ void AllLine::generate(Communicator *comm, ShapeGraph &map, AllLine::MapData &ma
     map.setKeyVertexCount(static_cast<int>(mapData.polygons.vertexPossibles.size()));
 }
 
-std::tuple<ShapeGraph, ShapeGraph> AllLine::extractFewestLineMaps(Communicator *comm,
-                                                                  ShapeGraph &map, MapData &mapData,
-                                                                  unsigned int seed) {
+std::tuple<ShapeGraph, ShapeGraph>
+AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &mapData) {
 
     if (comm) {
         comm->CommPostMessage(Communicator::NUM_STEPS, 2);
         comm->CommPostMessage(Communicator::CURRENT_STEP, 1);
     }
-
-    pafmath::pafsrand(seed);
 
     // make one rld for each radial line...
     std::map<RadialKey, std::set<int>> radialdivisions;

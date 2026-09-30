@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2000-2010 University College London, Eva Friedrich
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -38,7 +38,7 @@ namespace AllLine {
                   Region4f &region, const Point2f &seed);
     ShapeGraph createAllLineMap(const std::string &name = "All-Line Map");
     std::tuple<ShapeGraph, ShapeGraph> extractFewestLineMaps(Communicator *comm, ShapeGraph &map,
-                                                             MapData &mapData, unsigned int seed);
+                                                             MapData &mapData);
     void makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &polyconnections,
                        const std::vector<RadialLine> &radiallines,
                        std::map<RadialKey, std::set<int>> &radialdivisions,

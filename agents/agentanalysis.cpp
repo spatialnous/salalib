@@ -22,14 +22,19 @@
 void AgentAnalysis::init(std::vector<Agent> &agents, std::vector<PixelRef> &releaseLocations,
                          size_t agent, int trailNum) {
     if (releaseLocations.size()) {
-        auto which = pafmath::pafrand() % releaseLocations.size();
+        auto which = m_rng.next() % releaseLocations.size();
         agents[agent].onInit(releaseLocations[which], trailNum);
     } else {
         const LatticeMap &map = agents[agent].getLatticeMap();
         PixelRef pix;
         do {
-            pix = map.pickPixel(
-                pafmath::prandom(static_cast<int>(m_randomReleaseLocationsSeed.value())));
+            // If the random release locations seed has been provided,
+            // then use that as a seed for the initialisation as well.
+            // Otherwise use the generator that the rest of agent
+            // analysis uses.
+            pix = map.pickPixel(m_randomReleaseLocationsSeed.has_value()
+                                    ? m_releaseLocationRng.prandom()
+                                    : m_rng.prandom());
         } while (!map.getPoint(pix).filled());
         agents[agent].onInit(pix, trailNum);
     }
@@ -88,11 +93,11 @@ void AgentAnalysis::runAgentEngine(std::vector<Agent> &agents,
     }
 
     for (size_t i = 0; i < m_systemTimesteps; i++) {
-        auto q = static_cast<size_t>(pafmath::invcumpoisson(pafmath::prandomr(), m_releaseRate));
+        auto q = static_cast<size_t>(pafmath::invcumpoisson(m_rng.prandomr(), m_releaseRate));
         auto length = agents.size();
         size_t k;
         for (k = 0; k < q; k++) {
-            agents.push_back(Agent(&(m_agentProgram), map, outputMode));
+            agents.push_back(Agent(&(m_agentProgram), map, &m_rng, outputMode));
         }
         for (k = 0; k < q; k++) {
             init(agents, releaseLocations, length + k, trailNum);
@@ -131,6 +136,7 @@ void AgentAnalysis::insertTrailsInMap(ShapeMap &trailsMap) {
 }
 
 AnalysisResult AgentAnalysis::run(Communicator *comm) {
+
     AttributeTable &table = m_latticeMap.getAttributeTable();
 
     if (m_agentFOV == 32) {

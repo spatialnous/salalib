@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2018 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -65,7 +65,7 @@ AnalysisResult SegmentTulipShortestPath::run(Communicator *) {
             // it is slightly slower to delete from an arbitrary place in the bin,
             // but it is necessary to use random paths to even out the number of times through equal
             // paths
-            auto curr = pafmath::pafrand() % binIter->size();
+            auto curr = m_rng.next() % binIter->size();
             auto currIter = binIter->begin() + static_cast<long>(curr);
             lineindex = *currIter;
             binIter->erase(currIter);

@@ -62,9 +62,9 @@ class Agent {
 
   public:
     Agent()
-        : m_program(nullptr), m_latticemap(nullptr), m_node(), m_outputMode(OUTPUT_NOTHING),
-          m_loc(), m_target(), m_vector(), m_destination(), m_targetPix(), _padding0(0),
-          _padding1(0), m_occMemory() {}
+        : m_program(nullptr), m_latticemap(nullptr), m_rng(nullptr), m_node(),
+          m_outputMode(OUTPUT_NOTHING), m_loc(), m_target(), m_vector(), m_destination(),
+          m_targetPix(), _padding0(0), _padding1(0), m_occMemory() {}
     Agent(AgentProgram *program, LatticeMap *latticemap, pafmath::Pafrand *rng,
           int outputMode = OUTPUT_NOTHING);
     Agent(const Agent &) = default;

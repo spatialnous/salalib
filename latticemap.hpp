@@ -149,7 +149,8 @@ class LatticeMap : public AttributeMap {
     size_t tagState(bool settag);
     bool sparkGraph2(Communicator *comm, bool boundarygraph, double maxdist);
     bool unmake(bool removeLinks);
-    bool sparkPixel2(PixelRef curs, int make, double maxdist = -1.0);
+    bool sparkPixel2(PixelRef curs, int make, PixelRefVector *binsB, float *farBinDists,
+                     double maxdist = -1.0);
     bool sieve2(sparkSieve2 &sieve, std::vector<PixelRef> &addlist, int q, int depth,
                 PixelRef curs);
     // bool makeGraph( Graph& graph, int optimization_level = 0, Communicator *comm = NULL);

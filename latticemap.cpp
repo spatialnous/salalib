@@ -931,6 +931,10 @@ bool LatticeMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxd
 
     count = 0;
 
+    // kept here to reduce rebuilding for every isovist
+    std::vector<PixelRef> binsB[32];
+    float farBinDists[32];
+
     for (size_t i = 0; i < m_cols; i++) {
 
         for (size_t j = 0; j < m_rows; j++) {
@@ -943,7 +947,7 @@ bool LatticeMap::sparkGraph2(Communicator *comm, bool boundarygraph, double maxd
                 point.m_node = std::unique_ptr<Node>(new Node());
                 m_attributes->addRow(AttributeKey(curs));
 
-                sparkPixel2(curs, 1,
+                sparkPixel2(curs, 1, binsB, farBinDists,
                             maxdist); // make flag of 1 suggests make this node, don't
                                       // set reciprocral process flags on those you can
                                       // see maxdist controls how far to see out to
@@ -1026,9 +1030,9 @@ bool LatticeMap::unmake(bool removeLinks) {
 // 2 -- register the reciprocal q octant in nodes you can see as requiring
 // processing
 
-bool LatticeMap::sparkPixel2(PixelRef curs, int make, double maxdist) {
-    static std::vector<PixelRef> binsB[32];
-    static float farBinDists[32];
+bool LatticeMap::sparkPixel2(PixelRef curs, int make, PixelRefVector *binsB, float *farBinDists,
+                             double maxdist) {
+
     for (int i = 0; i < 32; i++) {
         farBinDists[i] = 0.0f;
     }

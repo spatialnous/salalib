@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2000-2010 University College London, Eva Friedrich
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,7 +22,8 @@ struct AxialVertexKey {
     int refKey;
     short refA;
     short refB;
-    AxialVertexKey(int ref = -1, short a = -1, short b = -1) : refKey(ref), refA(a), refB(b) {}
+    constexpr AxialVertexKey(int ref = -1, short a = -1, short b = -1)
+        : refKey(ref), refA(a), refB(b) {}
     friend bool operator==(const AxialVertexKey &a, const AxialVertexKey &b);
     friend bool operator!=(const AxialVertexKey &a, const AxialVertexKey &b);
     friend bool operator>(const AxialVertexKey &a, const AxialVertexKey &b);
@@ -42,7 +44,7 @@ inline bool operator<(const AxialVertexKey &a, const AxialVertexKey &b) {
             (a.refKey == b.refKey && (a.refA < b.refA || (a.refA == b.refA && a.refB < b.refB))));
 }
 
-const AxialVertexKey NoVertex(-1, -1, -1);
+inline constexpr AxialVertexKey NoVertex(-1, -1, -1);
 
 struct AxialVertex : public AxialVertexKey {
     Point2f point;

@@ -10,7 +10,7 @@
 #include <cmath>
 
 namespace {
-    static unsigned int g_nicecolor[] = {
+    constexpr unsigned int g_nicecolor[] = {
         0x003333DD, // 0 blue
         0x003388DD, // 1
         0x0022CCDD, // 2
@@ -25,7 +25,7 @@ namespace {
 
     // Test a range designed to try to keep consistent saturation and brightness of
     // g_nicecolor, and only move hue
-    static unsigned int g_nicecolorhsb[] = {
+    constexpr unsigned int g_nicecolorhsb[] = {
         0x003333DD, // 0 blue
         0x003377DD, // 1
         0x0033BBDD, // 2
@@ -38,7 +38,7 @@ namespace {
         0x00DD3333, // 9 red
     };
 
-    static unsigned int g_greyscale[] = {
+    constexpr unsigned int g_greyscale[] = {
         0x00000000, // 0 black
         0x00444444, // 1
         0x00777777, // 2
@@ -48,13 +48,13 @@ namespace {
         0x00FFFFFF, // 6 white
     };
 
-    static unsigned int g_bluered[] = {
+    constexpr unsigned int g_bluered[] = {
         0x004575B4, // 0 blue
         0x0091BFDB, 0x00E0F3F8, 0x00FFFFBF, 0x00FEE090, 0x00FC8D59,
         0x00D73027 // 6 red
     };
 
-    static unsigned int g_purpleorange[] = {
+    constexpr unsigned int g_purpleorange[] = {
         0x00542788, // 0 purple
         0x00998EC3, // 1
         0x00D8DAEB, // 2

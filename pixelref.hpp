@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -17,7 +18,7 @@ class PixelRef {
   public:
     short x = -1;
     short y = -1;
-    PixelRef(short ax = -1, short ay = -1) : x(ax), y(ay) {}
+    constexpr PixelRef(short ax = -1, short ay = -1) : x(ax), y(ay) {}
     PixelRef(int i) : x(static_cast<short>(i >> 16)), y(static_cast<short>(i & 0xffff)) {}
 
     bool empty() { return x == -1 && y == -1; }
@@ -94,7 +95,7 @@ class PixelRef {
     // NOLINTEND(clang-analyzer-core)
 };
 
-const PixelRef NoPixel(-1, -1);
+inline constexpr PixelRef NoPixel(-1, -1);
 
 inline bool operator==(const PixelRef a, const PixelRef b) { return (a.x == b.x) && (a.y == b.y); }
 inline bool operator!=(const PixelRef a, const PixelRef b) { return (a.x != b.x) || (a.y != b.y); }

@@ -20,6 +20,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <string_view>
 #include <vector>
 
 class AttributeTable;
@@ -989,42 +990,4 @@ struct SalaBuffer {
         return std::string(buffer);
     }
     bool empty() { return bufpos == -1; }
-};
-
-///////////////////////////////////////////////////
-
-/////////////////////////////////////////////
-
-// Operator and function names
-
-struct SalaFuncLabel {
-    SalaObj::Func func;
-
-  private:
-    [[maybe_unused]] unsigned _padding0 : 4 * 8;
-
-  public:
-    std::string name;
-    std::string desc;
-    SalaFuncLabel(SalaObj::Func f = SalaObj::S_FNULL, const std::string &str = std::string(),
-                  const std::string &des = std::string())
-        : func(f), _padding0(0), name(str), desc(des) {}
-};
-
-struct SalaMemberFuncLabel : public SalaFuncLabel {
-    SalaObj::Type type;
-
-  private:
-    [[maybe_unused]] unsigned _padding0 : 4 * 8;
-
-  public:
-    SalaMemberFuncLabel(SalaObj::Type t = SalaObj::S_NONE, SalaObj::Func f = SalaObj::S_FNULL,
-                        const std::string &str = std::string(),
-                        const std::string &des = std::string())
-        : type(t), _padding0(0) {
-
-        func = f;
-        name = str;
-        desc = des;
-    }
 };

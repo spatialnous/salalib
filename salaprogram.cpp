@@ -36,7 +36,10 @@
 #include <istream>
 #include <iterator>
 #include <set>
+#include <string>
+#include <string_view>
 #include <time.h>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -44,85 +47,130 @@
 
 // Assign and list access rather incongruently in math ops, but never mind:
 namespace {
-    bool g_sala_loaded = false;
 
-    std::vector<SalaFuncLabel> g_sala_math_ops;
-    std::vector<SalaFuncLabel> g_sala_comp_ops;
-    std::vector<SalaFuncLabel> g_sala_logical_ops;
-    std::vector<SalaFuncLabel> g_sala_global_funcs;
-    std::vector<SalaMemberFuncLabel> g_sala_member_funcs;
+    // Operator and function names
 
-    void loadSalaProgram() {
-        // math ops
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_ADD, "+", "add"));
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_SUBTRACT, "-", "subtract"));
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_MINUS, "-", "negative"));
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_PLUS, "+", "positive"));
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_MULTIPLY, "*", "multiply"));
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_DIVIDE, "/", "divide"));
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_MODULO, "%", "modulo"));
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_POWER, "^", "power"));
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_ASSIGN, "=", "assignment"));
-        g_sala_math_ops.push_back(SalaFuncLabel(SalaObj::S_LIST_ACCESS, "[]",
-                                                "list access")); // list access included even though
-                                                                 // not parsed directly like this
+    struct SalaFuncLabel {
+        SalaObj::Func func;
 
-        // comp ops
-        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_GT, ">", "greater than"));
-        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_LT, "<", "less than"));
-        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_GEQ, ">=", "greater than or equal to"));
-        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_LEQ, "<=", "less than or equal to"));
-        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_NEQ, "!=", "not equal to"));
-        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_EQ, "==", "equal to"));
-        g_sala_comp_ops.push_back(SalaFuncLabel(SalaObj::S_IS, "is", "is the same object as"));
+      private:
+        [[maybe_unused]] unsigned _padding0 : 4 * 8;
 
-        // logical ops
-        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_NOT, "not", "logical not"));
-        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_NOT, "!", "logical not"));
-        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_AND, "and", "logical and"));
-        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_AND, "&&", "logical and"));
-        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_OR, "or", "logical or"));
-        g_sala_logical_ops.push_back(SalaFuncLabel(SalaObj::S_OR, "||", "logical or"));
+      public:
+        std::string_view name;
+        std::string_view desc;
+        constexpr SalaFuncLabel(SalaObj::Func f, const std::string_view str,
+                                const std::string_view des)
+            : func(f), _padding0(0), name(str), desc(des) {}
+    };
 
-        // global functions
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_SQRT, "sqrt", "square root"));
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_LOG, "log", "log base 10"));
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_LN, "ln", "natural logarithm"));
-        g_sala_global_funcs.push_back(
-            SalaFuncLabel(SalaObj::S_RAND, "random", "random number (0.0 to 1.0)"));
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_SIN, "sin", "sine"));
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_COS, "cos", "cosine"));
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_TAN, "tan", "tangent"));
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_ASIN, "asin", "inverse sine"));
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_ACOS, "acos", "inverse cosine"));
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_ATAN, "atan", "inverse tangent"));
-        g_sala_global_funcs.push_back(
-            SalaFuncLabel(SalaObj::S_LEN, "len", "array or string length"));
-        g_sala_global_funcs.push_back(SalaFuncLabel(SalaObj::S_RANGE, "range", "set of integers"));
+    static_assert(std::is_trivially_destructible_v<SalaFuncLabel>, "must stay a literal type");
 
-        // member functions
-        g_sala_member_funcs.push_back(
-            SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FAPPEND, "append", "append item"));
-        g_sala_member_funcs.push_back(
-            SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FEXTEND, "extend", "extend by list"));
-        g_sala_member_funcs.push_back(
-            SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FPOP, "pop", "pop (last) item"));
-        g_sala_member_funcs.push_back(
-            SalaMemberFuncLabel(SalaObj::S_LIST, SalaObj::S_FCLEAR, "clear", "clear contents"));
-        g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FVALUE,
-                                                          "value", "get attribute value"));
-        g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FSETVALUE,
-                                                          "setvalue", "set attribute value"));
-        g_sala_member_funcs.push_back(
-            SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FMARK, "mark", "get node mark"));
-        g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ, SalaObj::S_FSETMARK,
-                                                          "setmark", "set node mark"));
-        g_sala_member_funcs.push_back(SalaMemberFuncLabel(SalaObj::S_GRAPHOBJ,
-                                                          SalaObj::S_FCONNECTIONS, "connections",
-                                                          "get list of connections"));
+    struct SalaMemberFuncLabel : public SalaFuncLabel {
+        SalaObj::Type type;
 
-        g_sala_loaded = true;
+      private:
+        [[maybe_unused]] unsigned _padding1 : 4 * 8;
+
+      public:
+        constexpr SalaMemberFuncLabel(SalaObj::Type t, SalaObj::Func f, const std::string_view str,
+                                      const std::string_view des)
+            : SalaFuncLabel(f, str, des), type(t), _padding1(0) {}
+    };
+    static_assert(std::is_trivially_destructible_v<SalaMemberFuncLabel>,
+                  "must stay a literal type");
+
+    constexpr SalaFuncLabel MATH_OPS[] = {
+        {SalaObj::S_ADD, "+", "add"},           //
+        {SalaObj::S_SUBTRACT, "-", "subtract"}, //
+        {SalaObj::S_MINUS, "-", "negative"},    //
+        {SalaObj::S_PLUS, "+", "positive"},     //
+        {SalaObj::S_MULTIPLY, "*", "multiply"}, //
+        {SalaObj::S_DIVIDE, "/", "divide"},     //
+        {SalaObj::S_MODULO, "%", "modulo"},     //
+        {SalaObj::S_POWER, "^", "power"},       //
+        {SalaObj::S_ASSIGN, "=", "assignment"}, //
+        // list access included even though
+        // not parsed directly like this
+        {SalaObj::S_LIST_ACCESS, "[]", "list access"} //
+    };
+
+    constexpr SalaFuncLabel COMP_OPS[] = {
+        {SalaObj::S_GT, ">", "greater than"},               //
+        {SalaObj::S_LT, "<", "less than"},                  //
+        {SalaObj::S_GEQ, ">=", "greater than or equal to"}, //
+        {SalaObj::S_LEQ, "<=", "less than or equal to"},    //
+        {SalaObj::S_NEQ, "!=", "not equal to"},             //
+        {SalaObj::S_EQ, "==", "equal to"},                  //
+        {SalaObj::S_IS, "is", "is the same object as"}      //
+    };
+
+    constexpr SalaFuncLabel LOGICAL_OPS[] = {
+        {SalaObj::S_NOT, "not", "logical not"}, //
+        {SalaObj::S_NOT, "!", "logical not"},   //
+        {SalaObj::S_AND, "and", "logical and"}, //
+        {SalaObj::S_AND, "&&", "logical and"},  //
+        {SalaObj::S_OR, "or", "logical or"},    //
+        {SalaObj::S_OR, "||", "logical or"}     //
+    };
+
+    constexpr SalaFuncLabel GLOBAL_FUNCS[] = {
+        {SalaObj::S_SQRT, "sqrt", "square root"},                  //
+        {SalaObj::S_LOG, "log", "log base 10"},                    //
+        {SalaObj::S_LN, "ln", "natural logarithm"},                //
+        {SalaObj::S_RAND, "random", "random number (0.0 to 1.0)"}, //
+        {SalaObj::S_SIN, "sin", "sine"},                           //
+        {SalaObj::S_COS, "cos", "cosine"},                         //
+        {SalaObj::S_TAN, "tan", "tangent"},                        //
+        {SalaObj::S_ASIN, "asin", "inverse sine"},                 //
+        {SalaObj::S_ACOS, "acos", "inverse cosine"},               //
+        {SalaObj::S_ATAN, "atan", "inverse tangent"},              //
+        {SalaObj::S_LEN, "len", "array or string length"},         //
+        {SalaObj::S_RANGE, "range", "set of integers"}             //
+    };
+
+    constexpr SalaMemberFuncLabel MEMBER_FUNCS[] = {
+        {SalaObj::S_LIST, SalaObj::S_FAPPEND, "append", "append item"},                          //
+        {SalaObj::S_LIST, SalaObj::S_FEXTEND, "extend", "extend by list"},                       //
+        {SalaObj::S_LIST, SalaObj::S_FPOP, "pop", "pop (last) item"},                            //
+        {SalaObj::S_LIST, SalaObj::S_FCLEAR, "clear", "clear contents"},                         //
+        {SalaObj::S_GRAPHOBJ, SalaObj::S_FVALUE, "value", "get attribute value"},                //
+        {SalaObj::S_GRAPHOBJ, SalaObj::S_FSETVALUE, "setvalue", "set attribute value"},          //
+        {SalaObj::S_GRAPHOBJ, SalaObj::S_FMARK, "mark", "get node mark"},                        //
+        {SalaObj::S_GRAPHOBJ, SalaObj::S_FSETMARK, "setmark", "set node mark"},                  //
+        {SalaObj::S_GRAPHOBJ, SalaObj::S_FCONNECTIONS, "connections", "get list of connections"} //
+    };
+
+    static_assert(MATH_OPS[0].desc == "add");
+    static_assert(MEMBER_FUNCS[0].name == "append");
+
+    template <typename T, std::size_t N>
+    constexpr const T *findByName(const T (&table)[N], std::string_view n) {
+        for (const auto &l : table)
+            if (l.name == n)
+                return &l;
+        return nullptr;
     }
+
+    std::string describe(SalaObj::Func func) {
+        auto byFunc = [func](const auto &table) -> const SalaFuncLabel * {
+            // slow to go through one by one, but this is an exception...
+            for (const auto &l : table)
+                if (l.func == func)
+                    return &l;
+            return nullptr;
+        };
+        if (const auto *l = byFunc(MATH_OPS))
+            return "'" + std::string(l->name) + "' operator";
+        if (const auto *l = byFunc(COMP_OPS))
+            return "'" + std::string(l->name) + "' operator";
+        if (const auto *l = byFunc(LOGICAL_OPS))
+            return "'" + std::string(l->name) + "' operator";
+        if (const auto *l = byFunc(GLOBAL_FUNCS))
+            return "'" + std::string(l->name) + "' function";
+        return "unknown function";
+    }
+
 } // namespace
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,9 +178,6 @@ namespace {
 SalaProgram::SalaProgram(SalaObj context, unsigned int seed)
     : m_rootCommand(), m_varStack(), m_errorStack(), m_col(), m_marked(false), _padding0(0),
       m_thisobj(), m_marks(), m_rng(seed) {
-    if (!g_sala_loaded) {
-        loadSalaProgram();
-    }
 
     // col is used when run in update mode, it does not form part of the program:
     m_col = -1;
@@ -834,39 +879,38 @@ int SalaCommand::decode(std::string string) // string copied as makelower applie
         retvar = SP_DATA;
     } else {
         // everything else should be in one of the operator / func lists:
-        size_t i;
         if (retvar == SP_NONE) {
             // note, math ops include assignment
-            for (i = 0; i < g_sala_math_ops.size(); i++) {
-                if (string == g_sala_math_ops[i].name) {
-                    pushFunc(g_sala_math_ops[i].func);
+            for (const auto &op : MATH_OPS) {
+                if (string == op.name) {
+                    pushFunc(op.func);
                     retvar = SP_FUNCTION;
                     break;
                 }
             }
         }
         if (retvar == SP_NONE) {
-            for (i = 0; i < g_sala_comp_ops.size(); i++) {
-                if (string == g_sala_comp_ops[i].name) {
-                    pushFunc(g_sala_comp_ops[i].func);
+            for (const auto &op : COMP_OPS) {
+                if (string == op.name) {
+                    pushFunc(op.func);
                     retvar = SP_FUNCTION;
                     break;
                 }
             }
         }
         if (retvar == SP_NONE) {
-            for (i = 0; i < g_sala_logical_ops.size(); i++) {
-                if (string == g_sala_logical_ops[i].name) {
-                    pushFunc(g_sala_logical_ops[i].func);
+            for (const auto &op : LOGICAL_OPS) {
+                if (string == op.name) {
+                    pushFunc(op.func);
                     retvar = SP_FUNCTION;
                     break;
                 }
             }
         }
         if (retvar == SP_NONE) {
-            for (i = 0; i < g_sala_global_funcs.size(); i++) {
-                if (string == g_sala_global_funcs[i].name) {
-                    pushFunc(g_sala_global_funcs[i].func);
+            for (const auto &func : GLOBAL_FUNCS) {
+                if (string == func.name) {
+                    pushFunc(func.func);
                     retvar = SP_FUNCTION;
                 }
             }
@@ -942,12 +986,12 @@ int SalaCommand::decode_member(const std::string &string, bool applyToThis) {
 
     // note, all hardcoded for built in classes:
     // string classes:
-    for (size_t i = 0; i < g_sala_member_funcs.size(); i++) {
+    for (const auto &func : MEMBER_FUNCS) {
         // note '&' in the type -- essentially allows for inheritance between
         // objects (tuple is type of list, etc)
-        if (!applyToThis || (m_program->m_thisobj.m_type & g_sala_member_funcs[i].type) != 0) {
-            if (string == g_sala_member_funcs[i].name) {
-                pushFunc(g_sala_member_funcs[i].func);
+        if (!applyToThis || (m_program->m_thisobj.m_type & func.type) != 0) {
+            if (string == func.name) {
+                pushFunc(func.func);
                 retvar = SP_FUNCTION;
                 break;
             }
@@ -1214,12 +1258,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError e) {
                 // slow to go through one by one, but this is an exception...
-                for (size_t i = 0; i < g_sala_math_ops.size(); i++) {
-                    if (g_sala_math_ops[i].func == func) {
-                        e.message = "In '" + g_sala_math_ops[i].name + "' operator: " + e.message;
-                        break;
-                    }
-                }
+                e.message = "In '" + describe(func) + "' operator: " + e.message;
                 e.lineno = m_line;
                 throw std::move(e);
             }
@@ -1298,19 +1337,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError e) {
                 // slow to go through one by one, but this is an exception...
-                for (size_t i = 0; i < g_sala_logical_ops.size(); i++) {
-                    if (g_sala_logical_ops[i].func == func) {
-                        e.message =
-                            "In '" + g_sala_logical_ops[i].name + "' operator: " + e.message;
-                        break;
-                    }
-                }
-                for (size_t j = 0; j < g_sala_comp_ops.size(); j++) {
-                    if (g_sala_comp_ops[j].func == func) {
-                        e.message = "In '" + g_sala_comp_ops[j].name + "' operator: " + e.message;
-                        break;
-                    }
-                }
+                e.message = "In '" + describe(func) + "' operator: " + e.message;
                 e.lineno = m_line;
                 throw std::move(e);
             }
@@ -1383,13 +1410,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError e) {
                 // slow to go through one by one, but this is an exception...
-                for (size_t i = 0; i < g_sala_global_funcs.size(); i++) {
-                    if (g_sala_global_funcs[i].func == func) {
-                        e.message =
-                            "In '" + g_sala_global_funcs[i].name + "' function: " + e.message;
-                        break;
-                    }
-                }
+                e.message = "In '" + describe(func) + "' operator: " + e.message;
                 e.lineno = m_line;
                 throw std::move(e);
             }
@@ -1504,10 +1525,10 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError e) {
                 // slow to go through one by one, but this is an exception...
-                for (size_t i = 0; i < g_sala_member_funcs.size(); i++) {
-                    if (g_sala_member_funcs[i].func == func) {
-                        SalaObj type = SalaObj(g_sala_member_funcs[i].type);
-                        e.message = "In " + type.getTypeStr() + " '" + g_sala_member_funcs[i].name +
+                for (const auto &mfunc : MEMBER_FUNCS) {
+                    if (mfunc.func == func) {
+                        SalaObj type = SalaObj(mfunc.type);
+                        e.message = "In " + type.getTypeStr() + " '" + std::string(mfunc.name) +
                                     "' function: " + e.message;
                         break;
                     }

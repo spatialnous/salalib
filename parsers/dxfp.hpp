@@ -310,8 +310,6 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
 class DxfLwPolyLine : public DxfPolyLine {
     friend class DxfParser;
 
-    DxfVertex m_currVertex;
-
   protected:
     int m_expectedVertexCount;
 

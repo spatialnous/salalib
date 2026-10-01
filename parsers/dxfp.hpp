@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -260,6 +261,8 @@ class DxfLine : public DxfEntity, public DxfRegion {
 class DxfPolyLine : public DxfEntity, public DxfRegion {
     friend class DxfParser;
 
+    DxfVertex m_currVertex;
+
   public:
     enum { CLOSED = 1 }; // CLOSED = closed polygon
   protected:
@@ -306,6 +309,8 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
 
 class DxfLwPolyLine : public DxfPolyLine {
     friend class DxfParser;
+
+    DxfVertex m_currVertex;
 
   protected:
     int m_expectedVertexCount;
@@ -463,6 +468,8 @@ class DxfCircle : public DxfEntity, public DxfRegion {
 
 class DxfSpline : public DxfEntity, public DxfRegion {
     friend class DxfParser;
+
+    DxfVertex m_currVertex;
 
   public:
     enum { CLOSED = 1 }; // CLOSED = closed spline

@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -54,7 +55,7 @@ DxfLayer *DxfParser::getLayer(
 DxfLineType *DxfParser::getLineType(
     const std::string &lineTypeName) // const <- removed as m_layers may be changed if DXF is poor
 {
-    static DxfLineType lineType;
+    DxfLineType lineType;
 
     lineType.m_name = lineTypeName;
 
@@ -737,6 +738,7 @@ void DxfPolyLine::clear() {
     m_vertexCount = 0;
     m_vertices.clear();
     m_attributes = 0;
+    m_currVertex.clear();
 
     DxfRegion::clear();
     DxfEntity::clear();
@@ -745,16 +747,14 @@ void DxfPolyLine::clear() {
 bool DxfPolyLine::parse(const DxfToken &token, DxfParser *parser, Communicator *comm) {
     bool parsed = false;
 
-    static DxfVertex vertex;
-
     if (m_vertexCount) {
-        if (vertex.parse(token, parser)) {
-            add(vertex); // <- add to region
+        if (m_currVertex.parse(token, parser)) {
+            add(m_currVertex); // <- add to region
             if (m_min.x == 0) {
                 if (comm)
                     comm->logWarning("problem");
             }
-            m_vertices.push_back(vertex);
+            m_vertices.push_back(m_currVertex);
             if (token.data == "VERTEX") { // Another vertex...
                 m_vertexCount++;
             } else { // Should be a SEQEND
@@ -795,6 +795,7 @@ DxfLwPolyLine::DxfLwPolyLine(int tag) : DxfPolyLine(tag), m_expectedVertexCount(
 
 void DxfLwPolyLine::clear() {
     m_expectedVertexCount = 0;
+    m_currVertex.clear();
 
     DxfPolyLine::clear();
 }
@@ -802,31 +803,29 @@ void DxfLwPolyLine::clear() {
 bool DxfLwPolyLine::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
 
-    static DxfVertex vertex;
-
     switch (token.code) {
     case 0:
         // push final vertex
         if (m_vertexCount) {
-            add(vertex); // <- add vertex to region
-            m_vertices.push_back(vertex);
+            add(m_currVertex); // <- add vertex to region
+            m_vertices.push_back(m_currVertex);
         }
         parsed = true;
         break;
     case 10:
         if (m_vertexCount) {
             // push last vertex
-            add(vertex); // <- add vertex to region
-            m_vertices.push_back(vertex);
+            add(m_currVertex); // <- add vertex to region
+            m_vertices.push_back(m_currVertex);
         }
         m_vertexCount++;
-        vertex.clear();
-        vertex.parse(token, parser);
+        m_currVertex.clear();
+        m_currVertex.parse(token, parser);
         break;
     case 20:
     case 30:
         // continue last vertex:
-        vertex.parse(token, parser);
+        m_currVertex.parse(token, parser);
         break;
     case 70:
         m_attributes = std::stoi(token.data);
@@ -1156,6 +1155,7 @@ void DxfSpline::clear() {
     m_ctrlPts.clear();
     m_knots.clear();
     m_attributes = 0;
+    m_currVertex.clear();
 
     DxfRegion::clear();
     DxfEntity::clear();
@@ -1163,8 +1163,6 @@ void DxfSpline::clear() {
 
 bool DxfSpline::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
     bool parsed = false;
-
-    static DxfVertex vertex;
 
     switch (token.code) {
     case 0:
@@ -1183,15 +1181,15 @@ bool DxfSpline::parse(const DxfToken &token, DxfParser *parser, Communicator *) 
         m_knots.push_back(std::stod(token.data));
         break;
     case 10:
-        vertex.x = std::stod(token.data);
+        m_currVertex.x = std::stod(token.data);
         m_xyz |= 0x0001;
         break;
     case 20:
-        vertex.y = std::stod(token.data);
+        m_currVertex.y = std::stod(token.data);
         m_xyz |= 0x0010;
         break;
     case 30:
-        vertex.z = std::stod(token.data);
+        m_currVertex.z = std::stod(token.data);
         m_xyz |= 0x0100;
         break;
     default:
@@ -1200,8 +1198,8 @@ bool DxfSpline::parse(const DxfToken &token, DxfParser *parser, Communicator *) 
     }
 
     if (m_xyz == 0x0111) {
-        add(vertex); // <- add vertex to region
-        m_ctrlPts.push_back(vertex);
+        add(m_currVertex); // <- add vertex to region
+        m_ctrlPts.push_back(m_currVertex);
         m_xyz = 0;
     }
 

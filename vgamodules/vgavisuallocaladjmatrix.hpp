@@ -19,7 +19,7 @@ class VGAVisualLocalAdjMatrix : public IAnalysis {
     LatticeMap &m_map;
     std::optional<int> m_limitToThreads;
     bool m_gatesOnly;
-    bool m_forceCommUpdatesMasterThread = false;
+    bool m_allowCommUpdatesFromWorkers = false;
 
     [[maybe_unused]] unsigned _padding0 : 2 * 8;
     [[maybe_unused]] unsigned _padding1 : 4 * 8;
@@ -40,10 +40,9 @@ class VGAVisualLocalAdjMatrix : public IAnalysis {
   public:
     VGAVisualLocalAdjMatrix(LatticeMap &map, bool gatesOnly,
                             std::optional<int> limitToThreads = std::nullopt,
-                            bool forceCommUpdatesMasterThread = false)
+                            bool allowCommUpdatesFromWorkers = false)
         : m_map(map), m_limitToThreads(limitToThreads), m_gatesOnly(gatesOnly),
-          m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread), _padding0(0), _padding1(0) {
-    }
+          m_allowCommUpdatesFromWorkers(allowCommUpdatesFromWorkers), _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override {
         return "Local Visibility Analysis (Adj. Matrix)";
     }

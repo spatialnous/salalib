@@ -18,7 +18,7 @@
 class VGAVisualLocalOpenMP : public IAnalysis {
     LatticeMap &m_map;
     std::optional<int> m_limitToThreads;
-    bool m_forceCommUpdatesMasterThread = false;
+    bool m_allowCommUpdatesFromWorkers = false;
 
     [[maybe_unused]] unsigned _padding0 : 3 * 8;
     [[maybe_unused]] unsigned _padding1 : 4 * 8;
@@ -39,10 +39,9 @@ class VGAVisualLocalOpenMP : public IAnalysis {
 
   public:
     VGAVisualLocalOpenMP(LatticeMap &map, std::optional<int> limitToThreads = std::nullopt,
-                         bool forceCommUpdatesMasterThread = false)
+                         bool allowCommUpdatesFromWorkers = false)
         : m_map(map), m_limitToThreads(limitToThreads),
-          m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread), _padding0(0), _padding1(0) {
-    }
+          m_allowCommUpdatesFromWorkers(allowCommUpdatesFromWorkers), _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Local Visibility Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *comm) override;
 };

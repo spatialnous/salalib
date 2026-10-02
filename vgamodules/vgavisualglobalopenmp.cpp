@@ -20,7 +20,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 #if !defined(_OPENMP)
     if (comm)
         comm->logWarning("OpenMP NOT available, only running on a single core");
-    m_forceCommUpdatesMasterThread = false;
+    m_allowCommUpdatesFromWorkers = false;
 #else
     if (m_limitToThreads.has_value()) {
         omp_set_num_threads(m_limitToThreads.value());
@@ -139,7 +139,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
 #if defined(_OPENMP)
         // only executed by the main thread if requested
-        if (!m_forceCommUpdatesMasterThread || omp_get_thread_num() == 0)
+        if (m_allowCommUpdatesFromWorkers || omp_get_thread_num() == 0)
 #endif
 
             if (comm) {

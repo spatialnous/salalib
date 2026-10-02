@@ -21,7 +21,7 @@ class VGAMetricOpenMP : public IVGAMetric {
     std::optional<int> m_limitToThreads;
 
     bool m_gatesOnly;
-    bool m_forceCommUpdatesMasterThread = false;
+    bool m_allowCommUpdatesFromWorkers = false;
 
     // To maintain binary compatibility with older .graph versions
     // write the last "misc" values back to the points
@@ -59,9 +59,9 @@ class VGAMetricOpenMP : public IVGAMetric {
   public:
     VGAMetricOpenMP(const LatticeMap &map, double radius, bool gatesOnly,
                     std::optional<int> limitToThreads = std::nullopt,
-                    bool forceCommUpdatesMasterThread = false)
+                    bool allowCommUpdatesFromWorkers = false)
         : IVGAMetric(map), m_radius(radius), m_limitToThreads(limitToThreads),
-          m_gatesOnly(gatesOnly), m_forceCommUpdatesMasterThread(forceCommUpdatesMasterThread),
+          m_gatesOnly(gatesOnly), m_allowCommUpdatesFromWorkers(allowCommUpdatesFromWorkers),
           _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Metric Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *comm) override;

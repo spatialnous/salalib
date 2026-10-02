@@ -45,7 +45,7 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
                 find_program(CLANG_TIDY_COMMAND NAMES clang-tidy)
 
                 if(CLANG_TIDY_COMMAND)
-                    set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
+                    set(CMAKE_CXX_CLANG_TIDY "clang-tidy;--warnings-as-errors=*")
                 else()
                     message(WARNING "clang-tidy not found!")
                 endif()

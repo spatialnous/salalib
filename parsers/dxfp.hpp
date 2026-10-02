@@ -261,8 +261,6 @@ class DxfLine : public DxfEntity, public DxfRegion {
 class DxfPolyLine : public DxfEntity, public DxfRegion {
     friend class DxfParser;
 
-    DxfVertex m_currVertex;
-
   public:
     enum { CLOSED = 1 }; // CLOSED = closed polygon
   protected:
@@ -274,6 +272,7 @@ class DxfPolyLine : public DxfEntity, public DxfRegion {
   protected:
     size_t m_vertexCount;
     std::vector<DxfVertex> m_vertices;
+    DxfVertex m_currVertex;
 
   public:
     DxfPolyLine(int tag = -1);
@@ -467,8 +466,6 @@ class DxfCircle : public DxfEntity, public DxfRegion {
 class DxfSpline : public DxfEntity, public DxfRegion {
     friend class DxfParser;
 
-    DxfVertex m_currVertex;
-
   public:
     enum { CLOSED = 1 }; // CLOSED = closed spline
   protected:
@@ -478,6 +475,7 @@ class DxfSpline : public DxfEntity, public DxfRegion {
     size_t m_knotCount;
     std::vector<DxfVertex> m_ctrlPts;
     std::vector<double> m_knots;
+    DxfVertex m_currVertex;
 
   public:
     DxfSpline(int tag = -1);

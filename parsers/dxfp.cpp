@@ -730,7 +730,7 @@ bool DxfLine::parse(const DxfToken &token, DxfParser *parser, Communicator *) {
 ///////////////////////////////////////////////////////////////////////////////
 
 DxfPolyLine::DxfPolyLine(int tag)
-    : DxfEntity(tag), m_attributes(), _padding0(0), m_vertexCount(), m_vertices() {
+    : DxfEntity(tag), m_attributes(), _padding0(0), m_vertexCount(), m_vertices(), m_currVertex() {
     clear();
 }
 
@@ -1144,7 +1144,7 @@ void DxfCircle::reflect(double, double) {
 
 DxfSpline::DxfSpline(int tag)
     : DxfEntity(tag), m_xyz(), m_attributes(), m_ctrlPtCount(), m_knotCount(), m_ctrlPts(),
-      m_knots() {
+      m_knots(), m_currVertex() {
     clear();
 }
 

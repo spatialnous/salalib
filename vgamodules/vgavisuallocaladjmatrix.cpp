@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -84,11 +84,13 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
         }
     }
 
+    bool cancelled = false;
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) schedule(dynamic)
 #endif
     for (int i = 0; i < n; ++i) {
-
+        if (cancelled)
+            continue;
         DataPoint &dp = colData[static_cast<size_t>(i)];
 
         Point &p = m_map.getPoint(filled[static_cast<size_t>(i)]);
@@ -152,12 +154,16 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
             if (comm) {
                 if (qtimer(atime, 500)) {
                     if (comm->IsCancelled()) {
-                        throw Communicator::CancelledException();
+#pragma omp atomic write
+                        cancelled = true;
+                        continue;
                     }
                     comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
                 }
             }
     }
+    if (cancelled)
+        throw Communicator::CancelledException();
 
     AnalysisResult result;
 

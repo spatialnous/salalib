@@ -6,6 +6,7 @@
 
 #include "vgavisualglobalopenmp.hpp"
 
+#include <atomic>
 #include <cmath>
 #include <cstddef>
 #include <ctime>
@@ -52,12 +53,12 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
 
     int n = static_cast<int>(attributes.getNumRows());
 
-    bool cancelled = false;
+    std::atomic<bool> cancelled{false};
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) schedule(dynamic)
 #endif
     for (int i = 0; i < n; i++) {
-        if (cancelled)
+        if (cancelled.load(std::memory_order_relaxed))
             continue;
         if ((m_map.getPoint(refs[static_cast<size_t>(i)]).contextfilled() &&
              !refs[static_cast<size_t>(i)].iseven()) ||
@@ -145,8 +146,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
             if (comm) {
                 if (qtimer(atime, 500)) {
                     if (comm->IsCancelled()) {
-#pragma omp atomic write
-                        cancelled = true;
+                        cancelled.store(true, std::memory_order_relaxed);
                         continue;
                     }
                     comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
@@ -159,7 +159,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
             ad0.point.dummyExtent = ad0.diagonalExtent;
         }
     }
-    if (cancelled)
+    if (cancelled.load(std::memory_order_relaxed))
         throw Communicator::CancelledException();
 
     // n.b. these must be entered in alphabetical order to preserve col indexing:

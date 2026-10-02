@@ -6,6 +6,7 @@
 
 #include "vgametricopenmp.hpp"
 
+#include <atomic>
 #include <cstddef>
 #include <ctime>
 #include <vector>
@@ -44,12 +45,12 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
     auto n = static_cast<int>(attributes.getNumRows());
 
-    bool cancelled = false;
+    std::atomic<bool> cancelled{false};
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) schedule(dynamic)
 #endif
     for (int i = 0; i < n; i++) {
-        if (cancelled)
+        if (cancelled.load(std::memory_order_relaxed))
             continue;
         if (m_gatesOnly) {
 #if defined(_OPENMP)
@@ -96,8 +97,7 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
             if (comm) {
                 if (qtimer(atime, 500)) {
                     if (comm->IsCancelled()) {
-#pragma omp atomic write
-                        cancelled = true;
+                        cancelled.store(true, std::memory_order_relaxed);
                         continue;
                     }
                     comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
@@ -105,7 +105,7 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
             }
     }
 
-    if (cancelled)
+    if (cancelled.load(std::memory_order_relaxed))
         throw Communicator::CancelledException();
 
     std::string mspaColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE,    //

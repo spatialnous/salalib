@@ -6,6 +6,7 @@
 
 #include "vgavisuallocaladjmatrix.hpp"
 
+#include <atomic>
 #include <cstddef>
 #include <ctime>
 #include <map>
@@ -84,12 +85,12 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
         }
     }
 
-    bool cancelled = false;
+    std::atomic<bool> cancelled{false};
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) schedule(dynamic)
 #endif
     for (int i = 0; i < n; ++i) {
-        if (cancelled)
+        if (cancelled.load(std::memory_order_relaxed))
             continue;
         DataPoint &dp = colData[static_cast<size_t>(i)];
 
@@ -154,15 +155,14 @@ AnalysisResult VGAVisualLocalAdjMatrix::run(Communicator *comm) {
             if (comm) {
                 if (qtimer(atime, 500)) {
                     if (comm->IsCancelled()) {
-#pragma omp atomic write
-                        cancelled = true;
+                        cancelled.store(true, std::memory_order_relaxed);
                         continue;
                     }
                     comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
                 }
             }
     }
-    if (cancelled)
+    if (cancelled.load(std::memory_order_relaxed))
         throw Communicator::CancelledException();
 
     AnalysisResult result;

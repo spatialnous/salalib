@@ -7,6 +7,7 @@
 #include "vgavisuallocalopenmp.hpp"
 
 #include <algorithm>
+#include <atomic>
 #include <cstddef>
 #include <ctime>
 #include <iterator>
@@ -86,7 +87,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
         }
     }
 
-    bool cancelled = false;
+    std::atomic<bool> cancelled{false};
 #if defined(_OPENMP)
 #pragma omp parallel for default(shared) schedule(dynamic)
 #endif
@@ -148,8 +149,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
             if (comm) {
                 if (qtimer(atime, 500)) {
                     if (comm->IsCancelled()) {
-#pragma omp atomic write
-                        cancelled = true;
+                        cancelled.store(true, std::memory_order_relaxed);
                         continue;
                     }
                     comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
@@ -157,7 +157,7 @@ AnalysisResult VGAVisualLocalOpenMP::run(Communicator *comm) {
             }
     }
 
-    if (cancelled)
+    if (cancelled.load(std::memory_order_relaxed))
         throw Communicator::CancelledException();
 
     AnalysisResult result;

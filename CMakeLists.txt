@@ -5,6 +5,8 @@
 
 set(salalib salalib)
 
+option(SALALIB_CLANG_TIDY "Run clang-tidy over salalib" OFF)
+
 if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
     if (CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
         # Common GCC and Clang warnings
@@ -38,12 +40,15 @@ if (NOT FORCE_GLOBAL_COMPILE_WARNINGS)
                 # no
                 # -Wno-c++98-compat
             )
-            # enable clang-tidy
-            find_program(CLANG_TIDY_COMMAND NAMES clang-tidy)
-            if(CLANG_TIDY_COMMAND)
-                set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
-            else()
-                message(WARNING "clang-tidy not found!")
+            if (SALALIB_CLANG_TIDY)
+                # enable clang-tidy
+                find_program(CLANG_TIDY_COMMAND NAMES clang-tidy)
+
+                if(CLANG_TIDY_COMMAND)
+                    set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
+                else()
+                    message(WARNING "clang-tidy not found!")
+                endif()
             endif()
         else()
             # GCC-specific

@@ -9,7 +9,6 @@
 #include <atomic>
 #include <cstddef>
 #include <ctime>
-#include <tuple>
 #include <vector>
 #if defined(_OPENMP)
 #include <omp.h>
@@ -37,19 +36,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
                               static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
-    std::vector<AnalysisData> globalAnalysisData;
-    globalAnalysisData.reserve(m_map.getAttributeTable().getNumRows());
-
-    size_t rowCounter = 0;
-    for (auto &attRow : attributes) {
-        auto &point = m_map.getPoint(attRow.getKey().value);
-        globalAnalysisData.push_back(AnalysisData(point, attRow.getKey().value, rowCounter, 0,
-                                                  attRow.getKey().value, -1.0f, 0.0f));
-        rowCounter++;
-    }
-
-    const auto refs = getRefVector(globalAnalysisData);
-    const auto graph = getGraph(globalAnalysisData, refs, false);
+    const auto refs = getRefVector(attributes);
 
     size_t count = 0;
 
@@ -74,28 +61,25 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
 
         DataPoint &dp = colData[static_cast<size_t>(i)];
 
-        std::vector<AnalysisData> analysisData;
-        analysisData.reserve(m_map.getAttributeTable().getNumRows());
-
-        size_t localRowCounter = 0;
-        for (auto &attRow : attributes) {
-            auto &point = m_map.getPoint(attRow.getKey().value);
-            analysisData.push_back(AnalysisData(point, attRow.getKey().value, localRowCounter, 0,
-                                                attRow.getKey().value, 0.0f, -1.0f));
-            localRowCounter++;
-        }
-
-        float totalAngle = 0.0f;
-        int totalNodes = 0;
+        std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
+        const auto graph = getGraph(analysisData, refs, false);
 
         auto &ad0 = analysisData.at(static_cast<size_t>(i));
 
-        std::tie(totalAngle, totalNodes) = traverseSum(analysisData, graph, refs, m_radius, ad0);
+        auto [totalAngle, totalNodes] = traverseSum(analysisData, graph, refs, m_radius, ad0);
 
         if (totalNodes > 0) {
             dp.meanDepth = static_cast<float>(static_cast<double>(totalAngle) /
                                               static_cast<double>(totalNodes));
         }
+
+        if (m_legacyWriteMiscs) {
+            // kept to achieve parity in binary comparison with old versions
+            ad0.point.dummyMisc = ad0.visitedFromBin;
+            ad0.point.dummyDist = ad0.dist;
+            ad0.point.dummyCumangle = ad0.cumAngle;
+        }
+
         dp.totalDepth = totalAngle;
         dp.count = static_cast<float>(totalNodes);
 

@@ -33,13 +33,13 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
     }
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-    const auto refs = getRefVector(analysisData);
-    const auto graph = getGraph(analysisData, refs, true);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(analysisData, refIdx, true);
 
     bool keepStats = true;
     AnalysisColumn pathAngleCol, pathLengthCol, euclidDistCol, pennDistCol;
     {
-        auto traversalResult = traverse(analysisData, graph, refs, -1, m_originRefs, keepStats);
+        auto traversalResult = traverse(analysisData, graph, refIdx, -1, m_originRefs, keepStats);
         pathAngleCol = std::move(traversalResult[0]);
         pathLengthCol = std::move(traversalResult[1]);
         euclidDistCol = std::move(traversalResult[2]);

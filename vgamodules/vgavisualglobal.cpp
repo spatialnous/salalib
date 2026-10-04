@@ -69,8 +69,8 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
     }
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-    const auto refs = getRefVector(analysisData);
-    const auto graph = getGraph(analysisData, refs, true);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(analysisData, refIdx, true);
 
     size_t count = 0;
 
@@ -85,7 +85,7 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
         }
 
         auto [totalDepth, totalNodes, distribution] =
-            traverseSum(analysisData, graph, refs, m_radius, ad0);
+            traverseSum(analysisData, graph, refIdx, m_radius, ad0);
         // only set to single float precision after divide
         // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of
         // Space

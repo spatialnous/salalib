@@ -36,7 +36,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
                               static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
-    const auto refs = getRefVector(attributes);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
 
     size_t count = 0;
 
@@ -62,11 +62,11 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         DataPoint &dp = colData[static_cast<size_t>(i)];
 
         std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-        const auto graph = getGraph(analysisData, refs, false);
+        const auto graph = getGraph(analysisData, refIdx, false);
 
         auto &ad0 = analysisData.at(static_cast<size_t>(i));
 
-        auto [totalAngle, totalNodes] = traverseSum(analysisData, graph, refs, m_radius, ad0);
+        auto [totalAngle, totalNodes] = traverseSum(analysisData, graph, refIdx, m_radius, ad0);
 
         if (totalNodes > 0) {
             dp.meanDepth = static_cast<float>(static_cast<double>(totalAngle) /

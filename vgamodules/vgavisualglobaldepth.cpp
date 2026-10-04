@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -20,10 +20,10 @@ AnalysisResult VGAVisualGlobalDepth::run(Communicator *) {
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
 
-    const auto refs = getRefVector(analysisData);
-    const auto graph = getGraph(analysisData, refs, false);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(analysisData, refIdx, false);
 
-    auto sdCol = traverse(analysisData, graph, refs, -1.0, m_originRefs)[0];
+    auto sdCol = traverse(analysisData, graph, refIdx, -1.0, m_originRefs)[0];
 
     for (size_t i = 0; i < analysisData.size(); i++) {
         result.setValue(i, colIdx, static_cast<double>(sdCol.getValue(i)));

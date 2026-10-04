@@ -1,10 +1,12 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vgavisuallocal.hpp"
+
+#include "vgautils.hpp"
 
 #include <algorithm>
 #include <cstddef>
@@ -26,7 +28,7 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
     auto controlCol = result.getColumnIndex(Column::VISUAL_CONTROL);
     auto controllabilityCol = result.getColumnIndex(Column::VISUAL_CONTROLLABILITY);
 
-    const auto refs = getRefVector(m_map.getAttributeTable());
+    const VGAUtils::RefIndex refIdx(getRefVector(m_map.getAttributeTable()));
 
     size_t count = 0;
 
@@ -38,7 +40,7 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                     count++;
                     continue;
                 }
-                auto refIdx = getRefIdx(refs, curs);
+                auto rIdx = refIdx.idx(curs);
 
                 // This is much easier to do with a straight forward list:
                 PixelRefVector neighbourhood;
@@ -79,22 +81,22 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
                 }
 
                 if (neighbourhood.size() > 1) {
-                    result.setValue(        //
-                        refIdx, clusterCol, //
+                    result.setValue(      //
+                        rIdx, clusterCol, //
                         static_cast<double>(cluster /
                                             static_cast<double>(neighbourhood.size() *
                                                                 (neighbourhood.size() - 1))));
-                    result.setValue(        //
-                        refIdx, controlCol, //
+                    result.setValue(      //
+                        rIdx, controlCol, //
                         static_cast<double>(control));
-                    result.setValue(                //
-                        refIdx, controllabilityCol, //
+                    result.setValue(              //
+                        rIdx, controllabilityCol, //
                         static_cast<double>(neighbourhood.size()) /
                             static_cast<double>(totalneighbourhood.size()));
                 } else {
-                    result.setValue(refIdx, clusterCol, -1.0);
-                    result.setValue(refIdx, controlCol, -1.0);
-                    result.setValue(refIdx, controllabilityCol, -1.0);
+                    result.setValue(rIdx, clusterCol, -1.0);
+                    result.setValue(rIdx, controlCol, -1.0);
+                    result.setValue(rIdx, controllabilityCol, -1.0);
                 }
                 count++; // <- increment count
             }

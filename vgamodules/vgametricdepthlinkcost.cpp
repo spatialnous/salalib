@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -20,12 +20,12 @@ AnalysisResult VGAMetricDepthLinkCost::run(Communicator *) {
     auto pathLengthColIdx = result.getColumnIndex(Column::METRIC_STEP_DEPTH);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, Column::LINK_METRIC_COST);
-    const auto refs = getRefVector(analysisData);
-    const auto graph = getGraph(analysisData, refs, true);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(analysisData, refIdx, true);
 
     AnalysisColumn pathLengthCol;
     {
-        auto traversalResult = traverse(analysisData, graph, refs, -1, m_pixelsFrom);
+        auto traversalResult = traverse(analysisData, graph, refIdx, -1, m_pixelsFrom);
         pathLengthCol = std::move(traversalResult[1]);
     }
 

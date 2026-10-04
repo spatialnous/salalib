@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2018-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2018-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,6 +7,7 @@
 // Interface to handle different kinds of VGA analysis
 
 #include "ivga.hpp"
+#include "vgautils.hpp"
 
 #include <set>
 #include <vector>
@@ -18,8 +19,7 @@ class IVGATraversing : public IVGA {
   protected:
     template <class T>
     std::vector<ADRefVector<T>> getGraph(std::vector<T> &analysisData,
-                                         const std::vector<PixelRef> &refs,
-                                         bool diagonalFix) const {
+                                         const VGAUtils::RefIndex &refIdx, bool diagonalFix) const {
         std::vector<ADRefVector<T>> graph;
         for (auto &ad : analysisData) {
             for (auto &ad2 : analysisData) {
@@ -33,7 +33,7 @@ class IVGATraversing : public IVGA {
                 for (auto pixVec : bin.pixelVecs) {
                     for (PixelRef pix = pixVec.start();
                          pix.col(bin.dir) <= pixVec.end().col(bin.dir);) {
-                        auto &ad3 = analysisData.at(getRefIdx(refs, pix));
+                        auto &ad3 = analysisData.at(refIdx.idx(pix));
                         conns.push_back({ad3, i});
 
                         // 10.2.02 revised --- diagonal was breaking this as it was extent in
@@ -52,7 +52,7 @@ class IVGATraversing : public IVGA {
     }
     virtual std::vector<AnalysisColumn>
     traverse(std::vector<AnalysisData> &analysisData,
-             const std::vector<ADRefVector<AnalysisData>> &graph, const std::vector<PixelRef> &refs,
+             const std::vector<ADRefVector<AnalysisData>> &graph, const VGAUtils::RefIndex &refIdx,
              const double radius, const std::set<PixelRef> &originRefs,
              const bool keepStats = false) const = 0;
 };

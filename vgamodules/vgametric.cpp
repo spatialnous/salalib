@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -44,8 +44,8 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
     auto countCol = result.getColumnIndex(countColText);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-    const auto refs = getRefVector(analysisData);
-    const auto graph = getGraph(analysisData, refs, false);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(analysisData, refIdx, false);
 
     size_t count = 0;
     for (auto &ad0 : analysisData) {
@@ -61,7 +61,7 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
         }
 
         auto [totalDepth, totalAngle, euclidDepth, totalNodes] =
-            traverseSum(analysisData, graph, refs, m_radius, ad0);
+            traverseSum(analysisData, graph, refIdx, m_radius, ad0);
 
         // Legacy Mean Penn Distance formula. The root contributes zero to both
         // totals and is counted in totalNodes, for compatibility with historic output.

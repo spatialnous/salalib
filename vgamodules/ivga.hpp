@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2018-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2018-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -14,7 +14,6 @@
 #include <functional>
 #include <iterator>
 #include <optional>
-#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -48,16 +47,6 @@ class IVGA : public IAnalysis {
   protected:
     template <class T> using ADRefVector = std::vector<std::tuple<std::reference_wrapper<T>, int>>;
 
-    template <class T>
-    std::vector<PixelRef> getRefVector(const std::vector<T> &analysisData) const {
-        std::vector<PixelRef> refs;
-        refs.reserve(analysisData.size());
-        for (auto &ad : analysisData) {
-            refs.push_back(ad.ref);
-        }
-        return refs;
-    }
-
     std::vector<PixelRef> getRefVector(const AttributeTable &attributes) const {
         std::vector<PixelRef> refs;
         refs.reserve(attributes.getNumRows());
@@ -65,13 +54,6 @@ class IVGA : public IAnalysis {
             refs.push_back(row.getKey().value);
         }
         return refs;
-    }
-
-    size_t getRefIdx(const std::vector<PixelRef> &refs, const PixelRef ref) const {
-        auto it = std::find(refs.begin(), refs.end(), ref);
-        if (it == refs.end())
-            throw std::out_of_range("Ref " + std::to_string(ref) + " not in refs");
-        return static_cast<size_t>(std::distance(refs.begin(), it));
     }
 
     std::optional<size_t> getRefIdxOptional(const std::vector<PixelRef> &refs,

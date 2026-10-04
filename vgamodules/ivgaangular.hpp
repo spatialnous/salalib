@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2018-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2018-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -84,7 +84,7 @@ class IVGAAngular : public IVGATraversing {
 
     std::vector<AnalysisColumn> traverse(std::vector<AnalysisData> &analysisData,
                                          const std::vector<ADRefVector<AnalysisData>> &graph,
-                                         const std::vector<PixelRef> &refs, const double radius,
+                                         const VGAUtils::RefIndex &refIdx, const double radius,
                                          const std::set<PixelRef> &originRefs,
                                          const bool keepStats = false) const override {
 
@@ -93,7 +93,7 @@ class IVGAAngular : public IVGATraversing {
         std::set<AngularSearchData> searchList; // contains root point
 
         for (auto &sel : originRefs) {
-            auto &ad = analysisData.at(getRefIdx(refs, sel));
+            auto &ad = analysisData.at(refIdx.idx(sel));
             searchList.insert(AngularSearchData(ad, 0.0f, std::nullopt));
             ad.cumAngle = 0.0f;
         }
@@ -116,7 +116,7 @@ class IVGAAngular : public IVGATraversing {
                 angularDepthCol.setValue(ad.attributeDataRow, static_cast<float>(ad.cumAngle),
                                          keepStats);
                 if (!p.getMergePixel().empty()) {
-                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                    auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0) {
                         ad2.cumAngle = ad.cumAngle;
                         angularDepthCol.setValue(ad2.attributeDataRow,
@@ -133,7 +133,7 @@ class IVGAAngular : public IVGATraversing {
 
     std::tuple<float, int> traverseSum(std::vector<AnalysisData> &analysisData,
                                        const std::vector<ADRefVector<AnalysisData>> &graph,
-                                       const std::vector<PixelRef> &refs, const double radius,
+                                       const VGAUtils::RefIndex &refIdx, const double radius,
                                        AnalysisData &ad0) {
 
         float totalAngle = 0.0f;
@@ -157,7 +157,7 @@ class IVGAAngular : public IVGATraversing {
                 extractAngular(graph.at(ad1.attributeDataRow), searchList, m_map, here);
                 ad1.visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
-                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                    auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0) {
                         ad2.cumAngle = ad1.cumAngle;
                         extractAngular(graph.at(ad2.attributeDataRow), searchList, m_map,
@@ -176,13 +176,13 @@ class IVGAAngular : public IVGATraversing {
     std::tuple<std::map<PixelRef, PixelRef>>
     traverseFind(std::vector<AnalysisData> &analysisData,
                  const std::vector<ADRefVector<AnalysisData>> &graph,
-                 const std::vector<PixelRef> &refs, const std::set<PixelRef> sourceRefs,
+                 const VGAUtils::RefIndex &refIdx, const std::set<PixelRef> sourceRefs,
                  const PixelRef targetRef) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
         std::set<AngularSearchData> searchList; // contains root point
         for (const auto &sourceRef : sourceRefs) {
-            auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
+            auto &ad = analysisData.at(refIdx.idx(sourceRef));
             searchList.insert(AngularSearchData(ad, 0.0f, std::nullopt));
             ad.cumAngle = 0.0f;
         }
@@ -203,7 +203,7 @@ class IVGAAngular : public IVGATraversing {
                 extractAngular(graph.at(ad.attributeDataRow), newPixels, m_map, here);
                 ad.visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
-                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                    auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0) {
                         auto newTripleIter =
                             newPixels.insert(AngularSearchData(ad2, here.angle, std::nullopt));

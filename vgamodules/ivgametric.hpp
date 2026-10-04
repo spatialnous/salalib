@@ -101,7 +101,7 @@ class IVGAMetric : public IVGATraversing {
 
     std::vector<AnalysisColumn> traverse(std::vector<AnalysisData> &analysisData,
                                          const std::vector<ADRefVector<AnalysisData>> &graph,
-                                         const std::vector<PixelRef> &refs, const double radius,
+                                         const VGAUtils::RefIndex &refIdx, const double radius,
                                          const std::set<PixelRef> &originRefs,
                                          const bool keepStats = false) const override {
 
@@ -116,7 +116,7 @@ class IVGAMetric : public IVGATraversing {
         std::set<MetricSearchData> searchList; // contains root point
 
         for (auto &sel : originRefs) {
-            auto &ad = analysisData.at(getRefIdx(refs, sel));
+            auto &ad = analysisData.at(refIdx.idx(sel));
             searchList.insert(MetricSearchData(ad, 0.0f, std::nullopt));
         }
 
@@ -150,7 +150,7 @@ class IVGAMetric : public IVGATraversing {
                         keepStats);
                 }
                 if (!p.getMergePixel().empty()) {
-                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                    auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0) {
                         ad2.cumAngle = ad1.cumAngle;
                         pathAngleCol.setValue(ad2.attributeDataRow,
@@ -182,14 +182,14 @@ class IVGAMetric : public IVGATraversing {
     std::tuple<std::map<PixelRef, PixelRef>>
     traverseFind(std::vector<AnalysisData> &analysisData,
                  const std::vector<ADRefVector<AnalysisData>> &graph,
-                 const std::vector<PixelRef> &refs, const std::set<PixelRef> sourceRefs,
+                 const VGAUtils::RefIndex &refIdx, const std::set<PixelRef> sourceRefs,
                  const PixelRef targetRef) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
         std::set<MetricSearchData> searchList; // contains root point
 
         for (const auto &sourceRef : sourceRefs) {
-            auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
+            auto &ad = analysisData.at(refIdx.idx(sourceRef));
             searchList.insert(MetricSearchData(ad, 0.0f, std::nullopt));
         }
 
@@ -210,7 +210,7 @@ class IVGAMetric : public IVGATraversing {
                 ad.dist = here.dist;
                 ad.visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
-                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                    auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0 || (here.dist + ad2.linkCost < ad2.dist)) {
                         ad2.dist = here.dist + ad2.linkCost;
 
@@ -243,14 +243,14 @@ class IVGAMetric : public IVGATraversing {
     std::tuple<std::map<PixelRef, PixelRef>>
     traverseFindMany(std::vector<AnalysisData> &analysisData,
                      const std::vector<ADRefVector<AnalysisData>> &graph,
-                     const std::vector<PixelRef> &refs, const std::set<PixelRef> sourceRefs,
+                     const VGAUtils::RefIndex &refIdx, const std::set<PixelRef> sourceRefs,
                      std::set<PixelRef> targetRefs) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
         std::set<MetricSearchData> searchList; // contains root point
 
         for (const auto &sourceRef : sourceRefs) {
-            auto &ad = analysisData.at(getRefIdx(refs, sourceRef));
+            auto &ad = analysisData.at(refIdx.idx(sourceRef));
             searchList.insert(MetricSearchData(ad, 0.0f, std::nullopt));
         }
 
@@ -270,7 +270,7 @@ class IVGAMetric : public IVGATraversing {
                 ad.dist = here.dist;
                 ad.visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
-                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                    auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0 || (here.dist + ad2.linkCost < ad2.dist)) {
                         ad2.dist = here.dist + ad2.linkCost;
 
@@ -307,7 +307,7 @@ class IVGAMetric : public IVGATraversing {
     std::tuple<float, float, float, int>
     traverseSum(std::vector<AnalysisData> &analysisData,
                 const std::vector<ADRefVector<AnalysisData>> &graph,
-                const std::vector<PixelRef> &refs, const double radius, AnalysisData &ad0) {
+                const VGAUtils::RefIndex &refIdx, const double radius, AnalysisData &ad0) {
 
         float totalDepth = 0.0f;
         float totalAngle = 0.0f;
@@ -331,7 +331,7 @@ class IVGAMetric : public IVGATraversing {
                 extractMetric(graph.at(ad1.attributeDataRow), searchList, m_map, here);
                 ad1.visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
-                    auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                    auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0) {
                         ad2.cumAngle = ad1.cumAngle;
                         extractMetric(graph.at(ad2.attributeDataRow), searchList, m_map,

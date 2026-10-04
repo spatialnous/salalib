@@ -6,6 +6,8 @@
 
 #include "vgathroughvision.hpp"
 
+#include "vgautils.hpp"
+
 #include "../agents/agentanalysis.hpp"
 
 #include <cstddef>
@@ -48,7 +50,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
     }
     AnalysisResult result(std::move(cols), attributes.getNumRows());
 
-    const auto refs = getRefVector(analysisData);
+    const VGAUtils::RefIndex refIdx(getRefVector(m_map.getAttributeTable()));
 
     size_t count = 0;
     for (auto &ad : analysisData) {
@@ -62,7 +64,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
                 PixelRef key = pixels[k];
                 if (!m_map.getPoint(key).filled())
                     continue;
-                analysisData.at(getRefIdx(refs, key)).misc += 1;
+                analysisData.at(refIdx.idx(key)).misc += 1;
 
                 // TODO: Undocumented functionality. Shows how many times a gate is passed?
                 if (agentGateColIdx.has_value() && agentGateCountColIdx.has_value()) {

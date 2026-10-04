@@ -37,7 +37,7 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
                               static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
-    const auto refs = getRefVector(attributes);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
 
     size_t count = 0;
 
@@ -63,12 +63,12 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
         DataPoint &dp = colData[static_cast<size_t>(i)];
 
         std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-        const auto graph = getGraph(analysisData, refs, false);
+        const auto graph = getGraph(analysisData, refIdx, false);
 
         auto &ad0 = analysisData.at(static_cast<size_t>(i));
 
         auto [totalDepth, totalAngle, euclidDepth, totalNodes] =
-            traverseSum(analysisData, graph, refs, m_radius, ad0);
+            traverseSum(analysisData, graph, refIdx, m_radius, ad0);
 
         if (m_legacyWriteMiscs) {
             // kept to achieve parity in binary comparison with old versions

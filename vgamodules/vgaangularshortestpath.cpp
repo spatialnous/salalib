@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2017-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -30,10 +30,10 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
     auto invMetricZoneColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_INV_METRIC_ZONE);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-    const auto refs = getRefVector(analysisData);
-    const auto graph = getGraph(analysisData, refs, false);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(analysisData, refIdx, false);
 
-    auto [parents] = traverseFind(analysisData, graph, refs, {m_pixelFrom}, m_pixelTo);
+    auto [parents] = traverseFind(analysisData, graph, refIdx, {m_pixelFrom}, m_pixelTo);
 
     int linePixelCounter = 0;
     auto pixelToParent = parents.find(m_pixelTo);
@@ -47,7 +47,7 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
 
         int counter = 0;
 
-        auto *lad = &analysisData.at(getRefIdx(refs, m_pixelTo));
+        auto *lad = &analysisData.at(refIdx.idx(m_pixelTo));
         result.setValue(lad->attributeDataRow, orderColIdx, counter);
 
         counter++;
@@ -55,7 +55,7 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
         counter++;
 
         while (currParent != parents.end()) {
-            auto &ad = analysisData.at(getRefIdx(refs, currParent->second));
+            auto &ad = analysisData.at(refIdx.idx(currParent->second));
             auto &p = ad.point;
             result.setValue(ad.attributeDataRow, orderColIdx, counter);
 
@@ -67,9 +67,9 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
                 result.setValue(ad.attributeDataRow, linkedColIdx, 0);
                 auto pixelated = m_map.quickPixelateLine(currParent->first, currParent->second);
                 for (auto &linePixel : pixelated) {
-                    auto linePixelRow = getRefIdxOptional(refs, linePixel);
+                    auto linePixelRow = refIdx.idxOptional(linePixel);
                     if (linePixelRow.has_value()) {
-                        auto &lpad = analysisData.at(getRefIdx(refs, linePixel));
+                        auto &lpad = analysisData.at(refIdx.idx(linePixel));
                         result.setValue(lpad.attributeDataRow, pathColIdx, linePixelCounter++);
                         result.setValue(lpad.attributeDataRow, visualZoneColIdx, 0);
                         result.setValue(lpad.attributeDataRow, metricZoneColIdx, 0);

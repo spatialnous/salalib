@@ -21,13 +21,13 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
     std::string_view linkMetricCostColName = Column::LINK_METRIC_COST;
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
-    const auto refs = getRefVector(analysisData);
-    const auto graph = getGraph(analysisData, refs, true);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(analysisData, refIdx, true);
 
-    auto [parents] = traverseFindMany(analysisData, graph, refs, m_pixelsFrom, m_pixelsTo);
+    auto [parents] = traverseFindMany(analysisData, graph, refIdx, m_pixelsFrom, m_pixelsTo);
 
     for (const PixelRef &pixelFrom : m_pixelsFrom) {
-        analysisData.at(getRefIdx(refs, pixelFrom)).dist = 0.0f;
+        analysisData.at(refIdx.idx(pixelFrom)).dist = 0.0f;
     }
 
     std::vector<std::string> colNames;
@@ -79,7 +79,7 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
 
             int counter = 0;
             int linePixelCounter = 0;
-            auto *lad = &analysisData.at(getRefIdx(refs, pixelTo));
+            auto *lad = &analysisData.at(refIdx.idx(pixelTo));
             result.setValue(lad->attributeDataRow, orderCol, counter);
             result.setValue(lad->attributeDataRow, distCol, static_cast<double>(lad->dist));
 
@@ -87,7 +87,7 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
             auto currParent = pixelToParent;
             counter++;
             while (currParent != parents.end()) {
-                auto &ad = analysisData.at(getRefIdx(refs, currParent->second));
+                auto &ad = analysisData.at(refIdx.idx(currParent->second));
                 auto &p = ad.point;
                 result.setValue(ad.attributeDataRow, orderCol, counter);
                 result.setValue(ad.attributeDataRow, distCol, static_cast<double>(ad.dist));
@@ -102,7 +102,7 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
                     for (auto &linePixel : pixelated) {
                         auto *linePixelRow = attributes.getRowPtr(AttributeKey(linePixel));
                         if (linePixelRow != nullptr) {
-                            auto &lpad = analysisData.at(getRefIdx(refs, linePixel));
+                            auto &lpad = analysisData.at(refIdx.idx(linePixel));
                             result.setValue(lpad.attributeDataRow, pathCol, linePixelCounter++);
                         }
                     }

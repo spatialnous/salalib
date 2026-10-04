@@ -38,9 +38,9 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
     auto invMetricZoneColIdx = result.getColumnIndex(invMetricZoneColName);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
-    const auto refs = getRefVector(analysisData);
-    const auto graph = getGraph(analysisData, refs, true);
-    auto [parents] = traverseFind(analysisData, graph, refs, m_pixelsFrom, m_pixelTo);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(analysisData, refIdx, true);
+    auto [parents] = traverseFind(analysisData, graph, refIdx, m_pixelsFrom, m_pixelTo);
 
     int linePixelCounter = 0;
     auto pixelToParent = parents.find(m_pixelTo);
@@ -55,18 +55,18 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
         int counter = 0;
 
         for (const PixelRef &pixelFrom : m_pixelsFrom) {
-            auto adt = analysisData.at(getRefIdx(refs, pixelFrom));
+            auto adt = analysisData.at(refIdx.idx(pixelFrom));
             result.setValue(adt.attributeDataRow, distCol, 0);
         }
 
-        auto *lad = &analysisData.at(getRefIdx(refs, m_pixelTo));
+        auto *lad = &analysisData.at(refIdx.idx(m_pixelTo));
         result.setValue(lad->attributeDataRow, orderCol, counter);
 
         counter++;
         auto currParent = pixelToParent;
         counter++;
         while (currParent != parents.end()) {
-            auto &ad = analysisData.at(getRefIdx(refs, currParent->second));
+            auto &ad = analysisData.at(refIdx.idx(currParent->second));
             auto &p = ad.point;
             result.setValue(ad.attributeDataRow, orderCol, counter);
 
@@ -80,7 +80,7 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
                 for (auto &linePixel : pixelated) {
                     auto *linePixelRow = attributes.getRowPtr(AttributeKey(linePixel));
                     if (linePixelRow != nullptr) {
-                        auto &lpad = analysisData.at(getRefIdx(refs, linePixel));
+                        auto &lpad = analysisData.at(refIdx.idx(linePixel));
                         result.setValue(lpad.attributeDataRow, pathCol, linePixelCounter++);
                         result.setValue(lpad.attributeDataRow, visualZoneColIdx, 0);
                         result.setValue(lpad.attributeDataRow, metricZoneColIdx, 0);

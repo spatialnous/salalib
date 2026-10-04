@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2018-2024 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2018-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -44,7 +44,7 @@ class IVGAVisual : public IVGATraversing {
 
     std::vector<AnalysisColumn> traverse(std::vector<AnalysisData> &analysisData,
                                          const std::vector<ADRefVector<AnalysisData>> &graph,
-                                         const std::vector<PixelRef> &refs, const double,
+                                         const VGAUtils::RefIndex &refIdx, const double,
                                          const std::set<PixelRef> &originRefs,
                                          const bool keepStats = false) const override {
 
@@ -53,7 +53,7 @@ class IVGAVisual : public IVGATraversing {
         std::vector<ADRefVector<AnalysisData>> searchTree;
         searchTree.push_back(ADRefVector<AnalysisData>());
         for (auto &sel : originRefs) {
-            auto &ad = analysisData.at(getRefIdx(refs, sel));
+            auto &ad = analysisData.at(refIdx.idx(sel));
             searchTree.back().push_back({ad, 0});
         }
 
@@ -71,7 +71,7 @@ class IVGAVisual : public IVGATraversing {
                         extractUnseen(graph.at(ad.attributeDataRow), searchTree[level + 1]);
                         ad.visitedFromBin = ~0;
                         if (!p.getMergePixel().empty()) {
-                            auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                            auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                             int &p2misc = ad2.visitedFromBin;
                             if (p2misc != ~0) {
                                 sd.setValue(ad2.attributeDataRow, static_cast<float>(level),
@@ -94,7 +94,7 @@ class IVGAVisual : public IVGATraversing {
     std::tuple<int, int, std::vector<int>>
     traverseSum(std::vector<AnalysisData> &analysisData,
                 const std::vector<ADRefVector<AnalysisData>> &graph,
-                const std::vector<PixelRef> &refs, const double radius, AnalysisData &ad0) {
+                const VGAUtils::RefIndex &refIdx, const double radius, AnalysisData &ad0) {
 
         int totalDepth = 0;
         int totalNodes = 0;
@@ -124,7 +124,7 @@ class IVGAVisual : public IVGATraversing {
                         extractUnseen(graph.at(ad3.attributeDataRow), searchTree[level + 1]);
                         ad3.visitedFromBin = ~0;
                         if (!p.getMergePixel().empty()) {
-                            auto &ad4 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                            auto &ad4 = analysisData.at(refIdx.idx(p.getMergePixel()));
                             if (ad4.visitedFromBin != ~0) {
                                 extractUnseen(graph.at(ad4.attributeDataRow),
                                               searchTree[level + 1]);
@@ -145,12 +145,12 @@ class IVGAVisual : public IVGATraversing {
     std::tuple<std::map<PixelRef, PixelRef>>
     traverseFind(std::vector<AnalysisData> &analysisData,
                  const std::vector<ADRefVector<AnalysisData>> &graph,
-                 const std::vector<PixelRef> &refs, PixelRef sourceRef, PixelRef targetRef) {
+                 const VGAUtils::RefIndex &refIdx, PixelRef sourceRef, PixelRef targetRef) {
 
         std::vector<ADRefVector<AnalysisData>> searchTree;
         searchTree.push_back(ADRefVector<AnalysisData>());
 
-        searchTree.back().push_back({analysisData.at(getRefIdx(refs, sourceRef)), 0});
+        searchTree.back().push_back({analysisData.at(refIdx.idx(sourceRef)), 0});
 
         size_t level = 0;
         std::map<PixelRef, PixelRef> parents;
@@ -169,7 +169,7 @@ class IVGAVisual : public IVGATraversing {
                         extractUnseen(graph.at(ad.attributeDataRow), newPixels);
                         ad.visitedFromBin = ~0;
                         if (!p.getMergePixel().empty()) {
-                            auto &ad2 = analysisData.at(getRefIdx(refs, p.getMergePixel()));
+                            auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                             if (ad2.visitedFromBin != ~0) {
                                 newPixels.push_back({ad2, 0});
                                 extractUnseen(graph.at(ad2.attributeDataRow), mergePixels);

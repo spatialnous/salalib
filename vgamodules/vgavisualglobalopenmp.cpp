@@ -38,7 +38,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
                               static_cast<size_t>(m_map.getFilledPointCount()));
     }
 
-    const auto refs = getRefVector(attributes);
+    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
 
     size_t count = 0;
 
@@ -60,8 +60,8 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
     for (int i = 0; i < n; i++) {
         if (cancelled.load(std::memory_order_relaxed))
             continue;
-        if ((m_map.getPoint(refs[static_cast<size_t>(i)]).contextfilled() &&
-             !refs[static_cast<size_t>(i)].iseven()) ||
+        if ((m_map.getPoint(refIdx[static_cast<size_t>(i)]).contextfilled() &&
+             !refIdx[static_cast<size_t>(i)].iseven()) ||
             (m_gatesOnly)) {
 #if defined(_OPENMP)
 #pragma omp atomic
@@ -72,12 +72,12 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
         DataPoint &dp = colData[static_cast<size_t>(i)];
 
         std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-        const auto graph = getGraph(analysisData, refs, false);
+        const auto graph = getGraph(analysisData, refIdx, false);
 
         auto &ad0 = analysisData.at(static_cast<size_t>(i));
 
         auto [totalDepth, totalNodes, distribution] =
-            traverseSum(analysisData, graph, refs, m_radius, ad0);
+            traverseSum(analysisData, graph, refIdx, m_radius, ad0);
 
         // only set to single float precision after divide
         // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of Space

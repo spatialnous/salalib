@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2014-2025 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2014-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -113,7 +113,7 @@ bool Poly::contains(const Point2f &p) {
     // note, touching intersections count 1/2
     try {
         doubleN = m_pRoot->intersections(l);
-    } catch (int) {
+    } catch (int &) {
         throw 1; // throws if on edge
     }
 

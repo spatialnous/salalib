@@ -269,7 +269,7 @@ bool SalaProgram::parse(std::istream &program) {
 
             try {
                 line = thiscommand.parse(program, line);
-            } catch (SalaError e) {
+            } catch (SalaError &e) {
                 if (e.lineno == -1)
                     e.lineno = line;
                 m_errorStack.push_back(std::move(e));
@@ -360,7 +360,7 @@ bool SalaProgram::runupdate(int col, const std::set<int> &selset) {
                     v = -1.0f;
                 }
                 table->getRow(AttributeKey(sel)).setValue(static_cast<size_t>(m_col), v);
-            } catch (SalaError e) {
+            } catch (SalaError &e) {
                 // error
                 m_errorStack.push_back(e);
                 return false;
@@ -377,7 +377,7 @@ bool SalaProgram::runupdate(int col, const std::set<int> &selset) {
                     v = -1.0f;
                 }
                 iter->getRow().setValue(static_cast<size_t>(m_col), v);
-            } catch (SalaError e) {
+            } catch (SalaError &e) {
                 // error
                 m_errorStack.push_back(e);
                 return false;
@@ -402,7 +402,7 @@ bool SalaProgram::runselect(std::vector<int> &selsetout, const std::set<int> &se
                 if (v) {
                     selsetout.push_back(key);
                 }
-            } catch (SalaError e) {
+            } catch (SalaError &e) {
                 // error
                 m_errorStack.push_back(e);
                 return false;
@@ -418,7 +418,7 @@ bool SalaProgram::runselect(std::vector<int> &selsetout, const std::set<int> &se
                 if (v) {
                     selsetout.push_back(key);
                 }
-            } catch (SalaError e) {
+            } catch (SalaError &e) {
                 // error
                 m_errorStack.push_back(e);
                 return false;
@@ -1256,7 +1256,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 default:
                     break;
                 }
-            } catch (SalaError e) {
+            } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
                 e.message = "In '" + describe(func) + "' operator: " + e.message;
                 e.lineno = m_line;
@@ -1335,7 +1335,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 default:
                     break;
                 }
-            } catch (SalaError e) {
+            } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
                 e.message = "In '" + describe(func) + "' operator: " + e.message;
                 e.lineno = m_line;
@@ -1408,7 +1408,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 default:
                     break;
                 }
-            } catch (SalaError e) {
+            } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
                 e.message = "In '" + describe(func) + "' operator: " + e.message;
                 e.lineno = m_line;
@@ -1523,7 +1523,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 default:
                     throw SalaError("Not a member function of " + obj.getTypeStr(), m_line);
                 }
-            } catch (SalaError e) {
+            } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
                 for (const auto &mfunc : MEMBER_FUNCS) {
                     if (mfunc.func == func) {

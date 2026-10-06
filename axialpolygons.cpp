@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2000-2010 University College London, Eva Friedrich
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -516,7 +517,7 @@ void AxialPolygons::makePolygons(std::vector<std::vector<Point2f>> &polygons) {
                     // this happens when you follow a false trail -- go back the way you
                     // came!
                     if (wayback < 0) {
-                        throw new genlib::RuntimeException("Error traversing when making polygons");
+                        throw genlib::RuntimeException("Error traversing when making polygons");
                     }
                     winner = wayback;
                 }

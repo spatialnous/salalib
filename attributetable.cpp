@@ -219,7 +219,7 @@ size_t AttributeTable::getRowIdx(const AttributeKey &key) const {
 AttributeRow &AttributeTable::addRow(const AttributeKey &key) {
     auto iter = m_rows.find(key);
     if (iter != m_rows.end()) {
-        throw new std::invalid_argument("Duplicate key");
+        throw std::invalid_argument("Duplicate key");
     }
     auto res = m_rows.insert(
         std::make_pair(key, std::unique_ptr<AttributeRowImpl>(new AttributeRowImpl(*this))));
@@ -229,7 +229,7 @@ AttributeRow &AttributeTable::addRow(const AttributeKey &key) {
 void AttributeTable::removeRow(const AttributeKey &key) {
     auto iter = m_rows.find(key);
     if (iter == m_rows.end()) {
-        throw new std::invalid_argument("Row does not exist");
+        throw std::invalid_argument("Row does not exist");
     }
     m_rows.erase(iter);
 }

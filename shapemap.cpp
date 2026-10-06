@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -227,8 +228,8 @@ int ShapeMap::makeLineShapeWithRef(const Line4f &line, int shapeRef, bool throug
         if (m_hasgraph) {
             auto rowid = genlib::findIndexFromKey(m_shapes, shapeRef);
             if (rowid < 0) {
-                throw new genlib::RuntimeException("Shape reference " + std::to_string(shapeRef) +
-                                                   " not found to make line");
+                throw genlib::RuntimeException("Shape reference " + std::to_string(shapeRef) +
+                                               " not found to make line");
             }
             if (isAxialMap()) {
                 connectIntersected(
@@ -921,7 +922,7 @@ void ShapeMap::makePolyPixels(int polyref) {
                 m_pixelShapes(static_cast<size_t>(pix.y), static_cast<size_t>(pix.x));
             const auto iter = genlib::findBinary(pixShapes, shapeRef);
             if (iter == pixShapes.end())
-                throw new genlib::RuntimeException("Poly reference not found");
+                throw genlib::RuntimeException("Poly reference not found");
             uint8_t &tags = iter->tags;
             if (tags == 0x00) {
                 tags |= ShapeRef::SHAPE_INTERNAL_EDGE;
@@ -1027,7 +1028,7 @@ void ShapeMap::shapePixelBorder(std::map<int, int> &relations, int polyref, int 
         const auto iter =
             genlib::findBinary(pixShapes, ShapeRef(static_cast<unsigned int>(polyref)));
         if (iter == pixShapes.end())
-            throw new genlib::RuntimeException("Poly reference not found");
+            throw genlib::RuntimeException("Poly reference not found");
         iter->tags |= static_cast<uint8_t>(side);
         relation->second &= ~side; // <- clear to check all have been done later
         side <<= 1;
@@ -2553,13 +2554,13 @@ bool ShapeMap::linkShapes(const Point2f &p, PixelRef p2) {
 bool ShapeMap::linkShapesFromRefs(int ref1, int ref2) {
     auto index1 = genlib::findIndexFromKey(m_shapes, ref1);
     if (index1 < 0) {
-        throw new genlib::RuntimeException("Shape reference " + std::to_string(ref1) +
-                                           " not found to link shapes");
+        throw genlib::RuntimeException("Shape reference " + std::to_string(ref1) +
+                                       " not found to link shapes");
     }
     auto index2 = genlib::findIndexFromKey(m_shapes, ref2);
     if (index2 < 0) {
-        throw new genlib::RuntimeException("Shape reference " + std::to_string(ref2) +
-                                           " not found to link shapes");
+        throw genlib::RuntimeException("Shape reference " + std::to_string(ref2) +
+                                       " not found to link shapes");
     }
     return linkShapes(static_cast<size_t>(index1), static_cast<size_t>(index2));
 }
@@ -2671,13 +2672,13 @@ bool ShapeMap::unlinkShapes(const Point2f &p1, const Point2f &p2) {
 bool ShapeMap::unlinkShapesFromRefs(int ref1, int ref2) {
     auto index1 = genlib::findIndexFromKey(m_shapes, ref1);
     if (index1 < 0) {
-        throw new genlib::RuntimeException("Shape reference " + std::to_string(ref1) +
-                                           " not found to unlink shapes");
+        throw genlib::RuntimeException("Shape reference " + std::to_string(ref1) +
+                                       " not found to unlink shapes");
     }
     auto index2 = genlib::findIndexFromKey(m_shapes, ref2);
     if (index2 < 0) {
-        throw new genlib::RuntimeException("Shape reference " + std::to_string(ref2) +
-                                           " not found to unlink shapes");
+        throw genlib::RuntimeException("Shape reference " + std::to_string(ref2) +
+                                       " not found to unlink shapes");
     }
     return unlinkShapes(static_cast<size_t>(index1), static_cast<size_t>(index2));
 }
@@ -2975,9 +2976,8 @@ std::vector<size_t> ShapeMap::makeViewportShapes(const Region4f &viewport) const
                 if (isObjectVisible(m_layers, m_attributes->getRow(shapeRefKey))) {
                     auto shapeIdx = m_attribHandle->findInIndex(shapeRefKey);
                     if (shapeIdx == -1) {
-                        throw new genlib::RuntimeException(
-                            "Shape " + std::to_string(shape.shapeRef) +
-                            " not found when making viewport shapes");
+                        throw genlib::RuntimeException("Shape " + std::to_string(shape.shapeRef) +
+                                                       " not found when making viewport shapes");
                     }
                     displayShapes[static_cast<size_t>(shapeIdx)] = static_cast<size_t>(x);
                 }

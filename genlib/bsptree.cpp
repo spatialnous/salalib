@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -129,7 +130,7 @@ BSPTree::makeLines(Communicator *, time_t, const std::vector<Line4f> &lines, BSP
     if (lines.size() > 3) {
         chosen = BSPTree::pickMidpointLine(lines, base->parent);
         if (chosen < 0) {
-            throw new genlib::RuntimeException("Error, failed to pick midpoint line");
+            throw genlib::RuntimeException("Error, failed to pick midpoint line");
         }
     } else {
         // TODO: This was originally `chosen = pafrand() % lines.size();`, but was making the

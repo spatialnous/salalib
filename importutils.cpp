@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2017-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -69,9 +69,9 @@ namespace sala {
             try {
                 map.open(communicator->GetFileSet(), communicator);
             } catch (std::invalid_argument &) {
-                throw new ImportError("Invalid argument when parsing file");
+                throw ImportError("Invalid argument when parsing file");
             } catch (std::out_of_range &) {
-                throw new ImportError("Out of range error when parsing file");
+                throw ImportError("Out of range error when parsing file");
             }
 
             if (communicator->IsCancelled()) {
@@ -103,7 +103,7 @@ namespace sala {
                 try {
                     stream >> dp;
                 } catch (std::logic_error &) {
-                    throw new ImportError("Logic error when parsing file");
+                    throw ImportError("Logic error when parsing file");
                 }
 
                 if (communicator->IsCancelled()) {
@@ -267,9 +267,9 @@ namespace sala {
         try {
             map.parse(fileset, communicator);
         } catch (std::invalid_argument &) {
-            throw new ImportError("Invalid argument when parsing file");
+            throw ImportError("Invalid argument when parsing file");
         } catch (std::out_of_range &) {
-            throw new ImportError("Out of range error when parsing file");
+            throw ImportError("Out of range error when parsing file");
         }
 
         std::vector<ShapeMap> maps;

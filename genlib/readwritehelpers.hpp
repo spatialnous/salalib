@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2017 Christian Sailer
-// SPDX-FileCopyrightText: 2018 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2018-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -49,7 +49,7 @@ namespace dXreadwrite {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
         if (vec.size() > static_cast<size_t>(static_cast<unsigned int>(-1))) {
-            throw new genlib::RuntimeException("Vector exceeded max size for streaming");
+            throw genlib::RuntimeException("Vector exceeded max size for streaming");
         }
         const unsigned int length = static_cast<const unsigned int>(vec.size());
         stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
@@ -63,7 +63,7 @@ namespace dXreadwrite {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
         if (vecF.size() > static_cast<size_t>(static_cast<unsigned int>(-1))) {
-            throw new genlib::RuntimeException("Vector exceeded max size for streaming");
+            throw genlib::RuntimeException("Vector exceeded max size for streaming");
         }
         const unsigned int length = static_cast<const unsigned int>(vecF.size());
         stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
@@ -104,7 +104,7 @@ namespace dXreadwrite {
         // READ / WRITE USES 32-bit LENGTHS (number of elements) for compatibility reasons
 
         if (map.size() > static_cast<size_t>(static_cast<unsigned int>(-1))) {
-            throw new genlib::RuntimeException("Map exceeded max size for streaming");
+            throw genlib::RuntimeException("Map exceeded max size for streaming");
         }
         const unsigned int length = static_cast<const unsigned int>(map.size());
         stream.write(reinterpret_cast<const char *>(&length), sizeof(length));

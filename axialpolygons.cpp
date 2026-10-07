@@ -245,7 +245,6 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
                             "makeVertexPossibles: line " + std::to_string(i) + ", connection " +
                             std::to_string(j) + " (" + std::to_string(connections[j].x) + ", " +
                             std::to_string(connections[j].y) + ") not found after pass 3");
-                        throw 3;
                     }
                     if (m_vertexPolys[static_cast<size_t>(index)] == -1) {
                         addlist.push_back(static_cast<int>(index));

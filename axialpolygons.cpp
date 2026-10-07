@@ -198,18 +198,26 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
     // three pass operation: (2) connect up vertex possibles
     for (i = 0; i < lines.size(); i++) {
         if (found(0, i) == -1 || found(1, i) == -1) {
-            // TODO: (CS) What are these integers being thrown?!
-            throw 1;
+            throw genlib::RuntimeException("makeVertexPossibles: line " + std::to_string(i) +
+                                           " has no registered start/end vertex after pass 1");
         }
-        auto index0 = vertexPossibles.find(pointlookup[static_cast<size_t>(found(0, i))]);
-        auto index1 = vertexPossibles.find(pointlookup[static_cast<size_t>(found(1, i))]);
-        if (index0 == vertexPossibles.end() || index1 == vertexPossibles.end()) {
-            // TODO: (CS) What are these integers being thrown?!
-            throw 2;
+        auto &vertex0 = pointlookup[static_cast<size_t>(found(0, i))];
+        auto &vertex1 = pointlookup[static_cast<size_t>(found(1, i))];
+        auto index0 = vertexPossibles.find(vertex0);
+        auto index1 = vertexPossibles.find(vertex1);
+        if (index0 == vertexPossibles.end()) {
+            throw genlib::RuntimeException("makeVertexPossibles: line " + std::to_string(i) +
+                                           ", vertex 0 (" + std::to_string(vertex0.x) + ", " +
+                                           std::to_string(vertex0.y) + ") not found after pass 2");
+        }
+        if (index1 == vertexPossibles.end()) {
+            throw genlib::RuntimeException("makeVertexPossibles: line " + std::to_string(i) +
+                                           ", vertex 1 (" + std::to_string(vertex1.x) + ", " +
+                                           std::to_string(vertex1.y) + ") not found after pass 2");
         }
 
-        index0->second.push_back(pointlookup[static_cast<size_t>(found(1, i))]);
-        index1->second.push_back(pointlookup[static_cast<size_t>(found(0, i))]);
+        index0->second.push_back(vertex1);
+        index1->second.push_back(vertex0);
     }
     for (auto &possible : vertexPossibles) {
         sort(possible.second.begin(), possible.second.end());
@@ -233,6 +241,10 @@ void AxialPolygons::makeVertexPossibles(const std::vector<Line4f> &lines,
                 for (size_t j = 0; j < connections.size(); j++) {
                     auto index = genlib::findIndexFromKey(vertexPossibles, connections[j]);
                     if (index == -1) {
+                        throw genlib::RuntimeException(
+                            "makeVertexPossibles: line " + std::to_string(i) + ", connection " +
+                            std::to_string(j) + " (" + std::to_string(connections[j].x) + ", " +
+                            std::to_string(connections[j].y) + ") not found after pass 3");
                         throw 3;
                     }
                     if (m_vertexPolys[static_cast<size_t>(index)] == -1) {

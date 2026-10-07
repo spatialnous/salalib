@@ -1,9 +1,12 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
+
+#include "salalib/genlib/exceptions.hpp"
 
 #include <chrono>
 #include <cstddef>
@@ -40,10 +43,9 @@ struct FilePath {
 
 class Communicator {
   public:
-    class CancelledException // throw from your class
-    {
+    class CancelledException : public genlib::BaseException {
       public:
-        CancelledException() {}
+        CancelledException() : genlib::BaseException("Analysis cancelled") {}
     };
     enum { NUM_STEPS, CURRENT_STEP, NUM_RECORDS, CURRENT_RECORD };
 

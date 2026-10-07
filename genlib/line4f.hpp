@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2014-2025 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2014-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -55,7 +55,6 @@ class Line4f : public Region4f {
     bool intersects(const Line4f &b, double tolerance = 0.0) const;
     bool intersects_no_touch(const Line4f &b, double tolerance = 0.0) const;
     int intersects_distinguish(const Line4f &b, double tolerance = 0.0) const;
-    int intersects_b(const Line4f &b, double tolerance = 0.0) const;
     //
     // fills in the location along the axis where the intersection happens
     bool intersect_line(const Line4f &l, LineAxis axis, double &loc) const;

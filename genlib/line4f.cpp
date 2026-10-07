@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
-// SPDX-FileCopyrightText: 2014-2025 Petros Koutsolampros
+// SPDX-FileCopyrightText: 2014-2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -371,41 +371,5 @@ int Line4f::intersects_distinguish(const Line4f &b, double tolerance) const {
         }
     }
 
-    return 0;
-}
-
-// returns 0 for no intersect, 1 for touching and 2 for crossing
-// n.b. only used by polygon contains -- throws if the first point of line b is touching line a
-// (first point of line b is the point to be tested) -- i.e., throws if point touches polygon
-int Line4f::intersects_b(const Line4f &b, double tolerance) const {
-    double aax = ax();
-    double aay = ay();
-    double abx = bx();
-    double aby = by();
-    double bax = b.ax();
-    double bay = b.ay();
-    double bbx = b.bx();
-    double bby = b.by();
-
-    double alpha = ((aay - aby) * (bax - aax) + (abx - aax) * (bay - aay));
-
-    double beta = ((aay - aby) * (bbx - aax) + (abx - aax) * (bby - aay));
-
-    double gamma = ((bay - bby) * (aax - bax) + (bbx - bax) * (aay - bay)) *
-                   ((bay - bby) * (abx - bax) + (bbx - bax) * (aby - bay));
-
-    if (alpha * beta <= tolerance && gamma <= tolerance) {
-        if (alpha * beta < -tolerance && gamma < -tolerance) {
-            return 2;
-        } else {
-            // this function is only used for poly contains point,
-            // the throw is defined if the point is *on* the polygon edge
-            // (within the tolerance)
-            if (fabs(alpha) <= tolerance) {
-                throw 1;
-            }
-            return 1;
-        }
-    }
     return 0;
 }

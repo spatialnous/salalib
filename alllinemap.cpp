@@ -368,25 +368,14 @@ void AllLine::makeDivisions(ShapeGraph &map, const std::vector<PolyConnector> &p
                     case 0:
                         break;
                     case 2: {
-                        auto index = static_cast<int>(genlib::findIndexFromKey(
-                            axialdividers, static_cast<int>(shape.shapeRef)));
-                        if (index != static_cast<int>(shape.shapeRef)) {
-                            throw 1; // for the code to work later this can't be true!
-                        }
-                        axialdividers[index].insert(connindex);
+                        axialdividers[static_cast<int>(shape.shapeRef)].insert(connindex);
                         connIter->second.insert(static_cast<int>(shape.shapeRef));
                     } break;
                     case 1: {
-                        auto index = static_cast<int>(genlib::findIndexFromKey(
-                            axialdividers, static_cast<int>(shape.shapeRef)));
-                        if (index != static_cast<int>(shape.shapeRef)) {
-                            throw 1; // for the code to work later this can't be true!
-                        }
-                        //
                         // this makes sure actually crosses between the line and the
                         // openspace properly
                         if (radiallines[static_cast<size_t>(connindex)].cuts(line)) {
-                            axialdividers[index].insert(connindex);
+                            axialdividers[static_cast<int>(shape.shapeRef)].insert(connindex);
                             connIter->second.insert(static_cast<int>(shape.shapeRef));
                         }
                     } break;

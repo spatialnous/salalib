@@ -457,7 +457,7 @@ bool ShapeMap::convertPointsToPolys(
     bool doneSomething = false;
 
     // replace the points with polys
-    for (auto shape : m_shapes) {
+    for (auto &shape : m_shapes) {
         if (selSet.has_value() && selSet->get().find(shape.first) == selSet->get().end()) {
             continue;
         }

@@ -22,8 +22,10 @@ class IVGATraversing : public IVGA {
                                          const VGAUtils::RefIndex &refIdx, bool diagonalFix) const {
         std::vector<ADRefVector<T>> graph;
         for (auto &ad : analysisData) {
-            for (auto &ad2 : analysisData) {
-                ad2.diagonalExtent = ad2.ref;
+            if (diagonalFix) {
+                for (auto &ad2 : analysisData) {
+                    ad2.diagonalExtent = ad2.ref;
+                }
             }
             auto &point = ad.point;
             graph.push_back(ADRefVector<T>());

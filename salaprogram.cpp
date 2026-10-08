@@ -161,13 +161,15 @@ namespace {
             return nullptr;
         };
         if (const auto *l = byFunc(MATH_OPS))
-            return "'" + std::string(l->name) + "' operator";
+            return "'" + std::string(l->name) + "' math operator";
         if (const auto *l = byFunc(COMP_OPS))
-            return "'" + std::string(l->name) + "' operator";
+            return "'" + std::string(l->name) + "' computational operator";
         if (const auto *l = byFunc(LOGICAL_OPS))
-            return "'" + std::string(l->name) + "' operator";
+            return "'" + std::string(l->name) + "' logical operator";
         if (const auto *l = byFunc(GLOBAL_FUNCS))
-            return "'" + std::string(l->name) + "' function";
+            return "'" + std::string(l->name) + "' global function";
+        if (const auto *l = byFunc(MEMBER_FUNCS))
+            return "'" + std::string(l->name) + "' member function";
         return "unknown function";
     }
 
@@ -1258,7 +1260,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
-                e.message = "In '" + describe(func) + "' operator: " + e.message;
+                e.message = "In " + describe(func) + e.message;
                 e.lineno = m_line;
                 throw std::move(e);
             }
@@ -1337,7 +1339,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
-                e.message = "In '" + describe(func) + "' operator: " + e.message;
+                e.message = "In " + describe(func) + e.message;
                 e.lineno = m_line;
                 throw std::move(e);
             }
@@ -1410,7 +1412,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
-                e.message = "In '" + describe(func) + "' operator: " + e.message;
+                e.message = "In " + describe(func) + e.message;
                 e.lineno = m_line;
                 throw std::move(e);
             }

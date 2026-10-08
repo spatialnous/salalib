@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "salalib/genlib/exceptions.hpp"
+#include "exceptions.hpp"
 
 #include <chrono>
 #include <cstddef>

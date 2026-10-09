@@ -294,10 +294,11 @@ AllLine::extractFewestLineMaps(Communicator *comm, ShapeGraph &map, MapData &map
                             keyvertexconns, keyvertexcounts);
 
     // make new lines here (assumes line map has only lines
-    for (int sk = 0; sk < static_cast<int>(map.getAllShapes().size()); sk++) {
-        if (!minimiser.removed(sk)) {
-            linesM.push_back(genlib::getMapAtIndex(map.getAllShapes(), static_cast<size_t>(sk))
-                                 ->second.getLine());
+    k = -1;
+    for (auto &shape : map.getAllShapes()) {
+        k++;
+        if (!minimiser.removed(k)) {
+            linesM.push_back(shape.second.getLine());
         }
     }
 

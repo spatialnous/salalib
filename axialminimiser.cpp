@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2000-2010 University College London, Eva Friedrich
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -55,6 +56,11 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
 
     m_axialconns = m_alllinemap->m_connectors;
 
+    m_lineLengths.reserve(m_alllinemap->m_shapes.size());
+    for (const auto &shape : m_alllinemap->m_shapes) {
+        m_lineLengths.push_back(static_cast<float>(shape.second.getLine().length()));
+    }
+
     for (size_t x = 0; x < radialsegs.size(); x++) {
         m_radialsegcounts[x] = 0;
     }
@@ -69,8 +75,7 @@ void AxialMinimiser::removeSubsets(std::map<int, std::set<int>> &axsegcuts,
         m_vps[y].index = static_cast<int>(y);
         double length = static_cast<double>(m_axialconns[y].connections.size());
         m_vps[y].value1 = static_cast<int>(length);
-        length = genlib::getMapAtIndex(m_alllinemap->m_shapes, y)->second.getLine().length();
-        m_vps[y].value2 = static_cast<float>(length);
+        m_vps[y].value2 = m_lineLengths[y];
         y++;
     }
 
@@ -211,8 +216,7 @@ void AxialMinimiser::fewestLongest(std::map<int, std::set<int>> &axsegcuts,
         if (!m_removed[y] && !m_vital[y]) {
             m_vps[livecount].index = static_cast<int>(y);
             m_vps[livecount].value1 = static_cast<int>(m_axialconns[y].connections.size());
-            m_vps[livecount].value2 = static_cast<float>(
-                genlib::getMapAtIndex(m_alllinemap->m_shapes, y)->second.getLine().length());
+            m_vps[livecount].value2 = m_lineLengths[y];
             livecount++;
         }
     }

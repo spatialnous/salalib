@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2000-2010 University College London, Eva Friedrich
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -31,6 +32,8 @@ class AxialMinimiser {
     int *m_radialsegcounts;
     std::vector<Connector>
         m_axialconns; // <- uses a copy of axial lines as it will remove connections
+    std::vector<float> m_lineLengths;
+
   public:
     AxialMinimiser(const ShapeGraph &alllinemap, size_t noOfAxsegcuts, size_t noOfRadialsegs);
     AxialMinimiser(const AxialMinimiser &) = default;

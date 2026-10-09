@@ -1260,7 +1260,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
-                e.message = "In " + describe(func) + e.message;
+                e.message = "In " + describe(func) + ": " + e.message;
                 e.lineno = m_line;
                 throw std::move(e);
             }
@@ -1339,7 +1339,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
-                e.message = "In " + describe(func) + e.message;
+                e.message = "In " + describe(func) + ": " + e.message;
                 e.lineno = m_line;
                 throw std::move(e);
             }
@@ -1412,7 +1412,7 @@ SalaObj SalaCommand::evaluate(int &pointer, SalaObj *&pObj) {
                 }
             } catch (SalaError &e) {
                 // slow to go through one by one, but this is an exception...
-                e.message = "In " + describe(func) + e.message;
+                e.message = "In " + describe(func) + ": " + e.message;
                 e.lineno = m_line;
                 throw std::move(e);
             }

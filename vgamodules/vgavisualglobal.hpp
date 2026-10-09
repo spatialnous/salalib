@@ -20,11 +20,7 @@ class VGAVisualGlobal : public IVGAVisual {
     bool m_gatesOnly;
     bool m_simpleVersion = false;
 
-    // To maintain binary compatibility with older .graph versions
-    // write the last "misc" values back to the points
-    bool m_legacyWriteMiscs = false;
-
-    [[maybe_unused]] unsigned _padding0 : 1 * 8;
+    [[maybe_unused]] unsigned _padding0 : 2 * 8;
     [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
   public:
@@ -57,5 +53,4 @@ class VGAVisualGlobal : public IVGAVisual {
 
   public:
     void setSimpleVersion(bool simpleVersion) { m_simpleVersion = simpleVersion; }
-    void setLegacyWriteMiscs(bool legacyWriteMiscs) { m_legacyWriteMiscs = legacyWriteMiscs; }
 };

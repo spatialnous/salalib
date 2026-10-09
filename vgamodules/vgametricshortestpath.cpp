@@ -39,7 +39,7 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
-    const auto graph = getGraph(analysisData, refIdx, true);
+    const auto graph = getGraph(refIdx, true);
     auto [parents] = traverseFind(analysisData, graph, refIdx, m_pixelsFrom, m_pixelTo);
 
     int linePixelCounter = 0;
@@ -87,8 +87,8 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
                         result.setValue(lpad.attributeDataRow, invMetricZoneColIdx, 1);
 
                         std::set<MetricSearchData> newPixels;
-                        extractMetric(graph.at(lpad.attributeDataRow), newPixels, m_map,
-                                      MetricSearchData(lpad, 0.0f, std::nullopt));
+                        extractMetric(analysisData, graph.at(lpad.attributeDataRow), newPixels,
+                                      m_map, MetricSearchData(lpad, 0.0f, std::nullopt));
                         for (auto &zonePixel : newPixels) {
                             auto &zad = zonePixel.ad;
                             if (result.getValue(zad.attributeDataRow, visualZoneColIdx) == -1) {

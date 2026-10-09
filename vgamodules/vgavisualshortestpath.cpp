@@ -29,7 +29,7 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
-    const auto graph = getGraph(analysisData, refIdx, true);
+    const auto graph = getGraph(refIdx, true);
 
     auto [parents] = traverseFind(analysisData, graph, refIdx, m_pixelFrom, m_pixelTo);
 
@@ -38,7 +38,6 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
     if (pixelToParent != parents.end()) {
         for (auto &ad : analysisData) {
             ad.visitedFromBin = 0;
-            ad.diagonalExtent = ad.ref;
         }
 
         int counter = 0;
@@ -72,10 +71,10 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
                         result.setValue(lpad.attributeDataRow, metricZoneColIdx, 0);
                         result.setValue(lpad.attributeDataRow, invMetricZoneColIdx, 1);
 
-                        ADRefVector<AnalysisData> newPixels;
-                        extractUnseen(graph.at(lpad.attributeDataRow), newPixels);
+                        ADRefVector newPixels;
+                        extractUnseen(analysisData, graph.at(lpad.attributeDataRow), newPixels);
                         for (auto &zonePixel : newPixels) {
-                            auto &zad = std::get<0>(zonePixel).get();
+                            auto &zad = analysisData[zonePixel.idx];
                             if (result.getValue(zad.attributeDataRow, visualZoneColIdx) == -1) {
                                 result.setValue(zad.attributeDataRow, visualZoneColIdx,
                                                 linePixelCounter);

@@ -34,7 +34,7 @@ AnalysisResult VGAMetricDepth::run(Communicator *) {
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
-    const auto graph = getGraph(analysisData, refIdx, true);
+    const auto graph = getGraph(refIdx, true);
 
     bool keepStats = true;
     AnalysisColumn pathAngleCol, pathLengthCol, euclidDistCol, pennDistCol;

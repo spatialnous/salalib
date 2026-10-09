@@ -70,7 +70,7 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
-    const auto graph = getGraph(analysisData, refIdx, true);
+    const auto graph = getGraph(refIdx, true);
 
     size_t count = 0;
 
@@ -81,11 +81,10 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
         }
         for (auto &ad2 : analysisData) {
             ad2.visitedFromBin = 0;
-            ad2.diagonalExtent = ad2.ref;
         }
 
         auto [totalDepth, totalNodes, distribution] =
-            traverseSum(analysisData, graph, refIdx, m_radius, ad0);
+            traverseSum(analysisData, graph, refIdx, m_radius, count);
         // only set to single float precision after divide
         // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of
         // Space
@@ -166,14 +165,6 @@ AnalysisResult VGAVisualGlobal::run(Communicator *comm) {
                 }
                 comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
             }
-        }
-    }
-
-    if (m_legacyWriteMiscs) {
-        // kept to achieve parity in binary comparison with old versions
-        for (auto &ad2 : analysisData) {
-            ad2.point.dummyMisc = ad2.visitedFromBin;
-            ad2.point.dummyExtent = ad2.diagonalExtent;
         }
     }
 

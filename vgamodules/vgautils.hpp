@@ -25,6 +25,7 @@ namespace VGAUtils {
                 if (!(m_refs[i - 1] < m_refs[i]))
                     throw std::logic_error("RefIndex: refs must be strictly ascending");
         }
+        const std::vector<PixelRef> getRefs() const { return m_refs; }
         size_t size() const { return m_refs.size(); }
         PixelRef operator[](size_t i) const { return m_refs[i]; }
         size_t idx(PixelRef ref) const {

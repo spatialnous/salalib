@@ -21,11 +21,7 @@ class VGAVisualGlobalOpenMP : public IVGAVisual {
     bool m_gatesOnly;
     bool m_allowCommUpdatesFromWorkers = false;
 
-    // To maintain binary compatibility with older .graph versions
-    // write the last "misc" values back to the points
-    bool m_legacyWriteMiscs = false;
-
-    [[maybe_unused]] unsigned _padding0 : 1 * 8;
+    [[maybe_unused]] unsigned _padding0 : 2 * 8;
     [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
     struct DataPoint {
@@ -61,7 +57,4 @@ class VGAVisualGlobalOpenMP : public IVGAVisual {
           _padding0(0), _padding1(0) {}
     std::string getAnalysisName() const override { return "Global Visibility Analysis (OpenMP)"; }
     AnalysisResult run(Communicator *) override;
-
-  public:
-    void setLegacyWriteMiscs(bool legacyWriteMiscs) { m_legacyWriteMiscs = legacyWriteMiscs; }
 };

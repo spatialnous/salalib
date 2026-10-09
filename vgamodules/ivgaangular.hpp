@@ -26,8 +26,8 @@ class IVGAAngular : public IVGATraversing {
         size_t rowCounter = 0;
         for (auto &attRow : attributes) {
             auto &point = m_map.getPoint(attRow.getKey().value);
-            analysisData.push_back(AnalysisData(point, attRow.getKey().value, rowCounter, 0,
-                                                attRow.getKey().value, 0.0f, -1.0f));
+            analysisData.push_back(
+                AnalysisData(point, attRow.getKey().value, rowCounter, 0, 0.0f, -1.0f));
             rowCounter++;
         }
         return analysisData;
@@ -60,11 +60,12 @@ class IVGAAngular : public IVGATraversing {
         }
     };
 
-    void extractAngular(const ADRefVector<AnalysisData> &conns, std::set<AngularSearchData> &pixels,
-                        const LatticeMap &map, const AngularSearchData &curs) const {
+    void extractAngular(std::vector<AnalysisData> &analysisData, const ADRefVector &conns,
+                        std::set<AngularSearchData> &pixels, const LatticeMap &map,
+                        const AngularSearchData &curs) const {
         if (curs.angle == 0.0f || curs.ad.point.blocked() || map.blockedAdjacent(curs.ad.ref)) {
             for (auto &conn : conns) {
-                auto &ad = std::get<0>(conn).get();
+                auto &ad = analysisData[conn.idx];
                 if (ad.visitedFromBin == 0) {
                     // n.b. dmap v4.06r now sets angle in range 0 to 4 (1 = 90 degrees)
                     float ang =
@@ -83,7 +84,7 @@ class IVGAAngular : public IVGATraversing {
     }
 
     std::vector<AnalysisColumn> traverse(std::vector<AnalysisData> &analysisData,
-                                         const std::vector<ADRefVector<AnalysisData>> &graph,
+                                         const std::vector<ADRefVector> &graph,
                                          const VGAUtils::RefIndex &refIdx, const double radius,
                                          const std::set<PixelRef> &originRefs,
                                          const bool keepStats = false) const override {
@@ -111,7 +112,8 @@ class IVGAAngular : public IVGATraversing {
             auto &p = ad.point;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
             if (p.filled() && ad.visitedFromBin != ~0) {
-                extractAngular(graph.at(ad.attributeDataRow), searchList, m_map, here);
+                extractAngular(analysisData, graph.at(ad.attributeDataRow), searchList, m_map,
+                               here);
                 ad.visitedFromBin = ~0;
                 angularDepthCol.setValue(ad.attributeDataRow, static_cast<float>(ad.cumAngle),
                                          keepStats);
@@ -121,8 +123,8 @@ class IVGAAngular : public IVGATraversing {
                         ad2.cumAngle = ad.cumAngle;
                         angularDepthCol.setValue(ad2.attributeDataRow,
                                                  static_cast<float>(ad2.cumAngle), keepStats);
-                        extractAngular(graph.at(ad2.attributeDataRow), searchList, m_map,
-                                       AngularSearchData(ad2, here.angle, std::nullopt));
+                        extractAngular(analysisData, graph.at(ad2.attributeDataRow), searchList,
+                                       m_map, AngularSearchData(ad2, here.angle, std::nullopt));
                         ad2.visitedFromBin = ~0;
                     }
                 }
@@ -132,7 +134,7 @@ class IVGAAngular : public IVGATraversing {
     }
 
     std::tuple<float, int> traverseSum(std::vector<AnalysisData> &analysisData,
-                                       const std::vector<ADRefVector<AnalysisData>> &graph,
+                                       const std::vector<ADRefVector> &graph,
                                        const VGAUtils::RefIndex &refIdx, const double radius,
                                        AnalysisData &ad0) {
 
@@ -154,14 +156,15 @@ class IVGAAngular : public IVGATraversing {
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps'
             // left in
             if (p.filled() && ad1.visitedFromBin != ~0) {
-                extractAngular(graph.at(ad1.attributeDataRow), searchList, m_map, here);
+                extractAngular(analysisData, graph.at(ad1.attributeDataRow), searchList, m_map,
+                               here);
                 ad1.visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
                     if (ad2.visitedFromBin != ~0) {
                         ad2.cumAngle = ad1.cumAngle;
-                        extractAngular(graph.at(ad2.attributeDataRow), searchList, m_map,
-                                       AngularSearchData(ad2, here.angle, std::nullopt));
+                        extractAngular(analysisData, graph.at(ad2.attributeDataRow), searchList,
+                                       m_map, AngularSearchData(ad2, here.angle, std::nullopt));
                         ad2.visitedFromBin = ~0;
                     }
                 }
@@ -173,11 +176,11 @@ class IVGAAngular : public IVGATraversing {
         return std::make_tuple(totalAngle, totalNodes);
     }
 
-    std::tuple<std::map<PixelRef, PixelRef>>
-    traverseFind(std::vector<AnalysisData> &analysisData,
-                 const std::vector<ADRefVector<AnalysisData>> &graph,
-                 const VGAUtils::RefIndex &refIdx, const std::set<PixelRef> sourceRefs,
-                 const PixelRef targetRef) {
+    std::tuple<std::map<PixelRef, PixelRef>> traverseFind(std::vector<AnalysisData> &analysisData,
+                                                          const std::vector<ADRefVector> &graph,
+                                                          const VGAUtils::RefIndex &refIdx,
+                                                          const std::set<PixelRef> sourceRefs,
+                                                          const PixelRef targetRef) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
         std::set<AngularSearchData> searchList; // contains root point
@@ -200,7 +203,7 @@ class IVGAAngular : public IVGATraversing {
             std::set<AngularSearchData> mergePixels;
             // nb, the filled check is necessary as diagonals seem to be stored with 'gaps' left in
             if (p.filled() && ad.visitedFromBin != ~0) {
-                extractAngular(graph.at(ad.attributeDataRow), newPixels, m_map, here);
+                extractAngular(analysisData, graph.at(ad.attributeDataRow), newPixels, m_map, here);
                 ad.visitedFromBin = ~0;
                 if (!p.getMergePixel().empty()) {
                     auto &ad2 = analysisData.at(refIdx.idx(p.getMergePixel()));
@@ -208,8 +211,8 @@ class IVGAAngular : public IVGATraversing {
                         auto newTripleIter =
                             newPixels.insert(AngularSearchData(ad2, here.angle, std::nullopt));
                         ad2.cumAngle = ad.cumAngle;
-                        extractAngular(graph.at(ad2.attributeDataRow), mergePixels, m_map,
-                                       *newTripleIter.first);
+                        extractAngular(analysisData, graph.at(ad2.attributeDataRow), mergePixels,
+                                       m_map, *newTripleIter.first);
                         for (auto &pixel : mergePixels) {
                             parents[pixel.ad.ref] = p.getMergePixel();
                         }

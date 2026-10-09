@@ -45,7 +45,7 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
-    const auto graph = getGraph(analysisData, refIdx, false);
+    const auto graph = getGraph(refIdx, false);
 
     size_t count = 0;
     for (auto &ad0 : analysisData) {

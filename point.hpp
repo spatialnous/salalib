@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2000-2010 University College London, Alasdair Turner
 // SPDX-FileCopyrightText: 2011-2012 Tasos Varoudis
+// SPDX-FileCopyrightText: 2026 Petros Koutsolampros
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -51,18 +52,6 @@ class Point {
         CONNECT_SE = 0x80
     };
 
-    // These intermediary variables were only used for storing arbitrary data during the
-    // analysis. They have been replaced with analysis-local ones, and only kept here for
-    // binary compatibility with older versions of graph files
-    // undocounter / point seen register / agent reference number, etc
-    mutable int dummyMisc;
-    // used to speed up metric analysis
-    mutable float dummyDist;
-    // cummulative angle -- used in metric analysis and angular analysis
-    mutable float dummyCumangle;
-    // used to speed up graph analysis (not sure whether or not it breaks it!)
-    mutable PixelRef dummyExtent;
-
   protected:
     std::unique_ptr<Node> m_node; // graph links
     Point2f m_location; // note: this is large, but it helps allow loading of non-standard grid
@@ -85,9 +74,8 @@ class Point {
 
   public:
     Point()
-        : dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), m_node(nullptr), m_location(),
-          m_color(), m_merge(NoPixel), m_lines(), m_processflag(0), m_block(0), m_state(EMPTY),
-          m_gridConnections(0), _padding0(0) {
+        : m_node(nullptr), m_location(), m_color(), m_merge(NoPixel), m_lines(), m_processflag(0),
+          m_block(0), m_state(EMPTY), m_gridConnections(0), _padding0(0) {
 
         //        m_misc = 0;
     }
@@ -109,10 +97,9 @@ class Point {
         return *this;
     }
     Point(const Point &p)
-        : dummyMisc(), dummyDist(), dummyCumangle(), dummyExtent(), m_node(),
-          m_location(p.m_location), m_color(p.m_color), m_merge(p.m_merge), m_lines(p.m_lines),
-          m_processflag(p.m_processflag), m_block(p.m_block), m_state(p.m_state),
-          m_gridConnections(p.m_gridConnections), _padding0(0) {
+        : m_node(), m_location(p.m_location), m_color(p.m_color), m_merge(p.m_merge),
+          m_lines(p.m_lines), m_processflag(p.m_processflag), m_block(p.m_block),
+          m_state(p.m_state), m_gridConnections(p.m_gridConnections), _padding0(0) {
 
         //        m_misc = p.m_misc;
 

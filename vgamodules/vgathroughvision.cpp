@@ -100,9 +100,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
     auto col = result.getColumnIndex(Column::THROUGH_VISION);
 
     for (auto &ad : analysisData) {
-        auto &p = ad.point;
         result.setValue(ad.attributeDataRow, col, static_cast<double>(ad.misc));
-        p.dummyMisc = 0;
     }
 
     result.completed = true;

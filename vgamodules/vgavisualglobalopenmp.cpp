@@ -39,6 +39,7 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
     }
 
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(refIdx, false);
 
     size_t count = 0;
 
@@ -72,12 +73,11 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
         DataPoint &dp = colData[static_cast<size_t>(i)];
 
         std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-        const auto graph = getGraph(analysisData, refIdx, false);
 
-        auto &ad0 = analysisData.at(static_cast<size_t>(i));
+        auto idx0 = static_cast<size_t>(i);
 
         auto [totalDepth, totalNodes, distribution] =
-            traverseSum(analysisData, graph, refIdx, m_radius, ad0);
+            traverseSum(analysisData, graph, refIdx, m_radius, idx0);
 
         // only set to single float precision after divide
         // note -- total_nodes includes this one -- mean depth as per p.108 Social Logic of Space
@@ -152,12 +152,6 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
                     comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
                 }
             }
-
-        if (m_legacyWriteMiscs) {
-            // kept to achieve parity in binary comparison with old versions
-            ad0.point.dummyMisc = ad0.visitedFromBin;
-            ad0.point.dummyExtent = ad0.diagonalExtent;
-        }
     }
     if (cancelled.load(std::memory_order_relaxed))
         throw Communicator::CancelledException();

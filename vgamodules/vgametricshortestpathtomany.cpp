@@ -22,7 +22,7 @@ AnalysisResult VGAMetricShortestPathToMany::run(Communicator *) {
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
-    const auto graph = getGraph(analysisData, refIdx, true);
+    const auto graph = getGraph(refIdx, true);
 
     auto [parents] = traverseFindMany(analysisData, graph, refIdx, m_pixelsFrom, m_pixelsTo);
 

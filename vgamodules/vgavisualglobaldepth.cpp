@@ -21,7 +21,7 @@ AnalysisResult VGAVisualGlobalDepth::run(Communicator *) {
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
 
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
-    const auto graph = getGraph(analysisData, refIdx, false);
+    const auto graph = getGraph(refIdx, false);
 
     auto sdCol = traverse(analysisData, graph, refIdx, -1.0, m_originRefs)[0];
 

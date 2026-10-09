@@ -37,6 +37,7 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
     }
 
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const auto graph = getGraph(refIdx, false);
 
     size_t count = 0;
 
@@ -62,7 +63,6 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         DataPoint &dp = colData[static_cast<size_t>(i)];
 
         std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-        const auto graph = getGraph(analysisData, refIdx, false);
 
         auto &ad0 = analysisData.at(static_cast<size_t>(i));
 
@@ -71,13 +71,6 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
         if (totalNodes > 0) {
             dp.meanDepth = static_cast<float>(static_cast<double>(totalAngle) /
                                               static_cast<double>(totalNodes));
-        }
-
-        if (m_legacyWriteMiscs) {
-            // kept to achieve parity in binary comparison with old versions
-            ad0.point.dummyMisc = ad0.visitedFromBin;
-            ad0.point.dummyDist = ad0.dist;
-            ad0.point.dummyCumangle = ad0.cumAngle;
         }
 
         dp.totalDepth = totalAngle;
@@ -101,12 +94,6 @@ AnalysisResult VGAAngularOpenMP::run(Communicator *comm) {
                     comm->CommPostMessage(Communicator::CURRENT_RECORD, count);
                 }
             }
-
-        if (m_legacyWriteMiscs) {
-            // kept to achieve parity in binary comparison with old versions
-            ad0.point.dummyMisc = ad0.visitedFromBin;
-            ad0.point.dummyCumangle = ad0.cumAngle;
-        }
     }
 
     if (cancelled.load(std::memory_order_relaxed))

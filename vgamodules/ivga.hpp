@@ -11,11 +11,10 @@
 
 #include <algorithm>
 #include <cstddef>
-#include <functional>
+#include <cstdint>
 #include <iterator>
 #include <optional>
 #include <string>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -26,26 +25,30 @@ class IVGA : public IAnalysis {
   protected:
     struct AnalysisData {
         const Point &point;
+        size_t attributeDataRow;
         const PixelRef ref;
         int visitedFromBin = 0;
-        size_t attributeDataRow;
-
-        // used to speed up graph analysis (not sure whether or not it breaks it!)
-        PixelRef diagonalExtent;
 
         float dist = 0.0f;
         float cumAngle = 0.0f;
         float linkCost = 0.0f;
+
+      private:
+        [[maybe_unused]] unsigned _padding0 : 4 * 8;
+
+      public:
         AnalysisData(const Point &pointIn, const PixelRef refIn, size_t attributeDataRowIn,
-                     int visitedFromBinIn, PixelRef diagonalExtentIn, float distIn,
-                     float cumAngleIn)
-            : point(pointIn), ref(refIn), visitedFromBin(visitedFromBinIn),
-              attributeDataRow(attributeDataRowIn), diagonalExtent(diagonalExtentIn), dist(distIn),
-              cumAngle(cumAngleIn) {}
+                     int visitedFromBinIn, float distIn, float cumAngleIn)
+            : point(pointIn), attributeDataRow(attributeDataRowIn), ref(refIn),
+              visitedFromBin(visitedFromBinIn), dist(distIn), cumAngle(cumAngleIn), _padding0(0) {}
     };
 
   protected:
-    template <class T> using ADRefVector = std::vector<std::tuple<std::reference_wrapper<T>, int>>;
+    struct ADRef {
+        uint32_t idx;
+        int bin;
+    };
+    using ADRefVector = std::vector<ADRef>;
 
     std::vector<PixelRef> getRefVector(const AttributeTable &attributes) const {
         std::vector<PixelRef> refs;

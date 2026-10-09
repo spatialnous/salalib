@@ -31,7 +31,7 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
     const VGAUtils::RefIndex refIdx(getRefVector(attributes));
-    const auto graph = getGraph(analysisData, refIdx, false);
+    const auto graph = getGraph(refIdx, false);
 
     auto [parents] = traverseFind(analysisData, graph, refIdx, {m_pixelFrom}, m_pixelTo);
 
@@ -76,8 +76,8 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
                         result.setValue(lpad.attributeDataRow, invMetricZoneColIdx, 1);
 
                         std::set<AngularSearchData> newPixels;
-                        extractAngular(graph.at(lpad.attributeDataRow), newPixels, m_map,
-                                       AngularSearchData(lpad, 0.0f, std::nullopt));
+                        extractAngular(analysisData, graph.at(lpad.attributeDataRow), newPixels,
+                                       m_map, AngularSearchData(lpad, 0.0f, std::nullopt));
                         for (auto &zonePixel : newPixels) {
                             auto &zad = zonePixel.ad;
                             if (result.getValue(zad.attributeDataRow, visualZoneColIdx) == -1) {

@@ -42,7 +42,7 @@ class IVGATraversing : public IVGA {
                     for (PixelRef pix = pixVec.start();
                          pix.col(bin.dir) <= pixVec.end().col(bin.dir);) {
                         auto idx = refIdx.idx(pix);
-                        conns.push_back({static_cast<uint32_t>(idx), i});
+                        conns.push_back({idx, i});
 
                         // 10.2.02 revised --- diagonal was breaking this as it was extent in
                         // diagonal or horizontal

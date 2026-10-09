@@ -20,7 +20,7 @@ AnalysisResult VGAMetricDepthLinkCost::run(Communicator *) {
     auto pathLengthColIdx = result.getColumnIndex(Column::METRIC_STEP_DEPTH);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, Column::LINK_METRIC_COST);
-    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const VGATypes::RefIndex refIdx(getRefVector(attributes));
     const auto graph = getGraph(refIdx, true);
 
     AnalysisColumn pathLengthCol;

@@ -30,7 +30,7 @@ AnalysisResult VGAAngularShortestPath::run(Communicator *) {
     auto invMetricZoneColIdx = result.getColumnIndex(Column::ANGULAR_SHORTEST_PATH_INV_METRIC_ZONE);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const VGATypes::RefIndex refIdx(getRefVector(attributes));
     const auto graph = getGraph(refIdx, false);
 
     auto [parents] = traverseFind(analysisData, graph, refIdx, {m_pixelFrom}, m_pixelTo);

@@ -8,6 +8,7 @@
 #include "../pixelref.hpp"
 
 #include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <optional>
 #include <stdexcept>
@@ -15,7 +16,16 @@
 #include <utility>
 #include <vector>
 
-namespace VGAUtils {
+namespace VGATypes {
+    using ADRowIndex = uint32_t;
+    static_assert(sizeof(PixelRef) <= sizeof(ADRowIndex),
+                  "ADRowIndex must be wide enough to index any lattice position");
+    struct ADRef {
+        ADRowIndex idx;
+        int bin;
+    };
+    using ADRefVector = std::vector<ADRef>;
+
     class RefIndex {
         std::vector<PixelRef> m_refs;
 
@@ -28,11 +38,11 @@ namespace VGAUtils {
         const std::vector<PixelRef> getRefs() const { return m_refs; }
         size_t size() const { return m_refs.size(); }
         PixelRef operator[](size_t i) const { return m_refs[i]; }
-        size_t idx(PixelRef ref) const {
+        ADRowIndex idx(PixelRef ref) const {
             auto it = genlib::findBinary(m_refs, ref);
             if (it == m_refs.end())
                 throw std::out_of_range("Ref " + std::to_string(ref) + " not in refs");
-            return static_cast<size_t>(std::distance(m_refs.begin(), it));
+            return static_cast<ADRowIndex>(std::distance(m_refs.begin(), it));
         }
         std::optional<size_t> idxOptional(PixelRef ref) const { // body here, not in a .cpp
             auto it = genlib::findBinary(m_refs, ref);
@@ -41,4 +51,4 @@ namespace VGAUtils {
             return std::make_optional(static_cast<size_t>(std::distance(m_refs.begin(), it)));
         }
     };
-} // namespace VGAUtils
+} // namespace VGATypes

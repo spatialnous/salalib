@@ -38,7 +38,7 @@ AnalysisResult VGAMetricShortestPath::run(Communicator *) {
     auto invMetricZoneColIdx = result.getColumnIndex(invMetricZoneColName);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes, linkMetricCostColName);
-    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const VGATypes::RefIndex refIdx(getRefVector(attributes));
     const auto graph = getGraph(refIdx, true);
     auto [parents] = traverseFind(analysisData, graph, refIdx, m_pixelsFrom, m_pixelTo);
 

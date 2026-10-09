@@ -28,7 +28,7 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
     auto invMetricZoneColIdx = result.getColumnIndex(Column::VISUAL_SHORTEST_PATH_INV_METRIC_ZONE);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const VGATypes::RefIndex refIdx(getRefVector(attributes));
     const auto graph = getGraph(refIdx, true);
 
     auto [parents] = traverseFind(analysisData, graph, refIdx, m_pixelFrom, m_pixelTo);
@@ -71,7 +71,7 @@ AnalysisResult VGAVisualShortestPath::run(Communicator *) {
                         result.setValue(lpad.attributeDataRow, metricZoneColIdx, 0);
                         result.setValue(lpad.attributeDataRow, invMetricZoneColIdx, 1);
 
-                        ADRefVector newPixels;
+                        VGATypes::ADRefVector newPixels;
                         extractUnseen(analysisData, graph.at(lpad.attributeDataRow), newPixels);
                         for (auto &zonePixel : newPixels) {
                             auto &zad = analysisData[zonePixel.idx];

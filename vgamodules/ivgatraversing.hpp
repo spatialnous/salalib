@@ -7,7 +7,7 @@
 // Interface to handle different kinds of VGA analysis
 
 #include "ivga.hpp"
-#include "vgautils.hpp"
+#include "vgatypes.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -20,8 +20,9 @@ class IVGATraversing : public IVGA {
     IVGATraversing(const LatticeMap &map) : IVGA(map) {}
 
   protected:
-    std::vector<ADRefVector> getGraph(const VGAUtils::RefIndex &refIdx, bool diagonalFix) const {
-        std::vector<ADRefVector> graph;
+    std::vector<VGATypes::ADRefVector> getGraph(const VGATypes::RefIndex &refIdx,
+                                                bool diagonalFix) const {
+        std::vector<VGATypes::ADRefVector> graph;
 
         const std::vector<PixelRef> &refs = refIdx.getRefs();
         std::vector<PixelRef> diagonalExtents;
@@ -33,7 +34,7 @@ class IVGATraversing : public IVGA {
                 std::copy(refs.begin(), refs.end(), diagonalExtents.begin());
             }
             auto &point = m_map.getPoint(ref);
-            graph.push_back(ADRefVector());
+            graph.push_back(VGATypes::ADRefVector());
             auto &conns = graph.back();
             for (int i = 0; i < 32; i++) {
                 Bin &bin = point.getNode().bin(i);
@@ -58,8 +59,10 @@ class IVGATraversing : public IVGA {
         }
         return graph;
     }
-    virtual std::vector<AnalysisColumn>
-    traverse(std::vector<AnalysisData> &analysisData, const std::vector<ADRefVector> &graph,
-             const VGAUtils::RefIndex &refIdx, const double radius,
-             const std::set<PixelRef> &originRefs, const bool keepStats = false) const = 0;
+    virtual std::vector<AnalysisColumn> traverse(std::vector<AnalysisData> &analysisData,
+                                                 const std::vector<VGATypes::ADRefVector> &graph,
+                                                 const VGATypes::RefIndex &refIdx,
+                                                 const double radius,
+                                                 const std::set<PixelRef> &originRefs,
+                                                 const bool keepStats = false) const = 0;
 };

@@ -37,7 +37,7 @@ AnalysisResult VGAAngular::run(Communicator *comm) {
     auto totalDepthCol = result.getColumnIndex(totalDetphColText);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const VGATypes::RefIndex refIdx(getRefVector(attributes));
     const auto graph = getGraph(refIdx, false);
 
     size_t count = 0;

@@ -6,7 +6,7 @@
 
 #include "vgathroughvision.hpp"
 
-#include "vgautils.hpp"
+#include "vgatypes.hpp"
 
 #include "../agents/agentanalysis.hpp"
 
@@ -50,7 +50,7 @@ AnalysisResult VGAThroughVision::run(Communicator *comm) {
     }
     AnalysisResult result(std::move(cols), attributes.getNumRows());
 
-    const VGAUtils::RefIndex refIdx(getRefVector(m_map.getAttributeTable()));
+    const VGATypes::RefIndex refIdx(getRefVector(m_map.getAttributeTable()));
 
     size_t count = 0;
     for (auto &ad : analysisData) {

@@ -73,7 +73,7 @@ class IVGAMetric : public IVGATraversing {
         }
     };
 
-    void extractMetric(std::vector<AnalysisData> &analysisData, const ADRefVector &conns,
+    void extractMetric(std::vector<AnalysisData> &analysisData, const VGATypes::ADRefVector &conns,
                        std::set<MetricSearchData> &pixels, const LatticeMap &map,
                        const MetricSearchData &curs) const {
         // if (dist == 0.0f || concaveConnected()) { // increases effiency but is too
@@ -101,8 +101,8 @@ class IVGAMetric : public IVGATraversing {
     }
 
     std::vector<AnalysisColumn> traverse(std::vector<AnalysisData> &analysisData,
-                                         const std::vector<ADRefVector> &graph,
-                                         const VGAUtils::RefIndex &refIdx, const double radius,
+                                         const std::vector<VGATypes::ADRefVector> &graph,
+                                         const VGATypes::RefIndex &refIdx, const double radius,
                                          const std::set<PixelRef> &originRefs,
                                          const bool keepStats = false) const override {
 
@@ -181,11 +181,10 @@ class IVGAMetric : public IVGATraversing {
         return {std::move(pathAngleCol), std::move(pathLengthCol), std::move(euclidDistCol)};
     }
 
-    std::tuple<std::map<PixelRef, PixelRef>> traverseFind(std::vector<AnalysisData> &analysisData,
-                                                          const std::vector<ADRefVector> &graph,
-                                                          const VGAUtils::RefIndex &refIdx,
-                                                          const std::set<PixelRef> sourceRefs,
-                                                          const PixelRef targetRef) {
+    std::tuple<std::map<PixelRef, PixelRef>>
+    traverseFind(std::vector<AnalysisData> &analysisData,
+                 const std::vector<VGATypes::ADRefVector> &graph, const VGATypes::RefIndex &refIdx,
+                 const std::set<PixelRef> sourceRefs, const PixelRef targetRef) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
         std::set<MetricSearchData> searchList; // contains root point
@@ -243,8 +242,9 @@ class IVGAMetric : public IVGATraversing {
     }
 
     std::tuple<std::map<PixelRef, PixelRef>>
-    traverseFindMany(std::vector<AnalysisData> &analysisData, const std::vector<ADRefVector> &graph,
-                     const VGAUtils::RefIndex &refIdx, const std::set<PixelRef> sourceRefs,
+    traverseFindMany(std::vector<AnalysisData> &analysisData,
+                     const std::vector<VGATypes::ADRefVector> &graph,
+                     const VGATypes::RefIndex &refIdx, const std::set<PixelRef> sourceRefs,
                      std::set<PixelRef> targetRefs) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
@@ -305,10 +305,10 @@ class IVGAMetric : public IVGATraversing {
     // This is a slow algorithm, but should give the correct answer
     // for demonstrative purposes
 
-    std::tuple<float, float, float, int> traverseSum(std::vector<AnalysisData> &analysisData,
-                                                     const std::vector<ADRefVector> &graph,
-                                                     const VGAUtils::RefIndex &refIdx,
-                                                     const double radius, AnalysisData &ad0) {
+    std::tuple<float, float, float, int>
+    traverseSum(std::vector<AnalysisData> &analysisData,
+                const std::vector<VGATypes::ADRefVector> &graph, const VGATypes::RefIndex &refIdx,
+                const double radius, AnalysisData &ad0) {
 
         float totalDepth = 0.0f;
         float totalAngle = 0.0f;

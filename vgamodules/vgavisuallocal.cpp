@@ -6,7 +6,7 @@
 
 #include "vgavisuallocal.hpp"
 
-#include "vgautils.hpp"
+#include "vgatypes.hpp"
 
 #include <algorithm>
 #include <cstddef>
@@ -28,7 +28,7 @@ AnalysisResult VGAVisualLocal::run(Communicator *comm) {
     auto controlCol = result.getColumnIndex(Column::VISUAL_CONTROL);
     auto controllabilityCol = result.getColumnIndex(Column::VISUAL_CONTROLLABILITY);
 
-    const VGAUtils::RefIndex refIdx(getRefVector(m_map.getAttributeTable()));
+    const VGATypes::RefIndex refIdx(getRefVector(m_map.getAttributeTable()));
 
     size_t count = 0;
 

@@ -60,7 +60,7 @@ class IVGAAngular : public IVGATraversing {
         }
     };
 
-    void extractAngular(std::vector<AnalysisData> &analysisData, const ADRefVector &conns,
+    void extractAngular(std::vector<AnalysisData> &analysisData, const VGATypes::ADRefVector &conns,
                         std::set<AngularSearchData> &pixels, const LatticeMap &map,
                         const AngularSearchData &curs) const {
         if (curs.angle == 0.0f || curs.ad.point.blocked() || map.blockedAdjacent(curs.ad.ref)) {
@@ -84,8 +84,8 @@ class IVGAAngular : public IVGATraversing {
     }
 
     std::vector<AnalysisColumn> traverse(std::vector<AnalysisData> &analysisData,
-                                         const std::vector<ADRefVector> &graph,
-                                         const VGAUtils::RefIndex &refIdx, const double radius,
+                                         const std::vector<VGATypes::ADRefVector> &graph,
+                                         const VGATypes::RefIndex &refIdx, const double radius,
                                          const std::set<PixelRef> &originRefs,
                                          const bool keepStats = false) const override {
 
@@ -134,8 +134,8 @@ class IVGAAngular : public IVGATraversing {
     }
 
     std::tuple<float, int> traverseSum(std::vector<AnalysisData> &analysisData,
-                                       const std::vector<ADRefVector> &graph,
-                                       const VGAUtils::RefIndex &refIdx, const double radius,
+                                       const std::vector<VGATypes::ADRefVector> &graph,
+                                       const VGATypes::RefIndex &refIdx, const double radius,
                                        AnalysisData &ad0) {
 
         float totalAngle = 0.0f;
@@ -176,11 +176,10 @@ class IVGAAngular : public IVGATraversing {
         return std::make_tuple(totalAngle, totalNodes);
     }
 
-    std::tuple<std::map<PixelRef, PixelRef>> traverseFind(std::vector<AnalysisData> &analysisData,
-                                                          const std::vector<ADRefVector> &graph,
-                                                          const VGAUtils::RefIndex &refIdx,
-                                                          const std::set<PixelRef> sourceRefs,
-                                                          const PixelRef targetRef) {
+    std::tuple<std::map<PixelRef, PixelRef>>
+    traverseFind(std::vector<AnalysisData> &analysisData,
+                 const std::vector<VGATypes::ADRefVector> &graph, const VGATypes::RefIndex &refIdx,
+                 const std::set<PixelRef> sourceRefs, const PixelRef targetRef) {
 
         // in order to calculate Penn angle, the MetricPair becomes a metric triple...
         std::set<AngularSearchData> searchList; // contains root point

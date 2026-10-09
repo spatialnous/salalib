@@ -5,7 +5,7 @@
 
 target_sources(salalib
     PRIVATE
-       vgautils.hpp
+       vgatypes.hpp
        ivga.hpp
        ivgatraversing.hpp
        ivgaangular.hpp

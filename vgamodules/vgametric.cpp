@@ -44,7 +44,7 @@ AnalysisResult VGAMetric::run(Communicator *comm) {
     auto countCol = result.getColumnIndex(countColText);
 
     std::vector<AnalysisData> analysisData = getAnalysisData(attributes);
-    const VGAUtils::RefIndex refIdx(getRefVector(attributes));
+    const VGATypes::RefIndex refIdx(getRefVector(attributes));
     const auto graph = getGraph(refIdx, false);
 
     size_t count = 0;

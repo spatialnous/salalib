@@ -30,8 +30,8 @@ class IVGAVisual : public IVGATraversing {
         return analysisData;
     }
 
-    void extractUnseen(std::vector<AnalysisData> &analysisData, const ADRefVector &conns,
-                       ADRefVector &pixels) const {
+    void extractUnseen(std::vector<AnalysisData> &analysisData, const VGATypes::ADRefVector &conns,
+                       VGATypes::ADRefVector &pixels) const {
         for (auto &conn : conns) {
             auto &ad = analysisData[conn.idx];
             int binI = conn.bin;
@@ -43,15 +43,15 @@ class IVGAVisual : public IVGATraversing {
     }
 
     std::vector<AnalysisColumn> traverse(std::vector<AnalysisData> &analysisData,
-                                         const std::vector<ADRefVector> &graph,
-                                         const VGAUtils::RefIndex &refIdx, const double,
+                                         const std::vector<VGATypes::ADRefVector> &graph,
+                                         const VGATypes::RefIndex &refIdx, const double,
                                          const std::set<PixelRef> &originRefs,
                                          const bool keepStats = false) const override {
 
         AnalysisColumn sd(analysisData.size());
 
-        std::vector<ADRefVector> searchTree;
-        searchTree.push_back(ADRefVector());
+        std::vector<VGATypes::ADRefVector> searchTree;
+        searchTree.push_back(VGATypes::ADRefVector());
         for (auto &sel : originRefs) {
             auto idx = refIdx.idx(sel);
             searchTree.back().push_back({static_cast<uint32_t>(idx), 0});
@@ -59,7 +59,7 @@ class IVGAVisual : public IVGATraversing {
 
         size_t level = 0;
         while (searchTree[level].size()) {
-            searchTree.push_back(ADRefVector());
+            searchTree.push_back(VGATypes::ADRefVector());
             const auto &searchTreeAtLevel = searchTree[level];
             for (auto currLvlIter = searchTreeAtLevel.rbegin();
                  currLvlIter != searchTreeAtLevel.rend(); currLvlIter++) {
@@ -92,22 +92,22 @@ class IVGAVisual : public IVGATraversing {
         return {std::move(sd)};
     }
 
-    std::tuple<int, int, std::vector<int>> traverseSum(std::vector<AnalysisData> &analysisData,
-                                                       const std::vector<ADRefVector> &graph,
-                                                       const VGAUtils::RefIndex &refIdx,
-                                                       const double radius, size_t idx0) {
+    std::tuple<int, int, std::vector<int>>
+    traverseSum(std::vector<AnalysisData> &analysisData,
+                const std::vector<VGATypes::ADRefVector> &graph, const VGATypes::RefIndex &refIdx,
+                const double radius, size_t idx0) {
 
         int totalDepth = 0;
         int totalNodes = 0;
 
-        std::vector<ADRefVector> searchTree;
-        searchTree.push_back(ADRefVector());
+        std::vector<VGATypes::ADRefVector> searchTree;
+        searchTree.push_back(VGATypes::ADRefVector());
         searchTree.back().push_back({static_cast<uint32_t>(idx0), 0});
 
         std::vector<int> distribution;
         size_t level = 0;
         while (searchTree[level].size()) {
-            searchTree.push_back(ADRefVector());
+            searchTree.push_back(VGATypes::ADRefVector());
             const auto &searchTreeAtLevel = searchTree[level];
             distribution.push_back(0);
             for (auto currLvlIter = searchTreeAtLevel.rbegin();
@@ -144,13 +144,13 @@ class IVGAVisual : public IVGATraversing {
         return std::make_tuple(totalDepth, totalNodes, distribution);
     }
 
-    std::tuple<std::map<PixelRef, PixelRef>> traverseFind(std::vector<AnalysisData> &analysisData,
-                                                          const std::vector<ADRefVector> &graph,
-                                                          const VGAUtils::RefIndex &refIdx,
-                                                          PixelRef sourceRef, PixelRef targetRef) {
+    std::tuple<std::map<PixelRef, PixelRef>>
+    traverseFind(std::vector<AnalysisData> &analysisData,
+                 const std::vector<VGATypes::ADRefVector> &graph, const VGATypes::RefIndex &refIdx,
+                 PixelRef sourceRef, PixelRef targetRef) {
 
-        std::vector<ADRefVector> searchTree;
-        searchTree.push_back(ADRefVector());
+        std::vector<VGATypes::ADRefVector> searchTree;
+        searchTree.push_back(VGATypes::ADRefVector());
 
         searchTree.back().push_back({static_cast<uint32_t>(refIdx.idx(sourceRef)), 0});
 
@@ -158,13 +158,13 @@ class IVGAVisual : public IVGATraversing {
         std::map<PixelRef, PixelRef> parents;
         bool pixelFound = false;
         while (searchTree[level].size()) {
-            searchTree.push_back(ADRefVector());
+            searchTree.push_back(VGATypes::ADRefVector());
             auto &currLevelPix = searchTree[level];
             auto &nextLevelPix = searchTree[level + 1];
             for (auto iter = currLevelPix.rbegin(); iter != currLevelPix.rend(); ++iter) {
                 auto &ad = analysisData[iter->idx];
-                ADRefVector newPixels;
-                ADRefVector mergePixels;
+                VGATypes::ADRefVector newPixels;
+                VGATypes::ADRefVector mergePixels;
                 auto &p = ad.point;
                 if (p.filled() && ad.visitedFromBin != ~0) {
                     if (!p.contextfilled() || ad.ref.iseven() || level == 0) {

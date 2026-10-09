@@ -11,7 +11,6 @@
 
 #include <algorithm>
 #include <cstddef>
-#include <cstdint>
 #include <iterator>
 #include <optional>
 #include <string>
@@ -44,12 +43,6 @@ class IVGA : public IAnalysis {
     };
 
   protected:
-    struct ADRef {
-        uint32_t idx;
-        int bin;
-    };
-    using ADRefVector = std::vector<ADRef>;
-
     std::vector<PixelRef> getRefVector(const AttributeTable &attributes) const {
         std::vector<PixelRef> refs;
         refs.reserve(attributes.getNumRows());

@@ -6,6 +6,7 @@
 
 #include "vgametricopenmp.hpp"
 
+#include <algorithm>
 #include <atomic>
 #include <cstddef>
 #include <ctime>
@@ -70,6 +71,8 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
         auto [totalDepth, totalAngle, euclidDepth, totalNodes] =
             traverseSum(analysisData, graph, refIdx, m_radius, ad0);
 
+        dp.penn = static_cast<float>(std::max(0.0, static_cast<double>(totalDepth - euclidDepth)) /
+                                     static_cast<double>(totalNodes));
         dp.mspa =
             static_cast<float>(static_cast<double>(totalAngle) / static_cast<double>(totalNodes));
         dp.mspl =
@@ -101,6 +104,8 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
     if (cancelled.load(std::memory_order_relaxed))
         throw Communicator::CancelledException();
 
+    std::string pennColText = getColumnWithRadius(Column::METRIC_MEAN_PENN_DISTANCE,          //
+                                                  m_radius, m_map.getRegion());               //
     std::string mspaColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_ANGLE,    //
                                                   m_radius, m_map.getRegion());               //
     std::string msplColText = getColumnWithRadius(Column::METRIC_MEAN_SHORTEST_PATH_DISTANCE, //
@@ -110,9 +115,10 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
     std::string countColText = getColumnWithRadius(Column::METRIC_NODE_COUNT,                 //
                                                    m_radius, m_map.getRegion());              //
 
-    AnalysisResult result({mspaColText, msplColText, distColText, countColText},
+    AnalysisResult result({pennColText, mspaColText, msplColText, distColText, countColText},
                           attributes.getNumRows());
 
+    auto pennCol = result.getColumnIndex(pennColText);
     auto mspaCol = result.getColumnIndex(mspaColText);
     auto msplCol = result.getColumnIndex(msplColText);
     auto distCol = result.getColumnIndex(distColText);
@@ -120,6 +126,7 @@ AnalysisResult VGAMetricOpenMP::run(Communicator *comm) {
 
     auto dataIter = colData.begin();
     for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {
+        result.setValue(ridx, pennCol, static_cast<double>(dataIter->penn));
         result.setValue(ridx, mspaCol, static_cast<double>(dataIter->mspa));
         result.setValue(ridx, msplCol, static_cast<double>(dataIter->mspl));
         result.setValue(ridx, distCol, static_cast<double>(dataIter->dist));

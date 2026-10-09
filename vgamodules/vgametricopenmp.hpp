@@ -27,12 +27,13 @@ class VGAMetricOpenMP : public IVGAMetric {
     [[maybe_unused]] unsigned _padding1 : 4 * 8;
 
     struct DataPoint {
-        float mspa, mspl, dist, count;
+        float penn, mspa, mspl, dist, count;
     };
 
   public:
     struct Column {
         static constexpr std::string_view                                              //
+            METRIC_MEAN_PENN_DISTANCE = "Metric Mean Penn Distance",                   //
             METRIC_MEAN_SHORTEST_PATH_ANGLE = "Metric Mean Shortest-Path Angle",       //
             METRIC_MEAN_SHORTEST_PATH_DISTANCE = "Metric Mean Shortest-Path Distance", //
             METRIC_MEAN_STRAIGHT_LINE_DISTANCE = "Metric Mean Straight-Line Distance", //

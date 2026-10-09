@@ -170,13 +170,13 @@ AnalysisResult VGAVisualGlobalOpenMP::run(Communicator *comm) {
                            depthColText, countColText, relEntropyColText},
                           attributes.getNumRows());
 
-    auto entropyCol = attributes.getColumnIndex(entropyColText);
-    auto integDvCol = attributes.getColumnIndex(integDvColText);
-    auto integPvCol = attributes.getColumnIndex(integPvColText);
-    auto integTkCol = attributes.getColumnIndex(integTkColText);
-    auto depthCol = attributes.getColumnIndex(depthColText);
-    auto countCol = attributes.getColumnIndex(countColText);
-    auto relEntropyCol = attributes.getColumnIndex(relEntropyColText);
+    auto entropyCol = result.getColumnIndex(entropyColText);
+    auto integDvCol = result.getColumnIndex(integDvColText);
+    auto integPvCol = result.getColumnIndex(integPvColText);
+    auto integTkCol = result.getColumnIndex(integTkColText);
+    auto depthCol = result.getColumnIndex(depthColText);
+    auto countCol = result.getColumnIndex(countColText);
+    auto relEntropyCol = result.getColumnIndex(relEntropyColText);
 
     auto dataIter = colData.begin();
     for (size_t ridx = 0; ridx < attributes.getNumRows(); ridx++) {

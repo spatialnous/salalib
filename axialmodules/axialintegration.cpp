@@ -299,8 +299,11 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
     // n.b., for this operation we assume continuous line referencing from zero (this is silly?)
     // has already failed due to this!  when intro hand drawn fewest line (where user may have
     // deleted) it's going to get worse...
-
-    bool *covered = new bool[nshapes];
+    if (attributes.getNumRows() != nshapes) {
+        throw genlib::RuntimeException(
+            "Axial integration: attribute row count does not match shape count");
+    }
+    std::vector<char> covered(nshapes);
 
     size_t i = 0;
     for (auto &iter : attributes) {
@@ -522,7 +525,6 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         if (comm) {
             if (qtimer(atime, 500)) {
                 if (comm->IsCancelled()) {
-                    delete[] covered;
                     throw Communicator::CancelledException();
                 }
                 comm->CommPostMessage(Communicator::CURRENT_RECORD, i);
@@ -530,7 +532,6 @@ AnalysisResult AxialIntegration::run(Communicator *comm, ShapeGraph &map, bool s
         }
         i++;
     }
-    delete[] covered;
     if (m_choice) {
         i = 0;
         for (auto &iter : attributes) {

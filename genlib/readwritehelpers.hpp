@@ -21,7 +21,8 @@ namespace dXreadwrite {
         stream.read(reinterpret_cast<char *>(&size), sizeof(size));
         if (size > 0) {
             vec.resize(size);
-            stream.read(reinterpret_cast<char *>(vec.data()), sizeof(T) * size);
+            stream.read(reinterpret_cast<char *>(vec.data()),
+                        static_cast<std::streamsize>(sizeof(T) * size));
         }
         return size;
     }
@@ -54,7 +55,8 @@ namespace dXreadwrite {
         const unsigned int length = static_cast<const unsigned int>(vec.size());
         stream.write(reinterpret_cast<const char *>(&length), sizeof(length));
         if (length > 0) {
-            stream.write(reinterpret_cast<const char *>(vec.data()), sizeof(T) * length);
+            stream.write(reinterpret_cast<const char *>(vec.data()),
+                         static_cast<std::streamsize>(sizeof(T) * length));
         }
     }
 
@@ -73,7 +75,8 @@ namespace dXreadwrite {
             for (const auto &i : vecF) {
                 vecT.push_back(static_cast<T>(i));
             }
-            stream.write(reinterpret_cast<const char *>(vecT.data()), sizeof(T) * length);
+            stream.write(reinterpret_cast<const char *>(vecT.data()),
+                         static_cast<std::streamsize>(sizeof(T) * length));
         }
     }
 

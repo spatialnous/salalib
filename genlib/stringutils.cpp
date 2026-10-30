@@ -42,7 +42,7 @@ namespace dXstring {
         }
         std::string result(length, '\0');
         char *ptr = &result[0];
-        stream.read(ptr, length);
+        stream.read(ptr, static_cast<std::streamsize>(length));
         return result;
     }
 
@@ -50,7 +50,7 @@ namespace dXstring {
         unsigned int length = static_cast<unsigned int>(s.length());
         stream.write(reinterpret_cast<char *>(&length), sizeof(unsigned int));
         if (length > 0) {
-            stream.write(s.data(), length);
+            stream.write(s.data(), static_cast<std::streamsize>(length));
         }
     }
 

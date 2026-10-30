@@ -12,7 +12,6 @@
 #include "sparksieve2.hpp"
 
 #include <algorithm>
-#include <cmath>
 #include <vector>
 
 sparkSieve2::sparkSieve2(const Point2f &centre, double maxdist)
